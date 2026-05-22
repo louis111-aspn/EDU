@@ -822,7 +822,7 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; 
       <tbody>
         <tr><td>별도 데이터 정확성</td><td class="val-navy">각 법인 CFO / 경리팀</td><td>법인 ERP (FI 모듈)</td><td>법인 책임 영역</td></tr>
         <tr><td>불일치 수정</td><td class="val-navy">양사 협의 후 해당 법인</td><td>법인 ERP 수정 전표</td><td>마감 전에만 가능</td></tr>
-        <tr><td>IC 제거</td><td class="val-navy">연결팀</td><td>SAP GR / EC-CS</td><td>연결 책임 영역</td></tr>
+        <tr><td>IC 제거</td><td class="val-navy">연결팀</td><td>SAP GR</td><td>연결 책임 영역</td></tr>
         <tr><td>미실현손익 제거</td><td class="val-navy">연결팀</td><td>SAP GR 별도 태스크</td><td>별도 워크스텝</td></tr>
       </tbody>
     </table>
@@ -1283,7 +1283,7 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; 
     </div>
     <div class="card">
       <div class="card-title">SAP FI 설정</div>
-      <div class="sap-item"><span class="sap-badge">EC-CS</span><div class="sap-text">연결 환산 모듈 — P/L 항목 평균환율, 자본 역사적 환율 자동 적용. 해외사업환산차이(OCI) 자동 계산 및 배당수익 제거 시 자동 조정.</div></div>
+      <div class="sap-item"><span class="sap-badge">GR</span><div class="sap-text">연결 환산 모듈 — P/L 항목 평균환율, 자본 역사적 환율 자동 적용. 해외사업환산차이(OCI) 자동 계산 및 배당수익 제거 시 자동 조정.</div></div>
       <div class="sap-item"><span class="sap-badge">FAGL</span><div class="sap-text">법인별 기능통화 설정(OB22) — USD 기능통화 법인의 KRW 표시통화 환산 자동 처리. 평균환율 테이블 월별 자동 업데이트.</div></div>
     </div>
   </div>
@@ -1409,7 +1409,7 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; 
     <div class="card">
       <div class="card-title">SAP FI 설정</div>
       <div class="sap-item"><span class="sap-badge">ABT1N</span><div class="sap-text">IC 자산이전 시 원가·감가상각 이력 수령 법인으로 이관, 이익 자동 산출</div></div>
-      <div class="sap-item"><span class="sap-badge">EC-CS</span><div class="sap-text">Consolidation Module에서 IC 자산이전 Elimination 등록 → 미실현이익 자동 제거 및 연간 감가상각 조정 자동화</div></div>
+      <div class="sap-item"><span class="sap-badge">GR</span><div class="sap-text">Consolidation Module에서 IC 자산이전 Elimination 등록 → 미실현이익 자동 제거 및 연간 감가상각 조정 자동화</div></div>
     </div>
   </div>
 
@@ -1546,7 +1546,7 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; 
     </div>
     <div class="card">
       <div class="card-title">SAP FI 설정</div>
-      <div class="sap-item"><span class="sap-badge">EC-CS</span><div class="sap-text">Consolidation Module에서 IC 채권 충당금 자동 제거 규칙 설정 — Trading Partner 연계 충당금 자동 탐지</div></div>
+      <div class="sap-item"><span class="sap-badge">GR</span><div class="sap-text">Consolidation Module에서 IC 채권 충당금 자동 제거 규칙 설정 — Trading Partner 연계 충당금 자동 탐지</div></div>
       <div class="sap-item"><span class="sap-badge">DTax</span><div class="sap-text">충당금 제거 시 A사 기존 이연법인세자산(DTA) 자동 제거 — IC 충당금 탐지 후 DTA 잔액 × 세율로 환입 분개 자동 생성.</div></div>
     </div>
   </div>
@@ -2285,20 +2285,20 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; 
       <div class="tab-panel" id="tab-sap3">
         <div class="card">
           <div class="sap-item"><span class="sap-badge">FAGL</span><div class="sap-text"><strong>외화 자동 재환산(FAGL_FC_VAL):</strong> 기말 화폐성 항목(미수·미지급배당금)을 기말환율로 자동 재환산. 양사 동일 환율 적용으로 T1 차이 최소화.</div></div>
-          <div class="sap-item"><span class="sap-badge">EC-CS</span><div class="sap-text"><strong>연결 환산 모듈:</strong> 해외 자회사 재무제표 환산 시 화폐성/비화폐성 항목별 환율 자동 적용. 해외사업환산차이(OCI) 자동 계산 및 P/L 외환차익과 상쇄 처리.</div></div>
+          <div class="sap-item"><span class="sap-badge">GR</span><div class="sap-text"><strong>연결 환산 모듈:</strong> 해외 자회사 재무제표 환산 시 화폐성/비화폐성 항목별 환율 자동 적용. 해외사업환산차이(OCI) 자동 계산 및 P/L 외환차익과 상쇄 처리.</div></div>
           <div class="sap-item"><span class="sap-badge">TP</span><div class="sap-text"><strong>Trading Partner:</strong> 모든 IC 배당 전표에 Trading Partner 필수 입력. ICMR에서 환율 차이(T1) 자동 탐지 및 OCI 흡수 분개 자동 생성.</div></div>
         </div>
       </div>
       <div class="tab-panel" id="tab-sap4">
         <div class="card">
           <div class="sap-item"><span class="sap-badge">ABT1N</span><div class="sap-text"><strong>법인 간 자산이전:</strong> IC 자산이전 시 원가 및 감가상각 이력을 수령 법인으로 이관하고 처분이익 자동 산출. 취득원가 정확성 확보.</div></div>
-          <div class="sap-item"><span class="sap-badge">EC-CS</span><div class="sap-text"><strong>Consolidation Module:</strong> IC 자산이전 거래를 EC-CS / SEM-BCS Elimination 방법으로 등록 → 미실현이익 자동 제거 및 매년 감가상각 조정 자동화.</div></div>
+          <div class="sap-item"><span class="sap-badge">GR</span><div class="sap-text"><strong>Consolidation Module:</strong> IC 자산이전 거래를 GR / SEM-BCS Elimination 방법으로 등록 → 미실현이익 자동 제거 및 매년 감가상각 조정 자동화.</div></div>
           <div class="sap-item"><span class="sap-badge">DTax</span><div class="sap-text"><strong>이연법인세 자동 계산:</strong> TAX 모듈과 연동하여 미실현이익 제거에 따른 임시차이 발생 시 이연법인세 자동 분개.</div></div>
         </div>
       </div>
       <div class="tab-panel" id="tab-sap5">
         <div class="card">
-          <div class="sap-item"><span class="sap-badge">EC-CS</span><div class="sap-text"><strong>IC 충당금 자동 제거 규칙:</strong> Consolidation Module에서 Trading Partner 연계 IC 채권 충당금 자동 탐지 및 제거 규칙 설정. 매 결산 수작업 누락 방지.</div></div>
+          <div class="sap-item"><span class="sap-badge">GR</span><div class="sap-text"><strong>IC 충당금 자동 제거 규칙:</strong> Consolidation Module에서 Trading Partner 연계 IC 채권 충당금 자동 탐지 및 제거 규칙 설정. 매 결산 수작업 누락 방지.</div></div>
           <div class="sap-item"><span class="sap-badge">DTax</span><div class="sap-text"><strong>이연법인세 자동 조정:</strong> IC 충당금 제거 시 A사의 기존 DTA 잔액을 자동 탐지하여 환입 분개 생성 — DTA 잔액 × 세율로 자동 산출.</div></div>
           <div class="sap-item"><span class="sap-badge">TP</span><div class="sap-text"><strong>Trading Partner 연계:</strong> IC 대여금 계정에 Trading Partner 필수 입력 설정 → ICMR에서 충당금 설정 여부 자동 탐지 및 연결팀 Alert 가능.</div></div>
         </div>
@@ -2344,21 +2344,21 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; 
           <td>화폐성/비화폐성 환율 적용 차이</td>
           <td><span class="type-pill t1" style="font-size:10px">T1 환산</span></td>
           <td>환산 기준 그룹 정책 통일</td>
-          <td>FAGL 자동 재환산, EC-CS</td>
+          <td>FAGL 자동 재환산, GR</td>
         </tr>
         <tr>
           <td><strong>유형 4</strong><br>유형자산 미실현</td>
           <td>연결 조정 누락</td>
           <td>— (연결 고유 조정)</td>
           <td>IC 자산대장 + Roll-forward</td>
-          <td>ABT1N, EC-CS</td>
+          <td>ABT1N, GR</td>
         </tr>
         <tr>
           <td><strong>유형 5</strong><br>IC 대여금 대손충당금</td>
           <td>연결 고유 조정 (대사 일치, 충당금 제거 필요)</td>
           <td><span class="type-pill t5" style="font-size:10px">연결 고유</span></td>
           <td>충당금 설정 즉시 연결팀 통보</td>
-          <td>EC-CS 자동 제거, DTax 연동</td>
+          <td>GR 자동 제거, DTax 연동</td>
         </tr>
       </tbody>
     </table>
@@ -2390,7 +2390,7 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; 
         <tr><td class="val-navy fw-700">1순위</td><td>Trading Partner 코드 체계 구축 (FI)</td><td>ICMR 자동 매칭 기반 확보</td><td>중</td></tr>
         <tr><td class="val-navy fw-700">2순위</td><td>Cut-off Rule 문서화 및 교육</td><td>유형 1 불일치 70% 감소</td><td>하</td></tr>
         <tr><td class="val-navy fw-700">3순위</td><td>표준 ICMR Template 도입</td><td>불일치 조기 감지 및 사유 분류</td><td>하</td></tr>
-        <tr><td class="val-navy fw-700">4순위</td><td>IC 대여금 대손충당금 대장 + EC-CS 자동 제거 설정</td><td>충당금 연결 조정 누락 방지</td><td>중</td></tr>
+        <tr><td class="val-navy fw-700">4순위</td><td>IC 대여금 대손충당금 대장 + GR 자동 제거 설정</td><td>충당금 연결 조정 누락 방지</td><td>중</td></tr>
         <tr><td class="val-navy fw-700">5순위</td><td>ICMR 조정 분개 자동 생성 모듈</td><td>Off-set 잔액 = 0 마감 자동화</td><td>상</td></tr>
       </tbody>
     </table>
