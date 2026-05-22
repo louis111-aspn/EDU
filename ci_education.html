@@ -1,0 +1,1975 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>투자자본상계(C/I) 완전 정복 — 실무 교육</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #003366;
+  --navy-mid: #004a8f;
+  --navy-light: #e8f0f9;
+  --navy-pale: #f4f7fc;
+  --white: #ffffff;
+  --gray-700: #333333;
+  --gray-500: #666666;
+  --gray-300: #cccccc;
+  --gray-100: #f5f5f5;
+  --green: #1a5c38;
+  --green-light: #edf7f2;
+  --amber: #7a4f00;
+  --amber-light: #fff8e6;
+  --red: #c0392b;
+  --red-light: #fdf0ef;
+  --border: #d0dae8;
+  --font: 'Noto Sans KR', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --sidebar-w: 268px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { font-family:var(--font); color:var(--gray-700); background:var(--gray-100); font-size:14px; line-height:1.75; }
+
+/* ── SIDEBAR ── */
+#sidebar {
+  width:var(--sidebar-w); background:var(--navy);
+  position:fixed; top:0; left:0; height:100vh;
+  overflow-y:auto; z-index:100; display:flex; flex-direction:column;
+}
+#sidebar::-webkit-scrollbar { width:3px; }
+#sidebar::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.15); border-radius:2px; }
+.sb-logo {
+  padding:22px 20px 18px;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+}
+.sb-logo .tag { font-size:9px; font-weight:500; letter-spacing:2.5px; color:rgba(255,255,255,0.45); text-transform:uppercase; margin-bottom:6px; }
+.sb-logo .title { font-size:13px; font-weight:700; color:#fff; line-height:1.45; }
+.sb-nav { padding:10px 0; flex:1; }
+.sb-section { font-size:9px; font-weight:500; letter-spacing:1.8px; color:rgba(255,255,255,0.3); text-transform:uppercase; padding:14px 20px 4px; }
+.sb-item {
+  display:flex; align-items:center; gap:10px;
+  padding:8px 20px; cursor:pointer;
+  color:rgba(255,255,255,0.65); font-size:12.5px; font-weight:400;
+  transition:all 0.15s; border-left:2px solid transparent;
+  text-decoration:none;
+}
+.sb-item:hover { color:#fff; background:rgba(255,255,255,0.07); }
+.sb-item.active { color:#fff; background:rgba(255,255,255,0.12); border-left-color:#fff; font-weight:500; }
+.sb-item .num {
+  width:20px; height:20px; border-radius:4px;
+  background:rgba(255,255,255,0.12); display:flex; align-items:center; justify-content:center;
+  font-size:10px; font-weight:600; flex-shrink:0;
+}
+.sb-item.active .num { background:rgba(255,255,255,0.25); }
+.sb-sub {
+  padding:5px 20px 5px 52px; cursor:pointer;
+  color:rgba(255,255,255,0.45); font-size:11.5px;
+  transition:all 0.15s; border-left:2px solid transparent;
+  text-decoration:none; display:block;
+}
+.sb-sub:hover { color:rgba(255,255,255,0.75); }
+
+/* ── MAIN ── */
+#main { margin-left:var(--sidebar-w); min-height:100vh; padding:40px 48px 80px; max-width:1100px; }
+
+/* ── MODULE HEADER ── */
+.mod-header {
+  background:var(--navy); color:#fff;
+  border-radius:8px; padding:28px 32px; margin-bottom:28px;
+}
+.mod-tag { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:8px; }
+.mod-title { font-size:22px; font-weight:700; line-height:1.35; margin-bottom:10px; }
+.mod-sub { font-size:13px; color:rgba(255,255,255,0.7); font-weight:300; }
+
+/* ── SECTION ── */
+.section { margin-bottom:36px; }
+.section-title {
+  font-size:15px; font-weight:700; color:var(--navy);
+  border-left:3px solid var(--navy); padding-left:12px;
+  margin-bottom:16px;
+}
+.section-title .badge {
+  display:inline-block; background:var(--navy); color:#fff;
+  font-size:10px; padding:2px 8px; border-radius:10px; margin-right:8px; font-weight:500;
+}
+
+/* ── CARD ── */
+.card {
+  background:#fff; border:1px solid var(--border);
+  border-radius:8px; padding:20px 24px; margin-bottom:16px;
+}
+.card-title { font-size:13px; font-weight:700; color:var(--navy); margin-bottom:12px; }
+
+/* ── CONCEPT BOX ── */
+.concept-box {
+  background:var(--navy-pale); border:1px solid var(--border);
+  border-radius:8px; padding:20px 24px; margin-bottom:16px;
+}
+.concept-box .label {
+  font-size:10px; letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--navy); font-weight:600; margin-bottom:8px;
+}
+
+/* ── CALLOUT ── */
+.callout {
+  border-radius:6px; padding:14px 18px; margin-bottom:14px;
+  display:flex; gap:12px; align-items:flex-start;
+}
+.callout.info { background:var(--navy-light); border-left:3px solid var(--navy); }
+.callout.success { background:var(--green-light); border-left:3px solid var(--green); }
+.callout.warn { background:var(--amber-light); border-left:3px solid #c8890a; }
+.callout.error { background:var(--red-light); border-left:3px solid var(--red); }
+.callout-icon { font-size:16px; flex-shrink:0; margin-top:1px; }
+.callout-text { font-size:13px; line-height:1.65; }
+.callout-text strong { font-weight:700; }
+
+/* ── TABLE ── */
+.tbl-wrap { overflow-x:auto; margin-bottom:16px; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th {
+  background:var(--navy); color:#fff; padding:10px 14px;
+  text-align:left; font-weight:500; font-size:12px;
+}
+td { padding:9px 14px; border-bottom:1px solid var(--border); vertical-align:top; }
+tr:last-child td { border-bottom:none; }
+tr:nth-child(even) td { background:var(--navy-pale); }
+td.num { text-align:right; font-family:var(--mono); font-size:12.5px; }
+td.key { font-weight:600; color:var(--navy); }
+td.pos { color:var(--green); font-weight:600; font-family:var(--mono); }
+td.neg { color:var(--red); font-weight:600; font-family:var(--mono); }
+
+/* ── JOURNAL ENTRY ── */
+.je-wrap { background:#fff; border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:16px; }
+.je-header {
+  background:var(--navy); color:#fff; padding:10px 18px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.je-header .je-title { font-size:12px; font-weight:600; letter-spacing:0.5px; }
+.je-header .je-badge {
+  background:rgba(255,255,255,0.15); color:#fff;
+  font-size:10px; padding:2px 8px; border-radius:10px;
+}
+.je-body { padding:16px 18px; }
+.je-line {
+  display:grid; grid-template-columns:1fr 90px 90px;
+  gap:8px; align-items:center; padding:5px 0;
+  border-bottom:1px dashed #eee; font-size:13px;
+}
+.je-line:last-child { border-bottom:none; }
+.je-line .acct { color:var(--gray-700); }
+.je-line .acct.debit { padding-left:0; font-weight:500; }
+.je-line .acct.credit { padding-left:20px; color:var(--gray-500); }
+.je-line .dr { text-align:right; font-family:var(--mono); font-size:12.5px; color:var(--navy); font-weight:600; }
+.je-line .cr { text-align:right; font-family:var(--mono); font-size:12.5px; color:var(--red); font-weight:600; }
+.je-line .empty { color:transparent; }
+.je-footer {
+  background:var(--navy-pale); border-top:1px solid var(--border);
+  padding:8px 18px; display:flex; justify-content:space-between;
+  font-size:11.5px; color:var(--gray-500);
+}
+.je-footer .verify { color:var(--green); font-weight:600; }
+.je-separator { height:1px; background:var(--border); margin:8px 0; }
+.je-label { font-size:11px; color:var(--gray-500); padding:4px 0 2px; font-weight:500; letter-spacing:0.5px; }
+
+/* ── T-ACCOUNT ── */
+.t-acct-wrap { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+.t-acct { background:#fff; border:1px solid var(--border); border-radius:8px; overflow:hidden; }
+.t-acct-name { background:var(--navy); color:#fff; padding:8px 14px; font-size:12px; font-weight:600; text-align:center; }
+.t-acct-body { display:grid; grid-template-columns:1fr 1fr; }
+.t-acct-col { padding:10px 12px; }
+.t-acct-col:first-child { border-right:2px solid var(--navy); }
+.t-acct-col-hd { font-size:10px; font-weight:700; color:var(--gray-500); text-align:center; margin-bottom:8px; letter-spacing:1px; }
+.t-acct-row { display:flex; justify-content:space-between; padding:3px 0; font-size:12.5px; border-bottom:1px dashed #f0f0f0; }
+.t-acct-row:last-child { border-bottom:none; }
+.t-acct-row .item { color:var(--gray-700); }
+.t-acct-row .amt { font-family:var(--mono); font-weight:600; color:var(--navy); }
+.t-acct-total { background:var(--navy-pale); display:flex; justify-content:space-between; padding:6px 12px; font-size:12px; font-weight:700; border-top:2px solid var(--navy); }
+
+/* ── FLOW CHART ── */
+.flow { display:flex; align-items:center; gap:0; margin-bottom:20px; flex-wrap:wrap; }
+.flow-step {
+  background:var(--navy); color:#fff;
+  padding:12px 18px; border-radius:6px;
+  font-size:12.5px; font-weight:500; text-align:center;
+  min-width:120px; line-height:1.4;
+}
+.flow-step.light { background:var(--navy-light); color:var(--navy); }
+.flow-step.highlight { background:#c8890a; }
+.flow-arrow { color:var(--navy); font-size:18px; padding:0 6px; }
+
+/* ── GRID LAYOUT ── */
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:16px; }
+
+/* ── FORMULA BOX ── */
+.formula {
+  background:var(--navy); color:#fff;
+  border-radius:8px; padding:16px 22px; margin-bottom:16px;
+  font-family:var(--mono); font-size:13px; line-height:2;
+}
+.formula .f-line { display:flex; align-items:center; gap:12px; }
+.formula .f-label { color:rgba(255,255,255,0.55); font-size:11px; width:200px; flex-shrink:0; }
+.formula .f-val { font-weight:600; font-size:14px; }
+.formula .f-sep { border-top:1px solid rgba(255,255,255,0.3); margin:8px 0; }
+.formula .f-result { color:#ffd700; font-size:15px; font-weight:700; }
+
+/* ── TABS ── */
+.tabs-wrap { margin-bottom:20px; }
+.tabs-nav { display:flex; gap:0; border-bottom:2px solid var(--border); margin-bottom:0; }
+.tab-btn {
+  padding:10px 20px; cursor:pointer; font-size:13px; font-weight:500;
+  color:var(--gray-500); border:none; background:none;
+  border-bottom:2px solid transparent; margin-bottom:-2px;
+  transition:all 0.15s; font-family:var(--font);
+}
+.tab-btn:hover { color:var(--navy); }
+.tab-btn.active { color:var(--navy); border-bottom-color:var(--navy); font-weight:700; }
+.tab-panel { display:none; padding:20px 0; }
+.tab-panel.active { display:block; }
+
+/* ── STEP ACCORDION ── */
+.step-list { margin-bottom:16px; }
+.step-item { background:#fff; border:1px solid var(--border); border-radius:8px; margin-bottom:8px; overflow:hidden; }
+.step-hd {
+  display:flex; align-items:center; gap:14px; padding:14px 18px;
+  cursor:pointer; transition:background 0.15s;
+}
+.step-hd:hover { background:var(--navy-pale); }
+.step-num {
+  width:28px; height:28px; border-radius:50%;
+  background:var(--navy); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:700; flex-shrink:0;
+}
+.step-hd-text { flex:1; }
+.step-hd-title { font-size:13.5px; font-weight:600; color:var(--navy); }
+.step-hd-sub { font-size:12px; color:var(--gray-500); margin-top:2px; }
+.step-toggle { color:var(--gray-300); font-size:18px; transition:transform 0.2s; }
+.step-item.open .step-toggle { transform:rotate(180deg); color:var(--navy); }
+.step-body { display:none; padding:0 18px 18px 60px; }
+.step-item.open .step-body { display:block; }
+
+/* ── MATRIX TABLE ── */
+.matrix { width:100%; border-collapse:collapse; font-size:12.5px; margin-bottom:16px; }
+.matrix th { background:var(--navy); color:#fff; padding:9px 12px; text-align:center; font-size:11.5px; }
+.matrix td { padding:9px 12px; border:1px solid var(--border); text-align:center; vertical-align:middle; }
+.matrix .star-5 { color:#003366; font-weight:700; }
+.matrix .star-4 { color:#1a5c38; }
+.matrix .star-3 { color:#7a4f00; }
+.matrix .star-2 { color:#c0392b; }
+.matrix .star-1 { color:#999; }
+.matrix .left { text-align:left; font-weight:500; }
+
+/* ── SUPPLEMENT TOGGLE ── */
+.supp-toggle {
+  background:var(--amber-light); border:1px solid #e8b84b;
+  border-radius:8px; overflow:hidden; margin-bottom:16px;
+}
+.supp-hd {
+  display:flex; align-items:center; gap:12px; padding:14px 18px;
+  cursor:pointer;
+}
+.supp-hd .supp-icon { font-size:18px; }
+.supp-hd .supp-label { font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:#7a4f00; }
+.supp-hd .supp-title { font-size:13.5px; font-weight:600; color:var(--gray-700); }
+.supp-hd .supp-arr { margin-left:auto; color:#c8890a; transition:transform 0.2s; }
+.supp-toggle.open .supp-arr { transform:rotate(180deg); }
+.supp-body { display:none; padding:0 18px 18px; }
+.supp-toggle.open .supp-body { display:block; }
+
+/* ── DIVIDER ── */
+.divider { height:1px; background:var(--border); margin:28px 0; }
+
+/* ── HIGHLIGHT PILL ── */
+.pill {
+  display:inline-block; padding:3px 10px; border-radius:20px;
+  font-size:11px; font-weight:600;
+}
+.pill.navy { background:var(--navy); color:#fff; }
+.pill.green { background:var(--green); color:#fff; }
+.pill.amber { background:#c8890a; color:#fff; }
+.pill.red { background:var(--red); color:#fff; }
+.pill.light { background:var(--navy-light); color:var(--navy); }
+
+/* ── KEY POINT BOX ── */
+.key-points { background:var(--navy); color:#fff; border-radius:8px; padding:20px 24px; margin-bottom:16px; }
+.key-points .kp-title { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:12px; }
+.key-points ul { list-style:none; }
+.key-points ul li { padding:5px 0; font-size:13px; display:flex; gap:10px; }
+.key-points ul li::before { content:'→'; color:rgba(255,255,255,0.4); flex-shrink:0; }
+
+/* ── TIMELINE ── */
+.timeline { position:relative; padding-left:32px; margin-bottom:20px; }
+.timeline::before { content:''; position:absolute; left:10px; top:0; bottom:0; width:2px; background:var(--border); }
+.tl-item { position:relative; margin-bottom:20px; }
+.tl-dot {
+  position:absolute; left:-26px; top:4px;
+  width:14px; height:14px; border-radius:50%;
+  background:var(--navy); border:2px solid #fff;
+  box-shadow:0 0 0 2px var(--navy);
+}
+.tl-date { font-size:11px; font-weight:600; color:var(--navy); letter-spacing:0.5px; margin-bottom:4px; }
+.tl-title { font-size:13.5px; font-weight:600; margin-bottom:4px; }
+.tl-desc { font-size:12.5px; color:var(--gray-500); }
+
+/* ── NAVIGATION ── */
+.page-nav { display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:24px; border-top:1px solid var(--border); }
+.nav-btn {
+  display:flex; align-items:center; gap:8px; padding:10px 20px;
+  background:var(--navy); color:#fff; border:none; border-radius:6px;
+  cursor:pointer; font-size:13px; font-weight:500; font-family:var(--font);
+  transition:opacity 0.15s;
+}
+.nav-btn:hover { opacity:0.85; }
+.nav-btn.secondary { background:#fff; color:var(--navy); border:1px solid var(--border); }
+.nav-btn.secondary:hover { background:var(--navy-pale); }
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px) {
+  #sidebar { transform:translateX(-100%); }
+  #main { margin-left:0; padding:24px 20px 60px; }
+  .grid-2, .grid-3, .t-acct-wrap { grid-template-columns:1fr; }
+}
+
+/* ── PAGE SECTIONS ── */
+.page { display:none; }
+.page.active { display:block; }
+
+/* ── BEFORE AFTER ── */
+.ba-wrap { display:grid; grid-template-columns:1fr 40px 1fr; gap:0; align-items:stretch; margin-bottom:16px; }
+.ba-col { background:#fff; border:1px solid var(--border); border-radius:8px; overflow:hidden; }
+.ba-hd { padding:10px 16px; font-size:12px; font-weight:700; text-align:center; }
+.ba-hd.before { background:#fdf0ef; color:var(--red); }
+.ba-hd.after { background:var(--green-light); color:var(--green); }
+.ba-body { padding:14px 16px; font-size:12.5px; }
+.ba-arrow { display:flex; align-items:center; justify-content:center; font-size:20px; color:var(--navy); }
+
+/* ── OWNERSHIP DIAGRAM ── */
+.ownership { display:flex; flex-direction:column; align-items:center; gap:0; margin-bottom:20px; }
+.own-entity {
+  background:var(--navy); color:#fff;
+  padding:12px 24px; border-radius:8px;
+  font-size:13px; font-weight:700; text-align:center; min-width:140px;
+}
+.own-entity.sub { background:var(--navy-light); color:var(--navy); }
+.own-entity.nci { background:var(--gray-100); color:var(--gray-700); border:1px solid var(--border); }
+.own-line { display:flex; align-items:flex-start; gap:0; }
+.own-pct {
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+  padding:4px 16px;
+}
+.own-pct .pct-num { font-size:13px; font-weight:700; color:var(--navy); }
+.own-pct .pct-bar { width:2px; height:32px; background:var(--navy); }
+.own-pct .pct-label { font-size:10px; color:var(--gray-500); }
+.own-row { display:flex; gap:40px; justify-content:center; }
+
+/* ── PROGRESS BAR ── */
+.prog-wrap { margin-bottom:8px; }
+.prog-label { display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; }
+.prog-bar { height:8px; background:var(--gray-100); border-radius:4px; overflow:hidden; }
+.prog-fill { height:100%; background:var(--navy); border-radius:4px; transition:width 0.6s; }
+.prog-fill.green { background:var(--green); }
+.prog-fill.amber { background:#c8890a; }
+.prog-fill.red { background:var(--red); }
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ── SIDEBAR ── -->
+<nav id="sidebar">
+  <div class="sb-logo">
+    <div class="tag">실무 교육 시리즈</div>
+    <div class="title">투자자본상계(C/I)<br>완전 정복</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-section">기초 이론</div>
+    <a class="sb-item active" onclick="showPage('m1')">
+      <span class="num">1</span> 연결결산 기초 이론
+    </a>
+    <a class="sb-item" onclick="showPage('m2')">
+      <span class="num">2</span> 투자차액 및 NCI
+    </a>
+    <div class="sb-section">이벤트별 분개</div>
+    <a class="sb-item" onclick="showPage('m3')">
+      <span class="num">3</span> 이벤트별 회계처리
+    </a>
+    <a class="sb-sub" onclick="showPage('m3'); setTab('m3-tabs','tab-31')">3.1 최초 취득</a>
+    <a class="sb-sub" onclick="showPage('m3'); setTab('m3-tabs','tab-32')">3.2 후속 측정</a>
+    <a class="sb-sub" onclick="showPage('m3'); setTab('m3-tabs','tab-33')">3.3 단계적 취득</a>
+    <a class="sb-sub" onclick="showPage('m3'); setTab('m3-tabs','tab-34')">3.4 추가 취득</a>
+    <a class="sb-sub" onclick="showPage('m3'); setTab('m3-tabs','tab-35')">3.5 유상증자</a>
+    <a class="sb-sub" onclick="showPage('m3'); setTab('m3-tabs','tab-36')">3.6 지배력 상실</a>
+    <div class="sb-section">시스템 · 실무</div>
+    <a class="sb-item" onclick="showPage('m4')">
+      <span class="num">4</span> Group Reporting 시스템
+    </a>
+    <a class="sb-item" onclick="showPage('m5')">
+      <span class="num">5</span> 실무 한계점 및 해결방안
+    </a>
+    <div class="sb-section">종합 실습</div>
+    <a class="sb-item" onclick="showPage('m6')">
+      <span class="num">6</span> 종합 사례 연구
+    </a>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════
+     MODULE 1 — 연결결산 기초 이론
+══════════════════════════════════════ -->
+<main id="main">
+<div id="page-m1" class="page active">
+  <div class="mod-header">
+    <div class="mod-tag">Module 1</div>
+    <div class="mod-title">연결결산 기초 이론</div>
+    <div class="mod-sub">단일 경제적 실체 관점에서 투자자본상계가 왜 필요한지 이해합니다</div>
+  </div>
+
+  <!-- 1.1 단일 경제적 실체 -->
+  <div class="section">
+    <div class="section-title"><span class="badge">1.1</span>단일 경제적 실체(Single Economic Entity)</div>
+
+    <div class="concept-box">
+      <div class="label">핵심 개념</div>
+      <p style="font-size:14px; line-height:1.8;">연결재무제표는 지배기업과 종속기업을 <strong>하나의 경제적 단위</strong>로 보고 작성합니다. 법적으로는 별개 법인이지만, 재무보고 목적상 <strong>"외부 투자자에게 그룹 전체의 실질적 재무상태"</strong>를 보여주는 것이 목적입니다.</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">📋 지배력(Control) 판단 기준 <span class="pill light">K-IFRS 제1110호</span></div>
+        <div class="step-list">
+          <div class="step-item open">
+            <div class="step-hd" onclick="toggleStep(this)">
+              <div class="step-num">1</div>
+              <div class="step-hd-text">
+                <div class="step-hd-title">힘(Power)</div>
+                <div class="step-hd-sub">피투자자의 관련 활동을 지휘할 능력</div>
+              </div>
+              <div class="step-toggle">▾</div>
+            </div>
+            <div class="step-body">
+              <p style="font-size:12.5px;">의결권 과반수(>50%), 계약상 약정, 사실상 지배 등. 단순 지분율이 아닌 실질적 의사결정 능력을 판단합니다.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-hd" onclick="toggleStep(this)">
+              <div class="step-num">2</div>
+              <div class="step-hd-text">
+                <div class="step-hd-title">변동이익에 대한 노출</div>
+                <div class="step-hd-sub">피투자자 성과에 따른 손익 변동</div>
+              </div>
+              <div class="step-toggle">▾</div>
+            </div>
+            <div class="step-body">
+              <p style="font-size:12.5px;">배당, 잔여재산 분배, 서비스 보수 등 피투자자의 성과에 따라 변동하는 이익에 노출되어 있어야 합니다.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-hd" onclick="toggleStep(this)">
+              <div class="step-num">3</div>
+              <div class="step-hd-text">
+                <div class="step-hd-title">힘과 이익의 연결</div>
+                <div class="step-hd-sub">힘을 이용해 이익에 영향을 미치는 능력</div>
+              </div>
+              <div class="step-toggle">▾</div>
+            </div>
+            <div class="step-body">
+              <p style="font-size:12.5px;">단순히 힘이 있고 이익에 노출되는 것만으로는 부족합니다. 힘을 사용하여 이익의 크기에 영향을 미칠 수 있어야 합니다.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🏢 그룹 구조 예시</div>
+        <div class="ownership">
+          <div class="own-entity">P사 (지배기업)</div>
+          <div class="own-line">
+            <div class="own-pct">
+              <div class="pct-label">지배</div>
+              <div class="pct-bar"></div>
+              <div class="pct-num">80%</div>
+            </div>
+            <div class="own-pct" style="margin-left:60px;">
+              <div class="pct-label">잔여</div>
+              <div class="pct-bar" style="background:var(--gray-300);"></div>
+              <div class="pct-num" style="color:var(--gray-500);">20%</div>
+            </div>
+          </div>
+          <div class="own-row">
+            <div class="own-entity sub">S사 (종속기업)</div>
+            <div class="own-entity nci">NCI<br><span style="font-size:11px;">(비지배주주)</span></div>
+          </div>
+        </div>
+        <div class="callout info" style="margin-top:8px;">
+          <div class="callout-icon">💡</div>
+          <div class="callout-text">연결 범위: P사 + S사를 하나의 단위로 보고 외부 거래만 재무제표에 반영</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.2 C/I 필요성 -->
+  <div class="section">
+    <div class="section-title"><span class="badge">1.2</span>투자자본상계(C/I)의 필요성</div>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-text"><strong>이중계상(Double Counting) 문제</strong> — P사의 별도재무제표에 "종속기업투자주식 1,000"이 계상되고, S사의 별도재무제표에도 "자본 800~900"이 계상됩니다. 단순 합산하면 같은 자산이 두 번 집계됩니다.</div>
+    </div>
+
+    <div class="ba-wrap">
+      <div class="ba-col">
+        <div class="ba-hd before">❌ C/I 前 (단순 합산)</div>
+        <div class="ba-body">
+          <table>
+            <tr><th>계정</th><th style="text-align:right;">금액</th></tr>
+            <tr><td>P사 종속기업투자주식</td><td class="num neg">1,000</td></tr>
+            <tr><td>S사 기타 자산</td><td class="num">900</td></tr>
+            <tr><td style="font-weight:700;">합계 자산</td><td class="num" style="font-weight:700;">1,900</td></tr>
+            <tr><td colspan="2" style="height:8px;"></td></tr>
+            <tr><td>S사 자본</td><td class="num neg">900</td></tr>
+            <tr style="background:#fdf0ef;"><td colspan="2" style="font-size:11.5px; color:var(--red); padding:8px 14px;">→ 투자주식 1,000과 자본 900이 이중계상</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="ba-arrow">→</div>
+      <div class="ba-col">
+        <div class="ba-hd after">✅ C/I 後 (상계 제거)</div>
+        <div class="ba-body">
+          <table>
+            <tr><th>계정</th><th style="text-align:right;">금액</th></tr>
+            <tr><td>종속기업투자주식 제거</td><td class="num neg">△1,000</td></tr>
+            <tr><td>S사 기타 자산</td><td class="num">900</td></tr>
+            <tr><td>영업권 인식</td><td class="num pos">+280</td></tr>
+            <tr><td style="font-weight:700;">연결 자산 합계</td><td class="num" style="font-weight:700;">1,180</td></tr>
+            <tr><td colspan="2" style="height:8px;"></td></tr>
+            <tr><td>비지배지분(NCI)</td><td class="num">180</td></tr>
+            <tr style="background:var(--green-light);"><td colspan="2" style="font-size:11.5px; color:var(--green); padding:8px 14px;">→ 그룹 외부 시각에서의 실질 재무상태 표시</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.3 프로세스 오버뷰 -->
+  <div class="section">
+    <div class="section-title"><span class="badge">1.3</span>연결결산 프로세스 오버뷰</div>
+
+    <div class="flow" style="flex-wrap:nowrap; overflow-x:auto; padding-bottom:8px;">
+      <div class="flow-step" style="min-width:110px; font-size:12px;">
+        <div style="font-size:18px; margin-bottom:4px;">📥</div>
+        데이터 수집
+        <div style="font-size:10px; color:rgba(255,255,255,0.6); margin-top:4px;">각사 패키지</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="min-width:110px; font-size:12px;">
+        <div style="font-size:18px; margin-bottom:4px;">💱</div>
+        환산
+        <div style="font-size:10px; color:rgba(255,255,255,0.6); margin-top:4px;">외화→원화</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="min-width:110px; font-size:12px;">
+        <div style="font-size:18px; margin-bottom:4px;">🔄</div>
+        내부거래 상계
+        <div style="font-size:10px; color:rgba(255,255,255,0.6); margin-top:4px;">IC Elimination</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step highlight" style="min-width:110px; font-size:12px;">
+        <div style="font-size:18px; margin-bottom:4px;">⚖️</div>
+        <strong>투자자본상계</strong>
+        <div style="font-size:10px; color:rgba(255,255,255,0.7); margin-top:4px;">C/I ← 본 교육</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step light" style="min-width:110px; font-size:12px;">
+        <div style="font-size:18px; margin-bottom:4px;">📊</div>
+        연결재무제표
+        <div style="font-size:10px; color:var(--gray-500); margin-top:4px;">최종 산출</div>
+      </div>
+    </div>
+
+    <div class="key-points">
+      <div class="kp-title">투자자본상계(C/I)가 다른 절차와 다른 이유</div>
+      <ul>
+        <li>단순 제거가 아니라 <strong>영업권, 공정가치차액, 비지배지분을 새로 인식</strong>하는 창조적 조정</li>
+        <li>취득일 한 번의 이벤트가 <strong>매 결산기에 후속 측정</strong>으로 누적·전파됨</li>
+        <li>자본 이벤트(유상증자·처분·지분 변동)마다 <strong>계산 구조가 달라짐</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <div></div>
+    <button class="nav-btn" onclick="showPage('m2')">Module 2: 투자차액 및 NCI →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MODULE 2 — 투자차액 및 NCI
+══════════════════════════════════════ -->
+<div id="page-m2" class="page">
+  <div class="mod-header">
+    <div class="mod-tag">Module 2</div>
+    <div class="mod-title">투자차액 및 비지배지분(NCI)의 이해</div>
+    <div class="mod-sub">취득원가를 분해하여 영업권·공정가치차액·NCI를 산출하는 핵심 계산 구조</div>
+  </div>
+
+  <!-- 2.1 공정가치차액 -->
+  <div class="section">
+    <div class="section-title"><span class="badge">2.1</span>공정가치차액(Fair Value Difference)</div>
+
+    <div class="concept-box">
+      <div class="label">정의</div>
+      <p style="font-size:13.5px; line-height:1.8;">취득일 시점 종속기업 개별 자산·부채의 <strong>장부금액(BV)</strong>과 <strong>공정가치(FV)</strong>의 차이. 연결재무제표에서는 FV 기준으로 자산·부채를 인식하므로, 이 차액을 별도로 인식하고 해당 자산의 내용연수에 따라 상각합니다.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📋 기준 케이스 — S사 취득일(20X1.1.1) 순자산</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>계정</th><th style="text-align:right;">장부금액(BV)</th><th style="text-align:right;">공정가치(FV)</th><th style="text-align:right;">FV차액</th><th>비고</th></tr>
+          <tr><td class="key">건물</td><td class="num">300</td><td class="num">400</td><td class="num pos">+100</td><td>잔존내용연수 10년</td></tr>
+          <tr><td>기타 순자산</td><td class="num">500</td><td class="num">500</td><td class="num">—</td><td>—</td></tr>
+          <tr style="background:var(--navy-pale);"><td style="font-weight:700;">순자산 합계</td><td class="num" style="font-weight:700;">800</td><td class="num" style="font-weight:700;">900</td><td class="num pos" style="font-weight:700;">+100</td><td></td></tr>
+        </table>
+      </div>
+
+      <div class="callout info">
+        <div class="callout-icon">📐</div>
+        <div class="callout-text"><strong>연간 FV차액 상각액</strong> = 100 ÷ 10년 = <strong>10</strong>씩 감가상각비 추가 인식 (연결조정분개)</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📅 FV차액 상각 스케줄 (건물 100, 10년)</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>연도</th><th style="text-align:right;">기초 잔액</th><th style="text-align:right;">당기 상각</th><th style="text-align:right;">기말 잔액</th></tr>
+          <tr><td>20X1</td><td class="num">100</td><td class="num neg">△10</td><td class="num">90</td></tr>
+          <tr><td>20X2</td><td class="num">90</td><td class="num neg">△10</td><td class="num">80</td></tr>
+          <tr><td>20X3</td><td class="num">80</td><td class="num neg">△10</td><td class="num">70</td></tr>
+          <tr><td style="color:var(--gray-400);">... (계속)</td><td class="num" style="color:var(--gray-400);">...</td><td class="num neg" style="color:var(--gray-400);">△10</td><td class="num" style="color:var(--gray-400);">...</td></tr>
+          <tr><td>20X10 (최종)</td><td class="num">10</td><td class="num neg">△10</td><td class="num">0</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2.2 영업권 -->
+  <div class="section">
+    <div class="section-title"><span class="badge">2.2</span>영업권(Goodwill) 및 부의 영업권</div>
+
+    <div class="formula">
+      <div class="f-line"><span class="f-label">이전대가</span><span class="f-val">1,000</span></div>
+      <div class="f-line"><span class="f-label">차감: 순자산FV × 지분율 (900×80%)</span><span class="f-val" style="color:#ff9999;">△ 720</span></div>
+      <div class="f-sep"></div>
+      <div class="f-line"><span class="f-label">영업권</span><span class="f-val f-result">= 280</span></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">✅ 영업권 발생 (정상 케이스)</div>
+        <p style="font-size:12.5px; color:var(--gray-500);">이전대가 &gt; 순자산FV × 지분율</p>
+        <br>
+        <p style="font-size:13px;">초과 지급의 경제적 의미: 브랜드, 고객관계, 기술력 등 <strong>식별 불가 무형자산</strong>에 대한 대가. K-IFRS 하에서 상각 없이 매년 손상검사(Impairment Test) 실시.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">⚠️ 부의 영업권 (염가매수차익)</div>
+        <p style="font-size:12.5px; color:var(--gray-500);">이전대가 &lt; 순자산FV × 지분율</p>
+        <br>
+        <p style="font-size:13px;">취득한 자산이 지급한 대가보다 많은 경우. 계산 오류 가능성 먼저 재검토 후, 이상 없으면 <strong>전액 즉시 당기손익(이익) 인식</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2.3 기타자본잉여금 -->
+  <div class="section">
+    <div class="section-title"><span class="badge">2.3</span>기타자본잉여금(Other Capital Surplus)</div>
+
+    <div class="callout info">
+      <div class="callout-icon">💡</div>
+      <div class="callout-text"><strong>발생 시점</strong>: 지배력 획득 <em>이후</em>, 지배력 상실 없이 지분율이 변동하는 경우 (추가 취득 / 일부 처분 / 종속기업 유상증자 등). 이 경우 영업권이 새로 발생하지 않고, 차액은 <strong>자본거래</strong>로 보아 기타자본잉여금(자본조정)으로 처리합니다.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">처리 원칙 — 지배력 유지 전제</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>상황</th><th>이전대가 vs NCI 순자산비례</th><th>기타자본잉여금 효과</th></tr>
+          <tr><td>지분 추가 취득</td><td>이전대가 &gt; NCI 순자산비례</td><td class="neg">자본 차감 (△)</td></tr>
+          <tr><td>지분 추가 취득</td><td>이전대가 &lt; NCI 순자산비례</td><td class="pos">자본 가산 (+)</td></tr>
+          <tr><td>종속기업 유상증자 (P사 실권)</td><td>NCI 납입액 &gt; NCI 순자산 증가분</td><td class="pos">자본 가산 (+)</td></tr>
+          <tr><td>종속기업 유상증자 (P사 실권)</td><td>NCI 납입액 &lt; NCI 순자산 증가분</td><td class="neg">자본 차감 (△)</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2.4 NCI -->
+  <div class="section">
+    <div class="section-title"><span class="badge">2.4</span>비지배지분(Non-Controlling Interests, NCI)</div>
+
+    <div class="concept-box">
+      <div class="label">정의</div>
+      <p style="font-size:13.5px;">종속기업 순자산 중 지배기업 귀속분이 아닌 부분. 연결재무제표 상 <strong>자본</strong>의 구성요소로 표시됩니다.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">NCI 측정 방식 (본 교육: 순자산비례 단일 적용)</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>측정 방식</th><th>산출 방법</th><th>영업권</th><th>특징</th></tr>
+          <tr>
+            <td class="key">순자산비례 측정 ✅</td>
+            <td>순자산FV × NCI 지분율<br>= 900 × 20% = <strong>180</strong></td>
+            <td>지배기업 귀속 영업권만 인식</td>
+            <td>실무 다수 채택. 단순·명확</td>
+          </tr>
+          <tr>
+            <td>공정가치 측정</td>
+            <td>NCI 지분 자체의 공정가치 별도 산정</td>
+            <td>전체 영업권(NCI 포함) 인식</td>
+            <td>Full Goodwill Method</td>
+          </tr>
+        </table>
+      </div>
+      <div class="callout info">
+        <div class="callout-icon">📐</div>
+        <div class="callout-text">기준 케이스 NCI: <strong>900 × 20% = 180</strong></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">NCI 잔액 Roll-forward (20X1 기준)</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>항목</th><th style="text-align:right;">금액</th><th>산출 근거</th></tr>
+          <tr><td>취득일 NCI (기초)</td><td class="num">180</td><td>900 × 20%</td></tr>
+          <tr><td>+ NCI 귀속 당기순이익</td><td class="num pos">+40</td><td>200 × 20%</td></tr>
+          <tr><td>+ NCI 귀속 FV차액 상각</td><td class="num neg">△2</td><td>△10 × 20%</td></tr>
+          <tr><td>− NCI 귀속 배당</td><td class="num neg">△10</td><td>50 × 20%</td></tr>
+          <tr style="background:var(--navy-pale);"><td style="font-weight:700;">20X1말 NCI 잔액</td><td class="num" style="font-weight:700;">208</td><td>= 1,040 × 20% ✅</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- 보충: 우선주 NCI -->
+    <div class="supp-toggle" id="supp-nci">
+      <div class="supp-hd" onclick="toggleSupp('supp-nci')">
+        <div class="supp-icon">🎓</div>
+        <div style="flex:1;">
+          <div class="supp-label">심화 · 보충 자료</div>
+          <div class="supp-title">우선주 존재 시 NCI 계산 조정</div>
+        </div>
+        <div class="supp-arr">▾</div>
+      </div>
+      <div class="supp-body">
+        <div class="callout warn">
+          <div class="callout-icon">⚠️</div>
+          <div class="callout-text"><strong>실무 주의</strong>: 종속기업이 우선주를 발행한 경우, NCI를 단순히 "순자산 × NCI 보통주 지분율"로 계산하면 <strong>오류</strong>가 발생합니다. 순자산을 우선주 귀속분 / 보통주 귀속분으로 먼저 분리해야 합니다.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Step 1. 순자산 분리 — 누적적·비참가적 우선주</div>
+          <div class="tbl-wrap">
+            <table>
+              <tr><th>구분</th><th>배분 방식</th></tr>
+              <tr><td>우선주 귀속</td><td>우선주 청산가치 + 미지급 누적배당</td></tr>
+              <tr><td>보통주 귀속</td><td>순자산 합계 − 우선주 귀속분</td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Step 2. NCI 및 당기손익 배분 수치 예시</div>
+          <div class="tbl-wrap">
+            <table>
+              <tr><th>항목</th><th style="text-align:right;">금액</th><th>산출 근거</th></tr>
+              <tr><td>S사 당기순이익</td><td class="num">200</td><td>—</td></tr>
+              <tr><td>우선주 배당 (액면 1,000 × 5%)</td><td class="num neg">△50</td><td>우선 귀속</td></tr>
+              <tr><td>보통주 귀속 이익</td><td class="num">150</td><td>200 − 50</td></tr>
+              <tr style="height:8px;"><td colspan="3"></td></tr>
+              <tr><td>우선주 NCI 귀속 이익 (우선주 100% NCI)</td><td class="num pos">+50</td><td>50 × 100%</td></tr>
+              <tr><td>보통주 NCI 귀속 이익 (보통주 NCI 20%)</td><td class="num pos">+30</td><td>150 × 20%</td></tr>
+              <tr style="background:var(--navy-pale);"><td style="font-weight:700;">NCI 귀속 이익 합계</td><td class="num" style="font-weight:700;">80</td><td>우선주 미고려 시 40 → <span class="neg">40 과소계상</span></td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="callout error">
+          <div class="callout-icon">🚨</div>
+          <div class="callout-text"><strong>GR 시스템 한계</strong>: GR 표준 C/I Rule은 보통주 단일 구조 기준. 우선주 존재 시 우선주 귀속 순자산·이익 계산표를 별도 작성하여 수동 입력값 산출 필요.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <button class="nav-btn secondary" onclick="showPage('m1')">← Module 1</button>
+    <button class="nav-btn" onclick="showPage('m3')">Module 3: 이벤트별 회계처리 →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MODULE 3 — 이벤트별 회계처리
+══════════════════════════════════════ -->
+<div id="page-m3" class="page">
+  <div class="mod-header">
+    <div class="mod-tag">Module 3</div>
+    <div class="mod-title">이벤트별 회계처리 및 연결분개</div>
+    <div class="mod-sub">기준 케이스(P사/S사) 타임라인을 따라 6개 이벤트의 연결조정분개를 단계별로 학습합니다</div>
+  </div>
+
+  <!-- 타임라인 -->
+  <div class="card" style="margin-bottom:24px;">
+    <div class="card-title">📅 기준 케이스 타임라인 (P사 / S사)</div>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">20X1.1.1</div><div class="tl-title">최초 취득 80% — 이전대가 1,000 <span class="pill light">3.1</span></div><div class="tl-desc">발행주식 1,200주 중 P사 960주(80%), NCI 240주(20%)</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">20X1.12.31</div><div class="tl-title">후속 측정 — 당기순이익 200, 배당 50 <span class="pill light">3.2</span></div><div class="tl-desc">FV차액 상각, NCI 손익 배분, 배당 제거</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">20X2.1.1</div><div class="tl-title">추가 취득 5% — 이전대가 70, 지배력 유지 <span class="pill light">3.4</span></div><div class="tl-desc">NCI로부터 60주 추가 매입 → P사 85%(1,020주)</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">20X2.7.1</div><div class="tl-title">유상증자 / P사 전액 실권 — 신주 300주 <span class="pill light">3.5</span></div><div class="tl-desc">신주 전량 NCI 인수 → P사 68%(1,020/1,500주)</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">20X3.1.1</div><div class="tl-title">지배력 상실 — 전량 처분, 대가 1,500 <span class="pill light">3.6</span></div><div class="tl-desc">처분이익 268 인식</div></div>
+    </div>
+    <div class="callout warn" style="margin-top:0;">
+      <div class="callout-icon">📌</div>
+      <div class="callout-text"><strong>3.3 단계적 취득</strong>은 독립 케이스(P사/T사)로 별도 탭에서 학습합니다.</div>
+    </div>
+  </div>
+
+  <!-- 탭 네비게이션 -->
+  <div class="tabs-wrap" id="m3-tabs">
+    <div class="tabs-nav">
+      <button class="tab-btn active" id="tab-31" onclick="setTab('m3-tabs','tab-31')">3.1 최초 취득</button>
+      <button class="tab-btn" id="tab-32" onclick="setTab('m3-tabs','tab-32')">3.2 후속 측정</button>
+      <button class="tab-btn" id="tab-33" onclick="setTab('m3-tabs','tab-33')">3.3 단계적 취득</button>
+      <button class="tab-btn" id="tab-34" onclick="setTab('m3-tabs','tab-34')">3.4 추가 취득</button>
+      <button class="tab-btn" id="tab-35" onclick="setTab('m3-tabs','tab-35')">3.5 유상증자</button>
+      <button class="tab-btn" id="tab-36" onclick="setTab('m3-tabs','tab-36')">3.6 지배력 상실</button>
+    </div>
+
+    <!-- ── 3.1 최초 취득 ── -->
+    <div class="tab-panel active" id="panel-tab-31">
+      <div class="section-title"><span class="badge">3.1</span>최초 취득 (20X1.1.1) — 80% 취득, 이전대가 1,000</div>
+
+      <div class="grid-2">
+        <div>
+          <div class="je-wrap">
+            <div class="je-header">
+              <span class="je-title">P사 별도 분개</span>
+              <span class="je-badge">별도재무제표</span>
+            </div>
+            <div class="je-body">
+              <div class="je-line"><span class="acct debit">종속기업투자주식</span><span class="dr">1,000</span><span class="empty">—</span></div>
+              <div class="je-line"><span class="acct credit">현금</span><span class="empty">—</span><span class="cr">1,000</span></div>
+            </div>
+            <div class="je-footer"><span>취득원가 전액 계상</span><span class="verify">균형 ✅</span></div>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="height:auto;">
+            <div class="card-title">투자차액 분해 요약</div>
+            <div class="formula" style="font-size:12px; padding:12px 16px; line-height:1.8;">
+              <div class="f-line"><span class="f-label" style="width:160px;">이전대가</span><span class="f-val">1,000</span></div>
+              <div class="f-line"><span class="f-label" style="width:160px;">△ 순자산FV×80%</span><span class="f-val" style="color:#ff9999;">△ 720</span></div>
+              <div class="f-sep"></div>
+              <div class="f-line"><span class="f-label" style="width:160px;">영업권</span><span class="f-val f-result" style="font-size:14px;">= 280</span></div>
+              <div style="margin-top:8px; font-size:11px; color:rgba(255,255,255,0.5);">NCI = 900 × 20% = 180</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="je-wrap">
+        <div class="je-header">
+          <span class="je-title">연결조정분개 ① — 투자·자본 상계</span>
+          <span class="je-badge">연결워크시트</span>
+        </div>
+        <div class="je-body">
+          <div class="je-label">차변 — 자산·비용 인식</div>
+          <div class="je-line"><span class="acct debit">순자산(S사 BV)</span><span class="dr">800</span><span class="empty">—</span></div>
+          <div class="je-line"><span class="acct debit">영업권</span><span class="dr">280</span><span class="empty">—</span></div>
+          <div class="je-line"><span class="acct debit">FV차액(건물)</span><span class="dr">100</span><span class="empty">—</span></div>
+          <div class="je-separator"></div>
+          <div class="je-label">대변 — 투자주식 제거 및 NCI 인식</div>
+          <div class="je-line"><span class="acct credit">종속기업투자주식</span><span class="empty">—</span><span class="cr">1,000</span></div>
+          <div class="je-line"><span class="acct credit">비지배지분(NCI)</span><span class="empty">—</span><span class="cr">180</span></div>
+        </div>
+        <div class="je-footer">
+          <span>차변 800+280+100 = 1,180 / 대변 1,000+180 = 1,180</span>
+          <span class="verify">균형 ✅</span>
+        </div>
+      </div>
+
+      <div class="t-acct-wrap">
+        <div class="t-acct">
+          <div class="t-acct-name">종속기업투자주식 (P사)</div>
+          <div class="t-acct-body">
+            <div class="t-acct-col">
+              <div class="t-acct-col-hd">차변 (DR)</div>
+              <div class="t-acct-row"><span class="item">현금 취득</span><span class="amt">1,000</span></div>
+            </div>
+            <div class="t-acct-col">
+              <div class="t-acct-col-hd">대변 (CR)</div>
+              <div class="t-acct-row"><span class="item">연결조정 제거</span><span class="amt" style="color:var(--red);">1,000</span></div>
+            </div>
+          </div>
+          <div class="t-acct-total"><span>잔액</span><span>0 ✅</span></div>
+        </div>
+        <div class="t-acct">
+          <div class="t-acct-name">영업권 (연결)</div>
+          <div class="t-acct-body">
+            <div class="t-acct-col">
+              <div class="t-acct-col-hd">차변 (DR)</div>
+              <div class="t-acct-row"><span class="item">최초 인식</span><span class="amt">280</span></div>
+            </div>
+            <div class="t-acct-col">
+              <div class="t-acct-col-hd">대변 (CR)</div>
+              <div class="t-acct-row"><span class="item">—</span><span class="amt"></span></div>
+            </div>
+          </div>
+          <div class="t-acct-total"><span>잔액</span><span>280</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 3.2 후속 측정 ── -->
+    <div class="tab-panel" id="panel-tab-32">
+      <div class="section-title"><span class="badge">3.2</span>후속 측정 (20X1.12.31) — 순이익 200, 배당 50</div>
+
+      <div class="callout info">
+        <div class="callout-icon">📋</div>
+        <div class="callout-text">후속 측정에서는 3개의 연결조정분개가 독립적으로 수행됩니다. 각각 <strong>FV차액 상각 / NCI 손익 배분 / 배당 제거</strong>입니다.</div>
+      </div>
+
+      <div class="je-wrap">
+        <div class="je-header">
+          <span class="je-title">연결조정분개 ② — FV차액(건물) 상각</span>
+          <span class="je-badge">연결워크시트</span>
+        </div>
+        <div class="je-body">
+          <div class="je-line"><span class="acct debit">감가상각비</span><span class="dr">10</span><span class="empty">—</span></div>
+          <div class="je-line"><span class="acct credit">건물(FV차액 상각)</span><span class="empty">—</span><span class="cr">10</span></div>
+        </div>
+        <div class="je-footer"><span>100 ÷ 10년 = 10 / P사 귀속 △8, NCI 귀속 △2</span><span class="verify">균형 ✅</span></div>
+      </div>
+
+      <div class="je-wrap">
+        <div class="je-header">
+          <span class="je-title">연결조정분개 ③ — NCI 손익 배분</span>
+          <span class="je-badge">연결워크시트</span>
+        </div>
+        <div class="je-body">
+          <div class="je-line"><span class="acct debit">NCI귀속 당기순이익</span><span class="dr">40</span><span class="empty">—</span></div>
+          <div class="je-line"><span class="acct credit">비지배지분</span><span class="empty">—</span><span class="cr">40</span></div>
+        </div>
+        <div class="je-footer"><span>200 × 20% = 40 / S사 순이익 중 NCI 귀속분 → NCI 잔액 증가</span><span class="verify">균형 ✅</span></div>
+      </div>
+
+      <div class="je-wrap">
+        <div class="je-header">
+          <span class="je-title">연결조정분개 ④ — 배당 제거</span>
+          <span class="je-badge">연결워크시트</span>
+        </div>
+        <div class="je-body">
+          <div class="je-line"><span class="acct debit">배당금수익(P사)</span><span class="dr">40</span><span class="empty">—</span></div>
+          <div class="je-line"><span class="acct debit">비지배지분</span><span class="dr">10</span><span class="empty">—</span></div>
+          <div class="je-line"><span class="acct credit">배당금</span><span class="empty">—</span><span class="cr">50</span></div>
+        </div>
+        <div class="je-footer"><span>P사 수취 50×80%=40 / NCI 귀속 50×20%=10</span><span class="verify">균형 ✅</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📊 20X1말 순자산 및 NCI 잔액 확인</div>
+        <div class="tbl-wrap">
+          <table>
+            <tr><th>항목</th><th style="text-align:right;">금액</th><th>산출 근거</th></tr>
+            <tr><td>기초 순자산(FV)</td><td class="num">900</td><td>취득일</td></tr>
+            <tr><td>+ 당기순이익</td><td class="num pos">+200</td><td></td></tr>
+            <tr><td>− 배당금</td><td class="num neg">△50</td><td></td></tr>
+            <tr><td>− FV차액 상각</td><td class="num neg">△10</td><td>건물</td></tr>
+            <tr style="background:var(--navy-pale);"><td style="font-weight:700;">기말 순자산(연결)</td><td class="num" style="font-weight:700;">1,040</td><td></td></tr>
+            <tr><td>NCI 잔액</td><td class="num">208</td><td>1,040 × 20% ✅</td></tr>
+            <tr><td>P사 귀속 순자산</td><td class="num">832</td><td>1,040 × 80%</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- 보충: 우선주 배분 -->
+      <div class="supp-toggle" id="supp-32">
+        <div class="supp-hd" onclick="toggleSupp('supp-32')">
+          <div class="supp-icon">🎓</div>
+          <div style="flex:1;">
+            <div class="supp-label">심화 · 보충 자료</div>
+            <div class="supp-title">우선주 존재 시 손익 배분 비교</div>
+          </div>
+          <div class="supp-arr">▾</div>
+        </div>
+        <div class="supp-body">
+          <div class="tbl-wrap">
+            <table>
+              <tr><th>구분</th><th>우선주 미고려</th><th>우선주 고려 (올바른 처리)</th></tr>
+              <tr><td>NCI 귀속 이익</td><td class="num neg">40 (과소)</td><td class="num pos">80 (정확)</td></tr>
+              <tr><td>지배주주 귀속 이익</td><td class="num neg">160 (과대)</td><td class="num pos">120 (정확)</td></tr>
+              <tr><td>오류 규모</td><td colspan="2" style="color:var(--red); font-weight:600;">△40 과소 / +40 과대 → 지배주주 EPS 왜곡</td></tr>
+            </table>
+          </div>
+          <div class="callout warn">
+            <div class="callout-icon">⚠️</div>
+            <div class="callout-text">우선주 배당이 클수록 오류 규모가 확대됩니다. 종속기업 자본 구조 확인이 C/I 정확도의 출발점입니다.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 3.3 단계적 취득 ── -->
+    <div class="tab-panel" id="panel-tab-33">
+      <div class="section-title"><span class="badge">3.3</span>단계적 취득 — 독립 케이스 (P사 / T사)</div>
+
+      <div class="callout info">
+        <div class="callout-icon">💡</div>
+        <div class="callout-text">관계기업(지분법 40%)에서 종속기업(연결 85%)으로 편입되는 시점의 핵심 처리: <strong>기존 보유 지분을 취득일 공정가치로 재평가하고 처분손익을 인식</strong>합니다.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📋 독립 케이스 마스터 데이터 (P사 / T사)</div>
+        <div class="tbl-wrap">
+          <table>
+            <tr><th>항목</th><th>내용</th></tr>
+            <tr><td>1단계 취득일</td><td>20X1.1.1 / 지분율 40% / 이전대가 400</td></tr>
+            <tr><td>T사 순자산 FV (20X1.1.1)</td><td>900</td></tr>
+            <tr><td>20X1년 T사 당기순이익</td><td>200 → 지분법이익 80 (200×40%)</td></tr>
+            <tr><td>2단계 취득일</td><td>20X2.1.1 / 추가 45% → 합계 85%</td></tr>
+            <tr><td>2단계 이전대가</td><td>600</td></tr>
+            <tr><td>기존 40% 지분 FV (재평가)</td><td>500</td></tr>
+            <tr><td>T사 순자산 FV (20X2.1.1)</td><td>1,100 (건물 FV차액 +100, 잔존 8년)</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="step-list">
+        <div class="step-item open">
+          <div class="step-hd" onclick="toggleStep(this)">
+            <div class="step-num">1</div>
+            <div class="step-hd-text">
+              <div class="step-hd-title">1단계 취득 및 지분법 적용 (20X1)</div>
+              <div class="step-hd-sub">관계기업 단계 — 지분법 이익 80 인식</div>
+            </div>
+            <div class="step-toggle">▾</div>
+          </div>
+          <div class="step-body">
+            <div class="je-wrap">
+              <div class="je-header"><span class="je-title">P사 별도 분개 — 1단계 취득</span><span class="je-badge">20X1.1.1</span></div>
+              <div class="je-body">
+                <div class="je-line"><span class="acct debit">관계기업투자주식</span><span class="dr">400</span><span class="empty">—</span></div>
+                <div class="je-line"><span class="acct credit">현금</span><span class="empty">—</span><span class="cr">400</span></div>
+              </div>
+              <div class="je-footer"><span>지분율 40% — 유의적 영향력, 지분법 적용</span><span class="verify">균형 ✅</span></div>
+            </div>
+            <div class="je-wrap">
+              <div class="je-header"><span class="je-title">P사 별도 분개 — 지분법 이익</span><span class="je-badge">20X1.12.31</span></div>
+              <div class="je-body">
+                <div class="je-line"><span class="acct debit">관계기업투자주식</span><span class="dr">80</span><span class="empty">—</span></div>
+                <div class="je-line"><span class="acct credit">지분법이익</span><span class="empty">—</span><span class="cr">80</span></div>
+              </div>
+              <div class="je-footer"><span>200 × 40% = 80 / 20X1말 장부금액: 480</span><span class="verify">균형 ✅</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-hd" onclick="toggleStep(this)">
+            <div class="step-num">2</div>
+            <div class="step-hd-text">
+              <div class="step-hd-title">기존 40% 지분 FV 재평가 (20X2.1.1)</div>
+              <div class="step-hd-sub">장부금액 480 → 공정가치 500, 처분이익 20 인식</div>
+            </div>
+            <div class="step-toggle">▾</div>
+          </div>
+          <div class="step-body">
+            <div class="callout warn">
+              <div class="callout-icon">⭐</div>
+              <div class="callout-text"><strong>핵심 처리</strong>: 2단계 취득으로 종속기업이 되는 순간, 기존 40% 지분은 "취득일 현재 공정가치"로 재측정하고 장부금액과의 차액을 당기손익으로 인식합니다.</div>
+            </div>
+            <div class="je-wrap">
+              <div class="je-header"><span class="je-title">P사 별도 분개 — 기존 지분 재평가</span><span class="je-badge">20X2.1.1</span></div>
+              <div class="je-body">
+                <div class="je-line"><span class="acct debit">관계기업투자주식</span><span class="dr">20</span><span class="empty">—</span></div>
+                <div class="je-line"><span class="acct credit">관계기업처분이익</span><span class="empty">—</span><span class="cr">20</span></div>
+              </div>
+              <div class="je-footer"><span>FV 500 − BV 480 = 20</span><span class="verify">균형 ✅</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-hd" onclick="toggleStep(this)">
+            <div class="step-num">3</div>
+            <div class="step-hd-text">
+              <div class="step-hd-title">2단계 취득 — 종속기업 계정 대체</div>
+              <div class="step-hd-sub">이전대가 합계 = 기존FV 500 + 추가대가 600 = 1,100</div>
+            </div>
+            <div class="step-toggle">▾</div>
+          </div>
+          <div class="step-body">
+            <div class="je-wrap">
+              <div class="je-header"><span class="je-title">P사 별도 분개 — 2단계 취득</span><span class="je-badge">20X2.1.1</span></div>
+              <div class="je-body">
+                <div class="je-line"><span class="acct debit">종속기업투자주식</span><span class="dr">1,100</span><span class="empty">—</span></div>
+                <div class="je-line"><span class="acct credit">관계기업투자주식(재평가 후)</span><span class="empty">—</span><span class="cr">500</span></div>
+                <div class="je-line"><span class="acct credit">현금</span><span class="empty">—</span><span class="cr">600</span></div>
+              </div>
+              <div class="je-footer"><span>기존 FV 500 + 추가 대가 600 = 합계 1,100</span><span class="verify">균형 ✅</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-hd" onclick="toggleStep(this)">
+            <div class="step-num">4</div>
+            <div class="step-hd-text">
+              <div class="step-hd-title">최초 편입 연결조정분개</div>
+              <div class="step-hd-sub">영업권 165, NCI 165 인식</div>
+            </div>
+            <div class="step-toggle">▾</div>
+          </div>
+          <div class="step-body">
+            <div class="formula" style="font-size:12px; padding:12px 16px; line-height:1.8; margin-bottom:12px;">
+              <div class="f-line"><span class="f-label" style="width:200px;">이전대가 합계</span><span class="f-val">1,100</span></div>
+              <div class="f-line"><span class="f-label" style="width:200px;">△ 순자산FV×85% (1,100×85%)</span><span class="f-val" style="color:#ff9999;">△ 935</span></div>
+              <div class="f-sep"></div>
+              <div class="f-line"><span class="f-label" style="width:200px;">영업권</span><span class="f-val f-result" style="font-size:13px;">= 165</span></div>
+              <div style="margin-top:6px; font-size:11px; color:rgba(255,255,255,0.5);">NCI = 1,100 × 15% = 165</div>
+            </div>
+            <div class="je-wrap">
+              <div class="je-header"><span class="je-title">연결조정분개 ⑤ — 최초 편입 (T사)</span><span class="je-badge">연결워크시트</span></div>
+              <div class="je-body">
+                <div class="je-line"><span class="acct debit">순자산(T사 BV)</span><span class="dr">1,000</span><span class="empty">—</span></div>
+                <div class="je-line"><span class="acct debit">영업권</span><span class="dr">165</span><span class="empty">—</span></div>
+                <div class="je-line"><span class="acct debit">FV차액(건물)</span><span class="dr">100</span><span class="empty">—</span></div>
+                <div class="je-line"><span class="acct credit">종속기업투자주식</span><span class="empty">—</span><span class="cr">1,100</span></div>
+                <div class="je-line"><span class="acct credit">비지배지분(NCI)</span><span class="empty">—</span><span class="cr">165</span></div>
+              </div>
+              <div class="je-footer"><span>차변 1,000+165+100=1,265 / 대변 1,100+165=1,265</span><span class="verify">균형 ✅</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 3.4 추가 취득 ── -->
+    <div class="tab-panel" id="panel-tab-34">
+      <div class="section-title"><span class="badge">3.4</span>추가 취득 / 지배력 유지 (20X2.1.1) — 5% 추가, 이전대가 70</div>
+
+      <div class="callout info">
+        <div class="callout-icon">💡</div>
+        <div class="callout-text"><strong>핵심 원칙</strong>: 지배력 유지 상태에서의 지분 추가 취득은 영업권이 발생하지 않습니다. 이전대가와 취득한 NCI 순자산 비례 간 차액은 전액 <strong>기타자본잉여금(자본조정)</strong>으로 처리합니다.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">전기 연결조정 이월 — 방식 A (전기 분개 재반영)</div>
+        <div class="callout warn">
+          <div class="callout-icon">📌</div>
+          <div class="callout-text">연결재무제표는 매 결산기 새로 작성됩니다. 전기 연결조정(②③④)의 효과가 당기 기초잉여금에 반영되지 않으므로, <strong>전기 분개를 당기 기초에 그대로 재반영</strong>합니다.</div>
+        </div>
+
+        <div class="je-wrap">
+          <div class="je-header"><span class="je-title">연결조정분개 ⑤-a — FV차액 상각 이월</span><span class="je-badge">기초 조정</span></div>
+          <div class="je-body">
+            <div class="je-line"><span class="acct debit">이익잉여금(기초) — P사 귀속</span><span class="dr">8</span><span class="empty">—</span></div>
+            <div class="je-line"><span class="acct debit">비지배지분(기초) — NCI 귀속</span><span class="dr">2</span><span class="empty">—</span></div>
+            <div class="je-line"><span class="acct credit">건물(FV차액 누계)</span><span class="empty">—</span><span class="cr">10</span></div>
+          </div>
+          <div class="je-footer"><span>P사 10×80%=8 / NCI 10×20%=2</span><span class="verify">균형 ✅</span></div>
+        </div>
+
+        <div class="je-wrap">
+          <div class="je-header"><span class="je-title">연결조정분개 ⑤-b — NCI 손익 배분 이월</span><span class="je-badge">기초 조정</span></div>
+          <div class="je-body">
+            <div class="je-line"><span class="acct debit">이익잉여금(기초)</span><span class="dr">40</span><span class="empty">—</span></div>
+            <div class="je-line"><span class="acct credit">비지배지분</span><span class="empty">—</span><span class="cr">40</span></div>
+          </div>
+          <div class="je-footer"><span>전기 NCI 귀속 순이익 200×20%=40 → NCI 잔액 가산</span><span class="verify">균형 ✅</span></div>
+        </div>
+
+        <div class="je-wrap">
+          <div class="je-header"><span class="je-title">연결조정분개 ⑤-c — 배당 제거 이월</span><span class="je-badge">기초 조정</span></div>
+          <div class="je-body">
+            <div class="je-line"><span class="acct debit">이익잉여금(기초)</span><span class="dr">40</span><span class="empty">—</span></div>
+            <div class="je-line"><span class="acct debit">비지배지분</span><span class="dr">10</span><span class="empty">—</span></div>
+            <div class="je-line"><span class="acct credit">이익잉여금(기초)</span><span class="empty">—</span><span class="cr">50</span></div>
+          </div>
+          <div class="je-footer"><span>P사 배당수익 40 제거 / NCI 배당 10 차감</span><span class="verify">균형 ✅</span></div>
+        </div>
+
+        <div class="callout success">
+          <div class="callout-icon">✅</div>
+          <div class="callout-text">이월 후 기초 NCI: 180(취득일) + 28(이월 순효과) = <strong>208</strong> = 1,040 × 20% 일치 확인</div>
+        </div>
+      </div>
+
+      <div class="je-wrap">
+        <div class="je-header">
+          <span class="je-title">P사 별도 분개 — 추가 취득</span>
+          <span class="je-badge">20X2.1.1</span>
+        </div>
+        <div class="je-body">
+          <div class="je-line"><span class="acct debit">종속기업투자주식</span><span class="dr">70</span><span class="empty">—</span></div>
+          <div class="je-line"><span class="acct credit">현금</span><span class="empty">—</span><span class="cr">70</span></div>
+        </div>
+        <div class="je-footer"><span>NCI로부터 60주 추가 매입 (60/1,200 = 5%)</span><span class="verify">균형 ✅</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">기타자본잉여금(자본조정) 계산</div>
+        <div class="formula" style="font-size:12px; padding:12px 16px; line-height:1.8;">
+          <div class="f-line"><span class="f-label" style="width:200px;">이전대가</span><span class="f-val">70</span></div>
+          <div class="f-line"><span class="f-label" style="width:200px;">취득 NCI 순자산비례 (1,040×5%)</span><span class="f-val" style="color:#ff9999;">△ 52</span></div>
+          <div class="f-sep"></div>
+          <div class="f-line"><span class="f-label" style="width:200px;">기타자본잉여금 (자본 차감)</span><span class="f-val f-result" style="font-size:13px;">= △18</span></div>
+        </div>
+      </div>
+
+      <div class="je-wrap">
+        <div class="je-header">
+          <span class="je-title">연결조정분개 ⑥ — 지분 추가 취득 (5%)</span>
+          <span class="je-badge">연결워크시트</span>
+        </div>
+        <div class="je-body">
+          <div class="je-line"><span class="acct debit">비지배지분(NCI)</span><span class="dr">52</span><span class="empty">—</span></div>
+          <div class="je-line"><span class="acct debit">기타자본잉여금(자본조정)</span><span class="dr">18</span><span class="empty">—</span></div>
+          <div class="je-line"><span class="acct credit">종속기업투자주식</span><span class="empty">—</span><span class="cr">70</span></div>
+        </div>
+        <div class="je-footer">
+          <span>취득 후: P사 85%(1,020주), NCI 15%(180주) / NCI 잔액: 208−52=156=1,040×15% ✅</span>
+          <span class="verify">균형 ✅</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 3.5 유상증자 ── -->
+    <div class="tab-panel" id="panel-tab-35">
+      <div class="section-title"><span class="badge">3.5</span>유상증자 / P사 전액 실권 (20X2.7.1) — 신주 300주 NCI 전액 인수</div>
+
+      <div class="card">
+        <div class="card-title">📊 주식수 변동 구조</div>
+        <div class="tbl-wrap">
+          <table>
+            <tr><th>구분</th><th style="text-align:right;">증자 전</th><th style="text-align:right;">신주 발행</th><th style="text-align:right;">증자 후</th><th style="text-align:right;">지분율</th></tr>
+            <tr><td class="key">P사 보유</td><td class="num">1,020주</td><td class="num">0주 (실권)</td><td class="num">1,020주</td><td class="num">1,020/1,500 = <strong>68%</strong></td></tr>
+            <tr><td>NCI 보유</td><td class="num">180주</td><td class="num">300주</td><td class="num">480주</td><td class="num">480/1,500 = <strong>32%</strong></td></tr>
+            <tr style="background:var(--navy-pale);"><td style="font-weight:700;">합계</td><td class="num" style="font-weight:700;">1,200주</td><td class="num" style="font-weight:700;">300주</td><td class="num" style="font-weight:700;">1,500주</td><td class="num">100%</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">NCI 변동 계산</div>
+        <div class="tbl-wrap">
+          <table>
+            <tr><th>항목</th><th style="text-align:right;">금액</th><th>산출 근거</th></tr>
+            <tr><td>증자 전 순자산</td><td class="num">1,040</td><td>M3.2 기말 기준 (단순화)</td></tr>
+            <tr><td>신주 납입액</td><td class="num pos">+300</td><td>NCI 300주 인수</td></tr>
+            <tr><td class="key">증자 후 순자산</td><td class="num key">1,340</td><td></td></tr>
+            <tr><td>증자 후 NCI 귀속 순자산</td><td class="num">428.8</td><td>1,340 × 32%</td></tr>
+            <tr><td>증자 전 NCI 귀속 순자산</td><td class="num">156</td><td>1,040 × 15%</td></tr>
+            <tr><td>NCI 순자산 증가액</td><td class="num">272.8 ≈ <strong>273</strong></td><td>428.8 − 156</td></tr>
+            <tr><td>NCI 실제 납입액</td><td class="num">300</td><td></td></tr>
+            <tr style="background:var(--navy-pale);"><td style="font-weight:700;">기타자본잉여금 (P사 자본 증가)</td><td class="num pos" style="font-weight:700;">+27</td><td>300 − 273 (반올림)</td></tr>
+          </table>
+        </div>
+        <div class="callout info">
+          <div class="callout-icon">💡</div>
+          <div class="callout-text">NCI가 납입한 300이 NCI 귀속 순자산 증가분(273)보다 크다 → NCI에 불리한 발행가 → 초과분(+27)은 P사(지배주주) 자본으로 귀속</div>
+        </div>
+      </div>
+
+      <div class="je-wrap">
+        <div class="je-header">
+          <span class="je-title">연결조정분개 ⑦ — 유상증자 NCI 처리</span>
+          <span class="je-badge">연결워크시트</span>
+        </div>
+        <div class="je-body">
+          <div class="je-line"><span class="acct debit">비지배지분</span><span class="dr">273</span><span class="empty">—</span></div>
+          <div class="je-line"><span class="acct credit">현금(납입액)</span><span class="empty">—</span><span class="cr">300</span></div>
+          <div class="je-line"><span class="acct credit">기타자본잉여금</span><span class="empty">—</span><span class="cr">27</span></div>
+        </div>
+        <div class="je-footer">
+          <span>NCI 잔액: 156+273=429 ≈ 1,340×32%=428.8 ✅ (반올림 오차 0.2)</span>
+          <span class="verify">균형 ✅</span>
+        </div>
+      </div>
+
+      <div class="callout success">
+        <div class="callout-icon">✅</div>
+        <div class="callout-text">증자 후 P사 지분율 <strong>68%</strong>, NCI <strong>32%</strong>로 확정. 다음 이벤트(M3.6)의 기준 지분율로 사용됩니다.</div>
+      </div>
+    </div>
+
+    <!-- ── 3.6 지배력 상실 ── -->
+    <div class="tab-panel" id="panel-tab-36">
+      <div class="section-title"><span class="badge">3.6</span>지배력 상실 — 전량 처분 (20X3.1.1), 처분 대가 1,500</div>
+
+      <div class="card">
+        <div class="card-title">📋 처분 시점 데이터</div>
+        <div class="tbl-wrap">
+          <table>
+            <tr><th>항목</th><th style="text-align:right;">금액</th><th>산출 근거</th></tr>
+            <tr><td>S사 연결 순자산</td><td class="num">1,400</td><td>가정</td></tr>
+            <tr><td>처분 대가</td><td class="num key">1,500</td><td>확정</td></tr>
+            <tr><td>P사 지분율</td><td class="num">68%</td><td>M3.5 후</td></tr>
+            <tr><td>NCI 잔액</td><td class="num">448</td><td>1,400 × 32%</td></tr>
+            <tr><td>P사 귀속 순자산</td><td class="num">952</td><td>1,400 × 68%</td></tr>
+            <tr><td>영업권 잔액</td><td class="num">280</td><td>손상 없음 가정</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">연결 처분이익 산출</div>
+        <div class="formula" style="font-size:12px; padding:14px 18px; line-height:2;">
+          <div class="f-line"><span class="f-label" style="width:260px;">처분 대가</span><span class="f-val">1,500</span></div>
+          <div class="f-line"><span class="f-label" style="width:260px;">△ 연결장부금액 (순자산+영업권)</span><span class="f-val" style="color:#ff9999;">△ 1,680</span></div>
+          <div style="font-size:11px; color:rgba(255,255,255,0.4); padding-left:0; margin-top:-4px; margin-bottom:4px;">&nbsp;&nbsp;&nbsp;&nbsp;(순자산 1,400 + 영업권 280)</div>
+          <div class="f-line"><span class="f-label" style="width:260px;">+ NCI 제거 (자본 환입)</span><span class="f-val" style="color:#90ee90;">+ 448</span></div>
+          <div class="f-sep"></div>
+          <div class="f-line"><span class="f-label" style="width:260px;">연결 처분이익</span><span class="f-val f-result">= 268</span></div>
+        </div>
+      </div>
+
+      <div class="je-wrap">
+        <div class="je-header">
+          <span class="je-title">연결조정분개 ⑧ — 지배력 상실</span>
+          <span class="je-badge">연결워크시트</span>
+        </div>
+        <div class="je-body">
+          <div class="je-label">차변 — 수취 자산 및 NCI 제거</div>
+          <div class="je-line"><span class="acct debit">현금</span><span class="dr">1,500</span><span class="empty">—</span></div>
+          <div class="je-line"><span class="acct debit">비지배지분</span><span class="dr">448</span><span class="empty">—</span></div>
+          <div class="je-separator"></div>
+          <div class="je-label">대변 — S사 연결 자산 및 손익 인식</div>
+          <div class="je-line"><span class="acct credit">S사 순자산(연결)</span><span class="empty">—</span><span class="cr">1,400</span></div>
+          <div class="je-line"><span class="acct credit">영업권</span><span class="empty">—</span><span class="cr">280</span></div>
+          <div class="je-line"><span class="acct credit">연결처분이익</span><span class="empty">—</span><span class="cr">268</span></div>
+        </div>
+        <div class="je-footer">
+          <span>차변 1,500+448=1,948 / 대변 1,400+280+268=1,948</span>
+          <span class="verify">균형 ✅</span>
+        </div>
+      </div>
+
+      <div class="key-points">
+        <div class="kp-title">지배력 상실 처리 4대 핵심</div>
+        <ul>
+          <li>종속기업 <strong>전체 자산·부채(연결장부금액)</strong>를 제거 — 순자산 + 영업권 포함</li>
+          <li><strong>NCI 잔액 전액 제거</strong> — 차변에 계상하여 자본 환원</li>
+          <li>처분 대가와 제거금액의 차액 = <strong>연결 처분손익</strong></li>
+          <li>잔여 지분 보유 시: 취득일 FV로 재측정 후 처분손익에 포함</li>
+        </ul>
+      </div>
+    </div>
+  </div><!-- /tabs-wrap -->
+
+  <div class="page-nav">
+    <button class="nav-btn secondary" onclick="showPage('m2')">← Module 2</button>
+    <button class="nav-btn" onclick="showPage('m4')">Module 4: GR 시스템 →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MODULE 4 — Group Reporting 시스템
+══════════════════════════════════════ -->
+<div id="page-m4" class="page">
+  <div class="mod-header">
+    <div class="mod-tag">Module 4</div>
+    <div class="mod-title">Group Reporting 시스템의 C/I 처리</div>
+    <div class="mod-sub">SAP Group Reporting에서 이론이 어떻게 시스템적으로 자동화되는지 이해합니다</div>
+  </div>
+
+  <!-- 4.1 아키텍처 -->
+  <div class="section">
+    <div class="section-title"><span class="badge">4.1</span>GR 시스템 아키텍처 개요</div>
+
+    <div class="concept-box">
+      <div class="label">Activity-Based Consolidation</div>
+      <p style="font-size:13.5px; line-height:1.8;">GR은 각 자본 이벤트(Activity)를 코드로 식별하고, 사전에 정의된 Rule에 따라 C/I 분개를 자동 생성합니다. 이벤트 코드(Activity Code)의 정확한 입력이 자동화의 전제 조건입니다.</p>
+    </div>
+
+    <div class="flow" style="flex-direction:column; align-items:stretch; gap:0;">
+      <div style="display:grid; grid-template-columns:1fr 40px 1fr 40px 1fr; gap:0; align-items:center;">
+        <div class="flow-step" style="text-align:center; font-size:12px;">
+          <div style="font-size:16px; margin-bottom:4px;">📥</div>
+          자회사 데이터 수집<br><span style="font-size:10px; opacity:0.7;">FS Item 매핑</span>
+        </div>
+        <div class="flow-arrow" style="text-align:center;">→</div>
+        <div class="flow-step" style="text-align:center; font-size:12px;">
+          <div style="font-size:16px; margin-bottom:4px;">🏷️</div>
+          Activity Code 분류<br><span style="font-size:10px; opacity:0.7;">자본 이벤트 식별</span>
+        </div>
+        <div class="flow-arrow" style="text-align:center;">→</div>
+        <div class="flow-step highlight" style="text-align:center; font-size:12px;">
+          <div style="font-size:16px; margin-bottom:4px;">⚙️</div>
+          C/I Rule 실행<br><span style="font-size:10px; opacity:0.7;">자동 분개 생성</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:16px;">
+      <div class="card">
+        <div class="card-title">지분율 마스터 데이터 관리</div>
+        <div class="tbl-wrap">
+          <table>
+            <tr><th>데이터</th><th>관리 포인트</th></tr>
+            <tr><td>지배·종속 관계</td><td>Consolidation Group 계층 설정</td></tr>
+            <tr><td>직접 지분율</td><td>이벤트 발생 시마다 갱신</td></tr>
+            <tr><td>유효 지분율</td><td>간접지배 포함 GR 자동 계산</td></tr>
+            <tr><td>Processing Sequence</td><td>법인 간 처리 순서 수동 설정 필수</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">주요 Activity Code 예시</div>
+        <div class="tbl-wrap">
+          <table>
+            <tr><th>코드</th><th>이벤트</th></tr>
+            <tr><td><code>01</code></td><td>최초 취득</td></tr>
+            <tr><td><code>02</code></td><td>추가 취득 (지배 유지)</td></tr>
+            <tr><td><code>03</code></td><td>유상증자</td></tr>
+            <tr><td><code>04</code></td><td>지배력 상실 / 처분</td></tr>
+            <tr><td><code>10</code></td><td>당기순이익 배분</td></tr>
+            <tr><td><code>11</code></td><td>배당금 처리</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4.2 C/I Rule -->
+  <div class="section">
+    <div class="section-title"><span class="badge">4.2</span>자동 C/I Rule 설정</div>
+
+    <div class="step-list">
+      <div class="step-item open">
+        <div class="step-hd" onclick="toggleStep(this)">
+          <div class="step-num">1</div>
+          <div class="step-hd-text">
+            <div class="step-hd-title">System Task Configuration</div>
+            <div class="step-hd-sub">C/I 태스크 실행 순서 설정</div>
+          </div>
+          <div class="step-toggle">▾</div>
+        </div>
+        <div class="step-body">
+          <p style="font-size:13px; margin-bottom:8px;">C/I 자동화는 다음 순서로 Task가 실행됩니다. 순서가 틀리면 영업권·NCI 계산 오류 발생:</p>
+          <div class="flow" style="flex-wrap:wrap; gap:4px;">
+            <div class="flow-step" style="font-size:11px; padding:8px 12px; min-width:80px;">환율 적용</div>
+            <div class="flow-arrow" style="font-size:14px;">→</div>
+            <div class="flow-step" style="font-size:11px; padding:8px 12px; min-width:80px;">IC 상계</div>
+            <div class="flow-arrow" style="font-size:14px;">→</div>
+            <div class="flow-step highlight" style="font-size:11px; padding:8px 12px; min-width:80px;">C/I 실행</div>
+            <div class="flow-arrow" style="font-size:14px;">→</div>
+            <div class="flow-step light" style="font-size:11px; padding:8px 12px; min-width:80px;">검증</div>
+          </div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-hd" onclick="toggleStep(this)">
+          <div class="step-num">2</div>
+          <div class="step-hd-text">
+            <div class="step-hd-title">C/I Method 및 Document Type 매핑</div>
+            <div class="step-hd-sub">이벤트 유형별 자동 분개 문서 유형 지정</div>
+          </div>
+          <div class="step-toggle">▾</div>
+        </div>
+        <div class="step-body">
+          <div class="tbl-wrap">
+            <table>
+              <tr><th>C/I Method</th><th>Document Type</th><th>적용 이벤트</th></tr>
+              <tr><td>Purchase Method</td><td>CI01</td><td>최초 취득, 단계적 취득</td></tr>
+              <tr><td>Equity Method</td><td>CI02</td><td>후속 측정 (손익·배당)</td></tr>
+              <tr><td>Capital Transaction</td><td>CI03</td><td>추가 취득, 유상증자 (지배 유지)</td></tr>
+              <tr><td>Disposal</td><td>CI04</td><td>지배력 상실</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4.3 이벤트별 자동분개 -->
+  <div class="section">
+    <div class="section-title"><span class="badge">4.3</span>이벤트별 자동화 수준</div>
+
+    <div class="tbl-wrap">
+      <table class="matrix">
+        <tr>
+          <th class="left">이벤트</th>
+          <th>자동화 수준</th>
+          <th class="left">GR 자동 처리 범위</th>
+          <th class="left">수동 처리 필요 영역</th>
+        </tr>
+        <tr>
+          <td class="left key">최초 취득 (단순)</td>
+          <td class="star-4">★★★★☆</td>
+          <td class="left">영업권·NCI·FV차액 자동 산출</td>
+          <td class="left">FV차액 FS Item 매핑 초기 설정</td>
+        </tr>
+        <tr>
+          <td class="left key">후속 측정</td>
+          <td class="star-4">★★★★☆</td>
+          <td class="left">손익 배분, 배당 제거 자동</td>
+          <td class="left">Activity Code 정확 입력 전제</td>
+        </tr>
+        <tr>
+          <td class="left key">단계적 취득</td>
+          <td class="star-2">★★☆☆☆</td>
+          <td class="left">2단계 취득분 자동 처리</td>
+          <td class="left">기존 지분 FV 재평가, 처분손익 수동 JE 필수</td>
+        </tr>
+        <tr>
+          <td class="left key">추가 취득 (지배 유지)</td>
+          <td class="star-3">★★★☆☆</td>
+          <td class="left">자본조정 계산 자동</td>
+          <td class="left">복잡한 NCI 재계산 수동 검증</td>
+        </tr>
+        <tr>
+          <td class="left key">유상증자 (지분율 변동)</td>
+          <td class="star-2">★★☆☆☆</td>
+          <td class="left">지분율 재계산</td>
+          <td class="left">발행가 ≠ 순자산비례 시 수동 검증</td>
+        </tr>
+        <tr>
+          <td class="left key">지배력 상실</td>
+          <td class="star-2">★★☆☆☆</td>
+          <td class="left">영업권·NCI 제거</td>
+          <td class="left">잔여지분 FV 재평가, 처분손익 대부분 수동</td>
+        </tr>
+        <tr>
+          <td class="left key">순환출자</td>
+          <td class="star-3">★★★☆☆</td>
+          <td class="left">연립방정식 기반 지분율 계산 지원</td>
+          <td class="left">영업권 귀속·NCI 중복 수동 검증 필요</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 4.4 환율변동효과 -->
+  <div class="section">
+    <div class="section-title"><span class="badge">4.4</span>환율변동효과(CTA) 처리</div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">환율 적용 원칙</div>
+        <div class="tbl-wrap">
+          <table>
+            <tr><th>항목</th><th>적용 환율</th></tr>
+            <tr><td>자본금, 자본잉여금</td><td>역사적 환율 (Historical Rate)</td></tr>
+            <tr><td>영업권</td><td>역사적 환율 (취득일)</td></tr>
+            <tr><td>이익잉여금</td><td>평균 환율 누적</td></tr>
+            <tr><td>기타 자산·부채</td><td>마감 환율 (Closing Rate)</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">외화번역차이(CTA) 배분</div>
+        <div class="tbl-wrap">
+          <table>
+            <tr><th>항목</th><th>배분 방식</th></tr>
+            <tr><td>P사 귀속 CTA</td><td>기타포괄손익 — 해외사업환산차이</td></tr>
+            <tr><td>NCI 귀속 CTA</td><td>NCI 잔액에 가산/차감</td></tr>
+            <tr><td>GR 처리</td><td>지분율 기준 자동 배분</td></tr>
+          </table>
+        </div>
+        <div class="callout info" style="margin-top:8px;">
+          <div class="callout-icon">💡</div>
+          <div class="callout-text">지배력 상실 시 누적 CTA 전액을 처분손익에 포함하여 당기손익으로 재분류</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <button class="nav-btn secondary" onclick="showPage('m3')">← Module 3</button>
+    <button class="nav-btn" onclick="showPage('m5')">Module 5: 실무 한계점 →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MODULE 5 — 실무 한계점 및 해결방안
+══════════════════════════════════════ -->
+<div id="page-m5" class="page">
+  <div class="mod-header">
+    <div class="mod-tag">Module 5</div>
+    <div class="mod-title">실무 한계점 및 해결방안</div>
+    <div class="mod-sub">주니어와 시니어를 가르는 핵심 — 실무에서 직면하는 어려움과 구조적 해결책</div>
+  </div>
+
+  <!-- 5.1 복잡한 지분 구조 -->
+  <div class="section">
+    <div class="section-title"><span class="badge">5.1</span>복잡한 지분 구조의 처리 한계</div>
+
+    <div class="step-list">
+      <div class="step-item open">
+        <div class="step-hd" onclick="toggleStep(this)">
+          <div class="step-num">①</div>
+          <div class="step-hd-text">
+            <div class="step-hd-title">간접 지배 (Indirect Ownership)</div>
+            <div class="step-hd-sub">P→A→B 다층 구조의 Processing Sequence 문제</div>
+          </div>
+          <div class="step-toggle">▾</div>
+        </div>
+        <div class="step-body">
+          <div class="callout error">
+            <div class="callout-icon">🚨</div>
+            <div class="callout-text"><strong>오류 패턴</strong>: Task 실행 순서(Processing Sequence) 미설정 시 중간 법인(A)의 NCI 계산 전에 B의 C/I가 먼저 실행 → 영업권·NCI 금액 불일치</div>
+          </div>
+          <div class="callout success">
+            <div class="callout-icon">✅</div>
+            <div class="callout-text"><strong>해결방안</strong>: Consolidation Group 내 법인 계층(Tier)을 명시하고 Task 실행 순서를 Tier 순으로 강제화. 구조 변경 시마다 재설정 필요.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-hd" onclick="toggleStep(this)">
+          <div class="step-num">②</div>
+          <div class="step-hd-text">
+            <div class="step-hd-title">순환출자 (Circular Holding)</div>
+            <div class="step-hd-sub">GR 지분율 계산은 지원 — 그러나 실무 검증 부담 존재</div>
+          </div>
+          <div class="step-toggle">▾</div>
+        </div>
+        <div class="step-body">
+          <div class="callout info">
+            <div class="callout-icon">💡</div>
+            <div class="callout-text">GR은 순환출자 구조에서 <strong>연립방정식(Simultaneous Equation Method)</strong> 기반으로 유효 지분율을 자동 계산합니다. 지분율 계산 자체는 시스템이 처리합니다.</div>
+          </div>
+          <div class="tbl-wrap" style="margin-top:12px;">
+            <table>
+              <tr><th>실제 문제 영역</th><th>구체적 내용</th></tr>
+              <tr><td>영업권 귀속 계산</td><td>순환 구조에서 각 법인의 영업권을 어느 취득 레이어에 귀속시킬지 수동 검증 필요</td></tr>
+              <tr><td>NCI 중복 인식 위험</td><td>상호 보유 지분에 의한 NCI가 중복 인식되지 않는지 결산마다 대사 필요</td></tr>
+              <tr><td>자본 변동 전파</td><td>Activity Code 기반 자동 분개가 순환 전파 시 의도대로 작동하는지 검증 난이도 높음</td></tr>
+              <tr><td>감사 추적</td><td>연립방정식 계산 과정이 블랙박스화 → 외부감사인 설명 부담</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5.2 데이터 품질 -->
+  <div class="section">
+    <div class="section-title"><span class="badge">5.2</span>기초 데이터 품질 및 정합성</div>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-text"><strong>핵심 명제</strong>: GR의 C/I는 자회사가 보고한 FS Item(자본 계정)을 기준으로 자동 계산합니다. <strong>자회사 데이터 품질 = C/I 정확도</strong>.</div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Mismatch 4대 원인</div>
+        <div class="step-list" style="margin-bottom:0;">
+          <div class="step-item open">
+            <div class="step-hd" onclick="toggleStep(this)" style="padding:10px 14px;">
+              <div class="step-num" style="width:22px; height:22px; font-size:11px;">1</div>
+              <div class="step-hd-text"><div class="step-hd-title" style="font-size:12.5px;">환율 차이</div></div>
+              <div class="step-toggle" style="font-size:14px;">▾</div>
+            </div>
+            <div class="step-body">
+              <p style="font-size:12px;">해외 종속기업: 모회사 투자주식(역사적 환율) vs 자회사 자본(현행 환율) → 구조적 차이 발생. CTA로 처리해야 하나 Activity Code 누락 시 Mismatch로 표시됨.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-hd" onclick="toggleStep(this)" style="padding:10px 14px;">
+              <div class="step-num" style="width:22px; height:22px; font-size:11px;">2</div>
+              <div class="step-hd-text"><div class="step-hd-title" style="font-size:12.5px;">Activity Code 누락</div></div>
+              <div class="step-toggle" style="font-size:14px;">▾</div>
+            </div>
+            <div class="step-body">
+              <p style="font-size:12px;">자회사가 유상증자·감자 발생 시 Activity Code 미입력 → GR이 자본 변동을 인식 못함 → 영업권·NCI 계산 오류. <strong>발생 빈도·영향도 모두 최상위 리스크.</strong></p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-hd" onclick="toggleStep(this)" style="padding:10px 14px;">
+              <div class="step-num" style="width:22px; height:22px; font-size:11px;">3</div>
+              <div class="step-hd-text"><div class="step-hd-title" style="font-size:12.5px;">배당 결의 시점 차이</div></div>
+              <div class="step-toggle" style="font-size:14px;">▾</div>
+            </div>
+            <div class="step-body">
+              <p style="font-size:12px;">자회사 배당 결의일 ≠ 모회사 배당수익 인식일 불일치 시 IC Elimination 후 잔액 발생. 결의 즉시 모회사 통보 프로세스 의무화 필요.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-hd" onclick="toggleStep(this)" style="padding:10px 14px;">
+              <div class="step-num" style="width:22px; height:22px; font-size:11px;">4</div>
+              <div class="step-hd-text"><div class="step-hd-title" style="font-size:12.5px;">지분법 조정 미제거</div></div>
+              <div class="step-toggle" style="font-size:14px;">▾</div>
+            </div>
+            <div class="step-body">
+              <p style="font-size:12px;">별도재무제표에 지분법 적용 후 연결 전환 시, 지분법 누적 조정액이 투자주식 장부금액에 포함되어 C/I 기준금액 오염. 연결 패키지 제출 전 지분법 조정 역분개 필요.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">현금흐름표 C/I 처리 한계</div>
+        <div class="callout error" style="margin-bottom:12px;">
+          <div class="callout-icon">🚨</div>
+          <div class="callout-text">GR 자동화 범위는 P&L·BS에 집중. Cash Flow Statement 상 C/I 제거 항목은 수동 입력 필요.</div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <tr><th>항목</th><th>처리 방식</th></tr>
+            <tr><td>종속기업 취득 현금</td><td>투자활동 현금 — 순자산 취득분과 분리 표시</td></tr>
+            <tr><td>영업권 포함 취득원가</td><td>수동 Statistical Item 설계 필요</td></tr>
+            <tr><td>배당금 수취/지급</td><td>IC 배당 제거 후 외부 배당만 표시</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5.3 K-IFRS vs K-GAAP -->
+  <div class="section">
+    <div class="section-title"><span class="badge">5.3</span>K-IFRS vs K-GAAP 차이</div>
+
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>항목</th><th>K-IFRS</th><th>K-GAAP</th><th>GR 처리</th></tr>
+        <tr><td class="key">영업권 상각</td><td>상각 없음, 매년 손상검사</td><td>20년 이내 정액 상각</td><td>K-IFRS 기준 기본값. K-GAAP 시 상각 Rule 수동 설정</td></tr>
+        <tr><td class="key">NCI 측정</td><td>공정가치 or 순자산비례 선택</td><td>순자산비례만 허용</td><td>Method 선택 가능, 법인별 일관성 관리 필요</td></tr>
+        <tr><td class="key">부의 영업권</td><td>즉시 당기손익(이익) 인식</td><td>자본잉여금 처리</td><td>Rule 분기 처리 필요</td></tr>
+        <tr><td class="key">단계적 취득</td><td>기존 지분 FV 재평가 후 처분손익</td><td>장부금액 기준 처리</td><td>K-IFRS 자동화. K-GAAP 법인 수동 처리</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 5.4 해결방안 체계 -->
+  <div class="section">
+    <div class="section-title"><span class="badge">5.4</span>해결방안 체계 — Prevention / Detection / Resolution</div>
+
+    <div class="grid-3">
+      <div class="card" style="border-top:3px solid var(--green);">
+        <div class="card-title" style="color:var(--green);">🛡️ Prevention (사전)</div>
+        <ul style="font-size:12.5px; padding-left:16px; line-height:2;">
+          <li>IC Ownership 마스터 Lock-down (결산 D-5 이전 변경 금지)</li>
+          <li>자회사 자본 변동 시 연결팀 즉시 통보 의무화</li>
+          <li>Activity Code 입력을 결산 체크리스트 필수 항목으로 포함</li>
+          <li>FS Item 매핑 Table 주기적 검증</li>
+        </ul>
+      </div>
+      <div class="card" style="border-top:3px solid #c8890a;">
+        <div class="card-title" style="color:#7a4f00;">🔍 Detection (탐지)</div>
+        <ul style="font-size:12.5px; padding-left:16px; line-height:2;">
+          <li>C/I 실행 후 영업권·NCI Roll-forward 자동 검증</li>
+          <li>대차불일치 발생 시 알림 Rule 설정</li>
+          <li>전기 대비 영업권 변동 분석 (손상 외 변동 원인 규명)</li>
+          <li>NCI 잔액 × 지분율 역산 검증</li>
+        </ul>
+      </div>
+      <div class="card" style="border-top:3px solid var(--navy);">
+        <div class="card-title" style="color:var(--navy);">🔧 Resolution (해소)</div>
+        <ul style="font-size:12.5px; padding-left:16px; line-height:2;">
+          <li>수동 JE: Document Type 분리 (자동 vs 수동 구분)</li>
+          <li>2-Level 승인 (담당자→팀장) 프로세스</li>
+          <li>계산 근거 Excel 아카이빙 의무화</li>
+          <li>동일 수동 JE 2기 이상 반복 시 자동화 전환 검토</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5.5 우선순위 매트릭스 -->
+  <div class="section">
+    <div class="section-title"><span class="badge">5.5</span>실무 우선순위 매트릭스</div>
+
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>한계점</th><th>발생 빈도</th><th>오류 영향도</th><th>대응 우선순위</th></tr>
+        <tr>
+          <td class="key">Activity Code 누락</td>
+          <td><span class="pill amber">높음</span></td>
+          <td><span class="pill amber">높음</span></td>
+          <td><span class="pill navy">P1 — 즉시 통제</span></td>
+        </tr>
+        <tr>
+          <td class="key">환율 차이 Mismatch</td>
+          <td><span class="pill amber">높음</span></td>
+          <td><span class="pill light">중간</span></td>
+          <td><span class="pill navy">P1 — 프로세스 정비</span></td>
+        </tr>
+        <tr>
+          <td class="key">단계적 취득·지배력 상실</td>
+          <td><span class="pill light">낮음</span></td>
+          <td><span class="pill amber">높음</span></td>
+          <td><span class="pill light">P2 — 수동 JE 표준화</span></td>
+        </tr>
+        <tr>
+          <td class="key">유상증자 지분율 변동</td>
+          <td><span class="pill light">중간</span></td>
+          <td><span class="pill light">중간</span></td>
+          <td><span class="pill light">P2 — 검증 체크리스트</span></td>
+        </tr>
+        <tr>
+          <td class="key">순환출자 검증 부담</td>
+          <td><span class="pill green">매우 낮음</span></td>
+          <td><span class="pill amber">높음</span></td>
+          <td>P3 — 구조 개선 검토</td>
+        </tr>
+        <tr>
+          <td class="key">우선주 NCI 조정</td>
+          <td><span class="pill green">낮음</span></td>
+          <td><span class="pill light">중간</span></td>
+          <td>P3 — 수동 계산표 관리</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 수동 JE 4원칙 -->
+  <div class="key-points">
+    <div class="kp-title">수동 JE(Manual Journal Entry) 4대 원칙</div>
+    <ul>
+      <li><strong>추적 가능성 (Traceability)</strong>: 수동 JE에 이벤트 유형·근거 문서 번호를 반드시 기재</li>
+      <li><strong>재현 가능성 (Reproducibility)</strong>: 계산 근거 Excel(FV 평가 보고서, 지분율 계산표)을 JE와 함께 아카이빙</li>
+      <li><strong>독립 검증 (Independent Review)</strong>: 수동 JE 입력자와 검토자를 분리 (Maker-Checker 원칙)</li>
+      <li><strong>자동화 로드맵 (Automation Roadmap)</strong>: 동일 수동 JE가 2결산기 이상 반복 시 GR Rule 자동화 전환 여부 검토 의무화</li>
+    </ul>
+  </div>
+
+  <div class="page-nav">
+    <button class="nav-btn secondary" onclick="showPage('m4')">← Module 4</button>
+    <button class="nav-btn" onclick="showPage('m6')">Module 6: 종합 사례 연구 →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MODULE 6 — 종합 사례 연구
+══════════════════════════════════════ -->
+<div id="page-m6" class="page">
+  <div class="mod-header">
+    <div class="mod-tag">Module 6</div>
+    <div class="mod-title">종합 사례 연구 (End-to-End)</div>
+    <div class="mod-sub">P사/S사 기준 케이스로 최초 취득부터 지배력 상실까지 연결정산표를 단계별로 완성합니다</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 케이스 요약 — 전체 이벤트 및 분개 번호</div>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>시점</th><th>이벤트</th><th>분개</th><th>대차 검증</th></tr>
+        <tr><td>20X1.1.1</td><td>최초 취득 80% (이전대가 1,000)</td><td>①</td><td class="pos">1,180 = 1,180 ✅</td></tr>
+        <tr><td>20X1.12.31</td><td>FV차액(건물) 상각</td><td>②</td><td class="pos">10 = 10 ✅</td></tr>
+        <tr><td>20X1.12.31</td><td>NCI 손익 배분 (200×20%=40)</td><td>③</td><td class="pos">40 = 40 ✅</td></tr>
+        <tr><td>20X1.12.31</td><td>배당 제거 (P사 40 + NCI 10)</td><td>④</td><td class="pos">50 = 50 ✅</td></tr>
+        <tr><td>20X2.1.1</td><td>전기 연결조정 이월 (방식 A)</td><td>⑤-a,b,c</td><td class="pos">각 분개 독립 균형 ✅</td></tr>
+        <tr><td>20X2.1.1</td><td>추가 취득 5% (이전대가 70)</td><td>⑥</td><td class="pos">70 = 70 ✅</td></tr>
+        <tr><td>20X2.7.1</td><td>유상증자 / P사 실권 (신주 300주)</td><td>⑦</td><td class="pos">300 = 300 ✅</td></tr>
+        <tr><td>20X3.1.1</td><td>지배력 상실 / 전량 처분 (대가 1,500)</td><td>⑧</td><td class="pos">1,948 = 1,948 ✅</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 연결정산표 -->
+  <div class="section">
+    <div class="section-title">연결정산표 — 20X1년 (최초 취득 및 후속 측정)</div>
+
+    <div class="tbl-wrap">
+      <table>
+        <tr>
+          <th>계정</th>
+          <th style="text-align:right;">P사 별도</th>
+          <th style="text-align:right;">S사 별도</th>
+          <th style="text-align:right;">합산</th>
+          <th style="text-align:right;">연결조정 DR</th>
+          <th style="text-align:right;">연결조정 CR</th>
+          <th style="text-align:right;">연결 후</th>
+        </tr>
+        <tr><td colspan="7" style="background:var(--navy-pale); font-weight:700; font-size:12px; padding:6px 14px; color:var(--navy);">자산</td></tr>
+        <tr><td>종속기업투자주식</td><td class="num">1,000</td><td class="num">—</td><td class="num">1,000</td><td class="num">—</td><td class="num neg">1,000</td><td class="num key">0</td></tr>
+        <tr><td>영업권</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num pos">280</td><td class="num">—</td><td class="num key">280</td></tr>
+        <tr><td>건물(FV차액)</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num pos">100</td><td class="num neg">10</td><td class="num key">90</td></tr>
+        <tr><td>S사 기타 순자산</td><td class="num">—</td><td class="num">800</td><td class="num">800</td><td class="num pos">200</td><td class="num">—</td><td class="num key">1,000</td></tr>
+        <tr><td colspan="7" style="background:var(--navy-pale); font-weight:700; font-size:12px; padding:6px 14px; color:var(--navy);">자본</td></tr>
+        <tr><td>S사 자본(BV)</td><td class="num">—</td><td class="num">800</td><td class="num">800</td><td class="num pos">800</td><td class="num">—</td><td class="num key">0</td></tr>
+        <tr><td>비지배지분(NCI)</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num neg">10</td><td class="num pos">180+40</td><td class="num key">210 →208</td></tr>
+        <tr><td colspan="7" style="background:var(--navy-pale); font-weight:700; font-size:12px; padding:6px 14px; color:var(--navy);">손익</td></tr>
+        <tr><td>감가상각비 추가</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num neg">10</td><td class="num">—</td><td class="num key">△10</td></tr>
+        <tr><td>배당금수익 제거</td><td class="num">40</td><td class="num">—</td><td class="num">40</td><td class="num">—</td><td class="num neg">40</td><td class="num key">0</td></tr>
+        <tr><td>NCI귀속 순이익</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num neg">40</td><td class="num">—</td><td class="num key">△40</td></tr>
+      </table>
+    </div>
+    <div class="callout info">
+      <div class="callout-icon">📌</div>
+      <div class="callout-text">NCI 잔액 = 180(취득) + 40(이익배분) − 10(배당) − 2(FV상각 NCI분) = <strong>208</strong> = 1,040 × 20% ✅</div>
+    </div>
+  </div>
+
+  <!-- 최종 요약 -->
+  <div class="section">
+    <div class="section-title">전체 학습 흐름 요약</div>
+    <div class="key-points">
+      <div class="kp-title">C/I 완전 정복 — 핵심 체계</div>
+      <ul>
+        <li><strong>M1 기초</strong>: 이중계상 방지 → C/I는 투자주식과 자본을 상계하고 영업권·NCI를 새로 인식하는 창조적 조정</li>
+        <li><strong>M2 분해</strong>: 이전대가 = 순자산FV × 지분율 + 영업권 / NCI = 순자산FV × NCI 지분율 (순자산비례)</li>
+        <li><strong>M3 이벤트</strong>: 6개 이벤트 × [별도분개 → 연결조정분개 → 잔액 검증] 3단 구조</li>
+        <li><strong>M4 시스템</strong>: Activity Code 정확도 = GR 자동화 품질. 복잡 이벤트는 수동 JE 불가피</li>
+        <li><strong>M5 실무</strong>: P1 리스크(Activity Code 누락·환율 Mismatch) 우선 통제. 수동 JE 4원칙 준수</li>
+        <li><strong>M6 종합</strong>: 분개 ①~⑧ 전체 대차 균형 확인. Roll-forward로 NCI·영업권 잔액 검증</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <button class="nav-btn secondary" onclick="showPage('m5')">← Module 5</button>
+    <button class="nav-btn secondary" onclick="showPage('m1')">처음으로 ↑</button>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+// ── 페이지 전환
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const page = document.getElementById('page-' + id);
+  if (page) { page.classList.add('active'); window.scrollTo(0, 0); }
+  document.querySelectorAll('.sb-item').forEach(item => {
+    item.classList.toggle('active', item.getAttribute('onclick') && item.getAttribute('onclick').includes("'" + id + "'"));
+  });
+}
+
+// ── 탭 전환
+function setTab(wrapId, tabId) {
+  const wrap = document.getElementById(wrapId);
+  if (!wrap) return;
+  wrap.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.id === tabId));
+  wrap.querySelectorAll('.tab-panel').forEach(panel => panel.classList.toggle('active', panel.id === 'panel-' + tabId));
+}
+
+// ── 스텝 아코디언
+function toggleStep(hd) {
+  const item = hd.closest('.step-item');
+  item.classList.toggle('open');
+}
+
+// ── 보충 자료 토글
+function toggleSupp(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+// ── 사이드바 서브링크 클릭 시 해당 모듈로 이동 후 탭 설정
+document.querySelectorAll('.sb-sub').forEach(sub => {
+  sub.addEventListener('click', function() {
+    const onclick = this.getAttribute('onclick');
+    if (onclick) eval(onclick);
+  });
+});
+</script>
+</body>
+</html>
