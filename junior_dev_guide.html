@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>요구사항대로 만들었는데 왜 틀렸나요? — IT 로직 설계 교육</title>
+<style>
+
+
+:root {
+  --navy: #003366;
+  --navy-dark: #001f3f;
+  --navy-mid: #00408a;
+  --navy-light: #e8eef7;
+  --accent: #1a5fb4;
+  --red: #c62828;
+  --red-bg: #fff5f5;
+  --green: #2e7d32;
+  --green-bg: #f0fff4;
+  --amber: #b45309;
+  --amber-bg: #fffbeb;
+  --gray-50: #f8f9fa;
+  --gray-100: #f0f2f5;
+  --gray-200: #e4e6ea;
+  --gray-400: #9ca3af;
+  --gray-600: #4b5563;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  --text: #111827;
+  --text-muted: #6b7280;
+  --border: #e5e7eb;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --shadow: 0 1px 4px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.06);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,.12);
+  --font: 'Noto Sans KR', -apple-system, sans-serif;
+  --mono: 'DM Mono', 'SF Mono', 'Consolas', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font); background: var(--gray-100); color: var(--text); line-height: 1.6; }
+
+/* ─── TOPBAR ─── */
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(255,255,255,.95); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 0; height: 52px;
+}
+.topbar-logo {
+  display: flex; align-items: center; gap: 10px;
+  padding: 0 20px; border-right: 1px solid var(--border);
+  text-decoration: none; height: 100%;
+}
+.topbar-logo-box {
+  width: 28px; height: 28px; background: var(--navy); border-radius: 7px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.topbar-logo-box svg { width: 16px; height: 16px; stroke: #fff; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.topbar-title { font-size: 13px; font-weight: 700; color: var(--navy); white-space: nowrap; }
+.topbar-nav { display: flex; align-items: center; gap: 0; flex: 1; overflow-x: auto; padding: 0 8px; }
+.topbar-nav::-webkit-scrollbar { display: none; }
+.nav-item {
+  font-size: 12px; font-weight: 500; color: var(--text-muted);
+  padding: 0 12px; height: 52px; display: flex; align-items: center;
+  text-decoration: none; white-space: nowrap; cursor: pointer;
+  border-bottom: 2px solid transparent; transition: all .15s;
+}
+.nav-item:hover { color: var(--navy); }
+.nav-item.active { color: var(--navy); border-bottom-color: var(--navy); }
+.topbar-quiz {
+  margin-left: auto; margin-right: 16px; flex-shrink: 0;
+  background: var(--navy); color: #fff; border: none;
+  font-size: 12px; font-weight: 600; padding: 7px 16px;
+  border-radius: 20px; cursor: pointer; display: flex; align-items: center; gap: 6px;
+  text-decoration: none; transition: background .15s; font-family: var(--font);
+}
+.topbar-quiz:hover { background: var(--navy-mid); }
+.topbar-quiz svg { width: 13px; height: 13px; fill: currentColor; }
+
+/* ─── HERO ─── */
+.hero {
+  background: var(--navy-dark);
+  padding: 72px 24px 60px;
+  text-align: center; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(26,95,180,.35) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-grid {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.hero-tag {
+  display: inline-block; font-size: 11px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: rgba(255,255,255,.5); margin-bottom: 20px;
+}
+.hero h1 {
+  font-size: clamp(24px, 4vw, 38px); font-weight: 700; color: #fff;
+  line-height: 1.25; margin-bottom: 16px; position: relative;
+}
+.hero h1 em { font-style: normal; color: #93c5fd; }
+.hero-sub {
+  font-size: 15px; color: rgba(255,255,255,.6); max-width: 520px;
+  margin: 0 auto 32px; line-height: 1.7;
+}
+.hero-meta {
+  display: flex; justify-content: center; gap: 24px; flex-wrap: wrap;
+  font-size: 12px; color: rgba(255,255,255,.45); position: relative;
+}
+.hero-meta span { display: flex; align-items: center; gap: 5px; }
+.hero-meta svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; }
+
+/* ─── LAYOUT ─── */
+.container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+.section { padding: 48px 0; }
+.section + .section { border-top: 1px solid var(--border); }
+
+/* ─── MODULE HEADER ─── */
+.module-header {
+  display: flex; align-items: flex-start; gap: 16px; margin-bottom: 28px;
+}
+.module-num {
+  width: 44px; height: 44px; border-radius: 12px; background: var(--navy);
+  color: #fff; font-size: 14px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.module-header-text h2 { font-size: 20px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
+.module-header-text p { font-size: 13px; color: var(--text-muted); }
+
+/* ─── CARDS ─── */
+.card {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 20px 24px;
+  box-shadow: var(--shadow);
+}
+.card + .card { margin-top: 12px; }
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.card-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+
+/* ─── COMPARISON ─── */
+.vs-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media(max-width:600px){ .vs-wrap { grid-template-columns: 1fr; } }
+.vs-card { border-radius: var(--radius); padding: 18px 20px; }
+.vs-card.wrong { background: var(--red-bg); border: 1px solid #fca5a5; }
+.vs-card.correct { background: var(--green-bg); border: 1px solid #86efac; }
+.vs-label { font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; margin-bottom: 10px; }
+.vs-card.wrong .vs-label { color: var(--red); }
+.vs-card.correct .vs-label { color: var(--green); }
+.vs-item { font-size: 13.5px; color: var(--gray-800); line-height: 1.65; padding: 3px 0; }
+.vs-item::before { content: '· '; color: var(--gray-400); }
+
+/* ─── TRAP CARDS ─── */
+.trap-card {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 18px;
+  border-left: 4px solid var(--navy); position: relative;
+}
+.trap-card.amber { border-left-color: var(--amber); }
+.trap-card.red { border-left-color: var(--red); }
+.trap-tag { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--navy); margin-bottom: 5px; }
+.trap-card.amber .trap-tag { color: var(--amber); }
+.trap-card.red .trap-tag { color: var(--red); }
+.trap-title { font-size: 14px; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
+.trap-body { font-size: 12.5px; color: var(--text-muted); line-height: 1.65; }
+
+/* ─── CODE BLOCK ─── */
+.code-block {
+  font-family: var(--mono); font-size: 12.5px;
+  background: #0f172a; color: #e2e8f0;
+  border-radius: var(--radius); padding: 16px 20px;
+  line-height: 1.8; overflow-x: auto; margin: 12px 0;
+  white-space: pre;
+}
+.code-block .kw { color: #7dd3fc; }
+.code-block .fn { color: #86efac; }
+.code-block .cm { color: #64748b; }
+.code-block .st { color: #fca5a5; }
+.code-block .num { color: #fdba74; }
+
+/* ─── TABLE ─── */
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.data-table th {
+  background: var(--navy); color: #fff; text-align: left;
+  padding: 9px 14px; font-weight: 600; font-size: 12px;
+}
+.data-table th:first-child { border-radius: 8px 0 0 0; }
+.data-table th:last-child { border-radius: 0 8px 0 0; }
+.data-table td { padding: 9px 14px; border-bottom: 1px solid var(--border); color: var(--gray-800); }
+.data-table tr:nth-child(even) td { background: var(--gray-50); }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table td.warn { color: var(--red); font-size: 12px; }
+
+/* ─── INSIGHT BOX ─── */
+.insight {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: var(--navy-light); border: 1px solid #c7d2fe;
+  border-radius: var(--radius); padding: 14px 18px; margin-top: 16px;
+}
+.insight-icon {
+  width: 28px; height: 28px; background: var(--navy); border-radius: 7px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+.insight-icon svg { width: 14px; height: 14px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; }
+.insight-text { font-size: 13.5px; color: var(--navy); line-height: 1.65; font-weight: 500; }
+.insight-text strong { color: var(--navy-dark); }
+
+/* ─── TIMELINE ─── */
+.timeline { display: flex; flex-direction: column; gap: 0; }
+.tl-item { display: flex; gap: 16px; position: relative; }
+.tl-item::before { content: ''; position: absolute; left: 19px; top: 38px; bottom: -16px; width: 1px; background: var(--border); }
+.tl-item:last-child::before { display: none; }
+.tl-dot {
+  width: 40px; height: 40px; border-radius: 10px; background: var(--navy);
+  color: #fff; font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.tl-content { flex: 1; padding-bottom: 20px; }
+.tl-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; }
+.tl-text { font-size: 13.5px; color: var(--gray-800); line-height: 1.6; }
+
+/* ─── CHECKLIST ─── */
+.checklist { display: flex; flex-direction: column; gap: 6px; }
+.cl-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 14px; background: var(--gray-50);
+  border: 1px solid var(--border); border-radius: 8px;
+  font-size: 13.5px; color: var(--gray-800); line-height: 1.5;
+}
+.cl-num {
+  min-width: 22px; height: 22px; border-radius: 6px; background: var(--navy);
+  color: #fff; font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+
+/* ─── OPTION CARDS ─── */
+.option-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.option-card { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
+.option-header { padding: 12px 16px; font-size: 13px; font-weight: 700; color: #fff; }
+.option-body { background: #fff; padding: 14px 16px; }
+.option-row { font-size: 12.5px; color: var(--gray-700, #374151); margin-bottom: 5px; line-height: 1.5; }
+.option-row strong { font-weight: 600; }
+.option-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; color: var(--text-muted); }
+
+/* ─── PRINCIPLE CARDS ─── */
+.principle-card {
+  display: flex; gap: 20px; align-items: flex-start;
+  background: #fff; border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 22px 24px;
+  box-shadow: var(--shadow);
+}
+.principle-card + .principle-card { margin-top: 12px; }
+.principle-num {
+  width: 48px; height: 48px; min-width: 48px; border-radius: 12px;
+  background: var(--navy); color: #fff;
+  font-size: 18px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.principle-title { font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
+.principle-body { font-size: 13.5px; color: var(--text-muted); line-height: 1.7; }
+
+/* ─── QUIZ CTA ─── */
+.quiz-cta {
+  background: var(--navy-dark); border-radius: var(--radius-lg);
+  padding: 40px 32px; text-align: center; margin: 0;
+  position: relative; overflow: hidden;
+}
+.quiz-cta::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 80% at 50% 100%, rgba(26,95,180,.4) 0%, transparent 60%);
+}
+.quiz-cta h2 { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 8px; position: relative; }
+.quiz-cta p { font-size: 14px; color: rgba(255,255,255,.6); margin-bottom: 24px; position: relative; }
+.quiz-cta-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #fff; color: var(--navy);
+  font-size: 14px; font-weight: 700; padding: 12px 28px;
+  border-radius: 24px; text-decoration: none; transition: all .2s;
+  position: relative; font-family: var(--font);
+}
+.quiz-cta-btn:hover { background: #e8eef7; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,0,0,.2); }
+.quiz-cta-btn svg { width: 16px; height: 16px; fill: currentColor; }
+.quiz-stats { display: flex; justify-content: center; gap: 32px; margin-top: 24px; position: relative; }
+.quiz-stat { text-align: center; }
+.quiz-stat-n { font-size: 24px; font-weight: 700; color: #fff; }
+.quiz-stat-l { font-size: 11px; color: rgba(255,255,255,.45); margin-top: 2px; }
+
+/* ─── DOMAIN PILL ─── */
+.pill {
+  display: inline-block; font-size: 11px; font-weight: 600;
+  padding: 3px 10px; border-radius: 12px;
+  background: var(--navy-light); color: var(--navy); border: 1px solid #c7d2fe;
+  margin-bottom: 8px;
+}
+
+/* ─── SECTION DIVIDER ─── */
+.section-divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 8px 0 24px; font-size: 11px; font-weight: 700;
+  color: var(--text-muted); letter-spacing: .08em; text-transform: uppercase;
+}
+.section-divider::before, .section-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+/* ─── PROGRESS/STEP ─── */
+.steps { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.step-btn {
+  padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+  border: 1px solid var(--border); background: #fff; color: var(--text-muted);
+  cursor: pointer; transition: all .15s; font-family: var(--font);
+}
+.step-btn.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+.step-btn:hover:not(.active) { border-color: var(--navy); color: var(--navy); }
+
+/* ─── ACCORDION ─── */
+.accordion-item { border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 8px; overflow: hidden; background: #fff; }
+.accordion-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; cursor: pointer; user-select: none;
+  font-size: 14px; font-weight: 600; color: var(--gray-900);
+}
+.accordion-header:hover { background: var(--gray-50); }
+.accordion-arrow { transition: transform .25s; font-size: 16px; color: var(--text-muted); }
+.accordion-item.open .accordion-arrow { transform: rotate(180deg); }
+.accordion-body { display: none; padding: 0 18px 16px; font-size: 13.5px; color: var(--text-muted); line-height: 1.7; border-top: 1px solid var(--border); padding-top: 14px; }
+.accordion-item.open .accordion-body { display: block; }
+
+/* ─── FOOTER ─── */
+.footer {
+  background: var(--navy-dark); color: rgba(255,255,255,.4);
+  text-align: center; padding: 28px; font-size: 12px;
+}
+
+/* ─── ANIMATIONS ─── */
+.fade-in { opacity: 0; transform: translateY(16px); transition: opacity .5s ease, transform .5s ease; }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+@media(max-width: 640px) {
+  .hero { padding: 48px 20px 40px; }
+  .section { padding: 36px 0; }
+  .principle-card { flex-direction: column; }
+  .principle-num { width: 40px; height: 40px; min-width: 40px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<nav class="topbar">
+  <a class="topbar-logo" href="#hero">
+    <div class="topbar-logo-box">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    </div>
+    <span class="topbar-title">로직 설계 가이드</span>
+  </a>
+  <div class="topbar-nav">
+    <a class="nav-item" href="#m00" onclick="setActive(this)">M00 오프닝</a>
+    <a class="nav-item" href="#m01" onclick="setActive(this)">M01 데이터 모델링</a>
+    <a class="nav-item" href="#m02" onclick="setActive(this)">M02 프로세스 로직</a>
+    <a class="nav-item" href="#m03" onclick="setActive(this)">M03 요구사항 해석</a>
+    <a class="nav-item" href="#m04" onclick="setActive(this)">M04 기술 부채</a>
+    <a class="nav-item" href="#m05" onclick="setActive(this)">M05 시니어 사고법</a>
+  </div>
+  <a class="topbar-quiz" href="junior_dev_quiz.html" target="_blank">
+    <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+    퀴즈 풀기
+  </a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-tag">초급 개발자 자기학습 교육자료</div>
+  <h1>"요구사항대로 만들었는데<br><em>왜 틀렸나요?</em>"</h1>
+  <p class="hero-sub">IT 시스템 구현 로직 설계 — 주니어가 빠지는 함정과 사고 전환<br>데이터 모델링 · 프로세스 구현 · 요구사항 해석 · 기술 부채</p>
+  <div class="hero-meta">
+    <span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg> 자기학습 2~3시간</span>
+    <span><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> 초급 개발자 1~3년</span>
+    <span><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> ERP · CRM · HR · MES</span>
+    <span><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> 5개 모듈 · 12개 실전 케이스</span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- MODULE 00: OPENING -->
+<!-- ═══════════════════════════════════════════ -->
+<div style="background:#fff">
+<div class="container">
+<section class="section fade-in" id="m00">
+  <div class="module-header">
+    <div class="module-num">00</div>
+    <div class="module-header-text">
+      <h2>오프닝 — 왜 이 교육이 필요한가</h2>
+      <p>고객이 요청한 것을 정확히 구현했는데, 왜 Go-Live 3개월 후 전면 재설계를 요청했을까?</p>
+    </div>
+  </div>
+
+  <div class="card" style="border-left: 4px solid var(--navy); background: #f8faff;">
+    <div class="pill">실제 사례 | ERP 구매 모듈 구현 프로젝트</div>
+    <p style="font-size:14px; color:var(--gray-800); line-height:1.75;">
+      고객 요청: <strong>"구매 발주서를 입력하면 자동으로 재고에 반영해 주세요."</strong><br>
+      → 주니어 개발자는 요청 그대로 구현 완료.<br>
+      6개월 후: 부분 납품 처리 불가 / 반품 시 재고 음수 발생 / 공급업체별 단가 이력 추적 불가<br>
+      → <strong style="color:var(--red)">전면 재설계 요청</strong>
+    </p>
+  </div>
+
+  <div style="margin-top:16px">
+    <div class="section-divider">주니어 vs. 시니어 사고 패턴</div>
+    <div class="vs-wrap">
+      <div class="vs-card wrong">
+        <div class="vs-label">✗ 주니어의 사고 패턴</div>
+        <div class="vs-item">고객이 말한 것을 그대로 구현하는 것이 목표</div>
+        <div class="vs-item">요구사항 = 완전한 명세</div>
+        <div class="vs-item">현재 케이스만 검토 ("이렇게 하면 되지 않나?")</div>
+        <div class="vs-item">화면/기능 단위로 분리해서 생각</div>
+        <div class="vs-item">"일단 동작하면 성공"</div>
+      </div>
+      <div class="vs-card correct">
+        <div class="vs-label">✓ 시니어의 사고 패턴</div>
+        <div class="vs-item">고객이 말한 것 뒤에 있는 의도를 파악</div>
+        <div class="vs-item">요구사항 = 출발점, 질문이 필요</div>
+        <div class="vs-item">예외 케이스 / 미래 변경 가능성까지 설계</div>
+        <div class="vs-item">데이터의 생명주기 전체를 추적</div>
+        <div class="vs-item">"이것이 바뀌면 무엇이 깨지는가?"</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight">
+    <div class="insight-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div>
+    <div class="insight-text"><strong>핵심 명제:</strong> 고객의 말(Requirement)과 고객의 진짜 필요(Need)는 다르다.<br>What을 구현하라는 지시보다 <strong>Why가 필요한가</strong>를 먼저 파악하는 습관이 핵심 역량이다.</div>
+  </div>
+</section>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- MODULE 01: DATA MODELING -->
+<!-- ═══════════════════════════════════════════ -->
+<div style="background:var(--gray-100)">
+<div class="container">
+<section class="section fade-in" id="m01">
+  <div class="module-header">
+    <div class="module-num">01</div>
+    <div class="module-header-text">
+      <h2>데이터 모델링 함정</h2>
+      <p>화면을 보고 테이블을 만들면 안 되는 5가지 이유</p>
+    </div>
+  </div>
+
+  <div class="card-grid" style="margin-bottom:20px">
+    <div class="trap-card">
+      <div class="trap-tag">함정 1-1</div>
+      <div class="trap-title">화면 = 테이블 착각</div>
+      <div class="trap-body">주문서 화면 칸 그대로 컬럼 설계 → 부분취소·분할배송 추가 요청 시 전면 재설계</div>
+    </div>
+    <div class="trap-card">
+      <div class="trap-tag">함정 1-2</div>
+      <div class="trap-title">주소·이력 분리 미흡</div>
+      <div class="trap-body">고객 테이블에 주소 직접 저장 → 주소 변경 시 과거 배송 이력도 바뀜 (데이터 오염)</div>
+    </div>
+    <div class="trap-card">
+      <div class="trap-tag">함정 1-3</div>
+      <div class="trap-title">Status 컬럼 남용</div>
+      <div class="trap-body">status = 'Y'/'N' 단순화 → 중간 상태(보류·검토 중)·이력 추적 전면 불가</div>
+    </div>
+    <div class="trap-card">
+      <div class="trap-tag">함정 1-4</div>
+      <div class="trap-title">코드성 데이터 하드코딩</div>
+      <div class="trap-body">부서코드를 IF문에 직접 박아 넣기 → 조직 개편 때마다 개발자 수작업 수정</div>
+    </div>
+    <div class="trap-card">
+      <div class="trap-tag">함정 1-5</div>
+      <div class="trap-title">시간 축 미반영</div>
+      <div class="trap-body">Effective Date 없이 현재 값만 저장 → 급여·조직 소급 계산 시 기준 데이터 없음</div>
+    </div>
+  </div>
+
+  <!-- Case 1-1 accordion -->
+  <div class="section-divider">실전 케이스</div>
+
+  <div class="accordion-item open">
+    <div class="accordion-header" onclick="toggleAcc(this)">
+      <span>Case 1-1 · ERP 구매/재고 — 주문 화면을 그대로 DB로 옮기면?</span>
+      <span class="accordion-arrow">▾</span>
+    </div>
+    <div class="accordion-body">
+      <div class="vs-wrap" style="margin-bottom:14px">
+        <div>
+          <p style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:8px">✗ 잘못된 설계 (화면 기반)</p>
+          <table class="data-table" style="font-size:12.5px">
+            <tr><th>컬럼</th><th>타입</th><th>문제점</th></tr>
+            <tr><td>order_id</td><td style="font-family:var(--mono)">INT PK</td><td></td></tr>
+            <tr><td>customer_name</td><td style="font-family:var(--mono)">VARCHAR</td><td class="warn">고객 변경 시 이력 없음</td></tr>
+            <tr><td>item_name</td><td style="font-family:var(--mono)">VARCHAR</td><td class="warn">품목 여러 개면?</td></tr>
+            <tr><td>qty</td><td style="font-family:var(--mono)">INT</td><td class="warn">부분납품 불가</td></tr>
+            <tr><td>status</td><td style="font-family:var(--mono)">VARCHAR</td><td class="warn">중간 상태 표현 불가</td></tr>
+            <tr><td>address</td><td style="font-family:var(--mono)">VARCHAR</td><td class="warn">배송지 변경 이력 없음</td></tr>
+          </table>
+        </div>
+        <div>
+          <p style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px">✓ 올바른 설계 (생명주기 기반)</p>
+          <div class="code-block" style="font-size:11.5px">orders (주문 헤더)
+  order_id | customer_id (FK)
+  order_date | status_cd
+
+order_lines (품목별 라인)
+  line_id | order_id (FK)
+  item_id (FK) | qty_ordered
+  qty_shipped
+
+order_status_log (상태 이력)
+  log_id | order_id (FK)
+  status_cd | changed_at
+  changed_by
+
+customers / addresses (분리)
+  customer_id | name
+  address_id | valid_from | valid_to</div>
+        </div>
+      </div>
+      <div class="insight" style="margin-top:0">
+        <div class="insight-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div>
+        <div class="insight-text"><strong>사고 전환:</strong> 테이블을 설계하기 전에 먼저 묻기 — "이 주문이 부분 취소되면? 배송지가 바뀌면? 품목이 추가되면?" 화면(View)과 저장 구조(Model)는 다르다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggleAcc(this)">
+      <span>Case 1-3 · 1-5 · ERP 회계/HR — Status 단순화와 시간 축 누락</span>
+      <span class="accordion-arrow">▾</span>
+    </div>
+    <div class="accordion-body">
+      <div class="vs-wrap">
+        <div>
+          <p style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:8px">✗ status = 'Y' / 'N'</p>
+          <div class="trap-body" style="margin-bottom:10px">
+            · 가능한 상태: 2가지<br>
+            · 결재 중 / 보류 / 반려 표현 불가<br>
+            · 상태 변경 시각 기록 없음<br>
+            · 누가 바꿨는지 추적 불가<br>
+            · 감사(Audit) 요건 충족 불가
+          </div>
+        </div>
+        <div>
+          <p style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px">✓ 상태 코드 + 이력 테이블 분리</p>
+          <div class="trap-body" style="margin-bottom:10px">
+            · 상태 코드 테이블 별도 관리<br>
+            · status_log: 변경 시각 + 변경자 기록<br>
+            · 새 상태 추가 시 코드 변경 없음<br>
+            · 감사 추적(Audit Trail) 자동 확보<br>
+            · 평균 처리 시간 등 통계 산출 가능
+          </div>
+        </div>
+      </div>
+      <div class="vs-wrap" style="margin-top:12px">
+        <div>
+          <p style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:8px">✗ 현재 값만 저장 (Effective Date 없음)</p>
+          <div class="code-block" style="font-size:11.5px">employees
+  emp_id | name | salary
+  <span class="cm">-- 급여 인상 시 이전 값 소실</span>
+  <span class="cm">-- 소급 계산 불가</span></div>
+        </div>
+        <div>
+          <p style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px">✓ Effective Date 패턴 적용</p>
+          <div class="code-block" style="font-size:11.5px">salary_history
+  emp_id | amount
+  effective_from | effective_to
+  <span class="cm">-- 특정 시점 조회:</span>
+  <span class="cm">-- WHERE eff_from &lt;= :date</span>
+  <span class="cm">-- AND eff_to &gt;= :date</span></div>
+        </div>
+      </div>
+      <div class="insight" style="margin-top:12px">
+        <div class="insight-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div>
+        <div class="insight-text"><strong>공통 원칙:</strong> '현재 상태'만 저장하면 과거와 미래를 잃는다. 비즈니스 데이터는 거의 모두 '언제부터 언제까지'라는 시간 축이 필요하다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight" style="margin-top:16px">
+    <div class="insight-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div>
+    <div class="insight-text"><strong>핵심 질문:</strong> 이 데이터는 '언제', '어떻게' 바뀔 수 있는가를 먼저 물어야 한다</div>
+  </div>
+</section>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- MODULE 02: PROCESS LOGIC -->
+<!-- ═══════════════════════════════════════════ -->
+<div style="background:#fff">
+<div class="container">
+<section class="section fade-in" id="m02">
+  <div class="module-header">
+    <div class="module-num">02</div>
+    <div class="module-header-text">
+      <h2>프로세스 로직 구현 함정</h2>
+      <p>업무 담당자가 설명한 정상 흐름은 전체 로직의 20%에 불과하다</p>
+    </div>
+  </div>
+
+  <div class="card-grid" style="margin-bottom:20px">
+    <div class="trap-card amber">
+      <div class="trap-tag">함정 2-1</div>
+      <div class="trap-title">Happy Path만 구현</div>
+      <div class="trap-body">정상 결제만 구현 → 부분환불·타임아웃·이중결제 케이스 누락 [CRM 영업관리]</div>
+    </div>
+    <div class="trap-card amber">
+      <div class="trap-tag">함정 2-2</div>
+      <div class="trap-title">순서 의존성 미고려</div>
+      <div class="trap-body">전표 마감 전 수정 허용 → 회계 불일치 / 승인 전 다음 단계 진입 허용 → 내부통제 구멍 [ERP 회계]</div>
+    </div>
+    <div class="trap-card amber">
+      <div class="trap-tag">함정 2-3</div>
+      <div class="trap-title">예외를 버튼으로 해결</div>
+      <div class="trap-body">특수 케이스마다 '예외처리' 버튼 추가 → 6개월 후 버튼 30개짜리 화면 탄생</div>
+    </div>
+    <div class="trap-card amber">
+      <div class="trap-tag">함정 2-4</div>
+      <div class="trap-title">동시성 미고려</div>
+      <div class="trap-body">재고 차감 로직에 Lock 없음 → 동시 주문 시 마이너스 재고 발생 [ERP 재고·MES]</div>
+    </div>
+    <div class="trap-card amber">
+      <div class="trap-tag">함정 2-5</div>
+      <div class="trap-title">UI에서만 유효성 검증</div>
+      <div class="trap-body">화면 우회(직접 API 호출) 시 승인 없이 처리 → 내부통제 완전 무력화 [ERP·HR]</div>
+    </div>
+  </div>
+
+  <div class="section-divider">실전 케이스</div>
+
+  <div class="accordion-item open">
+    <div class="accordion-header" onclick="toggleAcc(this)">
+      <span>Case 2-1 · CRM 영업관리 — Happy Path만 구현한 결과</span>
+      <span class="accordion-arrow">▾</span>
+    </div>
+    <div class="accordion-body">
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px">주문 접수 → 결제 요청 → 재고 차감 → 배송 처리 → 완료 (주니어가 구현한 정상 흐름만)</p>
+      <table class="data-table">
+        <tr><th>누락 케이스</th><th>실제 발생 문제</th><th>도메인</th></tr>
+        <tr><td>결제 타임아웃</td><td>결제 요청 후 응답 없음 → 재시도 시 이중결제</td><td>CRM</td></tr>
+        <tr><td>재고 부족 (부분)</td><td>10개 주문인데 7개만 있음 → 부분 승인/대기 처리 로직 없음</td><td>ERP·재고</td></tr>
+        <tr><td>결제 취소 후 재고</td><td>결제 취소 시 차감된 재고 자동 복구 로직 없음</td><td>ERP·재고</td></tr>
+        <tr><td>배송 중 주소 변경</td><td>배송 중 고객이 주소 변경 요청 → 변경 시점 기준 처리 없음</td><td>CRM</td></tr>
+        <tr><td>중복 주문 방지</td><td>새로고침·네트워크 지연으로 동일 주문 2회 생성</td><td>전 도메인</td></tr>
+      </table>
+      <div class="insight" style="margin-top:12px">
+        <div class="insight-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div>
+        <div class="insight-text"><strong>사고 전환:</strong> 로직 구현 전, 'WHEN 이 단계가 실패하면 / 지연되면 / 건너뛰면?' 질문을 각 단계마다 반복하라</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggleAcc(this)">
+      <span>Case 2-4 · MES — 재고 동시 차감과 Lock 미처리</span>
+      <span class="accordion-arrow">▾</span>
+    </div>
+    <div class="accordion-body">
+      <div class="vs-wrap">
+        <div>
+          <p style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:8px">✗ Lock 없는 코드</p>
+          <div class="code-block" style="font-size:11.5px"><span class="kw">def</span> <span class="fn">deduct_stock</span>(item_id, qty):
+  stock = db.<span class="fn">get_stock</span>(item_id) <span class="cm"># 100</span>
+  <span class="kw">if</span> stock >= qty:
+    db.<span class="fn">update_stock</span>(item_id, stock - qty)
+<span class="cm">
+# A: 100 조회 → B: 100 조회
+# A: 20으로 업데이트
+# B: 20으로 업데이트  ← 음수!</span></div>
+        </div>
+        <div>
+          <p style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px">✓ 해결 방법</p>
+          <div class="code-block" style="font-size:11.5px"><span class="cm">-- 비관적 Lock</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> stock
+<span class="kw">WHERE</span> item_id = :id
+<span class="kw">FOR UPDATE</span>; <span class="cm">-- 다른 트랜잭션 대기</span>
+
+<span class="cm">-- 낙관적 Lock (version 컬럼)</span>
+<span class="kw">UPDATE</span> stock
+<span class="kw">SET</span> qty = qty - :n,
+    version = version + 1
+<span class="kw">WHERE</span> id = :id
+  <span class="kw">AND</span> version = :expected_ver;</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggleAcc(this)">
+      <span>Case 2-5 · ERP — UI 전용 승인 로직의 위험성</span>
+      <span class="accordion-arrow">▾</span>
+    </div>
+    <div class="accordion-body">
+      <div class="vs-wrap">
+        <div class="vs-card wrong">
+          <div class="vs-label">✗ UI에서만 검증</div>
+          <div class="vs-item">화면: 결재 완료 전 '발주 확정' 버튼 비활성화 (JS)</div>
+          <div class="vs-item">Postman으로 API 직접 호출 → 검증 우회</div>
+          <div class="vs-item">결재 없이 발주 5건 감사에서 발견</div>
+          <div class="vs-item">내부통제 완전 무력화</div>
+        </div>
+        <div class="vs-card correct">
+          <div class="vs-label">✓ 서버에서 재검증</div>
+          <div class="vs-item">API 진입 시 결재 상태 DB에서 재확인</div>
+          <div class="vs-item">미결재 상태면 400 에러 반환</div>
+          <div class="vs-item">UI는 UX 보조 수단일 뿐</div>
+          <div class="vs-item">비즈니스 규칙 = 서버 + DB 레이어</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight" style="margin-top:16px">
+    <div class="insight-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div>
+    <div class="insight-text"><strong>핵심 질문:</strong> '이 로직이 실패하면 어떤 일이 벌어지는가?'를 먼저 역방향으로 생각해야 한다</div>
+  </div>
+</section>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- MODULE 03: REQUIREMENTS -->
+<!-- ═══════════════════════════════════════════ -->
+<div style="background:var(--gray-100)">
+<div class="container">
+<section class="section fade-in" id="m03">
+  <div class="module-header">
+    <div class="module-num">03</div>
+    <div class="module-header-text">
+      <h2>요구사항 해석 함정</h2>
+      <p>고객이 말한 것은 솔루션이지 요구사항이 아니다</p>
+    </div>
+  </div>
+
+  <div class="card-grid" style="margin-bottom:20px">
+    <div class="trap-card">
+      <div class="trap-tag">함정 3-1</div>
+      <div class="trap-title">솔루션을 요구사항으로 착각</div>
+      <div class="trap-body">"엑셀 업로드 기능 만들어 주세요" → 실제 필요: 배치 자동화 [ERP·HR]</div>
+    </div>
+    <div class="trap-card">
+      <div class="trap-tag">함정 3-2</div>
+      <div class="trap-title">현행 프로세스 그대로 전산화</div>
+      <div class="trap-body">오프라인 결재 문서 구조를 DB에 그대로 복제 → 종이 결재의 비효율도 함께 복제됨</div>
+    </div>
+    <div class="trap-card">
+      <div class="trap-tag">함정 3-3</div>
+      <div class="trap-title">빈도 낮은 예외에 과잉 투자</div>
+      <div class="trap-body">연 1회 케이스에 복잡한 화면 개발 → 개발 비용 &gt; 예외 처리 비용</div>
+    </div>
+    <div class="trap-card">
+      <div class="trap-tag">함정 3-4</div>
+      <div class="trap-title">묵시적 비즈니스 룰 누락</div>
+      <div class="trap-body">"마감은 매월 말일" → 공휴일이면? 주말이면? 윤달이면? 아무도 먼저 말하지 않는다</div>
+    </div>
+  </div>
+
+  <div class="section-divider">Case 3-1 · 5 Whys 적용 — HR 근태 엑셀 업로드 요청</div>
+
+  <div class="timeline card" style="padding:24px">
+    <div class="tl-item">
+      <div class="tl-dot">요청</div>
+      <div class="tl-content">
+        <div class="tl-label">고객의 말</div>
+        <div class="tl-text">"근태 데이터를 엑셀로 업로드하는 기능을 만들어 주세요"</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot">Why 1</div>
+      <div class="tl-content">
+        <div class="tl-label">첫 번째 이유</div>
+        <div class="tl-text">매월 초 전 직원 근태 데이터를 HR 시스템에 넣어야 해서</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot">Why 2</div>
+      <div class="tl-content">
+        <div class="tl-label">두 번째 이유</div>
+        <div class="tl-text">출입통제 시스템에서 export한 파일을 수작업으로 입력 중</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot">Why 3</div>
+      <div class="tl-content">
+        <div class="tl-label">근본 원인</div>
+        <div class="tl-text">출입통제 시스템과 HR 시스템이 별도로 운영되어 연동 없음</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot" style="background:var(--green)">해결</div>
+      <div class="tl-content">
+        <div class="tl-label" style="color:var(--green)">진짜 해결책</div>
+        <div class="tl-text" style="color:var(--green);font-weight:600">엑셀 업로드 X → 출입통제 시스템 API 연동 또는 야간 배치 자동화</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider" style="margin-top:24px">Case 3-4 · 묵시적 비즈니스 룰 체크리스트</div>
+
+  <div class="card">
+    <table class="data-table">
+      <tr><th>고객이 말한 것</th><th>아무도 말하지 않은 규칙</th></tr>
+      <tr><td>"마감은 매월 말일"</td><td>공휴일·주말이면 전 영업일로 이동</td></tr>
+      <tr><td>"연체 이자는 다음달 1일부터"</td><td>1일이 휴일이면 다음 영업일 기산</td></tr>
+      <tr><td>"급여는 25일 지급"</td><td>25일 휴일이면 24일(전), 금요일이면 목요일</td></tr>
+      <tr><td>"재고 마감은 분기 말"</td><td>해외 법인은 현지 시간 기준 적용</td></tr>
+    </table>
+    <div class="insight" style="margin-top:14px">
+      <div class="insight-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div>
+      <div class="insight-text"><strong>체크리스트:</strong> 요구사항 수신 후 → ① Why가 필요한가 ② 현재 어떻게 하고 있나 ③ 예외 케이스가 있나 ④ 관련 시스템이 있나 ⑤ 이 기능이 없으면 무슨 일이 생기나</div>
+    </div>
+  </div>
+</section>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- MODULE 04: TECH DEBT -->
+<!-- ═══════════════════════════════════════════ -->
+<div style="background:#fff">
+<div class="container">
+<section class="section fade-in" id="m04">
+  <div class="module-header">
+    <div class="module-num">04</div>
+    <div class="module-header-text">
+      <h2>워크어라운드와 기술 부채</h2>
+      <p>워크어라운드는 선택이 아니라 '판단'이다</p>
+    </div>
+  </div>
+
+  <div class="card-grid" style="margin-bottom:20px">
+    <div class="trap-card red">
+      <div class="trap-tag">패턴 4-1</div>
+      <div class="trap-title">플래그 컬럼 남용</div>
+      <div class="trap-body">IS_SPECIAL_CASE_2, FLAG_B, FLAG_X → 6개월 후 의미 불명 컬럼 누적 → 담당자 퇴사 시 블랙박스화</div>
+    </div>
+    <div class="trap-card red">
+      <div class="trap-tag">패턴 4-2</div>
+      <div class="trap-title">배치로 정합성 보정</div>
+      <div class="trap-body">실시간 처리 불가 → 야간 배치로 보정 → 낮 동안 데이터 신뢰 불가 → 배치 실패 시 오류 누적</div>
+    </div>
+    <div class="trap-card red">
+      <div class="trap-tag">패턴 4-3</div>
+      <div class="trap-title">하드코딩된 예외 처리</div>
+      <div class="trap-body">IF customer_id = 'CUS001' THEN... → 예외 업체 증가 시 코드 폭증 → 테스트·배포 없이 수정 불가</div>
+    </div>
+    <div class="trap-card red">
+      <div class="trap-tag">패턴 4-4</div>
+      <div class="trap-title">문서 없는 워크어라운드</div>
+      <div class="trap-body">이유 모르게 돌아가는 로직 → 담당자 퇴사 후 아무도 손 못 댐 → "건드리면 터진다" 문화</div>
+    </div>
+  </div>
+
+  <div class="section-divider">워크어라운드 허용 vs. 재설계 판단 매트릭스</div>
+
+  <div class="card">
+    <table class="data-table">
+      <tr><th>판단 기준</th><th style="color:#86efac">✓ 워크어라운드 허용</th><th style="color:#fca5a5">⚠ 재설계 필요</th></tr>
+      <tr><td>발생 빈도</td><td>연 1~2회 이하</td><td>월 1회 이상</td></tr>
+      <tr><td>영향 범위</td><td>단일 사용자/부서</td><td>다수 사용자·시스템 전체</td></tr>
+      <tr><td>데이터 신뢰도</td><td>보조 데이터에 국한</td><td>핵심 트랜잭션 데이터</td></tr>
+      <tr><td>확장 가능성</td><td>이 케이스로 종결</td><td>유사 케이스 증가 예상</td></tr>
+      <tr><td>감사 요건</td><td>내부통제 미해당</td><td>회계·법무 감사 대상</td></tr>
+    </table>
+    <div class="insight" style="margin-top:14px">
+      <div class="insight-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div>
+      <div class="insight-text"><strong>워크어라운드 도입 시 최소 원칙:</strong> ① 왜 이 방법을 선택했는가 (배경) ② 어떤 조건에서 실행되는가 ③ 언제 제거/개선할 것인가 (기한 명시)</div>
+    </div>
+  </div>
+
+  <div class="section-divider" style="margin-top:24px">Case 4-1 · MES — 플래그 컬럼 누적 실사례</div>
+  <div class="card">
+    <div class="code-block"><span class="cm">-- 6개월 차 work_order 테이블 (실제 사례)</span>
+work_order_id     INT
+status            VARCHAR   <span class="cm">-- '대기'/'진행'/'완료'</span>
+IS_URGENT         CHAR(1)   <span class="cm">-- Y/N (납기 임박)</span>
+IS_REWORK         CHAR(1)   <span class="cm">-- Y/N (재작업 지시)</span>
+IS_HOLD           CHAR(1)   <span class="cm">-- Y/N (보류)</span>
+IS_SPECIAL_LINE   CHAR(1)   <span class="cm">-- Y/N (특수 라인 전용)</span>
+FLAG_A            CHAR(1)   <span class="cm">-- ??? (개발자 퇴사, 의미 불명)</span>
+FLAG_B            CHAR(1)   <span class="cm">-- ??? (레거시, 삭제 불가)</span>
+IS_EXPORTED       CHAR(1)   <span class="cm">-- Y/N (외부 시스템 전송 여부)</span></div>
+    <div class="vs-wrap" style="margin-top:12px">
+      <div>
+        <p style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:8px">✗ 문제</p>
+        <div class="trap-body">· 플래그 의미를 아는 사람 없음<br>· 삭제했다가 시스템 오류 발생<br>· 신규 개발자 온보딩 불가<br>· 결국 시스템 교체 결정</div>
+      </div>
+      <div>
+        <p style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px">✓ 올바른 설계</p>
+        <div class="code-block" style="font-size:11.5px">work_order_attributes
+  wo_id | attr_key
+  attr_value | created_at
+
+work_order_status_log
+  wo_id | status
+  changed_at | changed_by</div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- MODULE 05: SENIOR THINKING -->
+<!-- ═══════════════════════════════════════════ -->
+<div style="background:var(--gray-100)">
+<div class="container">
+<section class="section fade-in" id="m05">
+  <div class="module-header">
+    <div class="module-num">05</div>
+    <div class="module-header-text">
+      <h2>시니어처럼 생각하는 법</h2>
+      <p>길은 하나가 아니다 — 구현 전 3가지 경우의 수를 먼저 그려라</p>
+    </div>
+  </div>
+
+  <!-- 3-Option Rule -->
+  <div class="section-divider">사고 도구 1 — 3-Option Rule</div>
+  <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px;font-style:italic">"월말 마감 후 잔여 재고를 익월로 이월하는 로직을 구현해 주세요" (ERP 재고)</p>
+  <div class="option-cards">
+    <div class="option-card">
+      <div class="option-header" style="background:#003366">Option A — 배치 프로그램</div>
+      <div class="option-body">
+        <div class="option-label">장점</div>
+        <div class="option-row">구현 단순 / 기존 패턴 재활용</div>
+        <div class="option-label" style="margin-top:8px">단점</div>
+        <div class="option-row">실행 실패 시 익월 데이터 없음<br>재실행 로직 별도 필요</div>
+        <div class="option-label" style="margin-top:8px">적합 상황</div>
+        <div class="option-row">소규모·이월 데이터 단순 구조</div>
+      </div>
+    </div>
+    <div class="option-card" style="border-color:#86efac;border-width:2px">
+      <div class="option-header" style="background:var(--green)">Option B — 마감 트랜잭션 즉시 이월</div>
+      <div class="option-body">
+        <div class="option-label">장점</div>
+        <div class="option-row">원자성 보장 / 실패 시 롤백<br>별도 배치 불필요</div>
+        <div class="option-label" style="margin-top:8px">단점</div>
+        <div class="option-row">마감 처리 시간 증가<br>마감 로직 복잡도 상승</div>
+        <div class="option-label" style="margin-top:8px">적합 상황</div>
+        <div class="option-row" style="color:var(--green);font-weight:600">데이터 정합성 최우선</div>
+      </div>
+    </div>
+    <div class="option-card">
+      <div class="option-header" style="background:var(--amber)">Option C — 기간 파라미터 조회</div>
+      <div class="option-body">
+        <div class="option-label">장점</div>
+        <div class="option-row">이월 작업 자체 불필요<br>과거 임의 시점 조회 가능</div>
+        <div class="option-label" style="margin-top:8px">단점</div>
+        <div class="option-row">조회 쿼리 복잡도 증가<br>보고서 성능 저하 가능</div>
+        <div class="option-label" style="margin-top:8px">적합 상황</div>
+        <div class="option-row">데이터 무결성·유연성 최우선</div>
+      </div>
+    </div>
+  </div>
+  <div class="insight" style="margin-top:14px">
+    <div class="insight-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div>
+    <div class="insight-text">3가지를 나열한 후 '비즈니스 우선순위'와 '기술 제약'을 기준으로 의사결정. <strong>첫 번째 방법만 검토하는 것은 설계가 아니라 코딩이다.</strong></div>
+  </div>
+
+  <!-- CRUDS -->
+  <div class="section-divider" style="margin-top:28px">사고 도구 2 — 데이터 생명주기 (CRUDS) 전체 추적</div>
+  <div class="card-grid-3">
+    <div class="trap-card">
+      <div class="trap-tag">C · Create</div>
+      <div class="trap-title">생성</div>
+      <div class="trap-body">누가 어떤 조건에서 생성할 수 있나? 생성 시 자동 계산값은?</div>
+    </div>
+    <div class="trap-card">
+      <div class="trap-tag">R · Read</div>
+      <div class="trap-title">조회</div>
+      <div class="trap-body">누가 조회하나? 권한 범위는? 집계·보고서 형태는?</div>
+    </div>
+    <div class="trap-card">
+      <div class="trap-tag">U · Update</div>
+      <div class="trap-title">수정</div>
+      <div class="trap-body">어떤 필드가 수정 가능? 수정 이력 필요? 수정 시 연쇄 효과는?</div>
+    </div>
+    <div class="trap-card">
+      <div class="trap-tag">D · Delete</div>
+      <div class="trap-title">삭제</div>
+      <div class="trap-body">삭제 가능한가? 소프트 삭제 필요? 관련 데이터 처리는?</div>
+    </div>
+    <div class="trap-card">
+      <div class="trap-tag">S · Archive</div>
+      <div class="trap-title">보관</div>
+      <div class="trap-body">보관 기간은? 보관 후 조회 가능? 법적 보존 요건은?</div>
+    </div>
+  </div>
+
+  <!-- Checklist -->
+  <div class="section-divider" style="margin-top:28px">설계 완료 전 체크리스트 20</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px">
+    <div>
+      <p style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">요구사항</p>
+      <div class="checklist">
+        <div class="cl-item"><div class="cl-num">1</div>이 기능이 필요한 근본 이유를 설명할 수 있나?</div>
+        <div class="cl-item"><div class="cl-num">2</div>고객이 '솔루션'을 요구한 것인지 '문제'를 요구한 것인지 구분했나?</div>
+        <div class="cl-item"><div class="cl-num">3</div>명시되지 않은 비즈니스 룰(공휴일, 경계값 등)을 확인했나?</div>
+        <div class="cl-item"><div class="cl-num">4</div>이 기능을 사용하는 이해관계자를 모두 파악했나?</div>
+        <div class="cl-item"><div class="cl-num">5</div>현행(As-Is) 프로세스와 차이점을 정의했나?</div>
+      </div>
+    </div>
+    <div>
+      <p style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">데이터 모델</p>
+      <div class="checklist">
+        <div class="cl-item"><div class="cl-num">6</div>이 데이터는 언제, 어떻게 변경되는가?</div>
+        <div class="cl-item"><div class="cl-num">7</div>이력 추적이 필요한 데이터인가?</div>
+        <div class="cl-item"><div class="cl-num">8</div>Effective Date(유효 기간)가 필요한가?</div>
+        <div class="cl-item"><div class="cl-num">9</div>코드성 데이터는 별도 테이블로 분리했나?</div>
+        <div class="cl-item"><div class="cl-num">10</div>화면 구조와 DB 구조를 혼동하지 않았나?</div>
+      </div>
+    </div>
+    <div>
+      <p style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">로직 설계</p>
+      <div class="checklist">
+        <div class="cl-item"><div class="cl-num">11</div>Happy Path 외 Edge Case 5개 이상을 정의했나?</div>
+        <div class="cl-item"><div class="cl-num">12</div>동시 접근 시 데이터 정합성을 보장하는가?</div>
+        <div class="cl-item"><div class="cl-num">13</div>이 로직이 실패하면 어떤 일이 벌어지는가?</div>
+        <div class="cl-item"><div class="cl-num">14</div>비즈니스 규칙은 UI가 아닌 서버에서 검증하는가?</div>
+        <div class="cl-item"><div class="cl-num">15</div>순서 의존성(선행 조건)을 명확히 정의했나?</div>
+      </div>
+    </div>
+    <div>
+      <p style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">구현 판단</p>
+      <div class="checklist">
+        <div class="cl-item"><div class="cl-num">16</div>3가지 구현 방법을 검토하고 선택 이유를 설명할 수 있나?</div>
+        <div class="cl-item"><div class="cl-num">17</div>이 워크어라운드는 언제 제거/개선할 것인가?</div>
+        <div class="cl-item"><div class="cl-num">18</div>배치 처리라면 실패 시 복구 방법은?</div>
+        <div class="cl-item"><div class="cl-num">19</div>이 설계가 1년 후에도 유효한가?</div>
+        <div class="cl-item"><div class="cl-num">20</div>이 결정을 다른 개발자에게 문서로 남겼나?</div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- CLOSING PRINCIPLES -->
+<!-- ═══════════════════════════════════════════ -->
+<div style="background:#fff">
+<div class="container">
+<section class="section fade-in">
+  <div style="text-align:center;margin-bottom:32px">
+    <div style="font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--text-muted);text-transform:uppercase;margin-bottom:8px">Closing</div>
+    <h2 style="font-size:22px;font-weight:700;color:var(--gray-900)">주니어에서 시니어로 가는 길은<br>'더 많은 코딩'이 아니라 '더 깊은 질문'에서 시작된다</h2>
+  </div>
+
+  <div class="principle-card">
+    <div class="principle-num">01</div>
+    <div>
+      <div class="principle-title">고객의 말(Requirement)과 진짜 필요(Need)는 다르다</div>
+      <div class="principle-body">고객이 '엑셀 업로드'를 요청할 때 진짜 의도는 '대량 데이터를 빠르게 넣고 싶다'는 것이다. 'What을 구현하라'는 지시보다 'Why가 필요한가'를 먼저 파악하는 습관이 핵심 역량이다.</div>
+    </div>
+  </div>
+  <div class="principle-card">
+    <div class="principle-num">02</div>
+    <div>
+      <div class="principle-title">데이터는 현재가 아닌 시간 축 위에 존재한다</div>
+      <div class="principle-body">비즈니스 데이터는 생성·변경·삭제·보관의 생명주기를 가진다. '지금 이 값이 맞는가'보다 '이 값이 언제부터 언제까지 유효한가'를 먼저 설계해야 한다.</div>
+    </div>
+  </div>
+  <div class="principle-card">
+    <div class="principle-num">03</div>
+    <div>
+      <div class="principle-title">길은 하나가 아니다 — 설계는 선택이고 선택에는 근거가 필요하다</div>
+      <div class="principle-body">처음 떠오른 방법이 최선인 경우는 드물다. 최소 3가지 방법을 나열하고, '왜 이 방법을 선택했는가'를 동료와 미래의 자신에게 문서로 설명할 수 있어야 한다.</div>
+    </div>
+  </div>
+</section>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- QUIZ CTA -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="container" style="padding-bottom:48px">
+  <div class="quiz-cta fade-in">
+    <h2>배운 내용을 퀴즈로 확인해보세요</h2>
+    <p>실제 사례 기반 20문제 — ERP · CRM · HR · MES 전 도메인 · 오답 재도전 기능 포함</p>
+    <a class="quiz-cta-btn" href="junior_dev_quiz.html" target="_blank">
+      <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      퀴즈 시작하기
+    </a>
+    <div class="quiz-stats">
+      <div class="quiz-stat"><div class="quiz-stat-n">20</div><div class="quiz-stat-l">총 문제</div></div>
+      <div class="quiz-stat"><div class="quiz-stat-n">5</div><div class="quiz-stat-l">모듈</div></div>
+      <div class="quiz-stat"><div class="quiz-stat-n">4</div><div class="quiz-stat-l">도메인</div></div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  IT 시스템 구현 로직 설계 — 주니어 개발자를 위한 함정 가이드 · 총 5개 모듈 · 12개 실전 케이스
+</footer>
+
+<script>
+function toggleAcc(header) {
+  const item = header.parentElement;
+  item.classList.toggle('open');
+}
+
+function setActive(el) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Intersection Observer for fade-in + nav highlight
+const fadeEls = document.querySelectorAll('.fade-in');
+const sections = document.querySelectorAll('section[id]');
+
+const fadeObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); }
+  });
+}, { threshold: 0.08 });
+
+fadeEls.forEach(el => fadeObserver.observe(el));
+
+const navObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id;
+      document.querySelectorAll('.nav-item').forEach(n => {
+        n.classList.toggle('active', n.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { threshold: 0.35 });
+
+sections.forEach(s => navObserver.observe(s));
+</script>
+</body>
+</html>
