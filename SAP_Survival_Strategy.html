@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 시대의 SAP 컨설턴트 생존전략</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #003366;
+    --navy-mid: #004488;
+    --navy-light: #E8EEF5;
+    --navy-dark: #001E3C;
+    --white: #FFFFFF;
+    --dark: #0D1B2A;
+    --gray: #333333;
+    --mid-gray: #6B7280;
+    --light-gray: #F5F7FA;
+    --border: #E2E8F0;
+    --danger: #CC2200;
+    --warning: #CC6600;
+    --success: #006633;
+    --accent-blue: #AABBCC;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--white);
+    color: var(--gray);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(0,30,60,0.96);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(170,187,204,0.15);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px; height: 56px;
+  }
+  .nav-logo {
+    font-size: 12px; font-weight: 700; color: var(--accent-blue);
+    letter-spacing: 3px; text-transform: uppercase;
+  }
+  .nav-links {
+    display: flex; gap: 4px;
+  }
+  .nav-links a {
+    color: rgba(255,255,255,0.6); text-decoration: none;
+    font-size: 11px; font-weight: 500; letter-spacing: 1px;
+    padding: 6px 14px; border-radius: 3px;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+  .nav-links a:hover { color: #fff; background: rgba(255,255,255,0.08); }
+
+  /* ─── SECTIONS ─── */
+  section { padding: 100px 0; }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+
+  /* ─── ACTION TITLE BAR ─── */
+  .action-title {
+    background: var(--navy);
+    color: #fff;
+    padding: 18px 32px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.5;
+    border-left: 5px solid var(--accent-blue);
+    margin-bottom: 48px;
+    border-radius: 2px;
+  }
+
+  /* ─── SECTION LABEL ─── */
+  .section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 4px;
+    color: var(--accent-blue); text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  /* ─── HERO ─── */
+  #hero {
+    min-height: 100vh;
+    background: var(--dark);
+    display: grid; grid-template-columns: 1fr 320px;
+    align-items: center;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  #hero::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0; width: 5px;
+    background: var(--navy);
+  }
+  .hero-bg-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,51,102,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,51,102,0.08) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .hero-left {
+    padding: 120px 60px 120px 80px;
+    position: relative; z-index: 2;
+  }
+  .hero-tag {
+    display: inline-block;
+    background: var(--navy);
+    color: #fff; font-size: 9px; font-weight: 700;
+    letter-spacing: 4px; text-transform: uppercase;
+    padding: 6px 14px; margin-bottom: 40px;
+  }
+  .hero-sub {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 22px; font-weight: 300;
+    color: var(--accent-blue);
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+  }
+  .hero-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(52px, 6vw, 80px);
+    color: var(--white);
+    line-height: 1.08;
+    margin-bottom: 36px;
+    letter-spacing: -1px;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--accent-blue);
+  }
+  .hero-divider {
+    width: 64px; height: 3px;
+    background: var(--navy);
+    margin-bottom: 28px;
+  }
+  .hero-desc {
+    font-size: 15px; color: rgba(170,187,204,0.85);
+    max-width: 520px; line-height: 1.8;
+    font-style: italic;
+  }
+  .hero-right {
+    background: var(--navy);
+    height: 100%; min-height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    padding: 120px 40px; gap: 0;
+    position: relative; z-index: 2;
+  }
+  .hero-stat {
+    width: 100%;
+    text-align: center;
+    padding: 36px 20px;
+    border-bottom: 1px solid rgba(170,187,204,0.15);
+  }
+  .hero-stat:last-child { border-bottom: none; }
+  .hero-stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 56px; color: #fff;
+    line-height: 1; margin-bottom: 10px;
+  }
+  .hero-stat-label {
+    font-size: 11px; color: var(--accent-blue);
+    line-height: 1.5; font-weight: 500;
+  }
+
+  /* ─── AGENDA ─── */
+  #agenda { background: var(--light-gray); }
+  .agenda-list { display: flex; flex-direction: column; gap: 4px; }
+  .agenda-item {
+    display: grid; grid-template-columns: 64px 1fr auto;
+    align-items: center; gap: 24px;
+    background: var(--white);
+    padding: 20px 28px;
+    border: 1px solid var(--border);
+    border-left: 4px solid transparent;
+    transition: all 0.25s;
+    cursor: default;
+  }
+  .agenda-item:hover { border-left-color: var(--navy); transform: translateX(4px); }
+  .agenda-item.highlight {
+    background: var(--navy); border-color: var(--navy);
+    border-left-color: var(--accent-blue);
+  }
+  .agenda-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px; font-weight: 700;
+    color: var(--navy);
+  }
+  .agenda-item.highlight .agenda-num { color: var(--accent-blue); }
+  .agenda-title {
+    font-size: 15px; font-weight: 700; color: var(--dark);
+  }
+  .agenda-item.highlight .agenda-title { color: #fff; }
+  .agenda-sub {
+    font-size: 12px; color: var(--mid-gray);
+    margin-top: 3px; font-style: italic;
+  }
+  .agenda-item.highlight .agenda-sub { color: var(--accent-blue); }
+  .agenda-arrow {
+    font-size: 18px; color: var(--border);
+    transition: color 0.2s;
+  }
+  .agenda-item:hover .agenda-arrow { color: var(--navy); }
+  .agenda-item.highlight .agenda-arrow { color: var(--accent-blue); }
+
+  /* ─── IMPACT (AI Shock) ─── */
+  #impact { background: var(--white); }
+  .impact-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+    border: 2px solid var(--border);
+  }
+  .impact-card {
+    padding: 32px 28px;
+    border-top: 5px solid var(--border);
+    position: relative;
+    transition: transform 0.2s;
+  }
+  .impact-card:hover { transform: translateY(-3px); }
+  .impact-card.danger { border-top-color: var(--danger); }
+  .impact-card.warning { border-top-color: var(--warning); }
+  .impact-card.safe { border-top-color: var(--navy); }
+  .impact-period {
+    font-size: 9px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; margin-bottom: 12px;
+  }
+  .impact-card.danger .impact-period { color: var(--danger); }
+  .impact-card.warning .impact-period { color: var(--warning); }
+  .impact-card.safe .impact-period { color: var(--navy); }
+  .impact-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px; color: var(--dark);
+    margin-bottom: 20px; line-height: 1.2;
+  }
+  .impact-divider {
+    width: 100%; height: 1px;
+    background: var(--border); margin-bottom: 20px;
+  }
+  .impact-items { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .impact-items li {
+    font-size: 13px; color: var(--gray);
+    padding-left: 16px; position: relative;
+  }
+  .impact-items li::before {
+    content: '▸';
+    position: absolute; left: 0;
+    font-size: 10px; top: 2px;
+  }
+  .impact-card.danger .impact-items li::before { color: var(--danger); }
+  .impact-card.warning .impact-items li::before { color: var(--warning); }
+  .impact-card.safe .impact-items li::before { color: var(--navy); }
+  .impact-badge {
+    margin-top: 24px;
+    display: inline-block;
+    padding: 6px 16px;
+    font-size: 10px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: #fff;
+  }
+  .impact-card.danger .impact-badge { background: var(--danger); }
+  .impact-card.warning .impact-badge { background: var(--warning); }
+  .impact-card.safe .impact-badge { background: var(--navy); }
+
+  /* ─── DIAGNOSIS ─── */
+  #diagnosis { background: var(--light-gray); }
+  .diagnosis-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+    align-items: start;
+  }
+  .matrix-wrap { position: relative; }
+  .matrix-title {
+    font-size: 12px; font-weight: 700; color: var(--navy);
+    letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .matrix-2x2 {
+    display: grid; grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 3px; border: 2px solid var(--border);
+  }
+  .matrix-cell {
+    padding: 24px 20px; min-height: 160px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    border-left: 4px solid transparent;
+    transition: all 0.2s;
+  }
+  .matrix-cell:hover { transform: scale(1.02); z-index: 1; }
+  .cell-label {
+    font-size: 11px; font-weight: 700; color: var(--dark);
+    margin-bottom: 8px;
+  }
+  .cell-desc {
+    font-size: 11px; color: var(--mid-gray);
+    line-height: 1.6;
+  }
+  .cell-tl { background: #FFF0EE; border-left-color: #EE9988; }
+  .cell-tr { background: #EEF5FF; border-left-color: #6699CC; }
+  .cell-bl { background: #FFE8E8; border-left-color: var(--danger); }
+  .cell-br { background: #E8F5E8; border-left-color: var(--success); }
+
+  .axis-label-x {
+    text-align: center; margin-top: 12px;
+    font-size: 10px; font-weight: 700; color: var(--navy);
+    letter-spacing: 2px; text-transform: uppercase;
+  }
+
+  .checklist { }
+  .checklist-title {
+    font-size: 12px; font-weight: 700; color: var(--navy);
+    letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .check-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
+  .check-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    flex-shrink: 0; margin-top: 4px;
+  }
+  .check-dot.risk { background: var(--danger); }
+  .check-dot.safe { background: var(--success); }
+  .check-text { font-size: 13px; color: var(--gray); line-height: 1.5; }
+  .check-legend {
+    display: flex; gap: 20px; margin-top: 20px;
+    font-size: 11px; color: var(--mid-gray);
+    align-items: center;
+  }
+  .check-legend span { display: flex; align-items: center; gap: 6px; }
+
+  /* ─── STRATEGIES ─── */
+  #strategies { background: var(--white); }
+  .strategy-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px;
+  }
+  .strategy-card {
+    display: flex; flex-direction: column;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .strategy-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 60px rgba(0,51,102,0.12);
+  }
+  .strategy-header {
+    background: var(--navy); padding: 28px 24px;
+    display: flex; gap: 16px; align-items: flex-start;
+  }
+  .strategy-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px; font-weight: 700;
+    color: var(--accent-blue); line-height: 1;
+    flex-shrink: 0;
+  }
+  .strategy-header-text {}
+  .strategy-name {
+    font-size: 16px; font-weight: 700; color: #fff;
+    margin-bottom: 4px;
+  }
+  .strategy-subtitle {
+    font-size: 11px; color: var(--accent-blue);
+  }
+  .strategy-body { padding: 24px; flex: 1; background: var(--light-gray); }
+  .strategy-desc {
+    font-size: 13px; color: var(--gray);
+    line-height: 1.75; margin-bottom: 20px;
+  }
+  .strategy-divider {
+    height: 1px; background: var(--border); margin-bottom: 16px;
+  }
+  .strategy-actions-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--navy); margin-bottom: 12px;
+  }
+  .strategy-actions { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .strategy-actions li {
+    font-size: 12px; color: var(--gray);
+    padding-left: 18px; position: relative; line-height: 1.5;
+  }
+  .strategy-actions li::before {
+    content: '→';
+    position: absolute; left: 0;
+    color: var(--navy); font-weight: 700;
+  }
+  .strategy-footer {
+    padding: 14px 24px;
+    background: var(--navy-light);
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .strategy-timeline {
+    font-size: 11px; color: var(--navy); font-weight: 700;
+  }
+  .strategy-fit { font-size: 10px; color: var(--mid-gray); }
+
+  /* ─── TOOLS (AI Collaborator) ─── */
+  #tools { background: var(--dark); }
+  #tools .action-title {
+    border-left-color: var(--accent-blue);
+    background: rgba(0,68,136,0.5);
+  }
+  .tools-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+  }
+  .tools-col-title {
+    font-size: 12px; font-weight: 700; color: var(--accent-blue);
+    letter-spacing: 3px; text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .tool-row {
+    display: flex; gap: 0;
+    border: 1px solid rgba(170,187,204,0.15);
+    margin-bottom: 3px;
+    transition: border-color 0.2s;
+  }
+  .tool-row:hover { border-color: rgba(170,187,204,0.4); }
+  .tool-accent { width: 4px; background: var(--navy); flex-shrink: 0; }
+  .tool-content { padding: 16px 20px; flex: 1; }
+  .tool-name {
+    font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px;
+  }
+  .tool-desc { font-size: 11px; color: rgba(170,187,204,0.7); margin-bottom: 8px; }
+  .tool-badge {
+    display: inline-block;
+    font-size: 9px; font-weight: 700; letter-spacing: 2px;
+    padding: 3px 10px; text-transform: uppercase;
+  }
+  .badge-green { background: var(--success); color: #fff; }
+  .badge-orange { background: var(--warning); color: #fff; }
+
+  .before-after-list { display: flex; flex-direction: column; gap: 3px; }
+  .ba-row {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(170,187,204,0.1);
+    padding: 16px 20px;
+  }
+  .ba-task { font-size: 12px; color: #fff; font-weight: 700; margin-bottom: 10px; }
+  .ba-times { display: flex; align-items: center; gap: 12px; }
+  .ba-before {
+    background: rgba(204,34,0,0.3);
+    padding: 5px 14px; font-size: 11px; color: #ffaaaa; font-weight: 700;
+  }
+  .ba-arrow { color: var(--accent-blue); font-size: 16px; font-weight: 700; }
+  .ba-after {
+    background: var(--navy);
+    padding: 5px 14px; font-size: 11px; color: #fff; font-weight: 700;
+  }
+
+  /* ─── DEEP STRATEGIES ─── */
+  #deep { background: var(--white); }
+  .deep-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+  .deep-card { border: 1px solid var(--border); overflow: hidden; }
+  .deep-header {
+    background: var(--navy); padding: 22px 28px;
+  }
+  .deep-header-title { font-size: 16px; font-weight: 700; color: #fff; }
+  .deep-body { padding: 28px; background: var(--light-gray); }
+  .deep-item {
+    display: flex; gap: 12px;
+    margin-bottom: 24px; padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .deep-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+  .deep-accent-bar { width: 3px; background: var(--navy); flex-shrink: 0; border-radius: 2px; }
+  .deep-item-content {}
+  .deep-item-title { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+  .deep-item-desc { font-size: 12px; color: var(--mid-gray); line-height: 1.6; }
+
+  .orch-card .deep-header { background: var(--dark); }
+  .orch-body { padding: 28px; background: var(--dark); }
+  .orch-item {
+    background: #0D1B2A;
+    border: 1px solid rgba(0,51,102,0.4);
+    padding: 18px 20px;
+    margin-bottom: 3px;
+  }
+  .orch-item-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .orch-item-desc { font-size: 12px; color: rgba(170,187,204,0.75); line-height: 1.6; }
+
+  /* ─── ROADMAP ─── */
+  #roadmap { background: var(--light-gray); }
+  .phase-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px;
+  }
+  .phase-card { display: flex; flex-direction: column; overflow: hidden; }
+  .phase-header {
+    padding: 22px 20px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .ph1 .phase-header { background: #4477AA; }
+  .ph2 .phase-header { background: #225588; }
+  .ph3 .phase-header { background: #114477; }
+  .ph4 .phase-header { background: var(--navy); }
+  .phase-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.6);
+    letter-spacing: 3px; text-transform: uppercase;
+  }
+  .phase-name { font-size: 20px; font-weight: 900; color: #fff; }
+  .phase-period-badge {
+    background: var(--navy-light);
+    border: 1px solid rgba(0,51,102,0.3);
+    padding: 5px 10px;
+    font-size: 10px; font-weight: 700; color: var(--navy);
+    text-align: center; margin: 0 16px 0;
+  }
+  .phase-body {
+    flex: 1; padding: 20px 16px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-top: none;
+  }
+  .phase-period-wrap { padding: 12px 16px; background: var(--navy-light); }
+  .phase-tasks { list-style: none; margin-top: 12px; }
+  .phase-tasks li {
+    font-size: 11.5px; color: var(--gray);
+    padding: 8px 0 8px 20px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    line-height: 1.4;
+  }
+  .phase-tasks li:last-child { border-bottom: none; }
+  .phase-tasks li::before {
+    content: '✓';
+    position: absolute; left: 0;
+    font-weight: 700; font-size: 10px;
+  }
+  .ph1 .phase-tasks li::before { color: #4477AA; }
+  .ph2 .phase-tasks li::before { color: #225588; }
+  .ph3 .phase-tasks li::before { color: #114477; }
+  .ph4 .phase-tasks li::before { color: var(--navy); }
+  .phase-output {
+    padding: 14px 16px 16px;
+    margin-top: auto;
+  }
+  .ph1 .phase-output { background: #4477AA; }
+  .ph2 .phase-output { background: #225588; }
+  .ph3 .phase-output { background: #114477; }
+  .ph4 .phase-output { background: var(--navy); }
+  .phase-output-label {
+    font-size: 8px; font-weight: 700; letter-spacing: 3px;
+    color: rgba(255,255,255,0.5); text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .phase-output-text { font-size: 11px; color: #fff; line-height: 1.4; }
+
+  /* ─── COMPETENCIES ─── */
+  #competencies { background: var(--white); }
+  .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; }
+  .comp-group { margin-bottom: 36px; }
+  .comp-group-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--navy);
+    margin-bottom: 20px; padding-bottom: 8px;
+    border-bottom: 2px solid var(--navy);
+  }
+  .comp-item { margin-bottom: 22px; }
+  .comp-item-top {
+    display: flex; justify-content: space-between;
+    margin-bottom: 6px; align-items: baseline;
+  }
+  .comp-name { font-size: 13px; font-weight: 700; color: var(--dark); }
+  .comp-pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; font-weight: 700; color: var(--navy);
+  }
+  .comp-desc { font-size: 11px; color: var(--mid-gray); margin-bottom: 8px; line-height: 1.5; }
+  .comp-bar-bg {
+    height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;
+  }
+  .comp-bar-fill {
+    height: 100%; background: var(--navy); border-radius: 2px;
+    transition: width 1s ease;
+  }
+  .key-quote {
+    background: var(--navy); padding: 32px 36px;
+    border-left: 5px solid var(--accent-blue);
+    margin-top: 0;
+  }
+  .key-quote-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 3px;
+    color: var(--accent-blue); text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .key-quote-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: 19px; color: #fff; line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* ─── CONCLUSION ─── */
+  #conclusion { background: var(--dark); min-height: 80vh; display: flex; align-items: center; }
+  .conclusion-inner { position: relative; z-index: 2; }
+  .conclusion-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 4px;
+    color: var(--accent-blue); text-transform: uppercase;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--navy);
+    display: inline-block;
+  }
+  .conclusion-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(40px, 5vw, 68px);
+    color: var(--white); line-height: 1.1;
+    margin-bottom: 32px;
+  }
+  .conclusion-title em { font-style: italic; color: var(--accent-blue); }
+  .conclusion-desc {
+    font-size: 15px; color: rgba(170,187,204,0.85);
+    max-width: 680px; line-height: 1.85;
+    margin-bottom: 52px;
+  }
+  .takeaways { display: flex; flex-direction: column; gap: 3px; }
+  .takeaway {
+    display: flex; align-items: center; gap: 20px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(0,51,102,0.5);
+    padding: 18px 24px;
+    transition: background 0.2s;
+  }
+  .takeaway:first-child { background: rgba(0,51,102,0.4); border-color: var(--navy); }
+  .takeaway:hover { background: rgba(0,51,102,0.25); }
+  .takeaway-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px; font-weight: 700; color: var(--accent-blue);
+    flex-shrink: 0; width: 32px;
+  }
+  .takeaway-text { font-size: 14px; color: #fff; line-height: 1.5; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--navy-dark);
+    border-top: 1px solid rgba(170,187,204,0.1);
+    padding: 28px 40px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-left { font-size: 11px; color: rgba(170,187,204,0.5); letter-spacing: 1px; }
+  .footer-right {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: rgba(170,187,204,0.35);
+  }
+
+  /* ─── ANIMATIONS ─── */
+  .fade-up {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    #hero { grid-template-columns: 1fr; }
+    .hero-right { min-height: auto; flex-direction: row; flex-wrap: wrap; gap: 0; padding: 40px; }
+    .hero-stat { width: 33.3%; border-right: 1px solid rgba(170,187,204,0.15); border-bottom: none; padding: 24px 12px; }
+    .strategy-grid, .phase-grid { grid-template-columns: 1fr; }
+    .diagnosis-grid, .tools-grid, .deep-grid, .comp-grid { grid-template-columns: 1fr; }
+    .impact-grid { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .hero-left { padding: 100px 40px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">SAP Survival Strategy</div>
+  <div class="nav-links">
+    <a href="#agenda">Agenda</a>
+    <a href="#impact">AI 충격</a>
+    <a href="#diagnosis">자가진단</a>
+    <a href="#strategies">생존전략</a>
+    <a href="#roadmap">로드맵</a>
+    <a href="#conclusion">결론</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg-grid"></div>
+  <div class="hero-left">
+    <div class="hero-tag">Strategic Education Material</div>
+    <div class="hero-sub">AI 시대의</div>
+    <h1 class="hero-title">SAP 컨설턴트<br><em>생존전략</em></h1>
+    <div class="hero-divider"></div>
+    <p class="hero-desc">SAP가 미래를 보장해주지 않는다.<br>우리는 어떻게 이 거대한 파도를 타고 넘어갈 수 있을까?</p>
+  </div>
+  <div class="hero-right">
+    <div class="hero-stat">
+      <div class="hero-stat-num">72%</div>
+      <div class="hero-stat-label">SAP 작업이 AI로<br>자동화 가능</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">5년</div>
+      <div class="hero-stat-label">컨설턴트 역할<br>근본적 변화 시점</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">3배</div>
+      <div class="hero-stat-label">AI 활용 컨설턴트<br>생산성 배수</div>
+    </div>
+  </div>
+</section>
+
+<!-- AGENDA -->
+<section id="agenda">
+  <div class="container">
+    <div class="action-title fade-up">
+      본 교육은 AI 충격을 직시하고, SAP 컨설턴트가 나아갈 3가지 전략 방향을 제시합니다
+    </div>
+    <div class="agenda-list fade-up">
+      <div class="agenda-item">
+        <div class="agenda-num">01</div>
+        <div>
+          <div class="agenda-title">AI 충격의 실체</div>
+          <div class="agenda-sub">SAP 컨설팅 시장에서 무슨 일이 벌어지고 있는가?</div>
+        </div>
+        <div class="agenda-arrow">→</div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-num">02</div>
+        <div>
+          <div class="agenda-title">위협 유형별 진단</div>
+          <div class="agenda-sub">나의 현재 포지션은 안전한가? 자가 진단 프레임워크</div>
+        </div>
+        <div class="agenda-arrow">→</div>
+      </div>
+      <div class="agenda-item highlight">
+        <div class="agenda-num">03</div>
+        <div>
+          <div class="agenda-title">3가지 생존 전략</div>
+          <div class="agenda-sub">AI Collaborator / Domain Expert / Orchestrator</div>
+        </div>
+        <div class="agenda-arrow">→</div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-num">04</div>
+        <div>
+          <div class="agenda-title">실행 로드맵</div>
+          <div class="agenda-sub">지금 당장 시작할 수 있는 12개월 전환 계획</div>
+        </div>
+        <div class="agenda-arrow">→</div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-num">05</div>
+        <div>
+          <div class="agenda-title">결론 및 Q&A</div>
+          <div class="agenda-sub">파도를 두려워할 것인가, 타고 넘을 것인가</div>
+        </div>
+        <div class="agenda-arrow">→</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="container">
+    <div class="section-label fade-up">01 — AI 충격의 실체</div>
+    <div class="action-title fade-up">
+      AI는 SAP 컨설팅의 '반복적 전문성'을 빠르게 잠식하며, 시장 구조 자체를 재편하고 있다
+    </div>
+    <div class="impact-grid fade-up">
+      <div class="impact-card danger">
+        <div class="impact-period">단기 충격 (現在)</div>
+        <div class="impact-title">반복 작업<br>자동화</div>
+        <div class="impact-divider"></div>
+        <ul class="impact-items">
+          <li>ABAP 코드 생성 AI</li>
+          <li>표준 설정 문서 자동화</li>
+          <li>FI/CO 전표 분류 ML</li>
+          <li>기본 Q&A 챗봇 대체</li>
+        </ul>
+        <div class="impact-badge">위험 높음</div>
+      </div>
+      <div class="impact-card warning">
+        <div class="impact-period">중기 충격 (1~3년)</div>
+        <div class="impact-title">분석·설계<br>영역 침범</div>
+        <div class="impact-divider"></div>
+        <ul class="impact-items">
+          <li>Fit/Gap 분석 보조 AI</li>
+          <li>프로세스 최적화 제안</li>
+          <li>사용자 교육 자동 생성</li>
+          <li>테스트 케이스 자동화</li>
+        </ul>
+        <div class="impact-badge">위험 중간</div>
+      </div>
+      <div class="impact-card safe">
+        <div class="impact-period">장기 충격 (3~5년)</div>
+        <div class="impact-title">전략 영역<br>도전</div>
+        <div class="impact-divider"></div>
+        <ul class="impact-items">
+          <li>ERP 전략 수립 AI 보조</li>
+          <li>변화관리 시뮬레이션</li>
+          <li>비즈니스 케이스 자동화</li>
+          <li>멀티 시스템 오케스트레이션</li>
+        </ul>
+        <div class="impact-badge">위험 낮음</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIAGNOSIS -->
+<section id="diagnosis">
+  <div class="container">
+    <div class="section-label fade-up">02 — 위협 유형별 진단</div>
+    <div class="action-title fade-up">
+      '대체 가능성 × 차별화 역량' 매트릭스로 자신의 현재 포지션을 냉정하게 진단해야 한다
+    </div>
+    <div class="diagnosis-grid fade-up">
+      <div class="matrix-wrap">
+        <div class="matrix-title">AI 대체 가능성 × 차별화 역량 매트릭스</div>
+        <div style="display:flex;align-items:stretch;gap:0;">
+          <div style="writing-mode:vertical-rl;transform:rotate(0deg);font-size:10px;font-weight:700;color:var(--navy);letter-spacing:2px;text-transform:uppercase;padding:0 10px 0 0;display:flex;align-items:center;justify-content:center;">차별화 역량</div>
+          <div style="flex:1;">
+            <div class="matrix-2x2">
+              <div class="matrix-cell cell-tl">
+                <div class="cell-label">전환 필요 (위험)</div>
+                <div class="cell-desc">High AI 대체<br>Low 차별화<br>→ 즉시 재포지션 필요</div>
+              </div>
+              <div class="matrix-cell cell-tr">
+                <div class="cell-label">안전지대 (현재 우위)</div>
+                <div class="cell-desc">Low AI 대체<br>High 차별화<br>→ 강점 유지·확장</div>
+              </div>
+              <div class="matrix-cell cell-bl">
+                <div class="cell-label">소멸 위험 (Critical)</div>
+                <div class="cell-desc">High AI 대체<br>High 차별화 없음<br>→ 생존 불가 영역</div>
+              </div>
+              <div class="matrix-cell cell-br">
+                <div class="cell-label">기회 영역 (성장)</div>
+                <div class="cell-desc">Low AI 대체<br>High 차별화<br>→ 집중 투자 영역</div>
+              </div>
+            </div>
+            <div class="axis-label-x">AI 대체 가능성 →</div>
+          </div>
+        </div>
+      </div>
+      <div class="checklist">
+        <div class="checklist-title">자가진단 체크리스트</div>
+        <div class="check-item">
+          <div class="check-dot risk"></div>
+          <div class="check-text">내 업무의 50% 이상이 문서작업이나 설정인가?</div>
+        </div>
+        <div class="check-item">
+          <div class="check-dot risk"></div>
+          <div class="check-text">동일 작업을 3회 이상 반복 수행하는가?</div>
+        </div>
+        <div class="check-item">
+          <div class="check-dot safe"></div>
+          <div class="check-text">특정 산업의 비즈니스 프로세스 전문가인가?</div>
+        </div>
+        <div class="check-item">
+          <div class="check-dot safe"></div>
+          <div class="check-text">고객의 전략 결정에 직접 관여하는가?</div>
+        </div>
+        <div class="check-item">
+          <div class="check-dot safe"></div>
+          <div class="check-text">복수의 SAP 모듈을 통합하여 설계 가능한가?</div>
+        </div>
+        <div class="check-item">
+          <div class="check-dot safe"></div>
+          <div class="check-text">AI 도구를 현재 업무에 적용하고 있는가?</div>
+        </div>
+        <div class="check-legend">
+          <span><span class="check-dot risk" style="display:inline-block;width:10px;height:10px;border-radius:50%;"></span> 위험 신호</span>
+          <span><span class="check-dot safe" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--success);"></span> 강점 신호</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STRATEGIES -->
+<section id="strategies">
+  <div class="container">
+    <div class="section-label fade-up">03 — 3가지 생존 전략</div>
+    <div class="action-title fade-up">
+      AI 시대 SAP 컨설턴트의 생존은 3가지 명확한 포지셔닝 전략 중 하나를 선택하는 것에서 시작된다
+    </div>
+    <div class="strategy-grid fade-up">
+      <div class="strategy-card">
+        <div class="strategy-header">
+          <div class="strategy-num">01</div>
+          <div class="strategy-header-text">
+            <div class="strategy-name">AI Collaborator</div>
+            <div class="strategy-subtitle">AI와 함께 일하는 전문가</div>
+          </div>
+        </div>
+        <div class="strategy-body">
+          <p class="strategy-desc">AI 도구를 내 업무에 통합하여 생산성을 3배 이상 높이는 전략. 현재 역할을 유지하면서 AI를 강력한 도구로 활용.</p>
+          <div class="strategy-divider"></div>
+          <div class="strategy-actions-label">핵심 액션</div>
+          <ul class="strategy-actions">
+            <li>BTP AI Core 활용 숙달</li>
+            <li>Joule AI 어시스턴트 활용</li>
+            <li>프롬프트 엔지니어링 습득</li>
+          </ul>
+        </div>
+        <div class="strategy-footer">
+          <div class="strategy-timeline">⏱ 0~6개월</div>
+          <div class="strategy-fit">전 레벨 적용 가능</div>
+        </div>
+      </div>
+      <div class="strategy-card">
+        <div class="strategy-header">
+          <div class="strategy-num">02</div>
+          <div class="strategy-header-text">
+            <div class="strategy-name">Domain Expert</div>
+            <div class="strategy-subtitle">산업·도메인 심화 전문가</div>
+          </div>
+        </div>
+        <div class="strategy-body">
+          <p class="strategy-desc">특정 산업(제조, 물류, 금융)의 비즈니스 프로세스를 AI가 대체할 수 없는 깊이로 전문화하는 전략.</p>
+          <div class="strategy-divider"></div>
+          <div class="strategy-actions-label">핵심 액션</div>
+          <ul class="strategy-actions">
+            <li>산업별 규제·컴플라이언스 심화</li>
+            <li>고객 비즈니스 전략 연계 역량</li>
+            <li>S/4HANA 전환 어드바이저</li>
+          </ul>
+        </div>
+        <div class="strategy-footer">
+          <div class="strategy-timeline">⏱ 6~18개월</div>
+          <div class="strategy-fit">3년 이상 경력 추천</div>
+        </div>
+      </div>
+      <div class="strategy-card">
+        <div class="strategy-header">
+          <div class="strategy-num">03</div>
+          <div class="strategy-header-text">
+            <div class="strategy-name">AI Orchestrator</div>
+            <div class="strategy-subtitle">AI 시스템 설계·통합 전문가</div>
+          </div>
+        </div>
+        <div class="strategy-body">
+          <p class="strategy-desc">AI 에이전트, 자동화 워크플로우, SAP BTP를 설계·통합하여 고객의 AI 전환을 리드하는 최상위 포지션.</p>
+          <div class="strategy-divider"></div>
+          <div class="strategy-actions-label">핵심 액션</div>
+          <ul class="strategy-actions">
+            <li>SAP BTP 아키텍처 설계</li>
+            <li>LLM + ERP 통합 구현</li>
+            <li>AI 거버넌스·ROI 설계</li>
+          </ul>
+        </div>
+        <div class="strategy-footer">
+          <div class="strategy-timeline">⏱ 12~24개월</div>
+          <div class="strategy-fit">시니어 / 아키텍트 추천</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS -->
+<section id="tools">
+  <div class="container">
+    <div class="section-label fade-up" style="color:var(--accent-blue);">전략 01 — AI Collaborator 심화</div>
+    <div class="action-title fade-up">
+      SAP BTP와 Joule AI를 업무에 즉시 통합하여 생산성 격차를 만들어야 한다
+    </div>
+    <div class="tools-grid fade-up">
+      <div>
+        <div class="tools-col-title">AI 도구 활용 맵</div>
+        <div class="tool-row">
+          <div class="tool-accent"></div>
+          <div class="tool-content">
+            <div class="tool-name">SAP Joule</div>
+            <div class="tool-desc">AI 어시스턴트 | 자연어로 SAP 시스템 조회·분석</div>
+            <span class="tool-badge badge-green">즉시 활용</span>
+          </div>
+        </div>
+        <div class="tool-row">
+          <div class="tool-accent"></div>
+          <div class="tool-content">
+            <div class="tool-name">BTP AI Core</div>
+            <div class="tool-desc">AI 플랫폼 | 커스텀 ML 모델 배포·운영</div>
+            <span class="tool-badge badge-orange">학습 필요</span>
+          </div>
+        </div>
+        <div class="tool-row">
+          <div class="tool-accent"></div>
+          <div class="tool-content">
+            <div class="tool-name">GitHub Copilot</div>
+            <div class="tool-desc">코딩 보조 | ABAP/CAP 코드 자동 생성</div>
+            <span class="tool-badge badge-green">즉시 활용</span>
+          </div>
+        </div>
+        <div class="tool-row">
+          <div class="tool-accent"></div>
+          <div class="tool-content">
+            <div class="tool-name">Claude / GPT-4</div>
+            <div class="tool-desc">문서·분석 | Fit/Gap 분석·RFC 문서 초안</div>
+            <span class="tool-badge badge-green">즉시 활용</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="tools-col-title">업무 전환 Before → After</div>
+        <div class="before-after-list">
+          <div class="ba-row">
+            <div class="ba-task">Fit/Gap 분석 문서 작성</div>
+            <div class="ba-times">
+              <div class="ba-before">Before: 4~6시간</div>
+              <div class="ba-arrow">→</div>
+              <div class="ba-after">After: 45분</div>
+            </div>
+          </div>
+          <div class="ba-row">
+            <div class="ba-task">ABAP 기본 코드 작성</div>
+            <div class="ba-times">
+              <div class="ba-before">Before: 2~3시간</div>
+              <div class="ba-arrow">→</div>
+              <div class="ba-after">After: 20분</div>
+            </div>
+          </div>
+          <div class="ba-row">
+            <div class="ba-task">테스트 케이스 설계</div>
+            <div class="ba-times">
+              <div class="ba-before">Before: 3시간</div>
+              <div class="ba-arrow">→</div>
+              <div class="ba-after">After: 30분</div>
+            </div>
+          </div>
+          <div class="ba-row">
+            <div class="ba-task">사용자 교육 자료 제작</div>
+            <div class="ba-times">
+              <div class="ba-before">Before: 1~2일</div>
+              <div class="ba-arrow">→</div>
+              <div class="ba-after">After: 2시간</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEEP STRATEGIES -->
+<section id="deep">
+  <div class="container">
+    <div class="section-label fade-up">전략 02·03 — 심화 전략</div>
+    <div class="action-title fade-up">
+      도메인 전문성 심화와 AI 오케스트레이터 포지션은 AI가 대체하기 가장 어려운 영역이다
+    </div>
+    <div class="deep-grid fade-up">
+      <div class="deep-card">
+        <div class="deep-header">
+          <div class="deep-header-title">전략 02 | Domain Expert</div>
+        </div>
+        <div class="deep-body">
+          <div class="deep-item">
+            <div class="deep-accent-bar"></div>
+            <div class="deep-item-content">
+              <div class="deep-item-title">산업 특화 전문성 (T자형 역량)</div>
+              <div class="deep-item-desc">제조(PP/QM), 물류(TM/EWM), 금융(FSCM) 중 하나를 AI가 따라올 수 없는 깊이로 전문화</div>
+            </div>
+          </div>
+          <div class="deep-item">
+            <div class="deep-accent-bar"></div>
+            <div class="deep-item-content">
+              <div class="deep-item-title">규제·컴플라이언스 어드바이저</div>
+              <div class="deep-item-desc">K-IFRS, 공정거래법, 개인정보보호법 등 법적 요구사항을 SAP에 구현하는 전문성</div>
+            </div>
+          </div>
+          <div class="deep-item">
+            <div class="deep-accent-bar"></div>
+            <div class="deep-item-content">
+              <div class="deep-item-title">비즈니스 프로세스 리엔지니어링</div>
+              <div class="deep-item-desc">단순 시스템 설정이 아닌, 고객의 운영 모델 자체를 재설계하는 전략적 역할</div>
+            </div>
+          </div>
+          <div class="deep-item">
+            <div class="deep-accent-bar"></div>
+            <div class="deep-item-content">
+              <div class="deep-item-title">이해관계자 관리 및 변화관리</div>
+              <div class="deep-item-desc">경영진 설득, 현업 저항 극복 — AI가 대체 불가한 인간적 역량</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="deep-card orch-card">
+        <div class="deep-header" style="background:var(--dark);">
+          <div class="deep-header-title" style="color:#fff;">전략 03 | AI Orchestrator</div>
+          <div style="font-size:11px;color:var(--accent-blue);margin-top:4px;font-style:italic;">최상위 희소 포지션 — 시장 수요 급증 예상</div>
+        </div>
+        <div class="orch-body">
+          <div class="orch-item">
+            <div class="orch-item-title">SAP BTP 아키텍처 설계</div>
+            <div class="orch-item-desc">Integration Suite, AI Core, Build 플랫폼을 활용한 엔터프라이즈 AI 아키텍처 설계·구현</div>
+          </div>
+          <div class="orch-item">
+            <div class="orch-item-title">LLM + ERP 통합 구현</div>
+            <div class="orch-item-desc">GPT/Claude API를 SAP 시스템과 연동, 인텔리전트 워크플로우 자동화 구현</div>
+          </div>
+          <div class="orch-item">
+            <div class="orch-item-title">AI Agent 오케스트레이션</div>
+            <div class="orch-item-desc">다수의 AI 에이전트가 SAP 모듈을 자율적으로 운영하는 시스템 설계·거버넌스</div>
+          </div>
+          <div class="orch-item">
+            <div class="orch-item-title">AI ROI 측정·경영진 보고</div>
+            <div class="orch-item-desc">AI 전환 비즈니스 케이스 수립, 투자 대비 효과 측정 체계 및 임원 커뮤니케이션</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap">
+  <div class="container">
+    <div class="section-label fade-up">04 — 실행 로드맵</div>
+    <div class="action-title fade-up">
+      지금 당장 시작할 수 있는 12개월 전환 로드맵: Phase별 명확한 목표와 체크포인트로 실행을 담보한다
+    </div>
+    <div class="phase-grid fade-up">
+      <div class="phase-card ph1">
+        <div class="phase-header">
+          <div class="phase-label">Phase 1</div>
+          <div class="phase-name">기초 구축</div>
+        </div>
+        <div class="phase-period-wrap">
+          <div class="phase-period-badge">0~3개월</div>
+        </div>
+        <div class="phase-body">
+          <ul class="phase-tasks">
+            <li>SAP Joule 핵심 기능 습득</li>
+            <li>AI 활용 업무 목록 작성</li>
+            <li>GitHub Copilot 실무 적용</li>
+            <li>자신의 전략 방향 결정</li>
+          </ul>
+        </div>
+        <div class="phase-output">
+          <div class="phase-output-label">Output</div>
+          <div class="phase-output-text">AI 활용 효율화 첫 사례 도출</div>
+        </div>
+      </div>
+      <div class="phase-card ph2">
+        <div class="phase-header">
+          <div class="phase-label">Phase 2</div>
+          <div class="phase-name">역량 심화</div>
+        </div>
+        <div class="phase-period-wrap">
+          <div class="phase-period-badge">3~6개월</div>
+        </div>
+        <div class="phase-body">
+          <ul class="phase-tasks">
+            <li>선택 전략 심화 학습 시작</li>
+            <li>SAP BTP 기본 아키텍처 이해</li>
+            <li>산업/도메인 전문 자격 취득</li>
+            <li>AI 활용 사례 포트폴리오 구축</li>
+          </ul>
+        </div>
+        <div class="phase-output">
+          <div class="phase-output-label">Output</div>
+          <div class="phase-output-text">포트폴리오 1개 완성, 내부 공유</div>
+        </div>
+      </div>
+      <div class="phase-card ph3">
+        <div class="phase-header">
+          <div class="phase-label">Phase 3</div>
+          <div class="phase-name">실전 적용</div>
+        </div>
+        <div class="phase-period-wrap">
+          <div class="phase-period-badge">6~9개월</div>
+        </div>
+        <div class="phase-body">
+          <ul class="phase-tasks">
+            <li>고객 프로젝트에 AI 도구 통합</li>
+            <li>차별화 서비스 제안서 작성</li>
+            <li>외부 커뮤니티/세미나 발표</li>
+            <li>멘토링 또는 내부 교육 시작</li>
+          </ul>
+        </div>
+        <div class="phase-output">
+          <div class="phase-output-label">Output</div>
+          <div class="phase-output-text">외부 인정 1건 (발표/논문/수상)</div>
+        </div>
+      </div>
+      <div class="phase-card ph4">
+        <div class="phase-header">
+          <div class="phase-label">Phase 4</div>
+          <div class="phase-name">포지션 확립</div>
+        </div>
+        <div class="phase-period-wrap">
+          <div class="phase-period-badge">9~12개월</div>
+        </div>
+        <div class="phase-body">
+          <ul class="phase-tasks">
+            <li>새 포지션으로 이동 or 역할 재정의</li>
+            <li>AI 프로젝트 리드 경험 확보</li>
+            <li>개인 브랜딩 확립 (LinkedIn 등)</li>
+            <li>다음 12개월 계획 수립</li>
+          </ul>
+        </div>
+        <div class="phase-output">
+          <div class="phase-output-label">Output</div>
+          <div class="phase-output-text">명확한 AI 시대 포지션 확립</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETENCIES -->
+<section id="competencies">
+  <div class="container">
+    <div class="section-label fade-up">핵심 역량 프레임워크</div>
+    <div class="action-title fade-up">
+      AI 시대에 SAP 컨설턴트가 반드시 보유해야 할 5가지 핵심 역량은 기술·비즈니스·인간 역량을 포괄한다
+    </div>
+    <div class="comp-grid fade-up">
+      <div>
+        <div class="comp-group">
+          <div class="comp-group-label">기술 역량</div>
+          <div class="comp-item">
+            <div class="comp-item-top">
+              <div class="comp-name">AI/ML 리터러시</div>
+              <div class="comp-pct">85%</div>
+            </div>
+            <div class="comp-desc">LLM 작동 원리, 프롬프트 엔지니어링, AI 한계 이해</div>
+            <div class="comp-bar-bg"><div class="comp-bar-fill" style="width:85%"></div></div>
+          </div>
+          <div class="comp-item">
+            <div class="comp-item-top">
+              <div class="comp-name">SAP BTP 플랫폼</div>
+              <div class="comp-pct">75%</div>
+            </div>
+            <div class="comp-desc">Integration Suite, AI Core, CAPM 개발 역량</div>
+            <div class="comp-bar-bg"><div class="comp-bar-fill" style="width:75%"></div></div>
+          </div>
+          <div class="comp-item">
+            <div class="comp-item-top">
+              <div class="comp-name">데이터 아키텍처</div>
+              <div class="comp-pct">70%</div>
+            </div>
+            <div class="comp-desc">SAP Datasphere, BW/4HANA, 데이터 모델링</div>
+            <div class="comp-bar-bg"><div class="comp-bar-fill" style="width:70%"></div></div>
+          </div>
+        </div>
+        <div class="comp-group">
+          <div class="comp-group-label">비즈니스 역량</div>
+          <div class="comp-item">
+            <div class="comp-item-top">
+              <div class="comp-name">산업 도메인 전문성</div>
+              <div class="comp-pct">90%</div>
+            </div>
+            <div class="comp-desc">특정 산업 운영 모델, 핵심 KPI, 규제 이해</div>
+            <div class="comp-bar-bg"><div class="comp-bar-fill" style="width:90%"></div></div>
+          </div>
+          <div class="comp-item">
+            <div class="comp-item-top">
+              <div class="comp-name">전략적 사고</div>
+              <div class="comp-pct">80%</div>
+            </div>
+            <div class="comp-desc">비즈니스 케이스 수립, ROI 측정, AI 투자 정당화</div>
+            <div class="comp-bar-bg"><div class="comp-bar-fill" style="width:80%"></div></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="comp-group">
+          <div class="comp-group-label">인간 역량 (AI 대체 불가)</div>
+          <div class="comp-item">
+            <div class="comp-item-top">
+              <div class="comp-name">이해관계자 관리</div>
+              <div class="comp-pct">95%</div>
+            </div>
+            <div class="comp-desc">C-Level 설득, 저항 관리, 합의 도출</div>
+            <div class="comp-bar-bg"><div class="comp-bar-fill" style="width:95%"></div></div>
+          </div>
+          <div class="comp-item">
+            <div class="comp-item-top">
+              <div class="comp-name">창의적 문제해결</div>
+              <div class="comp-pct">88%</div>
+            </div>
+            <div class="comp-desc">전례 없는 복잡 문제에 대한 해법 설계</div>
+            <div class="comp-bar-bg"><div class="comp-bar-fill" style="width:88%"></div></div>
+          </div>
+          <div class="comp-item">
+            <div class="comp-item-top">
+              <div class="comp-name">변화관리 리더십</div>
+              <div class="comp-pct">92%</div>
+            </div>
+            <div class="comp-desc">조직 문화 변화, 사용자 저항 극복, 코칭</div>
+            <div class="comp-bar-bg"><div class="comp-bar-fill" style="width:92%"></div></div>
+          </div>
+        </div>
+        <div class="key-quote">
+          <div class="key-quote-label">핵심 메시지</div>
+          <div class="key-quote-text">"AI는 당신의 기술을 복제할 수 있지만,<br>당신의 판단력·신뢰·관계는 복제할 수 없다."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONCLUSION -->
+<section id="conclusion">
+  <div class="container">
+    <div class="conclusion-inner fade-up">
+      <div class="conclusion-label">Conclusion</div>
+      <h2 class="conclusion-title">파도를 두려워하지 말고<br><em>파도를 타는 법</em>을 배워라</h2>
+      <p class="conclusion-desc">SAP가 미래를 보장해주지 않는 것은 사실이다. 그러나 AI를 이해하고 활용하며, 자신의 도메인 전문성과 인간적 역량을 결합한 컨설턴트에게 미래는 열려 있다.</p>
+      <div class="takeaways">
+        <div class="takeaway">
+          <div class="takeaway-num">1</div>
+          <div class="takeaway-text">지금 당장 AI 도구를 업무에 통합하라 — 관망하는 자는 도태된다</div>
+        </div>
+        <div class="takeaway">
+          <div class="takeaway-num">2</div>
+          <div class="takeaway-text">3가지 전략 중 자신에게 맞는 하나를 선택하고 집중하라</div>
+        </div>
+        <div class="takeaway">
+          <div class="takeaway-num">3</div>
+          <div class="takeaway-text">AI가 대체할 수 없는 인간의 강점(판단·신뢰·관계)을 강화하라</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">AI 시대의 SAP 컨설턴트 생존전략 | Strategic Education Material</div>
+  <div class="footer-right">© 2026 ASPN</div>
+</footer>
+
+<script>
+  // Scroll fade-up animation
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.fade-up').forEach((el, i) => {
+    el.style.transitionDelay = (i % 4) * 0.08 + 's';
+    observer.observe(el);
+  });
+
+  // Active nav highlight
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(sec => {
+      if (window.scrollY >= sec.offsetTop - 80) current = sec.id;
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current
+        ? '#fff' : 'rgba(255,255,255,0.6)';
+    });
+  });
+</script>
+</body>
+</html>
