@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASPN BAC사업부 교육 자료 모음</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #003366;
+    --navy-light: #0a4a8a;
+    --navy-dim: #002244;
+    --accent-line: #003366;
+    --bg: #FFFFFF;
+    --bg-secondary: #F8F9FB;
+    --bg-section: #F2F5F9;
+    --text-primary: #1A1A2E;
+    --text-secondary: #4A4A6A;
+    --text-muted: #7A7A9A;
+    --border: #D8DEE9;
+    --border-strong: #B8C4D4;
+    --pad-x: 96px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--navy);
+    padding: 0 var(--pad-x);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-mark {
+    width: 32px;
+    height: 32px;
+    background: #fff;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logo-mark svg { display: block; }
+
+  .logo-text {
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.01em;
+  }
+
+  .logo-sub {
+    font-size: 12px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.65);
+    letter-spacing: 0.03em;
+    margin-top: 1px;
+  }
+
+  .header-badge {
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 4px 12px;
+    border-radius: 2px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 60px var(--pad-x) 48px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    position: relative;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    left: var(--pad-x);
+    top: 60px;
+    bottom: 48px;
+    width: 3px;
+    background: var(--navy);
+    border-radius: 2px;
+  }
+
+  .hero-inner { padding-left: 24px; }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .hero-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.25;
+    margin-bottom: 10px;
+  }
+
+  .hero-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  main {
+    padding: 48px var(--pad-x) 80px;
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  /* ── SECTION ── */
+  .section {
+    margin-bottom: 40px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1.5px solid var(--border);
+  }
+
+  .section-num {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: 0.08em;
+    min-width: 28px;
+  }
+
+  .section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.01em;
+  }
+
+  .section-count {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--text-muted);
+    background: var(--bg-section);
+    padding: 2px 10px;
+    border-radius: 20px;
+  }
+
+  /* ── LINK CARDS ── */
+  .link-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 10px;
+  }
+
+  .link-card {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .link-card:hover {
+    border-color: var(--navy);
+    background: #F0F4FA;
+    box-shadow: 0 2px 12px rgba(0,51,102,0.08);
+  }
+
+  .link-card:hover .card-arrow {
+    transform: translateX(3px);
+    color: var(--navy);
+  }
+
+  .card-accent {
+    width: 3px;
+    align-self: stretch;
+    background: var(--navy);
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .link-card:hover .card-accent { opacity: 1; }
+
+  .card-body {
+    flex: 1;
+    padding: 14px 18px;
+    min-width: 0;
+  }
+
+  .card-title {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
+  }
+
+  .card-url {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: 'Inter', monospace;
+  }
+
+  .card-arrow {
+    flex-shrink: 0;
+    padding: 0 16px;
+    color: var(--border-strong);
+    font-size: 16px;
+    transition: transform 0.15s, color 0.15s;
+    display: flex;
+    align-items: center;
+  }
+
+  /* External link icon for Google Drive */
+  .card-ext-badge {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--navy);
+    background: rgba(0,51,102,0.08);
+    padding: 2px 6px;
+    border-radius: 2px;
+    margin-top: 5px;
+    display: inline-block;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--navy-dim);
+    padding: 24px var(--pad-x);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-copy {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+    font-weight: 300;
+  }
+
+  .footer-tag {
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 0.06em;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    :root { --pad-x: 24px; }
+    .hero-title { font-size: 22px; }
+    .link-grid { grid-template-columns: 1fr; }
+    .header-badge { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-logo">
+    <div class="logo-mark">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <rect x="2" y="2" width="8" height="8" fill="#003366"/>
+        <rect x="12" y="2" width="8" height="8" fill="#003366"/>
+        <rect x="2" y="12" width="8" height="8" fill="#003366"/>
+        <rect x="12" y="12" width="8" height="8" fill="#003366" opacity="0.4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-text">ASPN</div>
+      <div class="logo-sub">BAC Business Division</div>
+    </div>
+  </div>
+  <div class="header-badge">Education Portal</div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">ASPN BAC사업부</div>
+    <div class="hero-title">교육 자료 모음</div>
+    <div class="hero-sub">컨설팅 · 연결결산 · Group Reporting · 경영계획 · 시장분석</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+
+  <!-- 1. 컨설팅 웹 교육자료 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <span class="section-title">컨설팅 웹 교육자료</span>
+      <span class="section-count">2건</span>
+    </div>
+    <div class="link-grid">
+      <a class="link-card" href="https://louis111-aspn.github.io/EDU/junior_dev_guide.html" target="_blank" rel="noopener">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-title">초급 개발자 자기학습 교육자료</div>
+          <div class="card-url">louis111-aspn.github.io/EDU/junior_dev_guide.html</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+      <a class="link-card" href="https://louis111-aspn.github.io/EDU/SAP_Survival_Strategy.html" target="_blank" rel="noopener">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-title">SAP 컨설턴트 생존전략</div>
+          <div class="card-url">louis111-aspn.github.io/EDU/SAP_Survival_Strategy.html</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 2. 연결결산 웹 교육자료 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <span class="section-title">연결결산 웹 교육자료</span>
+      <span class="section-count">3건</span>
+    </div>
+    <div class="link-grid">
+      <a class="link-card" href="https://louis111-aspn.github.io/EDU/ci_education.html" target="_blank" rel="noopener">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-title">투자자본상계</div>
+          <div class="card-url">louis111-aspn.github.io/EDU/ci_education.html</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+      <a class="link-card" href="https://louis111-aspn.github.io/EDU/equity_method_interactive.html" target="_blank" rel="noopener">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-title">지분법평가</div>
+          <div class="card-url">louis111-aspn.github.io/EDU/equity_method_interactive.html</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+      <a class="link-card" href="https://louis111-aspn.github.io/EDU/ic_reconciliation_edu.html" target="_blank" rel="noopener">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-title">내부거래대사</div>
+          <div class="card-url">louis111-aspn.github.io/EDU/ic_reconciliation_edu.html</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 3. Group Reporting 애드인 웹페이지 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <span class="section-title">Group Reporting 애드인 웹페이지</span>
+      <span class="section-count">2건</span>
+    </div>
+    <div class="link-grid">
+      <a class="link-card" href="https://louis111-aspn.github.io/SALES" target="_blank" rel="noopener">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-title">GR애드인 브로슈어</div>
+          <div class="card-url">louis111-aspn.github.io/SALES</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+      <a class="link-card" href="https://louis111-aspn.github.io/HELP" target="_blank" rel="noopener">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-title">GR애드인 웹도움말</div>
+          <div class="card-url">louis111-aspn.github.io/HELP</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 4. SAPI 경영계획 PKG 웹페이지 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <span class="section-title">SAPI 경영계획 PKG 웹페이지</span>
+      <span class="section-count">1건</span>
+    </div>
+    <div class="link-grid">
+      <a class="link-card" href="https://louis111-aspn.github.io/SAPI/sapi_cost_planning_wireframe.html" target="_blank" rel="noopener">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-title">비용계획 Bottom-Up 프로세스</div>
+          <div class="card-url">louis111-aspn.github.io/SAPI/sapi_cost_planning_wireframe.html</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 5. 시장 분석 웹 보고서 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <span class="section-title">시장 분석 웹 보고서</span>
+      <span class="section-count">2건</span>
+    </div>
+    <div class="link-grid">
+      <a class="link-card" href="https://louis111-aspn.github.io/AGRA2.0/sap-anthropic-analysis.html" target="_blank" rel="noopener">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-title">SAP × Anthropic 파트너십 심층 분석 보고서</div>
+          <div class="card-url">louis111-aspn.github.io/AGRA2.0/sap-anthropic-analysis.html</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+      <a class="link-card" href="https://louis111-aspn.github.io/AGRA2.0/sap-bdc-analysis.html" target="_blank" rel="noopener">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-title">SAP Business Data Cloud AI 파이프라인 분석 보고서</div>
+          <div class="card-url">louis111-aspn.github.io/AGRA2.0/sap-bdc-analysis.html</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 9. 구글드라이브 교육자료 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">09</span>
+      <span class="section-title">구글드라이브 교육자료</span>
+      <span class="section-count">1건</span>
+    </div>
+    <div class="link-grid">
+      <a class="link-card" href="https://drive.google.com/drive/folders/1UwLtDMoQA9b9PMxQebA-bb94jLgfuF_F?usp=drive_link" target="_blank" rel="noopener">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-title">BAC내부과제 교육자료</div>
+          <div class="card-url">drive.google.com/drive/folders/…</div>
+          <div class="card-ext-badge">Google Drive</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-copy">© ASPN BAC사업부 · 교육 자료 포털</div>
+  <div class="footer-tag">INTERNAL USE ONLY</div>
+</footer>
+
+</body>
+</html>
