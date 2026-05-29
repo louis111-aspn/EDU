@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABAP 기술 개요 | 컨설턴트를 위한 개발자 소통 가이드</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #003366;
+    --navy-light: #004488;
+    --navy-pale: #e8eef5;
+    --white: #FFFFFF;
+    --gray-dark: #333333;
+    --gray-mid: #666666;
+    --gray-light: #f5f5f5;
+    --gray-border: #e0e0e0;
+    --accent-red: #cc2200;
+    --accent-green: #005500;
+    --pad: 96px;
+    --pad-sm: 48px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    color: var(--gray-dark);
+    background: var(--white);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  /* ── TOP NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: var(--navy);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 var(--pad);
+    height: 56px;
+    border-bottom: 2px solid rgba(255,255,255,0.1);
+  }
+  .nav-brand {
+    font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.7);
+    letter-spacing: 2px; text-transform: uppercase;
+  }
+  .nav-tabs {
+    display: flex; gap: 0;
+  }
+  .nav-tab {
+    font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.6);
+    padding: 0 20px; height: 56px; display: flex; align-items: center;
+    cursor: pointer; border-bottom: 2px solid transparent;
+    transition: all 0.2s; letter-spacing: 0.5px;
+    border: none; background: none;
+  }
+  .nav-tab:hover { color: #fff; }
+  .nav-tab.active { color: #fff; border-bottom-color: #fff; }
+
+  /* ── HERO ── */
+  .hero {
+    margin-top: 56px;
+    background: var(--navy);
+    padding: 72px var(--pad) 64px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: 'ABAP';
+    position: absolute; right: var(--pad); top: 50%; transform: translateY(-50%);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 140px; font-weight: 600;
+    color: rgba(255,255,255,0.04);
+    letter-spacing: -4px; line-height: 1;
+    pointer-events: none;
+  }
+  .hero-label {
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    color: rgba(255,255,255,0.5); margin-bottom: 20px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px; font-weight: 700; color: #fff;
+    line-height: 1.15; margin-bottom: 24px;
+    max-width: 700px;
+  }
+  .hero-subtitle {
+    font-size: 16px; color: rgba(255,255,255,0.65);
+    max-width: 600px; line-height: 1.8;
+  }
+  .hero-meta {
+    margin-top: 40px;
+    display: flex; gap: 48px;
+  }
+  .hero-stat { }
+  .hero-stat-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 28px; font-weight: 600; color: #fff;
+  }
+  .hero-stat-label {
+    font-size: 11px; color: rgba(255,255,255,0.5);
+    letter-spacing: 1px; margin-top: 2px;
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    padding: 80px var(--pad);
+    border-bottom: 1px solid var(--gray-border);
+  }
+  .section:last-of-type { border-bottom: none; }
+  .section.bg-light { background: var(--gray-light); }
+
+  .section-label {
+    font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--navy); font-family: 'IBM Plex Mono', monospace;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px; font-weight: 700; color: var(--navy);
+    margin-bottom: 8px; line-height: 1.3;
+  }
+  .section-action-title {
+    font-size: 14px; color: var(--gray-mid);
+    border-left: 3px solid var(--navy);
+    padding-left: 16px; margin-bottom: 48px; line-height: 1.6;
+    max-width: 700px;
+  }
+
+  /* ── TABS (내부) ── */
+  .tab-nav {
+    display: flex; border-bottom: 2px solid var(--gray-border);
+    margin-bottom: 40px; gap: 0;
+  }
+  .tab-btn {
+    padding: 12px 24px; font-size: 13px; font-weight: 500;
+    color: var(--gray-mid); border: none; background: none;
+    cursor: pointer; border-bottom: 2px solid transparent;
+    margin-bottom: -2px; transition: all 0.2s;
+  }
+  .tab-btn.active { color: var(--navy); border-bottom-color: var(--navy); }
+  .tab-btn:hover { color: var(--navy); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── EVOLUTION TIMELINE ── */
+  .timeline {
+    position: relative;
+    padding-left: 32px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute; left: 8px; top: 0; bottom: 0;
+    width: 2px; background: var(--navy-pale);
+  }
+  .tl-item {
+    position: relative; margin-bottom: 36px;
+    cursor: pointer;
+  }
+  .tl-dot {
+    position: absolute; left: -28px; top: 4px;
+    width: 12px; height: 12px;
+    border: 2px solid var(--navy); background: #fff;
+    border-radius: 50%; transition: background 0.2s;
+  }
+  .tl-item:hover .tl-dot { background: var(--navy); }
+  .tl-year {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; color: var(--navy); font-weight: 600;
+    letter-spacing: 1px; margin-bottom: 4px;
+  }
+  .tl-title {
+    font-size: 15px; font-weight: 700; color: var(--gray-dark);
+    margin-bottom: 6px;
+  }
+  .tl-desc {
+    font-size: 13px; color: var(--gray-mid); line-height: 1.6;
+  }
+  .tl-tags {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px;
+  }
+  .tag {
+    display: inline-block; padding: 2px 10px;
+    border: 1px solid var(--navy); color: var(--navy);
+    font-size: 11px; letter-spacing: 0.5px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* ── ARCHITECTURE GRID ── */
+  .arch-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--gray-border);
+    border: 2px solid var(--gray-border);
+  }
+  .arch-cell {
+    background: #fff;
+    padding: 28px 24px;
+    transition: background 0.2s;
+    cursor: default;
+  }
+  .arch-cell:hover { background: var(--navy-pale); }
+  .arch-cell.header {
+    background: var(--navy); color: #fff;
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    font-weight: 500; display: flex; align-items: center;
+  }
+  .arch-cell-label {
+    font-size: 11px; color: var(--navy);
+    letter-spacing: 1px; text-transform: uppercase;
+    font-family: 'IBM Plex Mono', monospace;
+    margin-bottom: 8px;
+  }
+  .arch-cell-title {
+    font-size: 15px; font-weight: 700; margin-bottom: 8px;
+  }
+  .arch-cell-desc {
+    font-size: 12px; color: var(--gray-mid); line-height: 1.6;
+  }
+
+  /* ── STRENGTH / WEAKNESS ── */
+  .sw-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+  }
+  .sw-card {
+    border: 1px solid var(--gray-border);
+    padding: 32px;
+  }
+  .sw-card-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 24px;
+  }
+  .sw-icon {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .sw-card-title {
+    font-size: 16px; font-weight: 700;
+  }
+  .sw-item {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--gray-border);
+    display: flex; gap: 16px; align-items: flex-start;
+    cursor: pointer;
+    transition: padding-left 0.2s;
+  }
+  .sw-item:last-child { border-bottom: none; }
+  .sw-item:hover { padding-left: 8px; }
+  .sw-bullet {
+    width: 6px; height: 6px; border-radius: 50%;
+    flex-shrink: 0; margin-top: 7px;
+  }
+  .sw-item-title { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+  .sw-item-desc { font-size: 12px; color: var(--gray-mid); line-height: 1.5; }
+
+  /* ── CODE BLOCK ── */
+  .code-block {
+    background: #1a1a2e;
+    color: #e0e0ff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px; line-height: 1.8;
+    padding: 24px 28px;
+    overflow-x: auto;
+    border-left: 3px solid var(--navy);
+  }
+  .code-kw { color: #7ec8e3; }
+  .code-str { color: #a8e6a3; }
+  .code-comment { color: #666688; font-style: italic; }
+  .code-num { color: #ffcc80; }
+  .code-type { color: #ce93d8; }
+
+  /* ── COMPARISON TABLE ── */
+  .compare-table {
+    width: 100%; border-collapse: collapse;
+    font-size: 13px;
+  }
+  .compare-table th {
+    background: var(--navy); color: #fff;
+    padding: 14px 20px; text-align: left;
+    font-weight: 500; font-size: 12px; letter-spacing: 0.5px;
+  }
+  .compare-table td {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--gray-border);
+    vertical-align: top; line-height: 1.5;
+  }
+  .compare-table tr:nth-child(even) td { background: var(--gray-light); }
+  .compare-table tr:hover td { background: var(--navy-pale); }
+  .badge {
+    display: inline-block; padding: 2px 8px;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.5px;
+  }
+  .badge-strong { background: #e8f5e9; color: #2e7d32; }
+  .badge-weak { background: #ffebee; color: #c62828; }
+  .badge-neutral { background: #e3f2fd; color: #1565c0; }
+
+  /* ── RAP DIAGRAM ── */
+  .rap-flow {
+    display: flex; align-items: stretch; gap: 0;
+    border: 1px solid var(--gray-border);
+    overflow: hidden;
+  }
+  .rap-layer {
+    flex: 1; padding: 24px 20px;
+    border-right: 1px solid var(--gray-border);
+    position: relative;
+  }
+  .rap-layer:last-child { border-right: none; }
+  .rap-layer-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 28px; font-weight: 600; color: var(--navy-pale);
+    margin-bottom: 12px; line-height: 1;
+  }
+  .rap-layer-title {
+    font-size: 13px; font-weight: 700; color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .rap-layer-items {
+    list-style: none;
+  }
+  .rap-layer-items li {
+    font-size: 11px; color: var(--gray-mid);
+    padding: 3px 0; border-bottom: 1px dotted var(--gray-border);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .rap-layer-items li:last-child { border-bottom: none; }
+
+  /* ── CONSULTANT TIPS ── */
+  .tips-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  }
+  .tip-card {
+    border-top: 3px solid var(--navy);
+    padding: 24px 0 0;
+  }
+  .tip-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 32px; font-weight: 600; color: var(--navy-pale);
+    margin-bottom: 12px; line-height: 1;
+  }
+  .tip-question {
+    font-size: 13px; font-weight: 700; color: var(--navy);
+    margin-bottom: 8px; line-height: 1.4;
+  }
+  .tip-answer {
+    font-size: 12px; color: var(--gray-mid); line-height: 1.6;
+  }
+  .tip-keyword {
+    margin-top: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; color: var(--navy);
+    background: var(--navy-pale);
+    padding: 4px 10px; display: inline-block;
+  }
+
+  /* ── GLOSSARY ── */
+  .glossary-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+  }
+  .glossary-item {
+    padding: 16px 20px;
+    border: 1px solid var(--gray-border);
+    transition: border-color 0.2s;
+  }
+  .glossary-item:hover { border-color: var(--navy); }
+  .glossary-term {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px; font-weight: 600; color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .glossary-def {
+    font-size: 12px; color: var(--gray-mid); line-height: 1.5;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--navy);
+    padding: 40px var(--pad);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  footer .left { color: rgba(255,255,255,0.4); font-size: 12px; }
+  footer .right {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; color: rgba(255,255,255,0.3);
+    letter-spacing: 1px;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar {
+    position: fixed; top: 56px; left: 0; right: 0;
+    height: 2px; background: transparent; z-index: 99;
+  }
+  .progress-fill {
+    height: 100%; background: rgba(255,255,255,0.4);
+    width: 0%; transition: width 0.1s;
+  }
+
+  /* ── ACCORDION ── */
+  .accordion-item {
+    border-bottom: 1px solid var(--gray-border);
+  }
+  .accordion-header {
+    padding: 16px 0; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 14px; font-weight: 500;
+    user-select: none;
+  }
+  .accordion-header:hover { color: var(--navy); }
+  .accordion-arrow {
+    font-size: 12px; transition: transform 0.2s;
+    color: var(--gray-mid);
+  }
+  .accordion-item.open .accordion-arrow { transform: rotate(180deg); }
+  .accordion-body {
+    max-height: 0; overflow: hidden; transition: max-height 0.3s ease;
+    font-size: 13px; color: var(--gray-mid); line-height: 1.7;
+    padding: 0;
+  }
+  .accordion-item.open .accordion-body {
+    max-height: 400px; padding-bottom: 16px;
+  }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.5s, transform 0.5s;
+  }
+  .reveal.visible {
+    opacity: 1; transform: none;
+  }
+
+  @media (max-width: 900px) {
+    :root { --pad: 24px; --pad-sm: 24px; }
+    .arch-grid { grid-template-columns: 1fr; }
+    .sw-grid { grid-template-columns: 1fr; }
+    .tips-grid { grid-template-columns: 1fr; }
+    .glossary-grid { grid-template-columns: 1fr; }
+    .hero-meta { flex-wrap: wrap; gap: 24px; }
+    nav { padding: 0 24px; }
+    .nav-tabs { display: none; }
+    .rap-flow { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">ABAP 기술 개요 · Consultant Guide</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="scrollTo('sec-overview')">개요</button>
+    <button class="nav-tab" onclick="scrollTo('sec-evolution')">진화</button>
+    <button class="nav-tab" onclick="scrollTo('sec-architecture')">구조</button>
+    <button class="nav-tab" onclick="scrollTo('sec-sw')">강약점</button>
+    <button class="nav-tab" onclick="scrollTo('sec-rap')">RAP</button>
+    <button class="nav-tab" onclick="scrollTo('sec-tips')">소통 가이드</button>
+    <button class="nav-tab" onclick="scrollTo('sec-glossary')">용어집</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="sec-overview">
+  <div class="hero-label">Strategic Tech Brief · SAP ABAP</div>
+  <h1 class="hero-title">ABAP은 SAP 생태계의 핵심 언어이며,<br>클래식에서 클라우드까지 지속 진화 중임</h1>
+  <p class="hero-subtitle">컨설턴트가 SAP 개발자와 효과적으로 협업하기 위한 기술 배경지식 정리. Classic ABAP부터 최신 ABAP RESTful Application Programming Model(RAP)까지 전 범위를 다룹니다.</p>
+  <div class="hero-meta">
+    <div class="hero-stat">
+      <div class="hero-stat-num">1983</div>
+      <div class="hero-stat-label">ABAP 최초 도입</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">Fortune 500</div>
+      <div class="hero-stat-label">87% SAP 사용</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">S/4HANA</div>
+      <div class="hero-stat-label">현재 플랫폼</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">BTP</div>
+      <div class="hero-stat-label">미래 방향</div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 1: EVOLUTION -->
+<section class="section" id="sec-evolution">
+  <div class="section-label">01 · History & Evolution</div>
+  <h2 class="section-title">ABAP의 진화: 메인프레임 언어에서<br>클라우드 네이티브 프레임워크까지</h2>
+  <p class="section-action-title">ABAP은 40년간 SAP 시스템의 핵심 개발 언어로 자리잡았으며, S/4HANA 전환과 함께 RAP 모델로의 패러다임 전환이 진행 중임 — 컨설턴트는 이 세대 차이를 이해해야 고객 현황을 정확히 진단할 수 있음</p>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:60px;">
+    <div class="timeline reveal">
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">1983 – 1990s</div>
+        <div class="tl-title">Classic ABAP: Procedural 시대</div>
+        <div class="tl-desc">SAP R/2, R/3와 함께 등장. FORM/PERFORM 구조, 모듈풀, 배치 프로그램 위주. 독일어 기반 키워드가 혼용됨.</div>
+        <div class="tl-tags">
+          <span class="tag">FORM/PERFORM</span>
+          <span class="tag">ALV Report</span>
+          <span class="tag">BDC</span>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2000s</div>
+        <div class="tl-title">ABAP Objects: 객체지향 도입</div>
+        <div class="tl-desc">Class/Interface 개념 도입. Design Pattern 적용 가능. 단 기존 절차적 코드와 혼재하여 "ABAP OO"와 "Classic"이 공존하는 과도기.</div>
+        <div class="tl-tags">
+          <span class="tag">CLASS/METHOD</span>
+          <span class="tag">INTERFACE</span>
+          <span class="tag">BADI</span>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2010s</div>
+        <div class="tl-title">ABAP for HANA: DB 밀착 최적화</div>
+        <div class="tl-desc">SAP HANA 인메모리 DB 도입으로 "Code to Data" 패러다임 전환. Open SQL 확장, CDS View 등장, AMDP(ABAP Managed Database Procedure) 도입.</div>
+        <div class="tl-tags">
+          <span class="tag">CDS View</span>
+          <span class="tag">AMDP</span>
+          <span class="tag">Open SQL</span>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2019 ~</div>
+        <div class="tl-title">RAP: RESTful Application Model</div>
+        <div class="tl-desc">SAP S/4HANA Cloud 전략의 핵심. OData 서비스를 선언적으로 생성, Fiori Elements UI 자동화, ABAP on BTP까지 확장.</div>
+        <div class="tl-tags">
+          <span class="tag">RAP</span>
+          <span class="tag">OData v4</span>
+          <span class="tag">Fiori Elements</span>
+          <span class="tag">ABAP Cloud</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal" style="padding-left:32px; border-left:1px solid var(--gray-border);">
+      <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--navy); font-family:'IBM Plex Mono',monospace; margin-bottom:20px;">버전별 핵심 개념</div>
+      
+      <div style="margin-bottom:28px;">
+        <div style="font-size:13px; font-weight:700; margin-bottom:12px;">Classic ABAP 코드 패턴</div>
+        <div class="code-block">
+<span class="code-comment">* 전통적 SELECT + 내부테이블 처리</span>
+<span class="code-kw">DATA</span>: lt_bkpf <span class="code-kw">TYPE TABLE OF</span> bkpf,
+       ls_bkpf <span class="code-kw">TYPE</span> bkpf.
+
+<span class="code-kw">SELECT</span> * <span class="code-kw">INTO TABLE</span> lt_bkpf
+  <span class="code-kw">FROM</span> bkpf
+  <span class="code-kw">WHERE</span> bukrs = <span class="code-str">'1000'</span>.
+
+<span class="code-kw">LOOP AT</span> lt_bkpf <span class="code-kw">INTO</span> ls_bkpf.
+  <span class="code-comment">* 행별 처리 → 성능 위험</span>
+<span class="code-kw">ENDLOOP</span>.
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:13px; font-weight:700; margin-bottom:12px;">Modern ABAP (HANA 최적화)</div>
+        <div class="code-block">
+<span class="code-comment">" HANA 친화적 신문법 (2017+)</span>
+<span class="code-kw">DATA</span>(lt_result) = <span class="code-kw">VALUE</span> #( ).
+
+<span class="code-kw">SELECT</span> bukrs, SUM( dmbtr ) <span class="code-kw">AS</span> total
+  <span class="code-kw">FROM</span> bsid
+  <span class="code-kw">INTO TABLE</span> @<span class="code-kw">DATA</span>(lt_bsid)
+  <span class="code-kw">GROUP BY</span> bukrs
+  <span class="code-kw">HAVING</span> SUM( dmbtr ) > @<span class="code-num">1000000</span>.
+
+<span class="code-comment">" Inline 선언 + 집계 → DB 레벨 처리</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2: ARCHITECTURE -->
+<section class="section bg-light" id="sec-architecture">
+  <div class="section-label">02 · Architecture</div>
+  <h2 class="section-title">ABAP 개발 생태계 전체 구조</h2>
+  <p class="section-action-title">SAP 개발 환경은 단순한 프로그래밍 언어가 아닌 통합 플랫폼이며, 각 레이어의 역할을 이해해야 개발 공수·리스크·일정을 현실적으로 추정할 수 있음</p>
+
+  <div class="arch-grid reveal">
+    <div class="arch-cell header">데이터 레이어</div>
+    <div class="arch-cell header">로직 레이어</div>
+    <div class="arch-cell header">UI / 통합 레이어</div>
+
+    <div class="arch-cell">
+      <div class="arch-cell-label">Dictionary</div>
+      <div class="arch-cell-title">ABAP Data Dictionary</div>
+      <div class="arch-cell-desc">테이블(Transparent/Pooled/Cluster), View, Data Element, Domain, Structure 정의. DB에 독립적인 메타데이터 관리.</div>
+    </div>
+    <div class="arch-cell">
+      <div class="arch-cell-label">Programs</div>
+      <div class="arch-cell-title">Report / Module Pool</div>
+      <div class="arch-cell-desc">리포트: 데이터 선택·출력. 모듈풀: 화면(Dynpro) 기반 트랜잭션 프로그램. 현재도 대다수 ECC 시스템의 주력.</div>
+    </div>
+    <div class="arch-cell">
+      <div class="arch-cell-label">UI</div>
+      <div class="arch-cell-title">SAP GUI / Dynpro</div>
+      <div class="arch-cell-desc">전통 SAP GUI 화면. 클라이언트 설치 필요. 극도로 정교한 데이터 입력 가능하나 UX가 구식.</div>
+    </div>
+
+    <div class="arch-cell">
+      <div class="arch-cell-label">CDS</div>
+      <div class="arch-cell-title">Core Data Services</div>
+      <div class="arch-cell-desc">HANA 기반 VDM(Virtual Data Model). 재사용 가능한 뷰 계층. Annotations으로 UI·OData까지 연결.</div>
+    </div>
+    <div class="arch-cell">
+      <div class="arch-cell-label">Classes</div>
+      <div class="arch-cell-title">ABAP Objects (OO)</div>
+      <div class="arch-cell-desc">Class, Interface, Inheritance. Design Pattern 적용. 단위 테스트(ABAP Unit) 지원. 최신 개발의 기본.</div>
+    </div>
+    <div class="arch-cell">
+      <div class="arch-cell-label">OData</div>
+      <div class="arch-cell-title">Fiori / OData Service</div>
+      <div class="arch-cell-desc">SAP Fiori 앱의 백엔드. OData v2(SEGW) 또는 v4(RAP). 모바일·웹 브라우저에서 접근 가능.</div>
+    </div>
+
+    <div class="arch-cell">
+      <div class="arch-cell-label">AMDP</div>
+      <div class="arch-cell-title">HANA Native SQLScript</div>
+      <div class="arch-cell-desc">ABAP 내에서 HANA SQLScript 직접 실행. 대용량 집계·분석에 최적. DB 종속성 증가 주의.</div>
+    </div>
+    <div class="arch-cell">
+      <div class="arch-cell-label">Enhancement</div>
+      <div class="arch-cell-title">BAdI / Enhancement Spot</div>
+      <div class="arch-cell-desc">SAP 표준 코드를 수정하지 않고 커스터마이즈하는 메커니즘. Upgrade 안전성의 핵심.</div>
+    </div>
+    <div class="arch-cell">
+      <div class="arch-cell-label">Integration</div>
+      <div class="arch-cell-title">RFC / BAPI / IDoc</div>
+      <div class="arch-cell-desc">외부 시스템과의 통신. RFC(원격함수), BAPI(비즈니스 API), IDoc(전자문서 표준). EDI·인터페이스의 기초.</div>
+    </div>
+  </div>
+
+  <div style="margin-top:48px;" class="reveal">
+    <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--navy); font-family:'IBM Plex Mono',monospace; margin-bottom:20px;">개발 도구 변화</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px;">
+      <div style="padding:20px; border:1px solid var(--gray-border);">
+        <div style="font-weight:700; margin-bottom:8px; font-size:13px;">SE80 / ABAP Workbench</div>
+        <div style="font-size:12px; color:var(--gray-mid);">전통 Eclipse 기반 개발 환경. SAP GUI 내 통합. Classic ABAP 개발의 표준 도구.</div>
+      </div>
+      <div style="padding:20px; border:1px solid var(--navy); background:var(--navy-pale);">
+        <div style="font-weight:700; margin-bottom:8px; font-size:13px; color:var(--navy);">ADT (Eclipse Plugin) ★</div>
+        <div style="font-size:12px; color:var(--gray-mid);">ABAP Development Tools. Eclipse 기반 현대적 IDE. RAP 개발, Code Completion, 리팩터링 지원.</div>
+      </div>
+      <div style="padding:20px; border:1px solid var(--gray-border);">
+        <div style="font-weight:700; margin-bottom:8px; font-size:13px;">SAP Build Code / BAS</div>
+        <div style="font-size:12px; color:var(--gray-mid);">BTP 기반 웹 IDE. ABAP Cloud 개발 환경. 온프레미스 접근 없이 클라우드에서 개발.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3: STRENGTHS & WEAKNESSES -->
+<section class="section" id="sec-sw">
+  <div class="section-label">03 · Strengths & Weaknesses</div>
+  <h2 class="section-title">ABAP이 강한 것과 약한 것:<br>컨설턴트가 알아야 할 현실</h2>
+  <p class="section-action-title">ABAP은 SAP 비즈니스 로직 구현에 최적화된 언어이나, 범용 소프트웨어 개발 언어와 비교시 명확한 한계가 존재함 — 이를 인식해야 현실적인 개발 범위와 일정을 협의할 수 있음</p>
+
+  <div class="sw-grid reveal">
+    <!-- STRENGTHS -->
+    <div class="sw-card">
+      <div class="sw-card-header">
+        <div class="sw-icon" style="background:#e8f5e9; color:#2e7d32;">▲</div>
+        <div class="sw-card-title" style="color:#2e7d32;">ABAP이 탁월한 영역</div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-bullet" style="background:#2e7d32;"></div>
+        <div>
+          <div class="sw-item-title">SAP 표준 데이터 직접 접근</div>
+          <div class="sw-item-desc">수천 개의 SAP 표준 테이블(BKPF, EKKO, VBAK 등)을 직접 Open SQL로 조회·조작. 별도 API 없이 핵심 비즈니스 데이터에 완벽 접근.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-bullet" style="background:#2e7d32;"></div>
+        <div>
+          <div class="sw-item-title">BAPI / 표준 함수 모듈 활용</div>
+          <div class="sw-item-desc">SAP이 제공하는 수천 개의 검증된 BAPI를 재사용. 전표 생성, 자재이동 등 복잡한 비즈니스 트랜잭션을 함수 호출 하나로 처리.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-bullet" style="background:#2e7d32;"></div>
+        <div>
+          <div class="sw-item-title">내부 테이블(Internal Table) 처리</div>
+          <div class="sw-item-desc">ABAP 고유의 강력한 데이터 컨테이너. 대용량 데이터 정렬, 집계, 조인을 메모리에서 고속 처리. 복잡한 보고서 개발에 탁월.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-bullet" style="background:#2e7d32;"></div>
+        <div>
+          <div class="sw-item-title">Enhancement Framework (수정 최소화)</div>
+          <div class="sw-item-desc">BAdI, Enhancement Point, User-Exit으로 SAP 표준 코드 원본을 건드리지 않고 커스터마이즈. SAP 업그레이드 시 수정사항 보존.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-bullet" style="background:#2e7d32;"></div>
+        <div>
+          <div class="sw-item-title">대용량 배치 처리</div>
+          <div class="sw-item-desc">수백만 건의 데이터를 처리하는 배치 프로그램, 병렬처리(Parallel Processing), 백그라운드 잡(Job) 관리에 최적화된 설계.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-bullet" style="background:#2e7d32;"></div>
+        <div>
+          <div class="sw-item-title">다국어·다통화 글로벌 지원</div>
+          <div class="sw-item-desc">텍스트 요소 분리, 다국어 메시지 클래스, 통화·단위 변환 함수 내장. 글로벌 기업의 다국가 배포에 설계 단계부터 최적화.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WEAKNESSES -->
+    <div class="sw-card">
+      <div class="sw-card-header">
+        <div class="sw-icon" style="background:#ffebee; color:#c62828;">▼</div>
+        <div class="sw-card-title" style="color:#c62828;">ABAP의 구조적 한계</div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-bullet" style="background:#c62828;"></div>
+        <div>
+          <div class="sw-item-title">인재 공급 부족 · 고령화</div>
+          <div class="sw-item-desc">ABAP 개발자 풀이 협소하고 고령화. 신규 개발자 유입 제한. 결과적으로 고용 비용 상승, 긴 채용 기간, 지식 의존 리스크 증가.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-bullet" style="background:#c62828;"></div>
+        <div>
+          <div class="sw-item-title">현대적 UI/UX 개발 비적합</div>
+          <div class="sw-item-desc">SAP GUI는 구식. Fiori 개발은 ABAP+JavaScript 분리 구조로 복잡도 증가. React/Vue 수준의 리치 인터랙션 구현에는 한계.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-bullet" style="background:#c62828;"></div>
+        <div>
+          <div class="sw-item-title">외부 시스템 통합의 복잡성</div>
+          <div class="sw-item-desc">SAP 외부 API 호출(REST/GraphQL)이 근본적으로 불편. HTTP Client 클래스를 수동 구성해야 함. 단순 REST 연동도 클래스 10개 이상 필요.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-bullet" style="background:#c62828;"></div>
+        <div>
+          <div class="sw-item-title">DevOps · CI/CD 생태계 미성숙</div>
+          <div class="sw-item-desc">Git 기반 버전관리(gCTS)는 발전 중이나 현장 도입률 낮음. 자동화 테스트, 배포 파이프라인 구성이 일반 SW 대비 훨씬 복잡.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-bullet" style="background:#c62828;"></div>
+        <div>
+          <div class="sw-item-title">SAP 외 환경에서 완전 무용</div>
+          <div class="sw-item-desc">ABAP 기술은 SAP 시스템에서만 작동. 이직·전직 시 기술 이전성 낮아 개발자 이탈 시 지식 소멸 위험. 오픈소스 생태계 연계 불가.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-bullet" style="background:#c62828;"></div>
+        <div>
+          <div class="sw-item-title">레거시 코드의 기술 부채</div>
+          <div class="sw-item-desc">20~30년 된 절차적 Classic ABAP 코드가 현업에서 여전히 운용. 리팩터링 없이 패치만 반복되어 이해·유지보수 비용이 기하급수적 증가.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPARISON TABLE -->
+  <div style="margin-top:48px;" class="reveal">
+    <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--navy); font-family:'IBM Plex Mono',monospace; margin-bottom:20px;">업무 유형별 ABAP 적합성 평가</div>
+
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab(this,'tab-fit')">개발 유형별 적합도</button>
+      <button class="tab-btn" onclick="switchTab(this,'tab-compare')">언어 비교 (ABAP vs Python vs Java)</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-fit">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th style="width:25%">개발 유형</th>
+            <th style="width:15%">ABAP 적합도</th>
+            <th>근거 및 컨설턴트 시사점</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>SAP 커스텀 보고서</strong><br><span style="font-size:11px;color:var(--gray-mid)">ALV, SAP Query</span></td>
+            <td><span class="badge badge-strong">최적</span></td>
+            <td>ABAP의 핵심 강점. 표준 데이터 직접 접근 + ALV 프레임워크. 공수가 상대적으로 예측 가능함.</td>
+          </tr>
+          <tr>
+            <td><strong>ERP 트랜잭션 커스터마이즈</strong><br><span style="font-size:11px;color:var(--gray-mid)">주문처리, 재고관리</span></td>
+            <td><span class="badge badge-strong">적합</span></td>
+            <td>BAdI/Enhancement 활용 시 표준 유지. 단, Enhancement Point 위치 파악에 분석 시간 필요.</td>
+          </tr>
+          <tr>
+            <td><strong>Fiori 앱 개발</strong><br><span style="font-size:11px;color:var(--gray-mid)">모바일 친화적 UI</span></td>
+            <td><span class="badge badge-neutral">복합</span></td>
+            <td>ABAP(백엔드) + JavaScript/SAPUI5(프론트엔드) 이원화. 두 기술 모두 아는 개발자 필요. 공수 과소 추정 위험.</td>
+          </tr>
+          <tr>
+            <td><strong>외부 API 통합</strong><br><span style="font-size:11px;color:var(--gray-mid)">REST, OAuth, Webhook</span></td>
+            <td><span class="badge badge-weak">비적합</span></td>
+            <td>BTP Integration Suite(iFlow) 또는 미들웨어 권고. ABAP에서 직접 구현 시 유지보수 부채 급증.</td>
+          </tr>
+          <tr>
+            <td><strong>데이터 분석 / ML</strong><br><span style="font-size:11px;color:var(--gray-mid)">예측모델, 통계</span></td>
+            <td><span class="badge badge-weak">비적합</span></td>
+            <td>SAP Analytics Cloud 또는 Python 기반 BTP 활용 권장. ABAP은 데이터 추출 역할로 한정.</td>
+          </tr>
+          <tr>
+            <td><strong>배치 / 마감 처리</strong><br><span style="font-size:11px;color:var(--gray-mid)">월마감, 대량 전기</span></td>
+            <td><span class="badge badge-strong">최적</span></td>
+            <td>병렬처리, 잡 체인 등 대규모 배치 처리는 ABAP의 전통적 강점. 안정성·성능 검증 완료.</td>
+          </tr>
+          <tr>
+            <td><strong>인터페이스 (EDI/IDoc)</strong><br><span style="font-size:11px;color:var(--gray-mid)">거래처 전자문서</span></td>
+            <td><span class="badge badge-strong">적합</span></td>
+            <td>IDoc 프레임워크는 SAP 생태계 표준. 파트너사와의 B2B 전자문서 교환에 검증된 방법론.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tab-panel" id="tab-compare">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th style="width:20%">비교 항목</th>
+            <th>ABAP</th>
+            <th>Python</th>
+            <th>Java / Spring</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>학습 난이도</strong></td>
+            <td>중간 (SAP 도메인 지식 필요)</td>
+            <td>쉬움 (초보 친화적)</td>
+            <td>어려움 (생태계 방대)</td>
+          </tr>
+          <tr>
+            <td><strong>SAP 데이터 접근</strong></td>
+            <td><span class="badge badge-strong">직접 · 완전</span></td>
+            <td>API/RFC 필요</td>
+            <td>JCo/RFC 필요</td>
+          </tr>
+          <tr>
+            <td><strong>외부 라이브러리</strong></td>
+            <td><span class="badge badge-weak">거의 없음</span></td>
+            <td>PyPI 40만+ 패키지</td>
+            <td>Maven 방대한 생태계</td>
+          </tr>
+          <tr>
+            <td><strong>데이터 분석</strong></td>
+            <td>제한적</td>
+            <td><span class="badge badge-strong">pandas/sklearn 최강</span></td>
+            <td>중간</td>
+          </tr>
+          <tr>
+            <td><strong>개발자 채용</strong></td>
+            <td><span class="badge badge-weak">희소 · 고비용</span></td>
+            <td><span class="badge badge-strong">풍부 · 저비용</span></td>
+            <td>풍부 · 중비용</td>
+          </tr>
+          <tr>
+            <td><strong>SAP 업그레이드 영향</strong></td>
+            <td>Enhancement 사용 시 낮음</td>
+            <td>API 변경 시 영향</td>
+            <td>API 변경 시 영향</td>
+          </tr>
+          <tr>
+            <td><strong>성능 (SAP 환경)</strong></td>
+            <td><span class="badge badge-strong">DB 직접 접근 최적</span></td>
+            <td>RFC 오버헤드</td>
+            <td>RFC 오버헤드</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 4: RAP -->
+<section class="section bg-light" id="sec-rap">
+  <div class="section-label">04 · Modern ABAP: RAP</div>
+  <h2 class="section-title">ABAP RESTful Application Programming Model:<br>SAP의 미래 개발 패러다임</h2>
+  <p class="section-action-title">RAP는 S/4HANA Cloud 및 BTP 환경에서 표준 개발 방식으로 자리잡고 있으며, 컨설턴트는 이를 이해해야 클라이언트의 커스터마이제이션 전략과 기술 부채 관리를 조언할 수 있음</p>
+
+  <div class="rap-flow reveal">
+    <div class="rap-layer" style="background:var(--navy); color:#fff;">
+      <div class="rap-layer-num" style="color:rgba(255,255,255,0.15);">UI</div>
+      <div class="rap-layer-title" style="color:#fff;">Fiori Elements</div>
+      <ul class="rap-layer-items">
+        <li style="color:rgba(255,255,255,0.6);">List Report</li>
+        <li style="color:rgba(255,255,255,0.6);">Object Page</li>
+        <li style="color:rgba(255,255,255,0.6);">Form / Table</li>
+        <li style="color:rgba(255,255,255,0.6);">Analytical Chart</li>
+      </ul>
+    </div>
+    <div class="rap-layer">
+      <div class="rap-layer-num">SRV</div>
+      <div class="rap-layer-title">OData v4 Service</div>
+      <ul class="rap-layer-items">
+        <li>Service Definition</li>
+        <li>Service Binding</li>
+        <li>OData v2/v4</li>
+        <li>Metadata 자동 생성</li>
+      </ul>
+    </div>
+    <div class="rap-layer">
+      <div class="rap-layer-num">BEH</div>
+      <div class="rap-layer-title">Behavior Definition</div>
+      <ul class="rap-layer-items">
+        <li>Create / Update / Delete</li>
+        <li>Actions / Functions</li>
+        <li>Validations</li>
+        <li>Determinations</li>
+      </ul>
+    </div>
+    <div class="rap-layer">
+      <div class="rap-layer-num">CDS</div>
+      <div class="rap-layer-title">CDS View Entity</div>
+      <ul class="rap-layer-items">
+        <li>Interface View</li>
+        <li>Projection View</li>
+        <li>Annotations</li>
+        <li>Associations</li>
+      </ul>
+    </div>
+    <div class="rap-layer">
+      <div class="rap-layer-num">DB</div>
+      <div class="rap-layer-title">HANA Database</div>
+      <ul class="rap-layer-items">
+        <li>Table (DDIC)</li>
+        <li>Transparent Table</li>
+        <li>HANA Artifacts</li>
+        <li>Calculation View</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="margin-top:48px; display:grid; grid-template-columns:1fr 1fr; gap:48px;" class="reveal">
+    <div>
+      <div style="font-size:13px; font-weight:700; margin-bottom:16px; color:var(--navy);">RAP 핵심 개념 FAQ</div>
+      <div style="border-top:1px solid var(--gray-border);">
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>RAP와 기존 OData(SEGW) 방식의 차이는?</span>
+            <span class="accordion-arrow">▼</span>
+          </div>
+          <div class="accordion-body">SEGW는 수동으로 OData 엔티티·매핑을 작성해야 했으나, RAP는 CDS Annotation 기반으로 OData 서비스가 자동 생성됩니다. 코드량이 60~70% 감소하고, UI 레이아웃도 Annotation으로 선언적 제어 가능합니다.</div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>Managed vs Unmanaged RAP의 차이는?</span>
+            <span class="accordion-arrow">▼</span>
+          </div>
+          <div class="accordion-body">Managed: SAP 프레임워크가 CRUD 로직(save, lock, draft)을 자동 처리. 단순 마스터데이터 유지보수에 적합. Unmanaged: 개발자가 모든 데이터 처리 로직을 직접 구현. 복잡한 비즈니스 로직이나 외부 시스템 연동 시 선택.</div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>Draft 기능이란?</span>
+            <span class="accordion-arrow">▼</span>
+          </div>
+          <div class="accordion-body">사용자가 저장 전 입력 중인 데이터를 임시 저장하는 기능. RAP는 Draft 테이블 관리를 프레임워크가 자동 처리. Fiori 앱에서 페이지 이탈 후 재접속 시 작업 내용 복원 가능.</div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>RAP에서 권한 체크는 어떻게?</span>
+            <span class="accordion-arrow">▼</span>
+          </div>
+          <div class="accordion-body">Behavior Definition에서 Authorization Master를 선언하고, ABAP 클래스에서 IS_AUTHORIZED 메서드를 구현합니다. CDS 레벨의 DCL(Data Control Language)과 결합하여 행 레벨 권한도 구현 가능합니다.</div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>ABAP Cloud (BTP)에서의 제약은?</span>
+            <span class="accordion-arrow">▼</span>
+          </div>
+          <div class="accordion-body">ABAP Cloud에서는 Released API(SAP가 공개한 API)만 호출 가능. 내부 SAP 함수 모듈 직접 호출 불가. 이 제약으로 인해 기존 ECC 코드의 BTP 마이그레이션 공수가 과소 추정되는 경우가 많음 — 이 점을 고객에게 반드시 설명해야 함.</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:13px; font-weight:700; margin-bottom:16px; color:var(--navy);">RAP Behavior Definition 예시</div>
+      <div class="code-block">
+<span class="code-comment">" 주문 관리 RAP 정의 예시</span>
+<span class="code-kw">managed</span> implementation <span class="code-kw">in</span> class
+  zbp_order_header <span class="code-kw">unique</span>;
+
+<span class="code-kw">define behavior for</span> ZI_OrderHeader
+  alias OrderHeader
+  persistent <span class="code-kw">table</span> zorder_h
+  draft <span class="code-kw">table</span> zorder_h_d
+  lock master total etag ChangedAt
+{
+  <span class="code-comment">// CRUD 자동 관리</span>
+  <span class="code-kw">create</span>; <span class="code-kw">update</span>; <span class="code-kw">delete</span>;
+
+  <span class="code-comment">// 커스텀 액션 (버튼)</span>
+  action <span class="code-type">Approve</span> result [<span class="code-num">1</span>] $self;
+  action <span class="code-type">Reject</span>  result [<span class="code-num">1</span>] $self;
+
+  <span class="code-comment">// 검증 로직</span>
+  validation checkAmount <span class="code-kw">on</span> save
+    { create; update; }
+
+  <span class="code-comment">// 자식 엔티티</span>
+  <span class="code-kw">association</span> _Items { create; }
+}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5: CONSULTANT TIPS -->
+<section class="section" id="sec-tips">
+  <div class="section-label">05 · Consultant Communication Guide</div>
+  <h2 class="section-title">개발자와 효과적으로 협의하기 위한<br>10가지 핵심 질문과 맥락</h2>
+  <p class="section-action-title">컨설턴트가 ABAP 개발자와 협업 시 올바른 질문을 통해 공수·리스크·기술 부채를 정확히 파악해야 클라이언트에게 현실적인 가이드를 제공할 수 있음</p>
+
+  <div class="tips-grid reveal">
+    <div class="tip-card">
+      <div class="tip-num">01</div>
+      <div class="tip-question">"이 요건, Enhancement로 가능합니까 아니면 수정(Modification)입니까?"</div>
+      <div class="tip-answer">Enhancement는 SAP 표준을 건드리지 않아 업그레이드 안전. Modification은 SAP 업데이트 시 재작업 필요. 대규모 롤아웃 계획 있다면 반드시 확인.</div>
+      <div class="tip-keyword">BAdI vs. Source Code Modification</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-num">02</div>
+      <div class="tip-question">"Z 테이블을 새로 만드나요, 표준 테이블에 Append Structure를 추가하나요?"</div>
+      <div class="tip-answer">커스텀 테이블(Z/Y prefix) 생성은 유연하지만 표준 보고서 연계 누락 위험. Append Structure는 표준 테이블 확장으로 통합 용이하나 제약 존재.</div>
+      <div class="tip-keyword">Data Model Design</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-num">03</div>
+      <div class="tip-question">"CDS View로 개발합니까, 아니면 ABAP 코드에서 직접 SELECT합니까?"</div>
+      <div class="tip-answer">CDS View는 재사용성·성능 우수하나 초기 설계 시간 필요. 직접 SELECT는 빠르지만 유지보수 부채 증가. S/4HANA 환경이라면 CDS 권장.</div>
+      <div class="tip-keyword">CDS vs. Open SQL</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-num">04</div>
+      <div class="tip-question">"ABAP Unit Test 작성을 계획에 포함했나요?"</div>
+      <div class="tip-answer">테스트 코드 미작성 시 회귀 버그 위험 증가. SAP은 Test Double Framework 제공. 공수의 20~30% 추가 필요하나 장기적 유지보수 비용 절감.</div>
+      <div class="tip-keyword">ABAP Unit / Test Double</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-num">05</div>
+      <div class="tip-question">"성능 테스트(HANA Trace)는 어느 시점에 계획되어 있나요?"</div>
+      <div class="tip-answer">ABAP 개발의 가장 큰 숨은 리스크. SELECT * FULL SCAN 하나가 시스템 전체를 마비시킬 수 있음. 개발 완료 후가 아니라 개발 중 주기적 체크 필요.</div>
+      <div class="tip-keyword">ST05 / HANA Trace</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-num">06</div>
+      <div class="tip-question">"이 인터페이스, ABAP에서 직접 호출합니까 아니면 Integration Suite를 거칩니까?"</div>
+      <div class="tip-answer">ABAP에서 직접 외부 REST 호출 시 에러 처리·인증·모니터링 부담. BTP Integration Suite(iFlow)를 허브로 사용하면 운영 가시성 대폭 향상.</div>
+      <div class="tip-keyword">PI/PO vs. BTP Integration</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-num">07</div>
+      <div class="tip-question">"이 개발, Transport Request는 어떻게 관리하나요?"</div>
+      <div class="tip-answer">SAP 변경관리는 TR(Transport Request) 기반. DEV→QAS→PRD 이동. TR 의존성 관리 실패 시 기능 배포 순서 오류로 운영 장애 발생 가능.</div>
+      <div class="tip-keyword">CTS / Transport Management</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-num">08</div>
+      <div class="tip-question">"S/4HANA Cloud입니까, On-premise입니까? Public Cloud입니까?"</div>
+      <div class="tip-answer">S/4HANA Public Cloud는 ABAP Cloud 제약(Released API만). On-premise/Private Cloud는 Classic ABAP 전부 가능. 개발 자유도가 근본적으로 다름.</div>
+      <div class="tip-keyword">Deployment Model</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-num">09</div>
+      <div class="tip-question">"RAP로 개발합니까, 아니면 기존 방식입니까?"</div>
+      <div class="tip-answer">RAP는 S/4HANA 1909+에서 가능. Fiori Elements와의 통합, 미래 업그레이드 친화성 측면에서 RAP 권장. 단 팀의 RAP 역량 확인 필수.</div>
+      <div class="tip-keyword">RAP vs. SEGW/Classic</div>
+    </div>
+  </div>
+
+  <!-- DO's and DON'Ts -->
+  <div style="margin-top:48px; display:grid; grid-template-columns:1fr 1fr; gap:32px;" class="reveal">
+    <div style="border:1px solid #2e7d32; padding:28px;">
+      <div style="font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#2e7d32; font-family:'IBM Plex Mono',monospace; margin-bottom:16px;">✓ 개발자와 소통 시 이렇게 하세요</div>
+      <ul style="list-style:none; font-size:13px; line-height:2;">
+        <li>📋 기능 단위로 개발 범위를 명확히 문서화 (Functional Spec)</li>
+        <li>🏷️ Z/Y prefix 커스텀 오브젝트 현황을 초기에 파악</li>
+        <li>📊 성능 영향도가 큰 기능은 데이터 볼륨을 반드시 명시</li>
+        <li>🔄 Enhancement 우선, 수정(Modification)은 최후 수단</li>
+        <li>📅 Transport 일정을 배포 계획에 반드시 포함</li>
+        <li>🧪 테스트 시나리오를 functional spec 수준으로 사전 준비</li>
+      </ul>
+    </div>
+    <div style="border:1px solid #c62828; padding:28px;">
+      <div style="font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#c62828; font-family:'IBM Plex Mono',monospace; margin-bottom:16px;">✗ 이런 오해는 피하세요</div>
+      <ul style="list-style:none; font-size:13px; line-height:2;">
+        <li>❌ "ABAP은 구식 언어라 빠르게 만들 수 있다" → 도메인 복잡도 고려 필수</li>
+        <li>❌ "SAP 표준에 있으니 바로 쓸 수 있다" → 설정·커스터마이즈 공수 별도</li>
+        <li>❌ "ECC 코드 그대로 S/4로 이전된다" → ABAP Cloud 제약으로 재개발 필요</li>
+        <li>❌ "API 연동은 ABAP에서 간단하다" → 외부 연동은 Integration Suite 권장</li>
+        <li>❌ "개발자 1명이면 충분하다" → 복잡한 RAP는 ABAP+UI5 이원 역량 필요</li>
+        <li>❌ "테스트는 개발 완료 후에" → 배치·인터페이스는 초기부터 통합 테스트</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 6: GLOSSARY -->
+<section class="section" id="sec-glossary">
+  <div class="section-label">06 · Glossary</div>
+  <h2 class="section-title">ABAP 핵심 용어집:<br>개발자와 대화 시 알아야 할 40선</h2>
+  <p class="section-action-title">개발자가 사용하는 기술 용어를 이해함으로써 회의 효율을 높이고, 잘못된 scope 정의로 인한 재작업을 예방할 수 있음</p>
+
+  <div style="display:flex; gap:12px; margin-bottom:28px; flex-wrap:wrap;" class="reveal">
+    <button class="tab-btn active" onclick="filterGlossary(this,'all')" style="border:1px solid var(--gray-border);">전체</button>
+    <button class="tab-btn" onclick="filterGlossary(this,'data')" style="border:1px solid var(--gray-border);">데이터</button>
+    <button class="tab-btn" onclick="filterGlossary(this,'dev')" style="border:1px solid var(--gray-border);">개발</button>
+    <button class="tab-btn" onclick="filterGlossary(this,'integration')" style="border:1px solid var(--gray-border);">통합</button>
+    <button class="tab-btn" onclick="filterGlossary(this,'rap')" style="border:1px solid var(--gray-border);">RAP/Modern</button>
+    <button class="tab-btn" onclick="filterGlossary(this,'ops')" style="border:1px solid var(--gray-border);">운영/배포</button>
+  </div>
+
+  <div class="glossary-grid reveal" id="glossary-grid">
+    <div class="glossary-item" data-cat="data"><div class="glossary-term">Transparent Table</div><div class="glossary-def">SAP DDIC에서 정의하는 기본 DB 테이블. 각 테이블이 DB에 1:1로 대응. 커스텀 Z테이블의 기본 유형.</div></div>
+    <div class="glossary-item" data-cat="data"><div class="glossary-term">Internal Table</div><div class="glossary-def">ABAP 메모리 내 데이터 컨테이너. Hashed/Sorted/Standard 세 가지 유형. 성능의 핵심.</div></div>
+    <div class="glossary-item" data-cat="data"><div class="glossary-term">Data Dictionary (DDIC)</div><div class="glossary-def">SAP 메타데이터 저장소. 테이블, 구조체, 데이터 요소, 도메인 정의. SE11 트랜잭션.</div></div>
+    <div class="glossary-item" data-cat="data"><div class="glossary-term">Domain / Data Element</div><div class="glossary-def">Domain: 값 범위 정의. Data Element: 필드의 의미와 Label 정의. DDIC의 기본 단위.</div></div>
+    <div class="glossary-item" data-cat="data"><div class="glossary-term">CDS View (Core Data Services)</div><div class="glossary-def">HANA 기반 재사용 가능한 데이터 뷰 계층. Annotation으로 UI·OData까지 제어.</div></div>
+    <div class="glossary-item" data-cat="data"><div class="glossary-term">Append Structure</div><div class="glossary-def">SAP 표준 테이블에 커스텀 필드를 추가하는 방식. 표준 테이블 직접 수정 없이 확장.</div></div>
+    <div class="glossary-item" data-cat="dev"><div class="glossary-term">Function Module (FM)</div><div class="glossary-def">재사용 가능한 절차형 함수 단위. RFC 가능 여부 설정으로 원격 호출 지원. BAPI의 기반.</div></div>
+    <div class="glossary-item" data-cat="dev"><div class="glossary-term">BAPI</div><div class="glossary-def">Business API. SAP 표준 Function Module 중 비즈니스 오퍼레이션용. BAPI_ACC_DOCUMENT_POST 등.</div></div>
+    <div class="glossary-item" data-cat="dev"><div class="glossary-term">BAdI (Business Add-In)</div><div class="glossary-def">SAP 표준 코드 수정 없이 커스텀 로직 삽입하는 Enhancement 메커니즘. OO 기반.</div></div>
+    <div class="glossary-item" data-cat="dev"><div class="glossary-term">User Exit / Enhancement Spot</div><div class="glossary-def">구형 BAdI 전신. SUSR/CMOD 트랜잭션. 신규 개발에는 BAdI 사용 권장.</div></div>
+    <div class="glossary-item" data-cat="dev"><div class="glossary-term">ALV (ABAP List Viewer)</div><div class="glossary-def">SAP 표준 보고서 출력 프레임워크. 필터·정렬·엑셀 다운로드 자동 지원. 보고서의 90%가 ALV.</div></div>
+    <div class="glossary-item" data-cat="dev"><div class="glossary-term">Dynpro (Screen)</div><div class="glossary-def">SAP GUI 화면 정의 언어. Module Pool 프로그램의 UI. Flow Logic(PBO/PAI)으로 제어.</div></div>
+    <div class="glossary-item" data-cat="dev"><div class="glossary-term">Selection Screen</div><div class="glossary-def">보고서·배치 프로그램의 입력 파라미터 화면. PARAMETERS/SELECT-OPTIONS 문으로 선언.</div></div>
+    <div class="glossary-item" data-cat="dev"><div class="glossary-term">ABAP Unit</div><div class="glossary-def">ABAP 내장 단위 테스트 프레임워크. CLASS ... FOR TESTING. TDD 지원.</div></div>
+    <div class="glossary-item" data-cat="dev"><div class="glossary-term">AMDP</div><div class="glossary-def">ABAP Managed Database Procedure. ABAP 클래스 내에서 HANA SQLScript 실행. DB 레벨 성능 최적화.</div></div>
+    <div class="glossary-item" data-cat="dev"><div class="glossary-term">Smartforms / Adobe Forms</div><div class="glossary-def">SAP 출력 양식 도구. 송장, 납품서, 계약서 등 인쇄물. Adobe Forms가 현재 표준.</div></div>
+    <div class="glossary-item" data-cat="integration"><div class="glossary-term">RFC (Remote Function Call)</div><div class="glossary-def">SAP 시스템 간 또는 외부 시스템 연동 프로토콜. Synchronous/Async/Transactional(tRFC) 유형.</div></div>
+    <div class="glossary-item" data-cat="integration"><div class="glossary-term">IDoc (Intermediate Document)</div><div class="glossary-def">SAP 전자문서 표준 포맷. EDI, B2B 문서 교환. ORDERS, DESADV 등 표준 메시지 유형.</div></div>
+    <div class="glossary-item" data-cat="integration"><div class="glossary-term">PI/PO (Process Orchestration)</div><div class="glossary-def">SAP 미들웨어. 시스템 간 메시지 라우팅·변환. BTP Integration Suite로 진화 중.</div></div>
+    <div class="glossary-item" data-cat="integration"><div class="glossary-term">OData Service</div><div class="glossary-def">Fiori/모바일 앱 백엔드 REST 프로토콜. v2(SEGW 기반) / v4(RAP 기반). JSON/XML 지원.</div></div>
+    <div class="glossary-item" data-cat="rap"><div class="glossary-term">RAP (RESTful Application Programming)</div><div class="glossary-def">S/4HANA 표준 개발 방법론. CDS+Behavior Definition+OData의 통합 프레임워크.</div></div>
+    <div class="glossary-item" data-cat="rap"><div class="glossary-term">Behavior Definition (BDEF)</div><div class="glossary-def">RAP의 비즈니스 로직 선언 파일. CRUD, Action, Validation, Determination 정의.</div></div>
+    <div class="glossary-item" data-cat="rap"><div class="glossary-term">Behavior Implementation Class</div><div class="glossary-def">BDEF에서 선언한 로직을 구현하는 ABAP 클래스. Local Handler/Saver 포함.</div></div>
+    <div class="glossary-item" data-cat="rap"><div class="glossary-term">Managed Scenario</div><div class="glossary-def">RAP에서 프레임워크가 save/lock/draft를 자동 처리. 단순 마스터데이터에 적합.</div></div>
+    <div class="glossary-item" data-cat="rap"><div class="glossary-term">Draft Handling</div><div class="glossary-def">저장 전 임시 데이터 관리 기능. RAP 프레임워크가 Draft 테이블 자동 관리.</div></div>
+    <div class="glossary-item" data-cat="rap"><div class="glossary-term">Fiori Elements</div><div class="glossary-def">OData Annotation 기반 자동 생성 UI. List Report, Object Page 등 템플릿 제공.</div></div>
+    <div class="glossary-item" data-cat="rap"><div class="glossary-term">ABAP Cloud</div><div class="glossary-def">BTP ABAP Environment. Released API만 사용 가능. 테넌트 격리. 클라우드 네이티브 ABAP.</div></div>
+    <div class="glossary-item" data-cat="rap"><div class="glossary-term">ADT (ABAP Development Tools)</div><div class="glossary-def">Eclipse 기반 현대적 ABAP IDE. RAP 개발, 리팩터링, 코드 완성, 디버깅 지원.</div></div>
+    <div class="glossary-item" data-cat="ops"><div class="glossary-term">Transport Request (TR)</div><div class="glossary-def">개발 오브젝트를 DEV→QAS→PRD로 이동하는 패키지. SAP 변경관리의 기본 단위.</div></div>
+    <div class="glossary-item" data-cat="ops"><div class="glossary-term">Workbench Request vs. Customizing Request</div><div class="glossary-def">WR: 프로그램·DDIC 등 개발 오브젝트. CR: IMG 설정값. 혼용 금지.</div></div>
+    <div class="glossary-item" data-cat="ops"><div class="glossary-term">ST05 / HANA Explain Plan</div><div class="glossary-def">SQL 성능 분석 도구. DB 쿼리 실행 계획 확인. 풀 스캔·인덱스 누락 탐지.</div></div>
+    <div class="glossary-item" data-cat="ops"><div class="glossary-term">SM37 / Background Job</div><div class="glossary-def">백그라운드 배치 잡 관리. 스케줄링·모니터링. 대용량 처리의 핵심.</div></td></div>
+    <div class="glossary-item" data-cat="ops"><div class="glossary-term">gCTS (Git-enabled CTS)</div><div class="glossary-def">SAP Transport를 Git 저장소와 연동하는 기능. CI/CD 파이프라인 구성의 기반.</div></div>
+    <div class="glossary-item" data-cat="ops"><div class="glossary-term">SPAM / Add-On Installation</div><div class="glossary-def">SAP 지원 패키지 관리자. SAP 수정 패치 적용. 커스텀 코드와의 충돌 분석 필수.</div></div>
+    <div class="glossary-item" data-cat="ops"><div class="glossary-term">SCC4 / Mandant</div><div class="glossary-def">SAP 클라이언트(회사 코드와 다름). DEV/QAS/PRD 각각 독립된 Mandant 운영.</div></div>
+    <div class="glossary-item" data-cat="dev"><div class="glossary-term">BDC (Batch Data Communication)</div><div class="glossary-def">화면 자동화로 데이터 대량 입력. Legacy 시스템 데이터 마이그레이션에 활용.</div></div>
+    <div class="glossary-item" data-cat="dev"><div class="glossary-term">LSMW / BAPI Migration</div><div class="glossary-def">데이터 마이그레이션 도구. 현재는 BAPI 기반 또는 SAP Migration Cockpit 사용 권장.</div></div>
+    <div class="glossary-item" data-cat="data"><div class="glossary-term">Cluster Table / Pooled Table</div><div class="glossary-def">여러 논리 테이블을 하나의 물리 DB 테이블에 저장. HR/FI 일부에서 사용. S/4에서 Transparent으로 전환.</div></div>
+    <div class="glossary-item" data-cat="rap"><div class="glossary-term">VDM (Virtual Data Model)</div><div class="glossary-def">S/4HANA CDS 뷰 아키텍처. Basic→Composite→Consumption 계층 구조.</div></div>
+    <div class="glossary-item" data-cat="integration"><div class="glossary-term">BTP Integration Suite (iFlow)</div><div class="glossary-def">SAP PI/PO의 클라우드 후계. 그래픽 기반 인터페이스 설계. REST·SOAP·IDoc 지원.</div></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="left">ABAP 기술 개요 | 컨설턴트를 위한 개발자 소통 가이드 | 교육 자료</div>
+  <div class="right">Classic ABAP → ABAP Objects → HANA → RAP → ABAP Cloud</div>
+</footer>
+
+<script>
+// Progress bar
+window.addEventListener('scroll', () => {
+  const s = document.documentElement.scrollTop;
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('progress').style.width = (s/h*100) + '%';
+  
+  // Nav active
+  const sections = ['sec-overview','sec-evolution','sec-architecture','sec-sw','sec-rap','sec-tips','sec-glossary'];
+  const tabs = document.querySelectorAll('.nav-tab');
+  sections.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el) {
+      const top = el.getBoundingClientRect().top;
+      if (top <= 100) tabs.forEach((t,j) => t.classList.toggle('active', j===i));
+    }
+  });
+});
+
+// Scroll to
+function scrollTo(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Internal tabs
+function switchTab(btn, panelId) {
+  const container = btn.closest('.section, div');
+  container.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  const panel = document.getElementById(panelId);
+  if (panel) panel.classList.add('active');
+}
+
+// Accordion
+function toggleAccordion(header) {
+  const item = header.closest('.accordion-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// Glossary filter
+function filterGlossary(btn, cat) {
+  document.querySelectorAll('[onclick^="filterGlossary"]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.glossary-item').forEach(item => {
+    item.style.display = (cat === 'all' || item.dataset.cat === cat) ? '' : 'none';
+  });
+}
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Stagger reveal in tips grid
+document.querySelectorAll('.tip-card').forEach((card, i) => {
+  card.style.transitionDelay = (i * 0.06) + 's';
+  card.classList.add('reveal');
+  observer.observe(card);
+});
+</script>
+</body>
+</html>
