@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GR PL 환산 라운딩 조정 — 교육자료</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #003366;
+    --navy-mid: #004899;
+    --navy-light: #e8eef5;
+    --white: #ffffff;
+    --gray-dark: #333333;
+    --gray-mid: #666666;
+    --gray-light: #f4f6f9;
+    --gray-border: #d0d8e4;
+    --accent-line: #003366;
+    --correct: #1a6e3c;
+    --correct-bg: #e8f5ee;
+    --wrong: #8b1a1a;
+    --wrong-bg: #fdf0f0;
+    --warn: #7a5200;
+    --warn-bg: #fdf6e3;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #f0f3f8;
+    color: var(--gray-dark);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 48px 0 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 320px; height: 320px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 50%;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -40px;
+    width: 220px; height: 220px;
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 50%;
+  }
+  .header-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 40px;
+    position: relative;
+    z-index: 1;
+  }
+  .header-tag {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 16px;
+  }
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.25;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+  header h1 em {
+    font-style: italic;
+    color: rgba(255,255,255,0.75);
+  }
+  header p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+    max-width: 580px;
+  }
+
+  /* ── NAV TABS ── */
+  .nav-tabs {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .nav-tabs-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: flex;
+    gap: 0;
+  }
+  .tab-btn {
+    padding: 16px 20px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gray-mid);
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--navy); }
+  .tab-btn.active {
+    color: var(--navy);
+    border-bottom-color: var(--navy);
+    font-weight: 700;
+  }
+
+  /* ── MAIN ── */
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 40px 80px;
+  }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    font-weight: 400;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .section-subtitle {
+    font-size: 13px;
+    color: var(--gray-mid);
+    margin-bottom: 32px;
+    line-height: 1.6;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--gray-border);
+    border-radius: 2px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 14px;
+  }
+
+  /* ── CALLOUT BOXES ── */
+  .callout {
+    border-left: 3px solid var(--navy);
+    background: var(--navy-light);
+    padding: 16px 20px;
+    margin: 20px 0;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .callout.correct {
+    border-left-color: var(--correct);
+    background: var(--correct-bg);
+    color: var(--correct);
+  }
+  .callout.wrong {
+    border-left-color: var(--wrong);
+    background: var(--wrong-bg);
+    color: var(--wrong);
+  }
+  .callout.warn {
+    border-left-color: var(--warn);
+    background: var(--warn-bg);
+    color: var(--warn);
+  }
+  .callout strong { font-weight: 700; }
+
+  /* ── TWO PATH DIAGRAM ── */
+  .path-diagram {
+    display: grid;
+    grid-template-columns: 1fr 40px 1fr;
+    gap: 0;
+    margin: 24px 0;
+    align-items: start;
+  }
+  .path-box {
+    border: 1px solid var(--gray-border);
+    background: var(--gray-light);
+    padding: 20px;
+  }
+  .path-box.highlight {
+    border-color: var(--navy);
+    background: var(--navy-light);
+  }
+  .path-label {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--navy);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .path-desc {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--gray-dark);
+  }
+  .path-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 30px;
+    color: var(--gray-mid);
+    font-size: 20px;
+  }
+  .path-vs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 28px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: var(--gray-mid);
+    font-style: italic;
+  }
+
+  /* ── MATH BLOCK ── */
+  .math-block {
+    background: #1a1f2e;
+    color: #e8f0ff;
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 13px;
+    line-height: 2;
+    padding: 24px 28px;
+    margin: 20px 0;
+    border-radius: 2px;
+    overflow-x: auto;
+  }
+  .math-block .comment { color: #5a7aaa; }
+  .math-block .highlight-text { color: #7dd3fc; font-weight: 600; }
+  .math-block .result { color: #86efac; font-weight: 600; }
+  .math-block .diff { color: #fca5a5; font-weight: 600; }
+
+  /* ── SIMULATOR ── */
+  .simulator {
+    background: var(--white);
+    border: 1px solid var(--gray-border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .sim-header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 14px 24px;
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+  .sim-body { padding: 24px; }
+
+  .sim-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .sim-control label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .sim-control input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--gray-border);
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 13px;
+    color: var(--gray-dark);
+    background: var(--gray-light);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .sim-control input:focus { border-color: var(--navy); background: var(--white); }
+
+  .sim-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+  .sim-table th {
+    background: var(--navy);
+    color: var(--white);
+    padding: 10px 14px;
+    text-align: right;
+    font-weight: 500;
+    font-size: 12px;
+  }
+  .sim-table th:first-child { text-align: left; }
+  .sim-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--gray-border);
+    text-align: right;
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+  }
+  .sim-table td:first-child {
+    text-align: left;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: var(--gray-mid);
+  }
+  .sim-table tr:hover td { background: var(--gray-light); }
+  .sim-table tr.total td {
+    background: var(--navy-light);
+    font-weight: 700;
+    border-top: 2px solid var(--navy);
+  }
+  .sim-table tr.rounding td {
+    background: var(--warn-bg);
+    color: var(--warn);
+    font-weight: 700;
+    border-top: 2px solid var(--warn);
+  }
+
+  .sim-result {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1px;
+    background: var(--gray-border);
+    border: 1px solid var(--gray-border);
+    margin-top: 16px;
+    min-height: 80px;
+  }
+  .sim-result-item {
+    background: var(--white);
+    padding: 16px 20px;
+    text-align: center;
+  }
+  .sim-result-item .label {
+    font-size: 11px;
+    color: var(--gray-mid);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .sim-result-item .value {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+  .sim-result-item.diff .value { color: var(--warn); }
+  .sim-result-item.diff { background: var(--warn-bg); }
+
+  .btn-run {
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    padding: 10px 24px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.2s;
+    margin-bottom: 20px;
+  }
+  .btn-run:hover { background: var(--navy-mid); }
+
+  /* ── RECORD STRUCTURE ── */
+  .tree {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 13px;
+    line-height: 2;
+    background: var(--gray-light);
+    border: 1px solid var(--gray-border);
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+  .tree .node-root { color: var(--navy); font-weight: 700; }
+  .tree .node-mid { color: var(--gray-dark); }
+  .tree .node-leaf { color: var(--gray-mid); }
+  .tree .node-highlight { color: var(--warn); font-weight: 600; }
+
+  /* ── DOC TYPE TABLE ── */
+  .doc-type-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 20px 0;
+  }
+  .doc-type-table th {
+    background: var(--navy);
+    color: var(--white);
+    padding: 10px 16px;
+    text-align: left;
+    font-weight: 500;
+    font-size: 12px;
+  }
+  .doc-type-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--gray-border);
+    vertical-align: top;
+  }
+  .doc-type-table tr:hover td { background: var(--gray-light); }
+  .doc-type-table tr.highlight-05 td { background: #e8eef5; }
+  .doc-type-table tr.highlight-06 td { background: var(--warn-bg); }
+  .doc-type-tag {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .attr-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 2px;
+  }
+  .attr-c { background: var(--navy); color: var(--white); }
+  .attr-d { background: var(--warn-bg); color: var(--warn); border: 1px solid var(--warn); }
+
+  /* ── FLOW DIAGRAM ── */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 24px 0;
+  }
+  .flow-step {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+  }
+  .flow-connector {
+    display: flex;
+    justify-content: center;
+    padding: 4px 0;
+    padding-left: 60px;
+  }
+  .flow-connector-line {
+    width: 2px;
+    background: var(--navy);
+    height: 20px;
+  }
+  .flow-num {
+    width: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: flex-start;
+    padding-top: 14px;
+    justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--navy);
+    opacity: 0.3;
+  }
+  .flow-content {
+    flex: 1;
+    border: 1px solid var(--gray-border);
+    padding: 14px 18px;
+    background: var(--white);
+    margin-bottom: 0;
+  }
+  .flow-content.active-step {
+    border-color: var(--navy);
+    background: var(--navy-light);
+  }
+  .flow-title {
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .flow-desc {
+    font-size: 13px;
+    color: var(--gray-mid);
+    line-height: 1.6;
+  }
+  .flow-tag {
+    display: inline-block;
+    margin-top: 6px;
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 10px;
+    padding: 2px 7px;
+    background: var(--navy);
+    color: var(--white);
+    letter-spacing: 0.5px;
+  }
+
+  /* ── QUIZ ── */
+  .quiz-card {
+    background: var(--white);
+    border: 1px solid var(--gray-border);
+    padding: 28px 32px;
+    margin-bottom: 20px;
+  }
+  .quiz-q {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--gray-dark);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .quiz-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    border: 1px solid var(--gray-border);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 13px;
+    line-height: 1.6;
+    background: var(--gray-light);
+  }
+  .quiz-option:hover { border-color: var(--navy); background: var(--navy-light); }
+  .quiz-option.selected-correct { border-color: var(--correct); background: var(--correct-bg); color: var(--correct); }
+  .quiz-option.selected-wrong { border-color: var(--wrong); background: var(--wrong-bg); color: var(--wrong); }
+  .quiz-option.reveal-correct { border-color: var(--correct); background: var(--correct-bg); color: var(--correct); }
+  .quiz-idx {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--navy);
+    min-width: 20px;
+  }
+  .quiz-feedback {
+    font-size: 13px;
+    line-height: 1.7;
+    padding: 14px 18px;
+    border-left: 3px solid var(--navy);
+    background: var(--navy-light);
+    display: none;
+    margin-top: 4px;
+  }
+  .quiz-feedback.show { display: block; }
+
+  /* ── SUMMARY ── */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .summary-item {
+    border: 1px solid var(--gray-border);
+    padding: 20px;
+    background: var(--white);
+  }
+  .summary-item-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--gray-border);
+  }
+  .summary-item p {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--gray-dark);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    main { padding: 24px 20px 60px; }
+    .header-inner { padding: 0 20px; }
+    .nav-tabs-inner { padding: 0 12px; overflow-x: auto; }
+    .tab-btn { padding: 14px 12px; font-size: 12px; }
+    .sim-controls { grid-template-columns: 1fr; }
+    .path-diagram { grid-template-columns: 1fr; }
+    .path-vs { display: none; }
+    .sim-result { grid-template-columns: 1fr; }
+    .summary-grid { grid-template-columns: 1fr; }
+    header h1 { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-tag">SAP Group Reporting · Currency Translation · 내부 교육자료</div>
+    <h1>PL 환산의 <em>라운딩 조정</em>은<br>왜 발생하는가</h1>
+    <p>실무자가 혼란스러워하는 GR 환산 라운딩 조정의 발생 메커니즘, 시스템 설계 철학, 전표 유형 구조를 단계별로 이해합니다.</p>
+  </div>
+</header>
+
+<nav class="nav-tabs">
+  <div class="nav-tabs-inner">
+    <button class="tab-btn active" onclick="showTab('s1', this)">① 핵심 개념</button>
+    <button class="tab-btn" onclick="showTab('s2', this)">② 왜 차이가 생기나</button>
+    <button class="tab-btn" onclick="showTab('s3', this)">③ 시뮬레이터</button>
+    <button class="tab-btn" onclick="showTab('s4', this)">④ 데이터 구조</button>
+    <button class="tab-btn" onclick="showTab('s5', this)">⑤ 전표 유형</button>
+    <button class="tab-btn" onclick="showTab('s6', this)">⑥ 확인 문제</button>
+    <button class="tab-btn" onclick="showTab('s7', this)">⑦ 현업 설득</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ───────────────── SECTION 1: 핵심 개념 ───────────────── -->
+<div id="s1" class="section active">
+  <div class="section-title">핵심 개념</div>
+  <div class="section-subtitle">PL 환산에서 충돌하는 두 가지 경로와 라운딩 조정의 본질을 이해합니다.</div>
+
+  <div class="card">
+    <div class="card-title">문제의 출발점</div>
+    <p style="font-size:14px;line-height:1.8;">GR에서 PL을 그룹 통화(GC)로 환산할 때, <strong>동일한 당기순이익</strong>을 계산하는 두 가지 경로가 존재합니다. 이 두 경로의 결과는 수학적으로 항상 동일하지 않습니다.</p>
+  </div>
+
+  <div class="path-diagram">
+    <div class="path-box">
+      <div class="path-label">경로 A — Bottom-up 합산</div>
+      <div class="path-desc">
+        각 PL 계정(매출, 원가, 판관비 등)을 <strong>개별적으로 환산</strong>한 뒤 합산<br><br>
+        <code style="font-size:12px;background:#eee;padding:3px 6px;">Σ round(FS Item₁ × r) + round(FS Item₂ × r) + ...</code>
+      </div>
+    </div>
+    <div class="path-vs">vs</div>
+    <div class="path-box highlight">
+      <div class="path-label">경로 B — Direct 환산 (GR 기준)</div>
+      <div class="path-desc">
+        LC 당기순이익 <strong>단일 금액</strong>을 환산율로 직접 환산<br><br>
+        <code style="font-size:12px;background:#d4e4f7;padding:3px 6px;">round(LC Net Income × r)</code><br><br>
+        → BS 차대 역산으로 독립 계산된 당기순이익 단일값
+      </div>
+    </div>
+  </div>
+
+  <div class="callout correct">
+    <strong>핵심:</strong> 두 경로 모두 동일한 평균환율 <em>r</em>을 사용합니다. 계정별로 환율이 다른 것이 아닙니다. 차이는 오직 <strong>반올림 연산의 적용 순서</strong>에서만 발생합니다.
+  </div>
+
+  <div class="card">
+    <div class="card-title">왜 경로 B를 기준으로 삼는가</div>
+    <p style="font-size:14px;line-height:1.8;margin-bottom:14px;">GR은 환산 후 BS에서 역산된 당기순이익과 PL에서 집계된 당기순이익이 일치하는지를 검증합니다. 이 검증이 성립하려면 PL 당기순이익이 <strong>단일 금액(경로 B)</strong>으로 확정되어 있어야 합니다.</p>
+    <p style="font-size:14px;line-height:1.8;">경로 A(각 계정 환산 합계)를 PL 당기순이익으로 사용하면 BS 역산값과 일치하지 않게 됩니다. 따라서 GR은 <strong>경로 B를 PL 당기순이익의 확정값으로 고정</strong>하고, 경로 A와의 차이를 별도 전표(전표 유형 06)로 명시적으로 기록합니다.</p>
+  </div>
+
+  <div class="callout">
+    <strong>라운딩 조정의 정의:</strong><br>
+    라운딩 조정 = 경로 B (LC Net Income × r의 환산값) − 경로 A (각 FS Item 환산 결과의 합계)
+  </div>
+</div>
+
+<!-- ───────────────── SECTION 2: 왜 차이가 생기나 ───────────────── -->
+<div id="s2" class="section">
+  <div class="section-title">왜 수학적으로 차이가 생기는가</div>
+  <div class="section-subtitle">반올림 연산의 비교환성(non-commutativity)과 부동소수점 누적 효과를 이해합니다.</div>
+
+  <div class="card">
+    <div class="card-title">반올림은 선형 연산이 아닙니다</div>
+    <div class="math-block">
+<span class="comment">// 반올림 연산의 핵심 성질</span>
+round(a × r) + round(b × r)  <span class="diff">≠</span>  round((a + b) × r)
+
+<span class="comment">// 직관적 예시: r = 1/3 (순환소수)</span>
+a = 100, b = 200, r = 0.3333...
+
+round(100 × 0.3333...) = round(33.33...) = <span class="highlight-text">33</span>
+round(200 × 0.3333...) = round(66.66...) = <span class="highlight-text">67</span>
+경로 A 합계                               = <span class="highlight-text">100</span>
+
+round(300 × 0.3333...) = round(99.99...) = <span class="result">100</span>
+경로 B 결과                               = <span class="result">100</span>
+
+<span class="comment">// 이 경우 차이 = 0. 하지만 계정이 수십 개면...</span>
+<span class="diff">→ 각 계정의 오차가 독립적으로 누적됨</span>
+    </div>
+
+    <div class="callout warn">
+      <strong>KRW의 경우 소수점이 존재하지 않습니다.</strong> USD→KRW 환산 시 소수점 이하가 절사되는 순간, 계정 수만큼 오차가 쌓입니다. FS Item이 200개, Partner가 30개, Subitem이 5개인 환경이라면 이론적 최대 누적 오차는 30,000원 수준에 달할 수 있습니다.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">왜 "평균환율이 달라서"가 틀린 설명인가</div>
+    <p style="font-size:14px;line-height:1.8;margin-bottom:12px;">IAS 21 하에서 동일 기간의 PL 항목에는 <strong>동일한 평균환율</strong>이 적용됩니다. 계정별로 서로 다른 환율이 적용되어 차이가 생기는 것이 아닙니다.</p>
+    <div class="callout wrong">
+      <strong>❌ 잘못된 설명:</strong> "매출은 1.10 환율, 원가는 1.095 환율이 적용되어서 차이가 생긴다"<br><br>
+      <strong>✅ 올바른 설명:</strong> "동일한 환율 r을 적용하더라도, 수만 개의 레코드를 각각 정수로 반올림하는 과정에서 단수 오차가 누적되어 차이가 생긴다"
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">라운딩 조정의 회계적 성격</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--gray-border);border:1px solid var(--gray-border);">
+      <div style="background:var(--white);padding:16px 18px;">
+        <div style="font-size:11px;font-weight:700;color:var(--correct);margin-bottom:8px;">✅ 맞는 설명</div>
+        <p style="font-size:13px;line-height:1.6;">측정 방법론의 산물</p>
+      </div>
+      <div style="background:var(--white);padding:16px 18px;">
+        <div style="font-size:11px;font-weight:700;color:var(--wrong);margin-bottom:8px;">❌ 틀린 설명</div>
+        <p style="font-size:13px;line-height:1.6;">회계적 오류</p>
+      </div>
+      <div style="background:var(--white);padding:16px 18px;">
+        <div style="font-size:11px;font-weight:700;color:var(--wrong);margin-bottom:8px;">❌ 틀린 설명</div>
+        <p style="font-size:13px;line-height:1.6;">이익 조작</p>
+      </div>
+      <div style="background:var(--white);padding:16px 18px;">
+        <div style="font-size:11px;font-weight:700;color:var(--correct);margin-bottom:8px;">✅ 맞는 설명</div>
+        <p style="font-size:13px;line-height:1.6;">양방향 발생 (이익/손실 모두 가능)</p>
+      </div>
+      <div style="background:var(--white);padding:16px 18px;">
+        <div style="font-size:11px;font-weight:700;color:var(--correct);margin-bottom:8px;">✅ 맞는 설명</div>
+        <p style="font-size:13px;line-height:1.6;">IAS 21 준거 범위 내</p>
+      </div>
+      <div style="background:var(--white);padding:16px 18px;">
+        <div style="font-size:11px;font-weight:700;color:var(--correct);margin-bottom:8px;">✅ 맞는 설명</div>
+        <p style="font-size:13px;line-height:1.6;">감사 중요성 기준 이하</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────── SECTION 3: 시뮬레이터 ───────────────── -->
+<div id="s3" class="section">
+  <div class="section-title">라운딩 차이 시뮬레이터</div>
+  <div class="section-subtitle">직접 수치를 입력해 경로 A와 경로 B의 차이를 확인하세요.</div>
+
+  <div class="simulator">
+    <div class="sim-header">ROUNDING DIFFERENCE SIMULATOR — PL Currency Translation (LC: USD → GC: KRW)</div>
+    <div class="sim-body">
+      <div class="sim-controls">
+        <div class="sim-control">
+          <label>평균환율 (USD/KRW)</label>
+          <input type="number" id="rate" value="1504.29" step="0.01" onkeydown="blockAlpha(event)">
+        </div>
+        <div class="sim-control">
+          <label>레코드 수 (Partner×Subitem)</label>
+          <input type="number" id="records" value="10" min="2" max="200" oninput="clampRecords(this)" onkeydown="blockAlpha(event)">
+          <div id="recordsWarn" style="display:none;margin-top:5px;font-size:11px;color:var(--wrong);font-weight:600;">최대 200개 — 초과 시 부동소수점 누적 오류 발생</div>
+        </div>
+        <div class="sim-control">
+          <label>총 LC 금액 (USD)</label>
+          <input type="number" id="total_lc" value="12345678.99" step="0.01" onkeydown="blockAlpha(event)">
+        </div>
+      </div>
+      <button class="btn-run" onclick="runSimulator()">▶ 시뮬레이션 실행</button>
+
+      <div class="sim-result" id="simResult"></div>
+
+      <div style="margin-top:24px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:11px;letter-spacing:1px;color:var(--navy);">레코드별 환산 상세</div>
+          <button id="copyBtn" onclick="copyTableToClipboard()"
+            style="display:flex;align-items:center;gap:6px;padding:6px 14px;background:var(--white);border:1px solid var(--navy);color:var(--navy);font-family:'Noto Sans KR',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.15s;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            엑셀 붙여넣기용 복사
+          </button>
+        </div>
+        <table class="sim-table" id="simTable">
+          <thead>
+            <tr>
+              <th>레코드</th>
+              <th>LC 금액 (USD)</th>
+              <th>USD × 환율 (소수점 포함, KRW)</th>
+              <th>10원 단위 반올림 후 (KRW)</th>
+            </tr>
+          </thead>
+          <tbody id="simBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>관찰 포인트:</strong> KRW는 1원 동전이 사실상 유통되지 않아 <strong>10원 단위로 반올림</strong>됩니다. 레코드당 최대 ±5원이 아닌 <strong>최대 ±5원 × 10 = ±50원</strong> 수준의 오차가 발생하며, 레코드 수가 많을수록 누적 차이가 커집니다. 레코드 수를 늘려 확인해 보세요.
+  </div>
+</div>
+
+<!-- ───────────────── SECTION 4: 데이터 구조 ───────────────── -->
+<div id="s4" class="section">
+  <div class="section-title">GR 데이터 구조와 누적 효과</div>
+  <div class="section-subtitle">실제 GR에서 하나의 FS Item이 얼마나 많은 레코드로 분리되어 저장되는지 이해합니다.</div>
+
+  <div class="card">
+    <div class="card-title">FS Item의 실제 저장 구조</div>
+    <p style="font-size:14px;line-height:1.8;margin-bottom:16px;">GR에서 하나의 FS Item 잔액은 단일 숫자가 아닙니다. Partner Unit, Subitem 등의 차원으로 분리되어 <strong>최하위 레코드 단위로 환산</strong>이 수행됩니다.</p>
+    <div class="tree">
+<span class="node-root">FS Item: 매출 (Sales Revenue)</span>
+ ├─ <span class="node-mid">Partner Unit: 국내 법인 A (IC 거래분)</span>
+ │   ├─ <span class="node-leaf">Subitem 001: 제품 A</span>  → <span class="node-highlight">round(금액 × r)</span>
+ │   └─ <span class="node-leaf">Subitem 002: 제품 B</span>  → <span class="node-highlight">round(금액 × r)</span>
+ ├─ <span class="node-mid">Partner Unit: 해외 법인 B (IC 거래분)</span>
+ │   └─ <span class="node-leaf">Subitem 001: 용역</span>    → <span class="node-highlight">round(금액 × r)</span>
+ └─ <span class="node-mid">External (외부거래분)</span>
+     ├─ <span class="node-leaf">Subitem 001: 국내 고객</span> → <span class="node-highlight">round(금액 × r)</span>
+     ├─ <span class="node-leaf">Subitem 002: 해외 고객</span> → <span class="node-highlight">round(금액 × r)</span>
+     └─ <span class="node-leaf">Subitem 003: 기타</span>     → <span class="node-highlight">round(금액 × r)</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">오차 누적 규모 추정</div>
+    <div class="math-block">
+<span class="comment">// 오차 발생 단위 — KRW는 10원 단위 반올림 (1원 동전 사실상 미유통)</span>
+레코드 1개당 최대 오차 = ±5원 (10원 단위 반올림 기준)
+
+<span class="comment">// 실제 대형 연결 기업의 레코드 수 추정</span>
+FS Item 수    ×   Partner 수   ×   Subitem 수   =   총 레코드
+  <span class="highlight-text">200개</span>            <span class="highlight-text">×  30개</span>            <span class="highlight-text">×   5개</span>           =  <span class="result">30,000행</span>
+
+<span class="comment">// 이론적 최대 누적 오차 (1원 단위였다면 ±30,000원)</span>
+10원 단위 기준 최대 ±<span class="diff">150,000 KRW</span>
+
+<span class="comment">// 중요성(Materiality) 판단</span>
+연결 당기순이익이 수천억 원 수준이라면
+150,000원도 사실상 0에 가까운 금액
+→ 감사인 중요성 기준 이하로 판단
+    </div>
+    <div class="callout warn">
+      <strong>그러나:</strong> 금액의 크기가 작더라도 <strong>설명되지 않는 잔액</strong>이 존재한다는 사실 자체가 실무 문제입니다. GR이 전표 유형 06으로 이를 명시적으로 기록하는 이유가 여기 있습니다.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">라운딩 조정이 없다면 어떻게 되는가</div>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <div class="flow-content">
+          <div class="flow-title">각 FS Item 레코드 환산 완료</div>
+          <div class="flow-desc">30,000개 레코드 각각 round(금액 × r) 수행 → 단수 오차 누적</div>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <div class="flow-content">
+          <div class="flow-title">PL 합계 (경로 A) 계산</div>
+          <div class="flow-desc">환산된 레코드의 합계 → 경로 B와 미세하게 다른 당기순이익</div>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <div class="flow-content active-step">
+          <div class="flow-title">⚠️ BS 불균형 발생</div>
+          <div class="flow-desc">PL 당기순이익(경로 A 합계)과 BS 역산 당기순이익이 불일치. 전표 유형 06 없이는 BS-PL 당기순이익 검증 실패</div>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">4</div>
+        <div class="flow-content">
+          <div class="flow-title">GR의 해결책: 전표 유형 06 자동 생성</div>
+          <div class="flow-desc">차이를 명시적 전표로 기록하여 BS-PL 당기순이익 일치 복원. 설명 불가능한 잔액 → 설명 가능한 계정으로 전환</div>
+          <span class="flow-tag">Document Type 06 / Attr: D-Rounding</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────── SECTION 5: 전표 유형 ───────────────── -->
+<div id="s5" class="section">
+  <div class="section-title">GR 전표 유형과 비즈니스 어플리케이션 속성</div>
+  <div class="section-subtitle">전표 유형 05(당기순이익)와 06(반올림)의 역할 분리 구조, 그리고 BS 라운딩의 해사차 흡수 메커니즘을 이해합니다.</div>
+
+  <div class="card">
+    <div class="card-title">확인된 전표 유형 구조</div>
+    <table class="doc-type-table">
+      <thead>
+        <tr>
+          <th>전표 유형</th>
+          <th>명칭</th>
+          <th>비즈니스 어플리케이션 속성</th>
+          <th>역할</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-05">
+          <td><span class="doc-type-tag">05</span></td>
+          <td>당기순이익</td>
+          <td><span class="attr-badge attr-c">C — 순이익 계산</span></td>
+          <td style="font-size:13px;line-height:1.6;">BS 차대 잔액의 역산으로 당기순이익을 독립 계산. PL 당기순이익과 부호 반대·금액 동일이면 태스크 성공</td>
+        </tr>
+        <tr class="highlight-06">
+          <td><span class="doc-type-tag">06</span></td>
+          <td>반올림 (PL)</td>
+          <td><span class="attr-badge attr-d">D — 반올림</span></td>
+          <td style="font-size:13px;line-height:1.6;">PL: 경로 B − 경로 A의 누적 단수 차이를 명시적 전표로 기록하여 PL 내부 균형 복원</td>
+        </tr>
+        <tr class="highlight-06">
+          <td><span class="doc-type-tag">06</span></td>
+          <td>반올림 (BS)</td>
+          <td><span class="attr-badge attr-d">D — 반올림</span></td>
+          <td style="font-size:13px;line-height:1.6;">BS: 각 BS FS Item 개별 환산의 누적 단수 차이를 <strong>해사차(외화환산차이) 계정에 흡수</strong></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout correct">
+      <strong>설계 철학:</strong> 속성 C(순이익 계산)와 D(반올림)를 별도 전표 유형으로 분리함으로써, GR은 이미 시스템 레벨에서 두 개념을 명확히 구분하고 있습니다. 이것이 라운딩을 "숨기는" 것이 아니라 "투명하게 표면화"하는 GR의 설계 철학입니다.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">PL vs BS 라운딩 조정 비교</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--gray-border);border:1px solid var(--gray-border);margin-bottom:16px;">
+      <div style="background:var(--navy);color:var(--white);padding:10px 16px;font-size:12px;font-weight:500;">PL 라운딩 조정</div>
+      <div style="background:var(--navy);color:var(--white);padding:10px 16px;font-size:12px;font-weight:500;">BS 라운딩 조정</div>
+      <div style="background:var(--white);padding:14px 16px;font-size:13px;line-height:1.7;">각 PL FS Item 개별 환산 합계(경로 A)와 당기순이익 단일 계산값(경로 B)의 차이</div>
+      <div style="background:var(--white);padding:14px 16px;font-size:13px;line-height:1.7;">각 BS FS Item 개별 환산의 누적 단수 차이</div>
+      <div style="background:var(--gray-light);padding:14px 16px;font-size:13px;line-height:1.7;">전표 유형 06 / <strong>잡이익·잡손실 계정</strong> (또는 별도 FS Item)</div>
+      <div style="background:var(--gray-light);padding:14px 16px;font-size:13px;line-height:1.7;">전표 유형 06 / <strong>해사차 (외화환산차이) 계정</strong>에 자동 흡수</div>
+    </div>
+    <div class="callout warn">
+      <strong>핵심 차이:</strong> PL 라운딩은 손익 계정에, BS 라운딩은 <strong>해사차 계정(자본 항목)</strong>에 흡수됩니다. BS는 차대 균형 원리상 불일치를 자본 항목으로 흡수하는 구조이기 때문입니다.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">전표 유형 05 → 06의 처리 순서</div>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">①</div>
+        <div class="flow-content active-step">
+          <div class="flow-title">당기순이익 단일 금액 계산</div>
+          <div class="flow-desc">BS의 차대 잔액을 조정하여 당기순이익을 역산. PL 당기순이익과 부호가 반대인 동일 금액이 산출되면 태스크 성공으로 확인됨</div>
+          <span class="flow-tag">Document Type 05 / Attr: C — 순이익 계산</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">②</div>
+        <div class="flow-content">
+          <div class="flow-title">Currency Translation Task 실행</div>
+          <div class="flow-desc">평균환율을 적용하여 모든 PL·BS FS Item 레코드를 GC로 개별 환산</div>
+          <span class="flow-tag">Document Type 04 — Currency Translation</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">③</div>
+        <div class="flow-content active-step">
+          <div class="flow-title">라운딩 조정 전표 자동 생성 — PL</div>
+          <div class="flow-desc">경로 B − 경로 A 차이를 계산하여 조정 전표 자동 기록. 잡이익·잡손실 계정(또는 별도 FS Item)에 반영</div>
+          <span class="flow-tag">Document Type 06 / Attr: D — 반올림 (PL)</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">④</div>
+        <div class="flow-content active-step">
+          <div class="flow-title">라운딩 조정 전표 자동 생성 — BS</div>
+          <div class="flow-desc">BS FS Item 개별 환산의 누적 단수 차이를 해사차(외화환산차이) 계정에 자동 흡수</div>
+          <span class="flow-tag">Document Type 06 / Attr: D — 반올림 (BS)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">별도 FS Item 계정 생성의 실용성 판단</div>
+    <table class="doc-type-table">
+      <thead>
+        <tr>
+          <th>판단 기준</th>
+          <th>전표 유형 06만으로 충분</th>
+          <th>별도 FS Item 추가 시 이점</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>발생 원인 추적</td>
+          <td style="color:var(--correct);font-weight:600;">✅ 전표 유형 필터로 식별</td>
+          <td style="color:var(--gray-mid);">추가 이점 없음</td>
+        </tr>
+        <tr>
+          <td>감사 대응</td>
+          <td style="color:var(--correct);font-weight:600;">✅ 유형 06 필터링으로 설명 가능</td>
+          <td style="color:var(--gray-mid);">추가 이점 없음</td>
+        </tr>
+        <tr>
+          <td>PL 계정 잔액 클린함</td>
+          <td style="color:var(--warn);font-weight:600;">⚠️ 잡이익·잡손실 잔액에 혼재</td>
+          <td style="color:var(--correct);font-weight:600;">✅ 계정 잔액 레벨에서 분리</td>
+        </tr>
+        <tr>
+          <td>기간별 모니터링</td>
+          <td style="color:var(--warn);font-weight:600;">⚠️ 전표 유형 필터 조회 필요</td>
+          <td style="color:var(--correct);font-weight:600;">✅ FS Item 잔액으로 직접 모니터링</td>
+        </tr>
+        <tr>
+          <td>데이터 품질 조기 감지</td>
+          <td style="color:var(--warn);font-weight:600;">⚠️ 별도 모니터링 설정 필요</td>
+          <td style="color:var(--correct);font-weight:600;">✅ 잔액 임계값 설정 가능</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout">
+      <strong>실용적 권고:</strong> 연결 대상 법인 수가 많고 Partner/Subitem 구조가 복잡한 기업(대규모·복잡 구조)은 별도 FS Item이 추가 가치를 제공합니다. 소규모·단순 구조라면 전표 유형 06 표준 설정으로 충분합니다.
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────── SECTION 6: 확인 문제 ───────────────── -->
+<div id="s6" class="section">
+  <div class="section-title">확인 문제</div>
+  <div class="section-subtitle">핵심 개념을 제대로 이해했는지 점검합니다.</div>
+
+  <!-- Q1 -->
+  <div class="quiz-card">
+    <div class="quiz-q">Q1. GR에서 PL 환산 라운딩 차이가 발생하는 근본 원인으로 가장 정확한 것은?</div>
+    <div class="quiz-options" id="q1">
+      <div class="quiz-option" onclick="answer(this,'q1',false,'q1-fb')">
+        <span class="quiz-idx">A</span>
+        <span>계정별로 서로 다른 평균환율이 적용되기 때문이다</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q1',true,'q1-fb')">
+        <span class="quiz-idx">B</span>
+        <span>수많은 레코드(Partner/Subitem 분리)를 각각 정수로 반올림하는 과정에서 단수 오차가 누적되기 때문이다</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q1',false,'q1-fb')">
+        <span class="quiz-idx">C</span>
+        <span>GR의 버그로 인해 환산이 정확하게 처리되지 않기 때문이다</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q1',false,'q1-fb')">
+        <span class="quiz-idx">D</span>
+        <span>IAS 21이 계정별 환율 적용을 강제하기 때문이다</span>
+      </div>
+    </div>
+    <div class="quiz-feedback" id="q1-fb">
+      <strong>정답: B</strong><br>
+      동일한 평균환율 r이 모든 PL 계정에 적용됩니다. 차이는 환율의 차이가 아니라, <code>round(a × r) + round(b × r) ≠ round((a+b) × r)</code>라는 반올림 연산의 비교환성에서 비롯됩니다. Partner Unit, Subitem으로 쪼개진 레코드 수만큼 오차가 독립적으로 누적됩니다.
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-card">
+    <div class="quiz-q">Q2. GR이 당기순이익을 "경로 B (단일 금액 직접 환산)"를 기준으로 삼는 이유는?</div>
+    <div class="quiz-options" id="q2">
+      <div class="quiz-option" onclick="answer(this,'q2',false,'q2-fb')">
+        <span class="quiz-idx">A</span>
+        <span>IAS 21이 당기순이익을 반드시 직접 환산하도록 강제하기 때문이다</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q2',false,'q2-fb')">
+        <span class="quiz-idx">B</span>
+        <span>경로 A의 합계 계산이 기술적으로 불가능하기 때문이다</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q2',true,'q2-fb')">
+        <span class="quiz-idx">C</span>
+        <span>BS 역산 당기순이익과 PL 집계 당기순이익이 일치하려면 PL 당기순이익이 단일 금액으로 확정되어 있어야 하기 때문이다</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q2',false,'q2-fb')">
+        <span class="quiz-idx">D</span>
+        <span>경로 B가 항상 경로 A보다 정확하기 때문이다</span>
+      </div>
+    </div>
+    <div class="quiz-feedback" id="q2-fb">
+      <strong>정답: C</strong><br>
+      이것은 IFRS의 요구가 아니라 <strong>시스템 아키텍처의 선택</strong>입니다. GR은 BS에서 역산된 당기순이익과 PL에서 집계된 당기순이익의 일치 여부를 검증합니다. 경로 A 합계를 PL 당기순이익으로 사용하면 BS 역산값과 불일치가 발생하므로, GR은 경로 B를 PL 당기순이익의 확정값으로 고정합니다.
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-card">
+    <div class="quiz-q">Q3. GR 전표 유형 05와 06의 비즈니스 어플리케이션 속성을 올바르게 짝지은 것은?</div>
+    <div class="quiz-options" id="q3">
+      <div class="quiz-option" onclick="answer(this,'q3',false,'q3-fb')">
+        <span class="quiz-idx">A</span>
+        <span>05: D(반올림), 06: C(순이익 계산)</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q3',true,'q3-fb')">
+        <span class="quiz-idx">B</span>
+        <span>05: C(순이익 계산), 06: D(반올림)</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q3',false,'q3-fb')">
+        <span class="quiz-idx">C</span>
+        <span>05: A(수동 입력), 06: B(자동 전기)</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q3',false,'q3-fb')">
+        <span class="quiz-idx">D</span>
+        <span>둘 다 동일한 속성을 공유한다</span>
+      </div>
+    </div>
+    <div class="quiz-feedback" id="q3-fb">
+      <strong>정답: B</strong><br>
+      전표 유형 05(당기순이익)는 속성 <strong>C — 순이익 계산</strong>, 전표 유형 06(반올림)은 속성 <strong>D — 반올림</strong>입니다. 이 분리 자체가 GR이 두 개념(당기순이익 anchor 확정 vs 라운딩 조정)을 시스템 레벨에서 명확히 구분하는 설계 철학을 반영합니다.
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-card">
+    <div class="quiz-q">Q4. 라운딩 조정 계정에 대한 설명으로 옳지 않은 것은?</div>
+    <div class="quiz-options" id="q4">
+      <div class="quiz-option" onclick="answer(this,'q4',false,'q4-fb')">
+        <span class="quiz-idx">A</span>
+        <span>이익 방향으로도, 손실 방향으로도 발생할 수 있다</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q4',false,'q4-fb')">
+        <span class="quiz-idx">B</span>
+        <span>외부감사인은 이 계정의 존재를 알고 있으며 중요성 기준으로 판단한다</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q4',true,'q4-fb')">
+        <span class="quiz-idx">C</span>
+        <span>이 조정을 없애면 PL이 더 정확해지므로 제거하는 것이 바람직하다</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q4',false,'q4-fb')">
+        <span class="quiz-idx">D</span>
+        <span>전표 유형 06으로 기록되므로 잡이익·잡손실과 구분하여 추적할 수 있다</span>
+      </div>
+    </div>
+    <div class="quiz-feedback" id="q4-fb">
+      <strong>정답: C</strong><br>
+      라운딩 조정을 제거하면 오히려 BS 불균형이 발생합니다. 이 조정은 "설명 불가능한 차이를 숨기는 것"이 아니라, <strong>"설명 불가능한 잔액을 설명 가능한 계정으로 표면화"</strong>하는 것입니다. 제거가 아닌 명시적 기록이 올바른 접근입니다.
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:32px;">
+    <div class="card-title">핵심 메시지 요약</div>
+    <div class="callout correct" style="font-size:14px;line-height:1.8;">
+      <strong>"라운딩 조정은 환율 차이가 아니라, Partner/Subitem으로 수만 개로 쪼개진 레코드를 각각 환산하고 KRW 단위로 정수화하는 과정에서 수학적으로 불가피하게 발생하는 누적 단수 차이입니다. 이를 숨기면 BS가 틀어지므로, GR은 전표 유형 06(속성 D-반올림)으로 이를 명시적으로 표면화합니다."</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────── SECTION 7: 현업 설득 ───────────────── -->
+<div id="s7" class="section">
+  <div class="section-title">현업 설득 논리</div>
+  <div class="section-subtitle">"엑셀 수식이 맞고 시스템이 틀렸다"는 현업의 요청에 대한 구조적 대응 논리입니다.</div>
+
+  <div class="card">
+    <div class="card-title">상황 이해 — 왜 현업은 "시스템이 틀렸다"고 느끼는가</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--gray-border);border:1px solid var(--gray-border);margin:16px 0;">
+      <div style="background:var(--navy);color:var(--white);padding:10px 16px;font-size:12px;font-weight:500;">엑셀 방식</div>
+      <div style="background:var(--navy);color:var(--white);padding:10px 16px;font-size:12px;font-weight:500;">GR 방식</div>
+      <div style="background:var(--white);padding:14px 16px;font-size:13px;line-height:1.8;">
+        PL 당기순이익 = 각 계정 합계 수식<br>
+        BS 당기순이익 = PL에서 끌어온 값에<br>
+        <strong>±단수를 수동으로 조정</strong><br>
+        → 차이가 보이지 않음 = <span style="color:var(--correct);font-weight:700;">"맞다"고 인식</span>
+      </div>
+      <div style="background:var(--white);padding:14px 16px;font-size:13px;line-height:1.8;">
+        전표 유형 06으로 라운딩 차이가<br>
+        잡이익/잡손실에 <strong>명시적으로 표시됨</strong><br><br>
+        → 차이가 보임 = <span style="color:var(--wrong);font-weight:700;">"틀렸다"고 인식</span>
+      </div>
+    </div>
+    <div class="callout warn">
+      <strong>핵심 인식 차이:</strong> 현업이 보는 "정확함"의 기준이 다릅니다. 엑셀은 차이를 <strong>숨겨서</strong> 맞춘 것이고, GR은 차이를 <strong>설명하면서</strong> 맞춘 것입니다. 금액은 같고 투명성만 다릅니다.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">설득 논리 1 — 엑셀이 실제로 무엇을 하고 있는지 보여주기</div>
+    <p style="font-size:14px;line-height:1.8;margin-bottom:12px;">엑셀에서 단수를 맞추는 수식은 차이를 없애는 것이 아니라 <strong>특정 계정에 이유 없이 흡수</strong>시키는 것입니다.</p>
+    <div class="callout wrong">
+      <strong>감사인 질문:</strong> "이 셀의 수식에서 ±1 조정은 어떤 근거로 하신 건가요? 그 계정이 어디이고, 금액이 얼마이며, 왜 발생했는지 추적이 가능하십니까?"
+    </div>
+    <p style="font-size:14px;line-height:1.8;margin-top:12px;">GR 전표 유형 06은 이 질문에 <strong>시스템이 자동으로 답변</strong>합니다. 발생 원인(환산 단수 누적), 금액, 계정이 전표 단위로 기록됩니다.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">설득 논리 2 — GR이 드러내는 것이 오류가 아님을 수치로 증명</div>
+    <p style="font-size:14px;line-height:1.8;margin-bottom:12px;">시뮬레이터(③번 탭)로 직접 보여줄 수 있습니다.</p>
+    <div class="math-block">
+<span class="comment">// 동일한 환율, 동일한 금액을 써도</span>
+<span class="comment">// 레코드를 개별 환산하면 수학적으로 반드시 차이가 납니다</span>
+
+round(a × r) + round(b × r)  <span class="diff">≠</span>  round((a + b) × r)
+
+<span class="comment">// 이것은 GR의 버그가 아니라 반올림 연산의 수학적 성질입니다</span>
+<span class="comment">// 엑셀도 동일한 계산을 하면 똑같이 차이가 납니다</span>
+    </div>
+    <div class="callout correct">
+      <strong>핵심 메시지:</strong> "엑셀에서 같은 로직으로 계산해 보시면 동일한 차이가 납니다. GR이 틀린 것이 아니라, 엑셀은 그 차이를 수동으로 묻어버리고 있는 것입니다."
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">설득 논리 3 — 숨기는 것 vs 드러내는 것의 감사 리스크 비교</div>
+    <table class="doc-type-table">
+      <thead>
+        <tr>
+          <th>비교 항목</th>
+          <th>엑셀 단수 맞춤</th>
+          <th>GR 전표 유형 06</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>차이 존재 여부</td>
+          <td>동일하게 존재</td>
+          <td>동일하게 존재</td>
+        </tr>
+        <tr>
+          <td>추적 가능성</td>
+          <td style="color:var(--wrong);font-weight:600;">❌ 수식에 묻힘</td>
+          <td style="color:var(--correct);font-weight:600;">✅ 전표 유형으로 분리 조회</td>
+        </tr>
+        <tr>
+          <td>감사 설명</td>
+          <td style="color:var(--wrong);font-weight:600;">❌ "맞춰놨습니다"</td>
+          <td style="color:var(--correct);font-weight:600;">✅ "수학적 필연이며 중요성 기준 이하"</td>
+        </tr>
+        <tr>
+          <td>재현 가능성</td>
+          <td style="color:var(--wrong);font-weight:600;">❌ 담당자 의존</td>
+          <td style="color:var(--correct);font-weight:600;">✅ 환산 재실행 시 자동 재계산</td>
+        </tr>
+        <tr>
+          <td>담당자 교체 시</td>
+          <td style="color:var(--wrong);font-weight:600;">❌ 로직 소실 위험</td>
+          <td style="color:var(--correct);font-weight:600;">✅ 시스템이 자동 처리</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">설득 논리 4 — BS-PL 당기순이익 일치 검증 구조 설명</div>
+    <p style="font-size:14px;line-height:1.8;margin-bottom:12px;">엑셀에서 BS 당기순이익을 PL에서 끌어오는 수식은 <strong>검증이 아니라 복사</strong>입니다. GR은 BS와 PL을 <strong>독립적으로 계산한 뒤 일치 여부를 검증</strong>합니다.</p>
+    <div class="math-block">
+<span class="comment">// GR의 검증 구조</span>
+BS 당기순이익  =  BS 차대 역산값        <span class="comment">← 독립 계산 (전표 유형 05)</span>
+PL 당기순이익  =  경로 B 확정값         <span class="comment">← 전표 유형 06으로 조정 완료</span>
+
+BS 역산값 + PL 집계값 = 0  <span class="result">→ 검증 성공</span>
+
+<span class="comment">// 엑셀의 구조</span>
+BS 당기순이익  =  PL 값 복사 + 수동 단수 조정
+<span class="diff">→ 검증이 아니라 은폐</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">설득 논리 5 — SAP 표준 설계 근거 제시</div>
+    <p style="font-size:14px;line-height:1.8;margin-bottom:12px;">전표 유형 06이 비즈니스 어플리케이션 속성 <strong>D(반올림)</strong>으로 별도 설계된 것은 의도적입니다. SAP가 이 차이를 인지하고 명시적으로 처리하도록 아키텍처를 설계한 것입니다.</p>
+    <div class="callout">
+      <strong>논리:</strong> "GR 표준이 틀렸다고 주장하시는 것은 SAP 아키텍처 설계가 잘못됐다고 주장하시는 것과 같습니다. 전 세계 수천 개 기업이 동일한 방식으로 연결결산을 하고 있습니다."
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">설득 논리 6 — 외부감사인 확인 카드</div>
+    <p style="font-size:14px;line-height:1.8;margin-bottom:12px;">현업이 끝까지 납득하지 못하는 경우 가장 효과적인 방법입니다.</p>
+    <div class="callout correct">
+      <strong>접근법:</strong> 외부감사인에게 직접 확인을 요청하세요. 감사인은 전표 유형 06의 존재를 이미 알고 있으며 중요성 기준 이하로 처리합니다. 감사인 입으로 "이 조정은 정상입니다"라는 말이 나오는 순간 현업의 저항은 사라집니다.
+    </div>
+    <p style="font-size:14px;line-height:1.8;margin-top:12px;">반대로 엑셀 단수 맞춤 방식에 대해 감사인이 어떻게 평가하는지도 함께 물어보면 더욱 효과적입니다.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">한 줄 요약 — 현장에서 바로 쓸 수 있는 문장</div>
+    <div class="callout correct" style="font-size:15px;line-height:1.9;">
+      <strong>"엑셀은 차이를 숨겨서 맞춘 것이고, GR은 차이를 설명하면서 맞춘 것입니다.<br>금액은 같고 투명성만 다릅니다.<br>감사인은 숨겨진 것보다 설명된 것을 더 신뢰합니다."</strong>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ── TAB NAVIGATION
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── QUIZ
+function answer(el, qId, isCorrect, fbId) {
+  const container = document.getElementById(qId);
+  if (container.dataset.answered) return;
+  container.dataset.answered = 'true';
+
+  container.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.style.pointerEvents = 'none';
+  });
+
+  if (isCorrect) {
+    el.classList.add('selected-correct');
+  } else {
+    el.classList.add('selected-wrong');
+    // reveal correct
+    container.querySelectorAll('.quiz-option').forEach(opt => {
+      if (opt.querySelector('.quiz-idx') && opt !== el) {
+        // find correct one
+      }
+    });
+  }
+
+  // Always reveal correct answer
+  container.querySelectorAll('.quiz-option').forEach(opt => {
+    const handler = opt.getAttribute('onclick');
+    if (handler && handler.includes('true')) {
+      opt.classList.add('reveal-correct');
+    }
+  });
+
+  document.getElementById(fbId).classList.add('show');
+}
+
+// ── 엑셀 붙여넣기용 복사 (탭 구분 텍스트)
+function copyTableToClipboard() {
+  const table = document.getElementById('simTable');
+  if (!table) return;
+
+  const rows = [];
+
+  // 헤더
+  const headers = [];
+  table.querySelectorAll('thead th').forEach(th => {
+    // span 태그 제거 후 순수 텍스트만
+    headers.push(th.innerText.replace(/\s+/g, ' ').trim());
+  });
+  rows.push(headers.join('\t'));
+
+  // 데이터 행
+  table.querySelectorAll('tbody tr').forEach(tr => {
+    const cells = [];
+    tr.querySelectorAll('td').forEach((td, ci) => {
+      let text = td.innerText.replace(/\s+/g, ' ').trim();
+      // 숫자 컬럼(USD, KRW)은 콤마·단위 제거하여 순수 숫자로
+      if (ci === 1) {
+        // USD 금액: "USD 1,234,567.89" → "1234567.89"
+        text = text.replace('USD', '').replace(/,/g, '').trim();
+      } else if (ci === 2) {
+        // 소수점 포함 KRW: "KRW 1234567.89 → 10원 단위" → "1234567.89"
+        text = text.replace('KRW', '').replace('→ 10원 단위', '').replace(/,/g, '').trim();
+      } else if (ci === 3) {
+        // 반올림 후 KRW: "KRW 1,234,560" → "1234560"
+        text = text.replace('KRW', '').replace(/,/g, '').trim();
+      }
+      cells.push(text);
+    });
+    rows.push(cells.join('\t'));
+  });
+
+  const tsv = rows.join('\n');
+
+  navigator.clipboard.writeText(tsv).then(() => {
+    const btn = document.getElementById('copyBtn');
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 복사 완료!';
+    btn.style.background = 'var(--correct-bg)';
+    btn.style.borderColor = 'var(--correct)';
+    btn.style.color = 'var(--correct)';
+    setTimeout(() => {
+      btn.innerHTML = orig;
+      btn.style.background = 'var(--white)';
+      btn.style.borderColor = 'var(--navy)';
+      btn.style.color = 'var(--navy)';
+    }, 2000);
+  }).catch(() => {
+    alert('클립보드 복사에 실패했습니다. 브라우저 권한을 확인해주세요.');
+  });
+}
+
+// ── 알파벳 입력 차단 (숫자, 소수점, 부호, 방향키, 백스페이스, 탭만 허용)
+function blockAlpha(e) {
+  const allowed = [
+    'Backspace','Delete','Tab','ArrowLeft','ArrowRight','ArrowUp','ArrowDown',
+    'Home','End','Enter','-','.'
+  ];
+  if (allowed.includes(e.key)) return;
+  if (/^\d$/.test(e.key)) return;
+  e.preventDefault();
+}
+
+// ── 레코드 수 입력 제한 (최대 200 — 부동소수점 누적 오류 방지)
+function clampRecords(el) {
+  const v = parseInt(el.value);
+  if (v > 200) {
+    el.value = 200;
+    document.getElementById('recordsWarn').style.display = 'block';
+  } else if (v < 2) {
+    el.value = 2;
+    document.getElementById('recordsWarn').style.display = 'none';
+  } else {
+    document.getElementById('recordsWarn').style.display = 'none';
+  }
+}
+// KRW: 10원 단위 반올림 (1원 동전 사실상 미유통)
+function roundUSD(val) {
+  return Math.round(val * 100) / 100;
+}
+function roundKRW(val) {
+  return Math.round(val / 10) * 10;
+}
+
+// 슬롯 생성 함수 — 매 시도마다 새로운 난수로 금액 배분
+// 양수/음수 개수를 전체 레코드 기준 정확히 절반씩 보장
+function buildSlots(n, total) {
+  const partnerCount = Math.floor(n / 2);
+  let partnerIndices = [];
+  for (let i = 0; i < partnerCount; i++) {
+    const idx = Math.round((i + 0.5) * (n / partnerCount));
+    partnerIndices.push(Math.min(idx, n - 1));
+  }
+  partnerIndices = [...new Set(partnerIndices)];
+  const actualPartnerCount = partnerIndices.length;
+  const nonPartnerCount = n - actualPartnerCount;
+
+  // 전체 n개 중 절반은 음수 — 파트너/External 각각 균등 분배
+  const totalNeg = Math.floor(n / 2);
+  const partnerNeg = Math.floor(totalNeg * (actualPartnerCount / n));
+  const nonPartnerNeg = totalNeg - partnerNeg;
+
+  // 파트너 인덱스 중 partnerNeg개를 무작위로 음수로 지정
+  const partnerNegSet = new Set(
+    [...partnerIndices].sort(() => Math.random() - 0.5).slice(0, partnerNeg)
+  );
+
+  let slots = Array(n).fill(null);
+  let partnerTotal = 0;
+  partnerIndices.forEach((idx) => {
+    const sign = partnerNegSet.has(idx) ? -1 : 1;
+    const share = Math.floor(Math.abs(total) * (0.04 + Math.random() * 0.15));
+    const amt = sign * share;
+    slots[idx] = { amt, isPartner: true };
+    partnerTotal = roundUSD(partnerTotal + amt);
+  });
+
+  let nonPartnerRemaining = roundUSD(total - partnerTotal);
+  const nonPartnerSlots = slots.map((s, i) => s === null ? i : -1).filter(i => i >= 0);
+
+  // nonPartner 중 nonPartnerNeg개를 음수로 지정 (마지막 제외)
+  const eligibleForNeg = nonPartnerSlots.slice(0, -1); // 마지막은 잔액 흡수용 제외
+  const negIndices = new Set(
+    [...eligibleForNeg].sort(() => Math.random() - 0.5).slice(0, Math.min(nonPartnerNeg, eligibleForNeg.length))
+  );
+
+  nonPartnerSlots.forEach((idx, ni) => {
+    if (ni === nonPartnerSlots.length - 1) {
+      // 마지막 External: 잔액 전부 흡수 (부호는 잔액에 따름)
+      slots[idx] = { amt: roundUSD(nonPartnerRemaining), isPartner: false };
+    } else {
+      const sign = negIndices.has(idx) ? -1 : 1;
+      const share = roundUSD(Math.abs(nonPartnerRemaining) * (0.05 + Math.random() * 0.35));
+      const amt = roundUSD(sign * share);
+      slots[idx] = { amt, isPartner: false };
+      nonPartnerRemaining = roundUSD(nonPartnerRemaining - amt);
+    }
+  });
+  return slots;
+}
+
+function runSimulator() {
+  const rate = parseFloat(document.getElementById('rate').value);
+  const n = parseInt(document.getElementById('records').value);
+  const total = roundUSD(parseFloat(document.getElementById('total_lc').value));
+
+  // diff ≠ 0 이 될 때까지 반복 (최대 100회 시도)
+  let slots, pathA, pathB, diff, lcNet, rawB;
+  let attempts = 0;
+  const MAX_ATTEMPTS = 100;
+  do {
+    attempts++;
+    slots = buildSlots(n, total);
+
+    pathA = 0;
+    slots.forEach(rec => { pathA += roundKRW(rec.amt * rate); });
+
+    lcNet = roundUSD(slots.reduce((a, rec) => roundUSD(a + rec.amt), 0));
+    rawB  = lcNet * rate;
+    pathB = roundKRW(rawB);
+    diff  = pathB - pathA;
+  } while (diff === 0 && attempts < MAX_ATTEMPTS);
+
+  // 테이블 행 생성
+  let rows = '';
+  slots.forEach((rec, i) => {
+    const { amt, isPartner } = rec;
+    const raw = amt * rate;
+    const rounded = roundKRW(raw);
+    const isNeg = amt < 0;
+    const label = isPartner
+      ? '<span style="font-size:10px;color:var(--navy);font-weight:700;margin-left:4px">[Partner IC]</span>'
+      : '<span style="font-size:10px;color:var(--gray-mid);margin-left:4px">[External]</span>';
+    const amtDisplay = isPartner
+      ? amt.toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0})
+      : amt.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+    rows += '<tr>'
+      + '<td>레코드 ' + String(i+1).padStart(2,'0') + label + '</td>'
+      + '<td style="color:' + (isNeg?'var(--wrong)':'inherit') + '">USD ' + amtDisplay + '</td>'
+      + '<td style="color:var(--gray-mid)">KRW ' + raw.toFixed(2) + ' <span style="font-size:10px">→ 10원 단위</span></td>'
+      + '<td style="color:' + (isNeg?'var(--wrong)':'var(--navy)') + ';font-weight:600">KRW ' + rounded.toLocaleString() + '</td>'
+      + '</tr>';
+  });
+  rows += '<tr class="total">'
+    + '<td>경로 A 합계 (Σ round 결과)</td>'
+    + '<td>USD ' + lcNet.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + '</td>'
+    + '<td>—</td>'
+    + '<td>KRW ' + pathA.toLocaleString() + '</td>'
+    + '</tr>';
+  rows += '<tr class="rounding">'
+    + '<td>경로 B (LC Net Income 직접 환산)</td>'
+    + '<td>USD ' + lcNet.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + '</td>'
+    + '<td>KRW ' + rawB.toFixed(2) + ' <span style="font-size:10px">→ 10원 단위</span></td>'
+    + '<td>KRW ' + pathB.toLocaleString() + '</td>'
+    + '</tr>';
+
+  document.getElementById('simBody').innerHTML = rows;
+
+  const attemptsNote = attempts > 1
+    ? '<div style="font-size:11px;color:var(--gray-mid);margin-top:6px;text-align:right">'
+      + '※ 차이 0 제외 후 ' + attempts + '회 시도 만에 결과 도출</div>'
+    : '';
+
+  document.getElementById('simResult').innerHTML = `
+    <div class="sim-result-item">
+      <div class="label">경로 A (합산)</div>
+      <div class="value">${pathA.toLocaleString()}</div>
+    </div>
+    <div class="sim-result-item">
+      <div class="label">경로 B (직접 환산)</div>
+      <div class="value">${pathB.toLocaleString()}</div>
+    </div>
+    <div class="sim-result-item diff">
+      <div class="label">라운딩 조정 (B − A)</div>
+      <div class="value">${diff >= 0 ? '+' : ''}${diff.toLocaleString()} 원</div>
+    </div>
+  ` + attemptsNote;
+}
+
+// Run simulator on load
+runSimulator();
+</script>
+</body>
+</html>
