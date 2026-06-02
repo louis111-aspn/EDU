@@ -1,0 +1,1801 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 3. 미팅 유형별 대처법 — ASPN 교육자료</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #003366;
+    --navy-mid: #004899;
+    --navy-light: #e8eef5;
+    --white: #ffffff;
+    --gray-dark: #333333;
+    --gray-mid: #666666;
+    --gray-light: #f4f6f9;
+    --gray-border: #d0d8e4;
+    --correct: #1a6e3c;
+    --correct-bg: #e8f5ee;
+    --wrong: #8b1a1a;
+    --wrong-bg: #fdf0f0;
+    --warn: #7a5200;
+    --warn-bg: #fdf6e3;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #f0f3f8;
+    color: var(--gray-dark);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 48px 0 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 320px; height: 320px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 50%;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -40px;
+    width: 220px; height: 220px;
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 50%;
+  }
+  .header-inner {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 clamp(20px, 5vw, 80px);
+    position: relative;
+    z-index: 1;
+  }
+  .header-tag {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 16px;
+  }
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 42px;
+    font-weight: 400;
+    line-height: 1.25;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+  header h1 em {
+    font-style: italic;
+    color: rgba(255,255,255,0.75);
+  }
+  header p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+  }
+  .header-meta {
+    margin-top: 24px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .header-chip {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.6);
+  }
+
+  /* ── NAV TABS ── */
+  .nav-tabs {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .nav-tabs-inner {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 clamp(12px, 4vw, 80px);
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-tabs-inner::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    padding: 14px clamp(10px, 1.5vw, 20px);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: clamp(13px, 1.4vw, 15px);
+    font-weight: 500;
+    color: var(--gray-mid);
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .tab-btn:hover { color: var(--navy); }
+  .tab-btn.active {
+    color: var(--navy);
+    border-bottom-color: var(--navy);
+    font-weight: 700;
+  }
+
+  /* ── MAIN ── */
+  main {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 40px clamp(20px, 5vw, 80px) 80px;
+  }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 30px;
+    font-weight: 400;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .section-subtitle {
+    font-size: 15px;
+    color: var(--gray-mid);
+    margin-bottom: 32px;
+    line-height: 1.7;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--gray-border);
+    border-radius: 2px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 14px;
+  }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-left: 3px solid var(--navy);
+    background: var(--navy-light);
+    padding: 16px 20px;
+    margin: 20px 0;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .callout.warn { border-left-color: var(--warn); background: var(--warn-bg); color: var(--warn); }
+  .callout.correct { border-left-color: var(--correct); background: var(--correct-bg); color: var(--correct); }
+  .callout.wrong { border-left-color: var(--wrong); background: var(--wrong-bg); color: var(--wrong); }
+  .callout strong { font-weight: 700; }
+
+  /* ── MEETING MAP ── */
+  .meeting-map {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 24px 0;
+  }
+  .meeting-card {
+    border: 1px solid var(--gray-border);
+    background: var(--white);
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .meeting-card:hover,
+  .meeting-card.active-card { border-color: var(--navy); background: var(--navy-light); }
+  .meeting-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px;
+    color: var(--navy);
+    opacity: 0.08;
+    position: absolute;
+    top: 8px; right: 12px;
+    line-height: 1;
+  }
+  .meeting-tag {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--navy);
+    background: var(--navy-light);
+    padding: 3px 8px;
+    display: inline-block;
+    margin-bottom: 8px;
+  }
+  .meeting-tag.red { background: var(--wrong-bg); color: var(--wrong); }
+  .meeting-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gray-dark);
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+  .meeting-desc {
+    font-size: 13px;
+    color: var(--gray-mid);
+    line-height: 1.6;
+  }
+
+  /* ── CHECKLIST (do / don't) ── */
+  .do-dont {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .do-box {
+    border: 1px solid var(--correct);
+    background: var(--correct-bg);
+    padding: 20px;
+  }
+  .dont-box {
+    border: 1px solid var(--wrong);
+    background: var(--wrong-bg);
+    padding: 20px;
+  }
+  .do-box-title {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--correct);
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .dont-box-title {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--wrong);
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .do-item, .dont-item {
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 8px;
+    padding-left: 16px;
+    position: relative;
+    color: var(--gray-dark);
+  }
+  .do-item::before { content: '✓'; position: absolute; left: 0; color: var(--correct); font-weight: 700; }
+  .dont-item::before { content: '✕'; position: absolute; left: 0; color: var(--wrong); font-weight: 700; }
+
+  /* ── PRINCIPLE BLOCK ── */
+  .principle-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .principle-card {
+    border: 1px solid var(--gray-border);
+    background: var(--white);
+    padding: 24px;
+    position: relative;
+  }
+  .principle-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 42px;
+    color: var(--navy);
+    opacity: 0.08;
+    position: absolute;
+    top: 12px; right: 16px;
+    line-height: 1;
+  }
+  .principle-label {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 10px;
+  }
+  .principle-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gray-dark);
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+  .principle-body {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--gray-mid);
+  }
+
+  /* ── FLOW ── */
+  .flow { display: flex; flex-direction: column; gap: 0; margin: 24px 0; }
+  .flow-step { display: flex; align-items: stretch; gap: 0; }
+  .flow-connector { display: flex; justify-content: center; padding: 4px 0; padding-left: 60px; }
+  .flow-connector-line { width: 2px; background: var(--navy); height: 20px; }
+  .flow-num {
+    width: 44px; min-width: 44px;
+    display: flex; align-items: flex-start;
+    padding-top: 14px; justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px; color: var(--navy); opacity: 0.3;
+  }
+  .flow-content {
+    flex: 1;
+    border: 1px solid var(--gray-border);
+    padding: 14px 18px;
+    background: var(--white);
+  }
+  .flow-content.active-step { border-color: var(--navy); background: var(--navy-light); }
+  .flow-title { font-weight: 700; font-size: 15px; color: var(--navy); margin-bottom: 4px; }
+  .flow-desc { font-size: 15px; color: var(--gray-mid); line-height: 1.6; }
+  .flow-tag {
+    display: inline-block; margin-top: 6px;
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 10px; padding: 2px 7px;
+    background: var(--navy); color: var(--white); letter-spacing: 0.5px;
+  }
+  .flow-tag.warn { background: var(--warn); }
+  .flow-tag.correct { background: var(--correct); }
+  .flow-tag.wrong { background: var(--wrong); }
+
+  /* ── PATH DIAGRAM ── */
+  .path-diagram {
+    display: grid;
+    grid-template-columns: 1fr 40px 1fr;
+    gap: 0;
+    margin: 24px 0;
+    align-items: start;
+  }
+  .path-box {
+    border: 1px solid var(--gray-border);
+    background: var(--gray-light);
+    padding: 20px;
+  }
+  .path-box.highlight { border-color: var(--navy); background: var(--navy-light); }
+  .path-label {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--navy);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .path-label.wrong-label { color: var(--wrong); }
+  .path-desc { font-size: 15px; line-height: 1.7; color: var(--gray-dark); }
+  .path-vs {
+    display: flex; align-items: center; justify-content: center;
+    padding-top: 28px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px; color: var(--gray-mid); font-style: italic;
+  }
+
+  /* ── SPEECH COMPARE ── */
+  .speech-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 24px 0;
+  }
+  .speech-col-label {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    text-align: center;
+    font-weight: 600;
+  }
+  .speech-col-label.bad { background: var(--wrong-bg); color: var(--wrong); border: 1px solid var(--wrong); }
+  .speech-col-label.good { background: var(--correct-bg); color: var(--correct); border: 1px solid var(--correct); }
+  .speech-bubble {
+    border: 1px solid var(--gray-border);
+    background: var(--gray-light);
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--gray-dark);
+  }
+  .speech-bubble.bad-bubble { border-color: #e8a0a0; background: var(--wrong-bg); }
+  .speech-bubble.good-bubble { border-color: #90c4a8; background: var(--correct-bg); }
+  .speech-context {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gray-mid);
+    margin-bottom: 6px;
+  }
+
+  /* ── DATA TABLE ── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    margin: 20px 0;
+  }
+  .data-table th {
+    background: var(--navy);
+    color: var(--white);
+    padding: 10px 16px;
+    text-align: left;
+    font-weight: 500;
+    font-size: 13px;
+  }
+  .data-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--gray-border);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+  .data-table tr:hover td { background: var(--gray-light); }
+  .data-table tr.row-highlight td { background: var(--navy-light); }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 2px;
+  }
+  .badge-navy { background: var(--navy); color: var(--white); }
+  .badge-warn { background: var(--warn-bg); color: var(--warn); border: 1px solid var(--warn); }
+  .badge-correct { background: var(--correct-bg); color: var(--correct); border: 1px solid var(--correct); }
+  .badge-wrong { background: var(--wrong-bg); color: var(--wrong); border: 1px solid var(--wrong); }
+  .badge-gray { background: var(--gray-light); color: var(--gray-mid); border: 1px solid var(--gray-border); }
+
+  /* ── AXIS GRID ── */
+  .axis-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--gray-border);
+    border: 1px solid var(--gray-border);
+    margin: 20px 0;
+  }
+  .axis-cell { background: var(--white); padding: 20px 22px; }
+  .axis-cell.navy-bg { background: var(--navy); color: var(--white); }
+  .axis-cell-title {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--navy);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .axis-cell.navy-bg .axis-cell-title { color: rgba(255,255,255,0.6); }
+  .axis-cell-body { font-size: 15px; line-height: 1.7; color: var(--gray-dark); }
+  .axis-cell.navy-bg .axis-cell-body { color: rgba(255,255,255,0.85); }
+
+  /* ── SUMMARY GRID ── */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .summary-item {
+    border: 1px solid var(--gray-border);
+    padding: 20px;
+    background: var(--white);
+  }
+  .summary-item-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--gray-border);
+  }
+  .summary-item p { font-size: 15px; line-height: 1.7; color: var(--gray-dark); }
+
+  /* ── RAG STATUS ── */
+  .rag-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .rag-cell {
+    padding: 16px 20px;
+    border: 1px solid var(--gray-border);
+  }
+  .rag-cell.rag-r { border-color: var(--wrong); background: var(--wrong-bg); }
+  .rag-cell.rag-a { border-color: var(--warn); background: var(--warn-bg); }
+  .rag-cell.rag-g { border-color: var(--correct); background: var(--correct-bg); }
+  .rag-dot {
+    display: inline-block;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .rag-r .rag-dot { background: var(--wrong); }
+  .rag-a .rag-dot { background: var(--warn); }
+  .rag-g .rag-dot { background: var(--correct); }
+  .rag-label {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .rag-r .rag-label { color: var(--wrong); }
+  .rag-a .rag-label { color: var(--warn); }
+  .rag-g .rag-label { color: var(--correct); }
+  .rag-desc { font-size: 13px; line-height: 1.6; color: var(--gray-dark); }
+
+  /* ── TIMELINE STRIP ── */
+  .timeline {
+    display: flex;
+    gap: 0;
+    margin: 24px 0;
+    border: 1px solid var(--gray-border);
+    overflow: hidden;
+  }
+  .tl-item {
+    flex: 1;
+    padding: 16px 14px;
+    border-right: 1px solid var(--gray-border);
+    position: relative;
+    background: var(--white);
+  }
+  .tl-item:last-child { border-right: none; }
+  .tl-item.tl-active { background: var(--navy); }
+  .tl-phase {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .tl-item.tl-active .tl-phase { color: rgba(255,255,255,0.6); }
+  .tl-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gray-dark);
+    margin-bottom: 4px;
+    line-height: 1.35;
+  }
+  .tl-item.tl-active .tl-title { color: var(--white); }
+  .tl-desc {
+    font-size: 12px;
+    color: var(--gray-mid);
+    line-height: 1.5;
+  }
+  .tl-item.tl-active .tl-desc { color: rgba(255,255,255,0.7); }
+
+  /* ── INTERACTIVE DRILL ── */
+  .drill-scenario {
+    background: var(--white);
+    border: 1px solid var(--gray-border);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .drill-header {
+    background: var(--gray-light);
+    border-bottom: 1px solid var(--gray-border);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .drill-header:hover { background: var(--navy-light); }
+  .drill-header.open { background: var(--navy-light); border-bottom-color: var(--navy); }
+  .drill-icon {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    min-width: 44px;
+    background: var(--navy);
+    color: var(--white);
+    padding: 3px 8px;
+    text-align: center;
+  }
+  .drill-situation {
+    flex: 1;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--gray-dark);
+    line-height: 1.5;
+  }
+  .drill-toggle {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 13px;
+    color: var(--gray-mid);
+    transition: transform 0.2s;
+  }
+  .drill-toggle.rotated { transform: rotate(180deg); }
+  .drill-body { display: none; padding: 20px 24px; }
+  .drill-body.open { display: block; }
+  .drill-bad {
+    border-left: 3px solid var(--wrong);
+    background: var(--wrong-bg);
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .drill-bad-label {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--wrong);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .drill-good {
+    border-left: 3px solid var(--correct);
+    background: var(--correct-bg);
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .drill-good-label {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--correct);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .drill-why {
+    border-left: 3px solid var(--navy);
+    background: var(--navy-light);
+    padding: 12px 16px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--gray-dark);
+  }
+  .drill-why-label {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  /* ── CHECKLIST ── */
+  .checklist { margin: 20px 0; display: flex; flex-direction: column; gap: 8px; }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--white);
+    border: 1px solid var(--gray-border);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--gray-dark);
+    user-select: none;
+  }
+  .check-item:hover { border-color: var(--navy); }
+  .check-item.checked {
+    background: var(--correct-bg);
+    border-color: var(--correct);
+    color: var(--correct);
+    text-decoration: line-through;
+    text-decoration-color: var(--correct);
+  }
+  .check-box {
+    width: 16px; min-width: 16px; height: 16px;
+    border: 1.5px solid var(--gray-border);
+    margin-top: 2px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    transition: all 0.15s;
+  }
+  .check-item.checked .check-box {
+    border-color: var(--correct);
+    background: var(--correct);
+    color: var(--white);
+  }
+  .check-counter {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 11px;
+    color: var(--gray-mid);
+    margin-top: 8px;
+    text-align: right;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap { margin: 32px 0 16px; }
+  .progress-label {
+    display: flex; justify-content: space-between;
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--gray-mid); margin-bottom: 6px;
+  }
+  .progress-bar { height: 4px; background: var(--gray-border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--navy); border-radius: 2px; transition: width 0.6s ease; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    main { padding: 24px 16px 60px; }
+    .header-inner { padding: 0 16px; }
+    header h1 { font-size: 28px; }
+    .section-title { font-size: 22px; }
+    .principle-grid { grid-template-columns: 1fr; }
+    .path-diagram { grid-template-columns: 1fr; }
+    .path-vs { display: none; }
+    .summary-grid { grid-template-columns: 1fr; }
+    .axis-grid { grid-template-columns: 1fr; }
+    .speech-compare { grid-template-columns: 1fr; }
+    .meeting-map { grid-template-columns: 1fr 1fr; }
+    .do-dont { grid-template-columns: 1fr; }
+    .rag-row { grid-template-columns: 1fr; }
+    .timeline { flex-direction: column; }
+    .tl-item { border-right: none; border-bottom: 1px solid var(--gray-border); }
+    .card { padding: 20px 18px; }
+    .data-table { font-size: 13px; }
+    .data-table th, .data-table td { padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-tag">Consultant Attitude Series · Module 3 · ASPN 내부 교육자료</div>
+    <h1>미팅 유형별<br><em>대처법</em></h1>
+    <p>같은 미팅도 유형에 따라 목적, 준비, 발언 방식이 완전히 다르다. 킥오프부터 경영진 보고까지 — 유형을 먼저 읽고 들어가는 컨설턴트가 미팅을 주도한다.</p>
+    <div class="header-meta">
+      <div class="header-chip">Module 3 of 5</div>
+      <div class="header-chip">6 Meeting Types</div>
+      <div class="header-chip">Preparation · Facilitation · Crisis</div>
+    </div>
+  </div>
+</header>
+
+<nav class="nav-tabs">
+  <div class="nav-tabs-inner">
+    <button class="tab-btn active" onclick="showTab('s1',this)">① 미팅 유형 지도</button>
+    <button class="tab-btn" onclick="showTab('s2',this)">② 킥오프</button>
+    <button class="tab-btn" onclick="showTab('s3',this)">③ 상태 보고</button>
+    <button class="tab-btn" onclick="showTab('s4',this)">④ 인터뷰·워크숍</button>
+    <button class="tab-btn" onclick="showTab('s5',this)">⑤ 이슈 해결</button>
+    <button class="tab-btn" onclick="showTab('s6',this)">⑥ 경영진 보고</button>
+    <button class="tab-btn" onclick="showTab('s7',this)">⑦ 돌발·갈등 대처</button>
+    <button class="tab-btn" onclick="showTab('s8',this)">⑧ 실전 드릴</button>
+    <button class="tab-btn" onclick="showTab('s9',this)">⑨ 자기 진단</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ── S1: 미팅 유형 지도 ── -->
+<div id="s1" class="section active">
+  <div class="section-title">미팅 유형 지도</div>
+  <div class="section-subtitle">미팅에 들어가기 전에 유형부터 파악한다. 목적이 다르면 준비, 발언 방식, 마무리 방식이 모두 달라진다. 유형을 잘못 읽고 들어가면 좋은 내용도 효과가 없다.</div>
+
+  <div class="meeting-map">
+    <div class="meeting-card" onclick="showTab('s2', document.querySelectorAll('.tab-btn')[1])">
+      <div class="meeting-num">01</div>
+      <div class="meeting-tag">Project Start</div>
+      <div class="meeting-title">킥오프 미팅</div>
+      <div class="meeting-desc">기대치·역할·범위 정렬. 분위기를 잡는 자리.</div>
+    </div>
+    <div class="meeting-card" onclick="showTab('s3', document.querySelectorAll('.tab-btn')[2])">
+      <div class="meeting-num">02</div>
+      <div class="meeting-tag">Recurring</div>
+      <div class="meeting-title">정기 상태 보고</div>
+      <div class="meeting-desc">RAG 상태, 이슈, 다음 단계, 의사결정 요청.</div>
+    </div>
+    <div class="meeting-card" onclick="showTab('s4', document.querySelectorAll('.tab-btn')[3])">
+      <div class="meeting-num">03</div>
+      <div class="meeting-tag">Discovery</div>
+      <div class="meeting-title">인터뷰·워크숍</div>
+      <div class="meeting-desc">정보 수집과 요건 정의. 판단이 아닌 경청.</div>
+    </div>
+    <div class="meeting-card" onclick="showTab('s5', document.querySelectorAll('.tab-btn')[4])">
+      <div class="meeting-num">04</div>
+      <div class="meeting-tag">Problem Solving</div>
+      <div class="meeting-title">이슈 해결 미팅</div>
+      <div class="meeting-desc">문제 정의 합의 → 근본 원인 → 액션 3종 세트.</div>
+    </div>
+    <div class="meeting-card" onclick="showTab('s6', document.querySelectorAll('.tab-btn')[5])">
+      <div class="meeting-num">05</div>
+      <div class="meeting-tag">High Stakes</div>
+      <div class="meeting-title">경영진·최종 보고</div>
+      <div class="meeting-desc">임팩트와 결정 사항 중심. Q&A 사전 준비 필수.</div>
+    </div>
+    <div class="meeting-card" onclick="showTab('s7', document.querySelectorAll('.tab-btn')[6])">
+      <div class="meeting-num">06</div>
+      <div class="meeting-tag red">Crisis</div>
+      <div class="meeting-title">돌발·갈등 상황</div>
+      <div class="meeting-desc">감정 인정 → 사실 복귀 → 솔루션. 즉흥 추정 금지.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">미팅 유형별 핵심 비교</div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width:18%">유형</th>
+          <th style="width:22%">핵심 목적</th>
+          <th style="width:25%">컨설턴트 역할</th>
+          <th style="width:35%">가장 많이 저지르는 실수</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-navy">킥오프</span></td>
+          <td>기대치·범위·역할 정렬</td>
+          <td>퍼실리테이터, 분위기 설정자</td>
+          <td>방법론 설명에 시간을 낭비하고 범위 합의를 못 한 채 종료</td>
+        </tr>
+        <tr class="row-highlight">
+          <td><span class="badge badge-gray">상태 보고</span></td>
+          <td>현황 공유, 이슈 조기 인지</td>
+          <td>보고자, 의사결정 지원자</td>
+          <td>좋은 소식만 공유하다 마지막에 나쁜 소식 폭탄</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-gray">인터뷰·워크숍</span></td>
+          <td>정보 수집, 요건 정의</td>
+          <td>경청자, 질문자</td>
+          <td>정보 수집 대신 본인 의견을 피력하거나 답을 유도</td>
+        </tr>
+        <tr class="row-highlight">
+          <td><span class="badge badge-warn">이슈 해결</span></td>
+          <td>원인 파악, 액션 합의</td>
+          <td>퍼실리테이터, 구조화 담당자</td>
+          <td>문제 정의 없이 솔루션 경쟁으로 바로 진입</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-navy">경영진 보고</span></td>
+          <td>임팩트 전달, 의사결정 요청</td>
+          <td>발표자, 전략적 조언자</td>
+          <td>디테일에 집중하다 핵심 메시지를 놓침</td>
+        </tr>
+        <tr class="row-highlight">
+          <td><span class="badge badge-wrong">돌발·갈등</span></td>
+          <td>상황 안정화, 신뢰 유지</td>
+          <td>중재자, 사실 복귀 유도자</td>
+          <td>감정적으로 반응하거나 즉흥적으로 추정하여 발언</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <strong>미팅 전 3가지 질문:</strong> ① 이 미팅의 목적은 무엇인가? ② 내가 이 미팅에서 해야 할 역할은 무엇인가? ③ 이 미팅이 끝나면 무엇이 결정되어야 하는가? — 이 세 가지에 답할 수 없다면 미팅 자체를 재검토해야 한다.
+  </div>
+</div>
+
+<!-- ── S2: 킥오프 ── -->
+<div id="s2" class="section">
+  <div class="section-title">킥오프 미팅</div>
+  <div class="section-subtitle">킥오프는 프로젝트의 첫인상이다. 이 자리에서 기대치, 범위, 역할이 정렬되지 않으면 이후 모든 마찰의 씨앗이 심어진다.</div>
+
+  <div class="card">
+    <div class="card-title">킥오프의 3가지 목적</div>
+    <div class="rag-row" style="grid-template-columns: repeat(3,1fr);">
+      <div style="border:1px solid var(--gray-border);background:var(--white);padding:20px;">
+        <div style="font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--navy);font-weight:700;margin-bottom:8px;">01 — Align</div>
+        <div style="font-size:15px;font-weight:700;color:var(--gray-dark);margin-bottom:6px;">기대치 정렬</div>
+        <div style="font-size:14px;color:var(--gray-mid);line-height:1.6;">모두가 같은 그림을 그리고 있는지 확인한다. "성공"의 정의가 관계자마다 다른 경우가 많다.</div>
+      </div>
+      <div style="border:1px solid var(--navy);background:var(--navy-light);padding:20px;">
+        <div style="font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--navy);font-weight:700;margin-bottom:8px;">02 — Scope</div>
+        <div style="font-size:15px;font-weight:700;color:var(--gray-dark);margin-bottom:6px;">범위 명확화</div>
+        <div style="font-size:14px;color:var(--gray-mid);line-height:1.6;">In-scope와 Out-of-scope를 명시적으로 정의한다. 나중에 "그건 당연히 포함인 줄 알았는데요"를 방지한다.</div>
+      </div>
+      <div style="border:1px solid var(--gray-border);background:var(--white);padding:20px;">
+        <div style="font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--navy);font-weight:700;margin-bottom:8px;">03 — RACI</div>
+        <div style="font-size:15px;font-weight:700;color:var(--gray-dark);margin-bottom:6px;">역할·책임 확인</div>
+        <div style="font-size:14px;color:var(--gray-mid);line-height:1.6;">누가 무엇을 결정하고, 누가 실행하고, 누구에게 보고하는지 확인한다. 역할이 모호하면 책임도 모호해진다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">킥오프 아젠다 구조 — 권장 순서</div>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">①</div>
+        <div class="flow-content">
+          <div class="flow-title">프로젝트 배경과 목적 (5분)</div>
+          <div class="flow-desc">왜 이 프로젝트가 시작되었는지, 달성하려는 비즈니스 목표가 무엇인지 공유한다. 방법론 설명이 아니다.</div>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">②</div>
+        <div class="flow-content active-step">
+          <div class="flow-title">범위 확인 및 합의 (15분) — 가장 중요</div>
+          <div class="flow-desc">In-scope와 Out-of-scope를 구체적으로 열거하고, 참석자 전원의 동의를 구한다. 이견이 있으면 이 자리에서 해소한다.</div>
+          <span class="flow-tag">Most Critical</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">③</div>
+        <div class="flow-content">
+          <div class="flow-title">역할·책임·커뮤니케이션 채널 (10분)</div>
+          <div class="flow-desc">RACI 매트릭스 공유. 정기 보고 주기, 보고 채널, 의사결정 경로를 명확히 한다.</div>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">④</div>
+        <div class="flow-content">
+          <div class="flow-title">전체 일정 및 마일스톤 (5분)</div>
+          <div class="flow-desc">세부 일정이 아닌 큰 마일스톤과 주요 산출물을 공유한다. 세부 일정은 별도로 배포한다.</div>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">⑤</div>
+        <div class="flow-content">
+          <div class="flow-title">Q&A 및 우려사항 수렴 (10분)</div>
+          <div class="flow-desc">참석자의 질문과 우려를 듣는다. 즉답이 어려운 것은 답변 기한을 약속하고 후속 공유한다.</div>
+          <span class="flow-tag correct">절대 생략 금지</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">킥오프에서 해야 할 것 vs 하지 말아야 할 것</div>
+    <div class="do-dont">
+      <div class="do-box">
+        <div class="do-box-title">✓ 해야 할 것</div>
+        <div class="do-item">범위(Scope) 문서를 사전에 배포하고 킥오프에서 확인한다</div>
+        <div class="do-item">마무리 전 "모두가 같은 이해를 갖고 있는가" 확인 질문을 한다</div>
+        <div class="do-item">미결 사항은 목록으로 만들고 답변 기한과 담당자를 지정한다</div>
+        <div class="do-item">킥오프 후 24시간 내 회의록과 합의 사항을 서면으로 공유한다</div>
+      </div>
+      <div class="dont-box">
+        <div class="dont-box-title">✕ 하지 말아야 할 것</div>
+        <div class="dont-item">방법론, 프레임워크, 분석 도구 설명으로 시간을 쓴다</div>
+        <div class="dont-item">범위 합의 없이 "진행하면서 조율하자"고 넘어간다</div>
+        <div class="dont-item">한쪽 관계자(예: IT)가 참석 못 한 상태에서 범위를 확정한다</div>
+        <div class="dont-item">미결 사항 없이 마무리된 척한다</div>
+      </div>
+    </div>
+    <div class="callout warn">
+      <strong>킥오프 체크 질문:</strong> "이 자리에서 모두가 같은 그림을 그리고 있는가?" — 킥오프를 마치기 전에 반드시 이 질문을 참석자 전체에게 던진다. 침묵이 동의가 아닐 수 있다.
+    </div>
+  </div>
+</div>
+
+<!-- ── S3: 상태 보고 ── -->
+<div id="s3" class="section">
+  <div class="section-title">정기 상태 보고</div>
+  <div class="section-subtitle">상태 보고는 진행 상황을 알리는 자리가 아니다. 의사결정권자가 올바른 판단을 내릴 수 있도록 정보를 구조화하여 제공하는 자리다.</div>
+
+  <div class="card">
+    <div class="card-title">RAG 상태 보고 체계</div>
+    <p style="font-size:15px;line-height:1.8;margin-bottom:16px;">모든 진행 항목을 Red / Amber / Green 3가지로 분류한다. 색만 봐도 어디에 집중해야 하는지 알 수 있어야 한다.</p>
+    <div class="rag-row">
+      <div class="rag-cell rag-r">
+        <div class="rag-label"><span class="rag-dot"></span>RED — 즉각 대응 필요</div>
+        <div class="rag-desc">일정·품질·예산 중 하나 이상이 심각하게 위협받는 상태. 의사결정권자의 즉각적 개입이 필요하다. 대안을 함께 제시한다.</div>
+      </div>
+      <div class="rag-cell rag-a">
+        <div class="rag-label"><span class="rag-dot"></span>AMBER — 주시 필요</div>
+        <div class="rag-desc">현재는 통제 가능하지만 방치하면 Red로 전환될 수 있는 상태. 리스크와 모니터링 계획을 함께 보고한다.</div>
+      </div>
+      <div class="rag-cell rag-g">
+        <div class="rag-label"><span class="rag-dot"></span>GREEN — 계획 대비 정상</div>
+        <div class="rag-desc">계획 대비 정상 진행 중. 단, "GREEN이지만 다음 주에 주의가 필요한 항목"이 있다면 미리 언급한다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">상태 보고의 구조 — 4단 포맷</div>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">①</div>
+        <div class="flow-content">
+          <div class="flow-title">진행 현황 (RAG 상태)</div>
+          <div class="flow-desc">전체 진행률과 각 워크스트림별 RAG 상태를 1~2분 안에 요약한다. 슬라이드를 처음부터 설명하지 않는다.</div>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">②</div>
+        <div class="flow-content active-step">
+          <div class="flow-title">이슈·리스크 — 대안과 함께</div>
+          <div class="flow-desc">이슈만 나열하지 않는다. "A 이슈가 있고, B 또는 C로 대응 가능합니다. 저는 B를 권장합니다"의 형식으로 제시한다.</div>
+          <span class="flow-tag">항상 대안 포함</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">③</div>
+        <div class="flow-content">
+          <div class="flow-title">다음 단계 계획</div>
+          <div class="flow-desc">다음 보고 기간 내 완료할 항목과 마일스톤을 공유한다. 이 시점에 예상되는 리스크도 미리 언급한다.</div>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">④</div>
+        <div class="flow-content">
+          <div class="flow-title">의사결정 요청 사항</div>
+          <div class="flow-desc">이 보고에서 결정이 필요한 사항을 명확하게 제시한다. "이 보고에서 A와 B 중 방향 결정을 부탁드립니다"처럼 구체적으로 요청한다.</div>
+          <span class="flow-tag correct">미팅 목적 달성 여부 결정</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">상태 보고에서 피해야 할 나쁜 패턴</div>
+    <div class="principle-grid">
+      <div class="principle-card">
+        <div class="principle-num">01</div>
+        <div class="principle-label">Bad Pattern 01</div>
+        <div class="principle-title">좋은 소식만 보고한다</div>
+        <div class="principle-body">나쁜 소식을 마지막까지 숨기다가 한꺼번에 터뜨리는 패턴. 의사결정권자의 대응 시간을 빼앗는다. 나쁜 소식일수록 빠르게, 대안과 함께 보고한다.</div>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">02</div>
+        <div class="principle-label">Bad Pattern 02</div>
+        <div class="principle-title">슬라이드를 처음부터 읽는다</div>
+        <div class="principle-body">자료는 사전 배포한다. 미팅에서는 핵심과 이슈에 집중한다. "이미 읽으셨겠지만"으로 시작하거나 슬라이드를 그대로 읽는 것은 시간 낭비다.</div>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">03</div>
+        <div class="principle-label">Bad Pattern 03</div>
+        <div class="principle-title">액션 아이템 없이 마무리한다</div>
+        <div class="principle-body">"좋은 미팅이었습니다"로 끝나는 보고. 모든 상태 보고는 Owner + Action + Due Date 3종 세트로 마무리되어야 한다.</div>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">04</div>
+        <div class="principle-label">Bad Pattern 04</div>
+        <div class="principle-title">보고 자료를 당일 배포한다</div>
+        <div class="principle-body">자료를 당일 미팅 직전에 배포하면 참석자가 읽을 시간이 없다. 미팅은 검토가 아닌 토론과 결정의 자리여야 한다. 최소 전날 배포를 원칙으로 한다.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── S4: 인터뷰·워크숍 ── -->
+<div id="s4" class="section">
+  <div class="section-title">인터뷰·요건 정의 워크숍</div>
+  <div class="section-subtitle">인터뷰는 내 의견을 전달하는 자리가 아니다. 상대의 현실을 최대한 정확하게 수집하는 자리다. 경청이 80%, 발언이 20%.</div>
+
+  <div class="card">
+    <div class="card-title">질문 설계의 원칙</div>
+    <div class="axis-grid">
+      <div class="axis-cell navy-bg">
+        <div class="axis-cell-title">닫힌 질문 — 제한적</div>
+        <div class="axis-cell-body">
+          <p style="margin-bottom:10px;">"현재 시스템에 만족하십니까?" → "예/아니오"로 끝난다</p>
+          <p style="margin-bottom:10px;">"A 프로세스가 문제입니까?" → 답을 유도한다</p>
+          <p>정보 수집보다 확인에 적합하다. 인터뷰 후반에 사용한다.</p>
+        </div>
+      </div>
+      <div class="axis-cell">
+        <div class="axis-cell-title">열린 질문 — 인사이트 발굴</div>
+        <div class="axis-cell-body">
+          <p style="margin-bottom:10px;">"지금 이 프로세스에서 가장 불편한 부분이 어디입니까?"</p>
+          <p style="margin-bottom:10px;">"월말 마감 때 어떤 일이 일어나는지 처음부터 설명해주실 수 있습니까?"</p>
+          <p>예상하지 못했던 정보가 나온다. 인터뷰 초반에 사용한다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">인터뷰 진행 5단계</div>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">①</div>
+        <div class="flow-content">
+          <div class="flow-title">목적과 맥락 소개 (3분)</div>
+          <div class="flow-desc">인터뷰 목적, 소요 시간, 결과 활용 방법을 간략히 설명한다. "오늘 말씀하신 내용은 보고서에 개인 발언이 아닌 종합 의견으로 반영됩니다"를 명확히 한다.</div>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">②</div>
+        <div class="flow-content active-step">
+          <div class="flow-title">열린 질문으로 탐색 (20분)</div>
+          <div class="flow-desc">미리 준비한 열린 질문으로 대화를 시작한다. 예상치 못한 답변이 나오면 그 방향으로 깊이 파고든다. "더 자세히 말씀해주시겠어요?"가 가장 강력한 후속 질문이다.</div>
+          <span class="flow-tag">침묵을 두려워 말 것</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">③</div>
+        <div class="flow-content">
+          <div class="flow-title">닫힌 질문으로 확인 (10분)</div>
+          <div class="flow-desc">수집한 정보를 구체화한다. "말씀하신 이 케이스가 얼마나 자주 발생합니까?" "영향을 받는 부서가 어디입니까?"처럼 수치와 범위를 확인한다.</div>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">④</div>
+        <div class="flow-content">
+          <div class="flow-title">발언 요약 및 확인 (5분)</div>
+          <div class="flow-desc">"오늘 말씀해주신 핵심은 A, B, C인데 맞습니까?" 즉시 확인하면 오해를 방지하고 상대에게 존중받는 느낌을 준다.</div>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">⑤</div>
+        <div class="flow-content">
+          <div class="flow-title">추가 의견 및 마무리 (2분)</div>
+          <div class="flow-desc">"오늘 여쭤보지 못했지만 중요하다고 생각하시는 부분이 있으시면 말씀해 주십시오." 이 한 가지 질문에서 핵심 인사이트가 나오는 경우가 많다.</div>
+          <span class="flow-tag correct">절대 생략 금지</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">이해관계 충돌 상황 — 두 부서의 요구가 충돌할 때</div>
+    <div class="path-diagram">
+      <div class="path-box">
+        <div class="path-label wrong-label">❌ 한쪽 편을 드는 반응</div>
+        <div class="path-desc">"A 부서 말씀이 맞는 것 같습니다." 또는 "현업 요건을 우선하는 방향으로 가겠습니다." → 다른 부서와의 관계가 즉시 경색된다. 컨설턴트가 중립을 잃으면 조정 역할도 잃는다.</div>
+      </div>
+      <div class="path-vs">→</div>
+      <div class="path-box highlight">
+        <div class="path-label">✓ 중립 유지 + 구조화</div>
+        <div class="path-desc">"두 부서의 요건이 A 지점에서 충돌하고 있습니다. 두 가지 요건이 모두 충족되어야 하는 이유를 각각 이해했습니다. 이 충돌을 해소할 수 있는 방안을 별도로 검토하여 제안드리겠습니다."</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">워크숍 퍼실리테이션 원칙</div>
+    <div class="principle-grid">
+      <div class="principle-card">
+        <div class="principle-num">01</div>
+        <div class="principle-label">Principle 01</div>
+        <div class="principle-title">아젠다와 시간을 지킨다</div>
+        <div class="principle-body">워크숍 시작 전 아젠다와 각 세션 소요 시간을 공유한다. 특정 주제에서 시간이 초과되면 "이 주제는 별도로 이어가고 지금은 다음 항목으로 넘어가겠습니다"라고 정리한다.</div>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">02</div>
+        <div class="principle-label">Principle 02</div>
+        <div class="principle-title">Parking Lot을 활용한다</div>
+        <div class="principle-body">범위 밖이거나 지금 당장 다루기 어려운 이슈는 "Parking Lot(주차장)"에 기록한다. 무시하지 않고 나중에 처리한다는 신호를 주면 참석자들의 불안이 줄어든다.</div>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">03</div>
+        <div class="principle-label">Principle 03</div>
+        <div class="principle-title">발언 독점을 방지한다</div>
+        <div class="principle-body">한 명이 발언을 독점하면 조용한 참석자의 의견을 놓친다. "X 님은 어떻게 보십니까?"처럼 조용한 참석자에게 직접 질문하여 다양한 관점을 수렴한다.</div>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">04</div>
+        <div class="principle-label">Principle 04</div>
+        <div class="principle-title">합의와 개인 의견을 구분한다</div>
+        <div class="principle-body">"이 항목은 오늘 참석자 전원이 동의한 내용입니다"와 "이 항목은 A 부서의 의견입니다"를 명확히 구분하여 기록한다. 나중에 "나는 그것에 동의한 적 없다"를 방지한다.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── S5: 이슈 해결 ── -->
+<div id="s5" class="section">
+  <div class="section-title">이슈 해결 미팅</div>
+  <div class="section-subtitle">이슈 해결 미팅에서 가장 많은 시간을 낭비하는 이유는 하나다 — 문제 정의 없이 솔루션 논쟁으로 직행하기 때문이다.</div>
+
+  <div class="card">
+    <div class="card-title">이슈 해결의 4단계 구조</div>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">①</div>
+        <div class="flow-content active-step">
+          <div class="flow-title">문제 정의에 합의한다 — 가장 중요</div>
+          <div class="flow-desc">"오늘 우리가 해결하려는 문제는 정확히 무엇인가?" 참석자 전원이 같은 문제를 보고 있는지 먼저 확인한다. 이 단계에서 5분을 투자하면 나머지 55분을 아낀다.</div>
+          <span class="flow-tag">Problem Statement 합의 필수</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">②</div>
+        <div class="flow-content">
+          <div class="flow-title">근본 원인을 탐색한다</div>
+          <div class="flow-desc">증상과 원인을 구분한다. "왜 이 문제가 발생했는가?"를 최소 3번 반복한다(5 Whys). 가장 먼저 나온 답이 근본 원인이 아닌 경우가 많다.</div>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">③</div>
+        <div class="flow-content">
+          <div class="flow-title">솔루션을 검토한다</div>
+          <div class="flow-desc">근본 원인이 파악된 후에 솔루션을 논의한다. 복수의 대안을 검토하고, 트레이드오프를 명시한다. "누가 틀렸나"가 아닌 "무엇이 문제인가"를 유지한다.</div>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">④</div>
+        <div class="flow-content">
+          <div class="flow-title">액션 아이템 3종 세트로 마무리</div>
+          <div class="flow-desc">미팅을 마치기 전에 반드시: <strong>액션 내용 + Owner(담당자) + Due Date(기한)</strong>를 기록하고 공유한다. 이 세 가지 중 하나라도 없으면 실행으로 이어지지 않는다.</div>
+          <span class="flow-tag correct">Action · Owner · Due</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">"누가 틀렸나" 분위기를 "무엇이 문제인가"로 전환하기</div>
+    <div class="speech-compare">
+      <div>
+        <div class="speech-col-label bad">❌ 비난 프레임</div>
+        <div class="speech-bubble bad-bubble">
+          <div class="speech-context">이슈 발생 원인 논의 중</div>
+          "처음부터 이 방식은 문제가 있다고 했잖아요. 왜 그때 제 말을 안 들으셨어요?"
+        </div>
+        <div class="speech-bubble bad-bubble">
+          <div class="speech-context">일정 지연 원인 파악 중</div>
+          "그쪽에서 제때 데이터를 주지 않아서 이렇게 된 거잖아요."
+        </div>
+      </div>
+      <div>
+        <div class="speech-col-label good">✓ 문제 중심 프레임</div>
+        <div class="speech-bubble good-bubble">
+          <div class="speech-context">이슈 발생 원인 논의 중</div>
+          "이 이슈가 발생한 시점과 조건을 먼저 파악해봅시다. 언제부터 이 패턴이 나타났는지 알면 원인을 좁힐 수 있습니다."
+        </div>
+        <div class="speech-bubble good-bubble">
+          <div class="speech-context">일정 지연 원인 파악 중</div>
+          "데이터 수신 일정이 원래 계획과 달라진 이유를 파악해봅시다. 이후 같은 상황이 생기지 않도록 프로세스를 어떻게 조정할 수 있을지 같이 논의하겠습니다."
+        </div>
+      </div>
+    </div>
+    <div class="callout">
+      <strong>퍼실리테이터의 역할:</strong> 대화가 비난 방향으로 흐를 때 "지금 우리의 목적은 원인을 찾고 해결책을 만드는 것입니다. 과거의 책임보다 앞으로의 조치에 집중합시다"라고 방향을 재설정한다.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">이슈 해결 미팅 마무리 체크</div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>항목</th>
+          <th>확인 질문</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-navy">문제 정의</span></td>
+          <td>"오늘 논의한 문제가 처음 우리가 정의한 문제와 같습니까?"</td>
+        </tr>
+        <tr class="row-highlight">
+          <td><span class="badge badge-warn">근본 원인</span></td>
+          <td>"합의된 근본 원인이 무엇입니까? 증상이 아닌 원인이 맞습니까?"</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-correct">액션 아이템</span></td>
+          <td>"모든 액션에 Owner와 Due Date가 지정되었습니까?"</td>
+        </tr>
+        <tr class="row-highlight">
+          <td><span class="badge badge-gray">재발 방지</span></td>
+          <td>"같은 문제가 반복되지 않도록 무엇을 바꿉니까?"</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-gray">다음 확인 일정</span></td>
+          <td>"액션 이행 여부를 언제, 어떻게 확인합니까?"</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ── S6: 경영진 보고 ── -->
+<div id="s6" class="section">
+  <div class="section-title">경영진·최종 보고</div>
+  <div class="section-subtitle">경영진은 디테일을 원하지 않는다. 임팩트와 결정 사항, 그리고 리스크를 원한다. 1장 1메시지, Q&A 사전 준비, 반론을 방어가 아닌 정보로 수용하는 태도.</div>
+
+  <div class="card">
+    <div class="card-title">경영진 보고의 3원칙</div>
+    <div class="rag-row" style="grid-template-columns: repeat(3,1fr);">
+      <div style="border:1px solid var(--navy);background:var(--navy);padding:20px;">
+        <div style="font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.6);font-weight:700;margin-bottom:8px;">Rule 01</div>
+        <div style="font-size:15px;font-weight:700;color:var(--white);margin-bottom:6px;">1장 1메시지</div>
+        <div style="font-size:14px;color:rgba(255,255,255,0.7);line-height:1.6;">슬라이드 1장에 메시지 1개. 제목이 곧 결론이어야 한다. "A 현황 분석"이 아닌 "A 시장의 성장 둔화로 B 전략 전환이 필요함".</div>
+      </div>
+      <div style="border:1px solid var(--gray-border);background:var(--white);padding:20px;">
+        <div style="font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--navy);font-weight:700;margin-bottom:8px;">Rule 02</div>
+        <div style="font-size:15px;font-weight:700;color:var(--gray-dark);margin-bottom:6px;">Q&A 10개 사전 준비</div>
+        <div style="font-size:14px;color:var(--gray-mid);line-height:1.6;">예상 질문 최소 10개를 미리 준비하고 답변을 검증한다. 현장에서 처음 만나는 질문이 없어야 한다.</div>
+      </div>
+      <div style="border:1px solid var(--gray-border);background:var(--white);padding:20px;">
+        <div style="font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--navy);font-weight:700;margin-bottom:8px;">Rule 03</div>
+        <div style="font-size:15px;font-weight:700;color:var(--gray-dark);margin-bottom:6px;">반론 = 정보</div>
+        <div style="font-size:14px;color:var(--gray-mid);line-height:1.6;">경영진의 반론을 공격으로 받지 않는다. 추가 정보가 있다는 신호다. 방어하지 않고 경청 후 근거로 응답한다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">경영진 보고 타임라인 — 보고 당일까지</div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-phase">D-5</div>
+        <div class="tl-title">초안 완성</div>
+        <div class="tl-desc">핵심 메시지와 논리 구조 확정</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">D-4</div>
+        <div class="tl-title">내부 리뷰</div>
+        <div class="tl-desc">리더·팀원과 논리·수치 검증</div>
+      </div>
+      <div class="tl-item tl-active">
+        <div class="tl-phase">D-3</div>
+        <div class="tl-title">Q&A 준비</div>
+        <div class="tl-desc">예상 질문 10개 이상 작성·검증</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">D-1</div>
+        <div class="tl-title">자료 배포</div>
+        <div class="tl-desc">전날 배포로 사전 검토 보장</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">D-Day</div>
+        <div class="tl-title">보고 실시</div>
+        <div class="tl-desc">토론·결정 중심으로 진행</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">반론 대응 — 방어 vs 수용</div>
+    <div class="speech-compare">
+      <div>
+        <div class="speech-col-label bad">❌ 방어적 반응</div>
+        <div class="speech-bubble bad-bubble">
+          <div class="speech-context">경영진이 분석 전제에 의문을 제기할 때</div>
+          "저희가 충분히 검토한 내용입니다. 데이터를 보시면 알 수 있습니다."
+        </div>
+        <div class="speech-bubble bad-bubble">
+          <div class="speech-context">경영진이 결론에 동의하지 않을 때</div>
+          "그 부분은 사실 저도 걱정이 있었는데요..." (자신감 상실)
+        </div>
+      </div>
+      <div>
+        <div class="speech-col-label good">✓ 수용 후 근거 제시</div>
+        <div class="speech-bubble good-bubble">
+          <div class="speech-context">경영진이 분석 전제에 의문을 제기할 때</div>
+          "좋은 포인트입니다. 저희는 X를 가정하고 분석했습니다. 혹시 다른 가정을 전제로 하신다면 시나리오 분석을 추가로 준비하겠습니다."
+        </div>
+        <div class="speech-bubble good-bubble">
+          <div class="speech-context">경영진이 결론에 동의하지 않을 때</div>
+          "말씀하신 관점을 이해했습니다. 제 결론과의 차이는 A 가정에서 비롯됩니다. 이 가정의 근거는 X입니다. 혹시 다른 데이터가 있으시면 함께 검토하겠습니다."
+        </div>
+      </div>
+    </div>
+    <div class="callout warn">
+      <strong>발표 중 모르는 질문을 받을 때:</strong> "현재 확인된 범위에서는 X입니다. Y 부분은 보고 후 확인하여 오늘 중으로 공유드리겠습니다." — 즉흥 추정으로 답하면 나중에 틀렸을 때 모든 분석의 신뢰도가 흔들린다.
+    </div>
+  </div>
+</div>
+
+<!-- ── S7: 돌발·갈등 ── -->
+<div id="s7" class="section">
+  <div class="section-title">돌발·갈등 상황 대처</div>
+  <div class="section-subtitle">돌발 상황에서 신뢰는 무너지는 것이 아니라 오히려 만들어진다. 위기 상황에서 침착하게 구조적으로 대응하는 컨설턴트는 장기적으로 가장 큰 신뢰 자산을 쌓는다.</div>
+
+  <div class="card">
+    <div class="card-title">돌발 상황 대응의 기본 구조</div>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">①</div>
+        <div class="flow-content">
+          <div class="flow-title">즉각 반응하지 않는다</div>
+          <div class="flow-desc">감정적 자극이 왔을 때 즉각 반응하는 것은 가장 위험한 패턴이다. 2~3초의 침묵은 자신감 있어 보인다. "잠시 정리하겠습니다"도 훌륭한 반응이다.</div>
+          <span class="flow-tag warn">Pause Before Respond</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">②</div>
+        <div class="flow-content active-step">
+          <div class="flow-title">감정을 인정하고, 사실로 복귀한다</div>
+          <div class="flow-desc">"말씀하신 우려가 이해됩니다. 현재 확인된 사실은 X입니다." — 감정을 무시하지 않되, 대화를 사실 기반으로 되돌린다. 이것이 신뢰를 지키는 가장 빠른 방법이다.</div>
+          <span class="flow-tag">Acknowledge → Fact</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">③</div>
+        <div class="flow-content">
+          <div class="flow-title">즉흥 추정을 하지 않는다</div>
+          <div class="flow-desc">모르는 것을 질문받으면: "현재 확인된 범위에서는 X입니다. Y 부분은 [시간]까지 확인하겠습니다." 압박이 있어도 추측으로 답하지 않는다.</div>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">④</div>
+        <div class="flow-content">
+          <div class="flow-title">솔루션과 다음 단계를 제시한다</div>
+          <div class="flow-desc">"현재 상황을 정리하면 X입니다. 대응 방향은 A 또는 B입니다. 저는 A를 권장하며, [시간]까지 구체적인 계획을 공유드리겠습니다."</div>
+          <span class="flow-tag correct">Solution First</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">상황별 대처 — 고객이 화를 낼 때</div>
+    <div class="axis-grid">
+      <div class="axis-cell navy-bg">
+        <div class="axis-cell-title">하지 말아야 할 것</div>
+        <div class="axis-cell-body">
+          <p style="margin-bottom:10px;">즉각 사과 → 자신감을 잃어 보이고, 사실 관계가 불명확한 상태에서의 사과는 책임을 인정하는 것으로 해석된다</p>
+          <p style="margin-bottom:10px;">즉각 반박 → 고객의 감정을 더 자극한다</p>
+          <p>침묵으로 모면 → 문제가 해결된 것처럼 보이지 않는다</p>
+        </div>
+      </div>
+      <div class="axis-cell">
+        <div class="axis-cell-title">해야 할 것</div>
+        <div class="axis-cell-body">
+          <p style="margin-bottom:10px;">"지금 말씀하신 상황이 X인 것으로 이해했습니다. 현재 확인된 사실을 먼저 말씀드리겠습니다."</p>
+          <p style="margin-bottom:10px;">사실을 확인한 후, 책임이 있는 부분에 대해 명확하고 짧게 사과한다</p>
+          <p>이후 즉시 해결 방향과 타임라인을 제시한다</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">미팅 중 전제가 무너지는 상황</div>
+    <div class="path-diagram">
+      <div class="path-box">
+        <div class="path-label wrong-label">❌ 즉흥 대응</div>
+        <div class="path-desc">"아, 그렇다면 결론이 바뀔 수 있겠네요..." (즉흥 추정으로 수정) → 현장에서 준비되지 않은 수정은 나중에 더 큰 오류로 이어진다. 신뢰도 함께 흔들린다.</div>
+      </div>
+      <div class="path-vs">→</div>
+      <div class="path-box highlight">
+        <div class="path-label">✓ 확인 후 재보고</div>
+        <div class="path-desc">"말씀하신 부분은 저희 분석의 중요한 전제와 관련됩니다. 오늘 자리에서 즉답보다는 정확히 확인한 후 [시간]까지 영향도와 함께 공유드리겠습니다."</div>
+      </div>
+    </div>
+    <div class="callout">
+      <strong>원칙:</strong> 현장에서 "즉답이 어렵다"고 말하는 것은 무능한 것이 아니다. 잘못된 즉답이 훨씬 더 큰 문제다. 확인 기한을 명확히 제시하면 오히려 신뢰를 준다.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">갈등이 고조될 때 — 미팅 중단 판단 기준</div>
+    <div class="summary-grid">
+      <div class="summary-item">
+        <div class="summary-item-title">미팅을 계속 진행하는 경우</div>
+        <p>감정이 고조되었으나 사실 기반 논의가 가능한 상태. "잠시 각자 정리하고 5분 후 재개하겠습니다"라고 짧은 휴식을 제안하여 분위기를 환기한다.</p>
+      </div>
+      <div class="summary-item">
+        <div class="summary-item-title">미팅을 중단하는 경우</div>
+        <p>사실 기반 논의가 불가능한 상태, 핵심 관계자의 부재로 결정이 불가능한 경우. "오늘 자리에서 결론을 내는 것보다 충분한 검토 후 재논의하는 것이 더 생산적일 것 같습니다"라고 제안한다.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── S8: 실전 드릴 ── -->
+<div id="s8" class="section">
+  <div class="section-title">실전 화법 드릴</div>
+  <div class="section-subtitle">미팅 유형별 실제 상황 카드를 클릭하여 나쁜 반응, 권장 대응, 핵심 원리를 확인한다. 미팅 전날 해당 유형 카드를 읽고 들어간다.</div>
+
+  <div class="drill-scenario">
+    <div class="drill-header" onclick="toggleDrill(this)">
+      <div class="drill-icon">KO-01</div>
+      <div class="drill-situation">킥오프에서 고객사가 범위 밖 요청을 당연하게 기대하고 있을 때</div>
+      <div class="drill-toggle">▼</div>
+    </div>
+    <div class="drill-body">
+      <div class="drill-bad-label">❌ 피해야 할 반응</div>
+      <div class="drill-bad">"일단 진행하면서 논의해보죠." → 범위가 모호한 채로 시작하면 나중에 훨씬 큰 갈등이 생긴다. "맞습니다" 같은 애매한 동조도 마찬가지다.</div>
+      <div class="drill-good-label">✓ 권장 대응</div>
+      <div class="drill-good">"말씀하신 부분에 대해 확인이 필요합니다. 현재 합의된 범위 문서에서는 X가 Out-of-scope로 정의되어 있습니다. 이것을 포함하려면 일정·비용·리소스에 영향이 있습니다. 오늘 이 자리에서 범위를 다시 논의하고 합의하는 것이 맞겠습니까?"</div>
+      <div class="drill-why-label">핵심 원리</div>
+      <div class="drill-why">킥오프는 범위를 확정하는 마지막 기회다. 이 자리에서 불편하더라도 명확히 정리해두지 않으면, 이후 모든 Scope Creep의 원인이 된다. 불편함을 감수하는 것이 장기적으로 모두에게 이롭다.</div>
+    </div>
+  </div>
+
+  <div class="drill-scenario">
+    <div class="drill-header" onclick="toggleDrill(this)">
+      <div class="drill-icon">SR-01</div>
+      <div class="drill-situation">상태 보고 중 경영진이 예상치 못한 이슈를 처음 듣고 화를 낼 때</div>
+      <div class="drill-toggle">▼</div>
+    </div>
+    <div class="drill-body">
+      <div class="drill-bad-label">❌ 피해야 할 반응</div>
+      <div class="drill-bad">"저도 어제 알았습니다." / "팀원이 보고를 늦게 해서요." → 책임 회피는 신뢰를 즉시 무너뜨린다. 경영진은 이유가 아닌 해결책과 재발 방지를 원한다.</div>
+      <div class="drill-good-label">✓ 권장 대응</div>
+      <div class="drill-good">"더 일찍 공유드렸어야 했습니다. 현재 상황은 X이며, 이미 A 조치를 시작했습니다. B 또는 C 방향으로 대응 가능하며, 저는 B를 권장합니다. 오늘 중으로 상세 계획을 공유드리겠습니다."</div>
+      <div class="drill-why-label">핵심 원리</div>
+      <div class="drill-why">사과는 짧게, 한 번. 나머지는 전부 해결에 집중한다. 경영진은 이미 일어난 일보다 앞으로 어떻게 할 것인지를 더 중요하게 본다.</div>
+    </div>
+  </div>
+
+  <div class="drill-scenario">
+    <div class="drill-header" onclick="toggleDrill(this)">
+      <div class="drill-icon">IW-01</div>
+      <div class="drill-situation">인터뷰 중 현업 담당자가 답변을 거부하거나 매우 짧게 답할 때</div>
+      <div class="drill-toggle">▼</div>
+    </div>
+    <div class="drill-body">
+      <div class="drill-bad-label">❌ 피해야 할 반응</div>
+      <div class="drill-bad">다음 질문으로 빠르게 넘어간다 / 답을 유도하는 방향으로 질문을 바꾼다 ("혹시 A가 문제인 건 아닌가요?") → 정보 수집 목적을 잃는다.</div>
+      <div class="drill-good-label">✓ 권장 대응</div>
+      <div class="drill-good">"더 구체적인 상황을 예시로 설명해주시겠어요?" 또는 "가장 최근에 이 프로세스를 실행하셨을 때 어떤 일이 있었는지 말씀해주시겠어요?" — 예시 요청은 짧은 답변에 깊이를 더하는 가장 효과적인 방법이다.</div>
+      <div class="drill-why-label">핵심 원리</div>
+      <div class="drill-why">짧은 답변은 불신이나 불편함의 신호일 수 있다. 추상적 질문을 구체적 상황·예시로 좁혀 물으면 답변이 풍부해진다. 판단하지 않는 분위기를 만드는 것이 먼저다.</div>
+    </div>
+  </div>
+
+  <div class="drill-scenario">
+    <div class="drill-header" onclick="toggleDrill(this)">
+      <div class="drill-icon">PS-01</div>
+      <div class="drill-situation">이슈 해결 미팅에서 참석자들이 원인 분석 대신 즉시 솔루션을 요구할 때</div>
+      <div class="drill-toggle">▼</div>
+    </div>
+    <div class="drill-body">
+      <div class="drill-bad-label">❌ 피해야 할 반응</div>
+      <div class="drill-bad">압박에 밀려 원인 분석 없이 솔루션 논의로 진입한다 → 근본 원인이 해소되지 않으면 같은 이슈가 반복된다.</div>
+      <div class="drill-good-label">✓ 권장 대응</div>
+      <div class="drill-good">"빠른 해결에 동의합니다. 다만 5분만 원인을 짚고 가면 솔루션의 효과를 훨씬 높일 수 있습니다. 지금 보이는 증상의 원인이 A인지 B인지에 따라 솔루션이 달라지기 때문입니다. 5분 투자하겠습니까?"</div>
+      <div class="drill-why-label">핵심 원리</div>
+      <div class="drill-why">속도 요구에 공감을 표하면서도, 원인 분석이 결국 더 빠른 해결로 이어진다는 논리로 설득한다. 5분이라는 구체적 시간 제안이 저항을 낮춘다.</div>
+    </div>
+  </div>
+
+  <div class="drill-scenario">
+    <div class="drill-header" onclick="toggleDrill(this)">
+      <div class="drill-icon">EP-01</div>
+      <div class="drill-situation">경영진 보고 중 슬라이드에 없는 데이터를 요청받을 때</div>
+      <div class="drill-toggle">▼</div>
+    </div>
+    <div class="drill-body">
+      <div class="drill-bad-label">❌ 피해야 할 반응</div>
+      <div class="drill-bad">"아마 X 정도 될 것 같습니다." (즉흥 추정) → 나중에 실제 수치가 다를 경우 전체 분석의 신뢰가 흔들린다.</div>
+      <div class="drill-good-label">✓ 권장 대응</div>
+      <div class="drill-good">"좋은 질문입니다. 현재 자리에서는 정확한 수치를 확인하기 어렵습니다. 오늘 보고 후 [시간]까지 정확한 데이터와 함께 공유드리겠습니다. 지금 자리에서는 Y 기준으로 말씀드리면 대략 Z 범위입니다만, 이것은 추정임을 전제로 듣고 계십시오."</div>
+      <div class="drill-why-label">핵심 원리</div>
+      <div class="drill-why">추정임을 명시하면서 추정 범위를 제시하는 것과, 추정을 사실처럼 말하는 것은 완전히 다르다. 후속 확인 시간을 명확히 약속하면 신뢰가 유지된다.</div>
+    </div>
+  </div>
+
+  <div class="drill-scenario">
+    <div class="drill-header" onclick="toggleDrill(this)">
+      <div class="drill-icon">CR-01</div>
+      <div class="drill-situation">미팅 중 고객사 두 부서가 서로를 비난하며 싸울 때</div>
+      <div class="drill-toggle">▼</div>
+    </div>
+    <div class="drill-body">
+      <div class="drill-bad-label">❌ 피해야 할 반응</div>
+      <div class="drill-bad">조용히 있는다 / 한쪽 편을 든다 / 황급히 다음 아젠다로 넘어가려 한다 → 퍼실리테이터로서의 역할을 잃는다.</div>
+      <div class="drill-good-label">✓ 권장 대응</div>
+      <div class="drill-good">"잠시 멈추겠습니다. 오늘 이 자리의 목적은 A 이슈를 해결하는 것입니다. 두 부서의 입장 차이가 있다는 것을 확인했습니다. 지금 책임 소재보다 해결 방향을 먼저 합의하고, 책임 관련 사항은 별도 채널에서 논의하는 것이 더 효과적이라고 생각합니다. 동의하십니까?"</div>
+      <div class="drill-why-label">핵심 원리</div>
+      <div class="drill-why">퍼실리테이터는 갈등을 회피하지 않고 방향을 재설정한다. "잠시 멈추겠습니다"는 회의실에서 가장 강력한 퍼실리테이션 문장 중 하나다. 목적을 환기시키면 감정이 구조 안으로 들어온다.</div>
+    </div>
+  </div>
+
+  <div class="callout" style="margin-top:8px;">
+    <strong>드릴 활용 팁:</strong> 오늘 예정된 미팅의 유형을 먼저 확인하고, 해당 유형의 드릴 카드를 미팅 전날 소리 내어 읽는다. 좋은 화법은 머리로 아는 것과 입에서 자연스럽게 나오는 것이 다르다.
+  </div>
+</div>
+
+<!-- ── S9: 자기 진단 ── -->
+<div id="s9" class="section">
+  <div class="section-title">자기 진단 체크리스트</div>
+  <div class="section-subtitle">이번 주 실제 미팅을 돌아보며 각 항목을 체크한다. 유형별로 어느 미팅이 가장 취약한지 파악하면 집중 개선 목표가 생긴다.</div>
+
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span>체크리스트 진행률</span>
+      <span id="check-pct">0 / 18 완료</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="check-progress" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">킥오프 · 상태 보고</div>
+    <div class="checklist">
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box">✓</div>
+        <span>킥오프에서 In-scope / Out-of-scope를 명시적으로 합의하고 서면으로 공유했다.</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box">✓</div>
+        <span>킥오프 후 24시간 내 회의록과 합의 사항을 배포했다.</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box">✓</div>
+        <span>상태 보고 자료를 미팅 전날 배포했다.</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box">✓</div>
+        <span>이번 주 상태 보고에서 나쁜 소식을 대안과 함께 빠르게 보고했다 (숨기지 않았다).</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box">✓</div>
+        <span>상태 보고를 액션 아이템(Owner + Due Date) 3종 세트로 마무리했다.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">인터뷰 · 워크숍</div>
+    <div class="checklist">
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box">✓</div>
+        <span>인터뷰에서 내 의견을 피력하거나 답을 유도하는 질문을 하지 않았다.</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box">✓</div>
+        <span>인터뷰 마무리 전 발언을 요약하고 상대의 확인을 받았다.</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box">✓</div>
+        <span>워크숍에서 발언 독점을 방지하고 조용한 참석자에게 의견을 요청했다.</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box">✓</div>
+        <span>이해관계 충돌이 있을 때 중립을 유지하고 구조화된 다음 단계를 제시했다.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">이슈 해결 · 경영진 보고</div>
+    <div class="checklist">
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box">✓</div>
+        <span>이슈 해결 미팅에서 솔루션 논의 전 문제 정의를 먼저 합의했다.</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box">✓</div>
+        <span>이슈 해결 미팅을 "누가 틀렸나"가 아닌 "무엇이 문제인가" 프레임으로 유지했다.</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box">✓</div>
+        <span>경영진 보고 전 예상 질문 최소 10개를 준비하고 답변을 검증했다.</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box">✓</div>
+        <span>경영진의 반론을 방어하지 않고 "좋은 포인트" 수용 후 근거를 제시했다.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">돌발·갈등 대처</div>
+    <div class="checklist">
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box">✓</div>
+        <span>돌발 상황에서 즉각 반응하지 않고 잠시 정리한 후 사실 기반으로 대응했다.</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box">✓</div>
+        <span>모르는 것을 질문받았을 때 추측이 아닌 "확인 후 [시간]까지 공유" 방식으로 응답했다.</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box">✓</div>
+        <span>갈등이 고조된 미팅에서 목적을 환기하고 방향을 재설정하는 발언을 했다.</span>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box">✓</div>
+        <span>미팅 중 전제가 무너졌을 때 즉흥 수정 대신 확인 후 재보고를 선택했다.</span>
+      </div>
+    </div>
+    <div class="check-counter" id="check-counter">0 / 18 항목 완료</div>
+  </div>
+
+  <div class="card" id="score-card" style="display:none;">
+    <div class="card-title">진단 결과</div>
+    <div id="score-result" style="font-size:15px;line-height:1.8;"></div>
+  </div>
+
+  <div class="callout warn">
+    <strong>활용 방법:</strong> 유형별(킥오프·상태보고 / 인터뷰·워크숍 / 이슈해결·경영진보고 / 돌발·갈등) 체크 수를 비교한다. 가장 체크 수가 적은 유형의 탭으로 돌아가 드릴 카드를 다시 읽는다.
+  </div>
+</div>
+
+</main>
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleDrill(header) {
+  const body = header.nextElementSibling;
+  const icon = header.querySelector('.drill-toggle');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  header.classList.toggle('open', !isOpen);
+  icon.classList.toggle('rotated', !isOpen);
+}
+
+const totalItems = 18;
+
+function toggleCheck(item) {
+  item.classList.toggle('checked');
+  const totalChecked = document.querySelectorAll('.check-item.checked').length;
+  const pct = Math.round((totalChecked / totalItems) * 100);
+
+  document.getElementById('check-pct').textContent = totalChecked + ' / ' + totalItems + ' 완료';
+  document.getElementById('check-progress').style.width = pct + '%';
+  document.getElementById('check-counter').textContent = totalChecked + ' / ' + totalItems + ' 항목 완료';
+
+  const scoreCard = document.getElementById('score-card');
+  const scoreResult = document.getElementById('score-result');
+
+  if (totalChecked >= 6) {
+    scoreCard.style.display = 'block';
+    let msg = '';
+    if (totalChecked <= 9) {
+      msg = `<span class="badge badge-wrong" style="display:inline-block;margin-bottom:10px;">기초 단계</span> 현재 ${totalChecked}개 항목을 실천하고 있습니다. 먼저 <strong>No Surprise(상태 보고)</strong>와 <strong>액션 아이템 3종 세트(모든 미팅 마무리)</strong> 두 가지를 다음 주 최우선 목표로 잡으세요. 이 두 가지가 모든 미팅 유형에 공통으로 적용됩니다.`;
+    } else if (totalChecked <= 13) {
+      msg = `<span class="badge badge-warn" style="display:inline-block;margin-bottom:10px;">성장 단계</span> 현재 ${totalChecked}개 항목을 실천하고 있습니다. 어느 미팅 유형에서 체크가 적은지 파악하고, 해당 탭의 드릴 카드를 집중적으로 읽으세요. 특히 <strong>경영진 보고</strong>와 <strong>돌발·갈등 대처</strong>는 연습 없이 현장에서 잘하기 어렵습니다.`;
+    } else {
+      msg = `<span class="badge badge-correct" style="display:inline-block;margin-bottom:10px;">숙련 단계</span> 현재 ${totalChecked}개 항목을 실천하고 있습니다. 미팅 운영 원칙이 상당 부분 체화되어 있습니다. 이제 <strong>팀원과 Role-play를 진행하거나, 다음 미팅에서 퍼실리테이터 역할을 자발적으로 맡아보세요.</strong> 설명할 수 있어야 진짜로 아는 것입니다.`;
+    }
+    scoreResult.innerHTML = msg;
+  } else {
+    scoreCard.style.display = 'none';
+  }
+}
+</script>
+</body>
+</html>
