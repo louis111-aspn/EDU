@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>생산원가 마감이 연결회계에 미치는 영향</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #003366;
+  --navy-light: #004488;
+  --navy-dim: rgba(0,51,102,0.08);
+  --navy-border: rgba(0,51,102,0.18);
+  --bg: #f0f3f8;
+  --white: #ffffff;
+  --text: #1a1a2e;
+  --text-muted: #4a5568;
+  --warn: #b45309;
+  --warn-bg: #fffbeb;
+  --correct: #155724;
+  --correct-bg: #f0fdf4;
+  --wrong: #7f1d1d;
+  --wrong-bg: #fff1f1;
+  --border: #dde3ed;
+  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font-sans: 'Noto Sans KR', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Noto Sans KR', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+}
+
+/* ── NAV ── */
+.sticky-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--navy);
+  display: flex;
+  align-items: stretch;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.sticky-nav::-webkit-scrollbar { display: none; }
+
+.nav-brand {
+  font-family: var(--font-serif);
+  color: rgba(255,255,255,0.55);
+  font-size: 13px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  border-right: 1px solid rgba(255,255,255,0.1);
+  letter-spacing: 0.02em;
+}
+
+.nav-tab {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.55);
+  padding: 14px 18px;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  letter-spacing: 0.03em;
+}
+.nav-tab:hover { color: rgba(255,255,255,0.9); }
+.nav-tab.active {
+  color: #ffffff;
+  border-bottom-color: rgba(255,255,255,0.7);
+}
+
+/* ── LAYOUT ── */
+.page-wrapper {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 32px 80px;
+}
+
+/* ── HERO ── */
+.hero {
+  padding: 56px 0 40px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 48px;
+}
+.hero-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--navy);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  opacity: 0.7;
+}
+.hero h1 {
+  font-family: var(--font-serif);
+  font-size: 38px;
+  line-height: 1.2;
+  color: var(--navy);
+  margin-bottom: 14px;
+}
+.hero-sub {
+  font-size: 15px;
+  color: var(--text-muted);
+  max-width: 680px;
+  line-height: 1.7;
+}
+.hero-meta {
+  display: flex;
+  gap: 24px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+.hero-badge {
+  font-size: 12px;
+  color: var(--navy);
+  background: var(--navy-dim);
+  border: 1px solid var(--navy-border);
+  padding: 4px 12px;
+  border-radius: 2px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* ── SECTION ── */
+.section { display: none; }
+.section.active { display: block; }
+
+.section-header {
+  margin-bottom: 32px;
+}
+.section-num {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--navy);
+  opacity: 0.5;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.section-title {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  color: var(--navy);
+  line-height: 1.25;
+  margin-bottom: 10px;
+}
+.section-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  max-width: 680px;
+  line-height: 1.7;
+}
+
+/* ── BRIDGE ── */
+.bridge-box {
+  background: var(--navy);
+  color: white;
+  padding: 20px 24px;
+  border-radius: 2px;
+  margin: 32px 0;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.bridge-box strong { color: rgba(255,255,255,0.9); }
+.bridge-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.5;
+  margin-bottom: 6px;
+}
+
+/* ── CALLOUT ── */
+.callout {
+  padding: 16px 20px;
+  border-left: 3px solid;
+  border-radius: 0 2px 2px 0;
+  margin: 20px 0;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.callout.navy { border-color: var(--navy); background: var(--navy-dim); color: var(--navy); }
+.callout.warn { border-color: var(--warn); background: var(--warn-bg); color: var(--warn); }
+.callout.correct { border-color: var(--correct); background: var(--correct-bg); color: var(--correct); }
+.callout.wrong { border-color: var(--wrong); background: var(--wrong-bg); color: var(--wrong); }
+.callout-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 4px;
+}
+
+/* ── CARDS ── */
+.card-grid {
+  display: grid;
+  gap: 16px;
+  margin: 24px 0;
+}
+.card-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.card-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 20px 22px;
+  border-radius: 2px;
+}
+.card-num {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  color: var(--navy);
+  opacity: 0.15;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 8px;
+  letter-spacing: 0.02em;
+}
+.card-body { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+.card.accent-top { border-top: 2px solid var(--navy); }
+
+/* ── STEP FLOW ── */
+.step-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 28px 0;
+}
+.step-item {
+  display: flex;
+  gap: 0;
+  align-items: stretch;
+}
+.step-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 48px;
+  flex-shrink: 0;
+}
+.step-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+}
+.step-dot.muted {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.step-line {
+  width: 1px;
+  flex: 1;
+  background: var(--border);
+  margin: 4px 0;
+  min-height: 16px;
+}
+.step-content {
+  padding: 4px 0 24px 16px;
+  flex: 1;
+}
+.step-tag {
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--navy);
+  background: var(--navy-dim);
+  border: 1px solid var(--navy-border);
+  padding: 2px 8px;
+  border-radius: 2px;
+  display: inline-block;
+  margin-bottom: 6px;
+  letter-spacing: 0.05em;
+}
+.step-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.step-body { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+
+/* ── TABLE ── */
+.table-wrap { overflow-x: auto; margin: 20px 0; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+thead tr { background: var(--navy); color: white; }
+thead th {
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+tbody tr { border-bottom: 1px solid var(--border); }
+tbody tr:nth-child(even) { background: rgba(0,51,102,0.025); }
+tbody td { padding: 10px 14px; color: var(--text); vertical-align: top; line-height: 1.55; }
+tbody td.mono { font-family: var(--font-mono); font-size: 12px; color: var(--navy); }
+tbody td.muted { color: var(--text-muted); }
+.tag-pill {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 2px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.tag-pill.legal { background: #e8f0fb; color: #1a3a6b; }
+.tag-pill.group { background: var(--navy-dim); color: var(--navy); border: 1px solid var(--navy-border); }
+
+/* ── CODE BLOCK ── */
+.code-block {
+  background: #0d1b2e;
+  color: #a8d8ff;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.8;
+  padding: 20px 24px;
+  border-radius: 2px;
+  margin: 16px 0;
+  overflow-x: auto;
+  white-space: pre;
+}
+.code-block .c-dim { color: #4a6a8a; }
+.code-block .c-green { color: #7ecfab; }
+.code-block .c-yellow { color: #f0c674; }
+.code-block .c-red { color: #f08080; }
+.code-block .c-white { color: #e8f4ff; }
+
+/* ── COMPARE ── */
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 20px 0;
+}
+.compare-col { background: var(--white); border: 1px solid var(--border); border-radius: 2px; overflow: hidden; }
+.compare-head {
+  padding: 10px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.compare-head.legal { background: #e8f0fb; color: #1a3a6b; }
+.compare-head.group { background: var(--navy); color: white; }
+.compare-body { padding: 16px; font-size: 13px; color: var(--text); }
+.journal-line { margin-bottom: 6px; font-family: var(--font-mono); font-size: 12px; line-height: 1.7; }
+.journal-dr { color: #1a3a6b; }
+.journal-cr { color: var(--navy); padding-left: 20px; }
+.journal-cr.group-val { color: #0a5c36; }
+.journal-note { font-family: var(--font-sans); font-size: 11px; color: var(--text-muted); margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px; }
+.journal-amount { float: right; color: var(--text-muted); }
+
+/* ── ACCORDION ── */
+.accordion { margin: 16px 0; }
+.accordion-item { border: 1px solid var(--border); border-radius: 2px; margin-bottom: 8px; background: var(--white); }
+.accordion-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: left;
+}
+.accordion-trigger:hover { background: var(--navy-dim); }
+.accordion-arrow {
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--navy-border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--navy);
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+.accordion-item.open .accordion-arrow { transform: rotate(180deg); }
+.accordion-body { display: none; padding: 0 18px 18px; font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+.accordion-item.open .accordion-body { display: block; }
+
+/* ── CHECKLIST ── */
+.checklist { margin: 20px 0; }
+.checklist-group { margin-bottom: 24px; }
+.checklist-group-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--navy-border);
+}
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.check-item:last-child { border-bottom: none; }
+.check-box {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--navy-border);
+  border-radius: 2px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  background: white;
+}
+.check-item.done .check-box {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: white;
+  font-size: 10px;
+}
+.check-item.done .check-label { color: var(--text-muted); text-decoration: line-through; }
+.check-label { font-size: 13px; color: var(--text); line-height: 1.55; flex: 1; }
+.check-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  letter-spacing: 0.04em;
+}
+.check-badge.pre { background: #fff3cd; color: #7a4f00; }
+.check-badge.core { background: var(--navy-dim); color: var(--navy); }
+.check-badge.post { background: var(--correct-bg); color: var(--correct); }
+
+.progress-bar-wrap { background: var(--border); border-radius: 2px; height: 4px; margin-bottom: 28px; }
+.progress-bar-fill { background: var(--navy); height: 4px; border-radius: 2px; transition: width 0.3s; }
+.progress-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+
+/* ── MATRIX ── */
+.matrix-table thead tr { background: var(--navy); }
+.matrix-table .go { color: #155724; font-weight: 700; }
+.matrix-table .nogo { color: #7f1d1d; font-weight: 700; }
+.matrix-table .alt { color: #7a4f00; font-weight: 700; }
+
+/* ── ACDOCA ── */
+.acdoca-row {
+  display: grid;
+  grid-template-columns: 160px 120px 120px 1fr;
+  gap: 1px;
+  background: var(--border);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.acdoca-cell {
+  background: var(--white);
+  padding: 8px 10px;
+  color: var(--text);
+}
+.acdoca-cell.head { background: var(--navy); color: white; font-weight: 700; font-size: 10px; letter-spacing: 0.06em; }
+.acdoca-cell.highlight { background: rgba(0,51,102,0.06); color: var(--navy); font-weight: 600; }
+
+/* ── TIMELINE STRIP ── */
+.timeline { display: flex; gap: 0; margin: 24px 0; overflow-x: auto; }
+.tl-item { flex: 1; min-width: 160px; }
+.tl-bar {
+  height: 4px;
+  background: var(--border);
+  position: relative;
+  margin: 12px 0;
+}
+.tl-bar.done { background: var(--navy); }
+.tl-bar.partial { background: linear-gradient(90deg, var(--navy) 50%, var(--border) 50%); }
+.tl-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--navy);
+  position: absolute;
+  top: -3px; left: -5px;
+}
+.tl-dot.empty { background: var(--border); border: 2px solid var(--border); }
+.tl-label { font-size: 11px; color: var(--text-muted); line-height: 1.4; padding-right: 8px; }
+.tl-title { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+
+/* ── FLOW DIAGRAM ── */
+.flow-box {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 12px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--navy);
+  text-align: center;
+}
+.flow-box.accent { background: var(--navy); color: white; border-color: var(--navy); }
+.flow-box.sub { border-style: dashed; color: var(--text-muted); font-weight: 400; font-size: 12px; }
+.flow-arrow { text-align: center; color: var(--navy); font-size: 18px; padding: 4px 0; opacity: 0.4; }
+.flow-row { display: flex; gap: 12px; align-items: center; margin: 6px 0; }
+.flow-row .flow-box { flex: 1; }
+
+/* ── UTIL ── */
+h3 { font-family: var(--font-sans); font-size: 16px; font-weight: 700; color: var(--navy); margin: 28px 0 12px; }
+h4 { font-size: 14px; font-weight: 700; color: var(--text); margin: 20px 0 8px; }
+p { font-size: 15px; color: var(--text); line-height: 1.75; margin-bottom: 14px; }
+ul, ol { padding-left: 20px; margin-bottom: 14px; }
+li { font-size: 14px; color: var(--text-muted); line-height: 1.7; margin-bottom: 4px; }
+hr { border: none; border-top: 1px solid var(--border); margin: 36px 0; }
+.mono { font-family: var(--font-mono); font-size: 12px; background: var(--navy-dim); color: var(--navy); padding: 1px 5px; border-radius: 2px; }
+.text-muted { color: var(--text-muted); }
+.mt-8 { margin-top: 8px; }
+.mt-16 { margin-top: 16px; }
+.mt-24 { margin-top: 24px; }
+.mb-16 { margin-bottom: 16px; }
+
+@media (max-width: 680px) {
+  .page-wrapper { padding: 0 16px 60px; }
+  .card-grid.cols-3 { grid-template-columns: 1fr; }
+  .card-grid.cols-2 { grid-template-columns: 1fr; }
+  .compare-grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 26px; }
+  .section-title { font-size: 22px; }
+  .acdoca-row { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="sticky-nav">
+  <div class="nav-brand">ASPN · BAC Division</div>
+  <button class="nav-tab active" onclick="showSection('s0')">◎ 아키텍처 개요</button>
+  <button class="nav-tab" onclick="showSection('s1')">① 원가정산 프로세스</button>
+  <button class="nav-tab" onclick="showSection('s2')">② GR·SAC-P 맥락</button>
+  <button class="nav-tab" onclick="showSection('s3')">③ Group Valuation 설정·작동</button>
+  <button class="nav-tab" onclick="showSection('s4')">④ 도입 고려사항</button>
+  <button class="nav-tab" onclick="showSection('s5')">⑤ SAC-P 대안 아키텍처</button>
+  <button class="nav-tab" onclick="showSection('s6')">⑥ 판단 매트릭스·체크리스트</button>
+</nav>
+
+<div class="page-wrapper">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">SAP S/4HANA · Group Reporting · SAC-P</div>
+  <h1>생산원가 마감이 연결회계에<br>미치는 영향</h1>
+  <p class="hero-sub">KO88 정산부터 Group Valuation 설정·작동 원리, SAC-P 대안 아키텍처까지 — GR·SAC-P 컨설턴트를 위한 수직 통합 실무 해설</p>
+  <div class="hero-meta">
+    <span class="hero-badge">대상: GR · SAC-P 컨설턴트 (Junior → Senior)</span>
+    <span class="hero-badge">모듈: CO · ML · GR · SAC-P</span>
+    <span class="hero-badge">버전: S/4HANA Cloud / On-Premise</span>
+  </div>
+</div>
+
+<!-- ────────────────────────────────────────────────────────── -->
+<!-- SECTION 0 — OVERVIEW -->
+<!-- ────────────────────────────────────────────────────────── -->
+<section id="s0" class="section active">
+  <div class="section-header">
+    <div class="section-num">Overview</div>
+    <div class="section-title">한눈에 보는 수직 통합 아키텍처</div>
+    <p class="section-desc">생산오더 원가정산부터 연결회계까지 — 데이터가 어떻게 흐르고, 각 레이어가 어떤 역할을 하는지 한 장으로 정리한다.</p>
+  </div>
+
+  <!-- MAIN FLOW DIAGRAM -->
+  <div style="display:flex;gap:24px;align-items:flex-start;margin:8px 0 32px">
+
+    <!-- LEFT: vertical flow -->
+    <div style="flex:1;min-width:0">
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:2px;overflow:hidden">
+
+        <!-- Row 1 -->
+        <div style="display:grid;grid-template-columns:1fr 32px 1fr;background:var(--navy);color:white;padding:14px 20px;align-items:center;gap:8px">
+          <div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;opacity:0.5;margin-bottom:3px">LAYER 1 — CO</div>
+            <div style="font-size:14px;font-weight:700">생산오더 (Production Order)</div>
+            <div style="font-size:12px;opacity:0.65;margin-top:2px">실제 투입원가 집계 중 (REL 상태)</div>
+          </div>
+          <div style="text-align:center;font-size:20px;opacity:0.4">↓</div>
+          <div style="font-size:12px;opacity:0.7;line-height:1.6">
+            원재료·인건비·간접비가<br>오더에 누적됨
+          </div>
+        </div>
+
+        <!-- Arrow -->
+        <div style="display:flex;align-items:center;padding:8px 20px;gap:12px;background:var(--bg)">
+          <div style="width:2px;height:24px;background:var(--navy-border);margin-left:14px"></div>
+          <div style="font-size:11px;color:var(--navy);font-weight:700;letter-spacing:0.05em">KKAX → KKS2 → KO88</div>
+          <div style="font-size:11px;color:var(--text-muted)">WIP 계산 → 분산 계산 → 오더 정산 (FI 전표 생성)</div>
+        </div>
+
+        <!-- Row 2 -->
+        <div style="display:grid;grid-template-columns:1fr 32px 1fr;background:#1a3a6b;color:white;padding:14px 20px;align-items:center;gap:8px">
+          <div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;opacity:0.5;margin-bottom:3px">LAYER 2 — FI / ML</div>
+            <div style="font-size:14px;font-weight:700">재고 / COGS 확정</div>
+            <div style="font-size:12px;opacity:0.65;margin-top:2px">Material Ledger 실제원가 배부 (CKMLCP)</div>
+          </div>
+          <div style="text-align:center;font-size:20px;opacity:0.4">↓</div>
+          <div style="font-size:12px;opacity:0.7;line-height:1.6">
+            개별 법인 시산표(Trial Balance) 확정<br>GR Data Collection 준비 완료
+          </div>
+        </div>
+
+        <!-- Arrow with branch -->
+        <div style="padding:12px 20px;background:var(--bg)">
+          <div style="display:flex;gap:0;align-items:stretch">
+            <div style="width:2px;background:var(--navy-border);margin-left:14px;margin-right:12px"></div>
+            <div style="flex:1">
+              <div style="font-size:11px;color:var(--navy);font-weight:700;letter-spacing:0.05em;margin-bottom:6px">ML Parallel Valuation (Group Valuation 활성화 시)</div>
+              <div style="display:flex;gap:10px">
+                <div style="flex:1;background:white;border:1px solid #c8d8f0;border-radius:2px;padding:8px 12px">
+                  <div style="font-size:10px;font-weight:700;color:#1a3a6b;letter-spacing:0.06em;margin-bottom:3px">LEGAL VIEW</div>
+                  <div style="font-size:12px;color:var(--text-muted)">이전가격 기준<br>각국 세법·공시 장부</div>
+                </div>
+                <div style="flex:1;background:var(--navy-dim);border:1px solid var(--navy-border);border-radius:2px;padding:8px 12px">
+                  <div style="font-size:10px;font-weight:700;color:var(--navy);letter-spacing:0.06em;margin-bottom:3px">GROUP VIEW</div>
+                  <div style="font-size:12px;color:var(--text-muted)">제조원가 기준<br>내부 마진 제거된 뷰</div>
+                </div>
+              </div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:6px">두 View 모두 Universal Journal(ACDOCA)에 기록 — 실제 저장 방식은 시스템 설정에 따라 상이</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 3 -->
+        <div style="display:grid;grid-template-columns:1fr 32px 1fr;background:#0d2d5e;color:white;padding:14px 20px;align-items:center;gap:8px">
+          <div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;opacity:0.5;margin-bottom:3px">LAYER 3 — GR</div>
+            <div style="font-size:14px;font-weight:700">SAP Group Reporting</div>
+            <div style="font-size:12px;opacity:0.65;margin-top:2px">법적 연결 재무제표 생성</div>
+          </div>
+          <div style="text-align:center;font-size:20px;opacity:0.4">↓</div>
+          <div style="font-size:12px;opacity:0.7;line-height:1.6">
+            Group Valuation 미사용 시:<br>
+            사후 연결조정 분개로 미실현 이익 제거<br>
+            <span style="opacity:0.55">Group Valuation 사용 시: 사전 예방</span>
+          </div>
+        </div>
+
+        <!-- Arrow -->
+        <div style="display:flex;align-items:center;padding:8px 20px;gap:12px;background:var(--bg)">
+          <div style="width:2px;height:24px;background:var(--navy-border);margin-left:14px"></div>
+          <div style="font-size:11px;color:var(--navy);font-weight:700;letter-spacing:0.05em">KO88 완료 → Actual 전송</div>
+          <div style="font-size:11px;color:var(--text-muted)">Live Connection(SAP_COM_0065) 또는 배치</div>
+        </div>
+
+        <!-- Row 4 -->
+        <div style="display:grid;grid-template-columns:1fr 32px 1fr;background:#003366;color:white;padding:14px 20px;align-items:center;gap:8px;border-top:2px solid rgba(255,255,255,0.15)">
+          <div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;opacity:0.5;margin-bottom:3px">LAYER 4 — SAC-P</div>
+            <div style="font-size:14px;font-weight:700">SAC Planning</div>
+            <div style="font-size:12px;opacity:0.65;margin-top:2px">경영관리 목적 연결 수익성 시뮬레이션</div>
+          </div>
+          <div style="text-align:center;font-size:20px;opacity:0.4"></div>
+          <div style="font-size:12px;opacity:0.7;line-height:1.6">
+            법적 연결조정이 아닌<br>관리회계 목적 분석 도구<br>
+            <span style="opacity:0.55">Allocation Step + Data Action</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RIGHT: key concepts -->
+    <div style="width:240px;flex-shrink:0;display:flex;flex-direction:column;gap:12px">
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:2px;padding:16px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:var(--navy);opacity:0.6;margin-bottom:8px">핵심 전제 조건</div>
+        <div style="font-size:12px;color:var(--text-muted);line-height:1.7">
+          ✓ KO88 완료 후에만<br>&nbsp;&nbsp;GR·SAC-P 데이터 신뢰<br>
+          ✓ Group Valuation은<br>&nbsp;&nbsp;ML 기반 Parallel Valuation<br>
+          ✓ SAC-P ≠ 연결회계 엔진
+        </div>
+      </div>
+      <div style="background:var(--navy-dim);border:1px solid var(--navy-border);border-radius:2px;padding:16px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:var(--navy);opacity:0.7;margin-bottom:8px">두 가지 연결 접근법</div>
+        <div style="font-size:12px;color:var(--navy);line-height:1.7">
+          <strong>① 사후 제거</strong><br>
+          GR에서 연결조정 분개로<br>미실현 이익 제거<br>→ 대부분 기업의 선택<br><br>
+          <strong>② 사전 예방</strong><br>
+          Group Valuation으로<br>처음부터 내부 마진 분리<br>→ 높은 운영 성숙도 요구
+        </div>
+      </div>
+      <div style="background:var(--warn-bg);border:1px solid #f0c040;border-radius:2px;padding:16px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:var(--warn);margin-bottom:8px">가장 흔한 오해</div>
+        <div style="font-size:12px;color:var(--warn);line-height:1.7">
+          Group Valuation은<br>
+          GR(연결회계) 모듈의<br>
+          기능이 아니다.<br><br>
+          ML → Parallel Valuation<br>→ Transfer Pricing<br>
+          설정 체계의 일부다.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHERE TO GO NEXT -->
+  <h3>이 자료의 학습 경로</h3>
+  <div style="display:flex;gap:0;margin:16px 0;overflow-x:auto">
+    <div onclick="showSection('s1')" style="flex:1;min-width:130px;background:var(--white);border:1px solid var(--border);border-right:none;padding:16px;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--navy-dim)'" onmouseout="this.style.background='var(--white)'">
+      <div style="font-size:10px;font-weight:700;color:var(--navy);opacity:0.5;letter-spacing:0.08em;margin-bottom:6px">SECTION 01</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px">원가정산 프로세스</div>
+      <div style="font-size:11px;color:var(--text-muted)">KKAX · KKS2 · KO88 트랜잭션 흐름</div>
+    </div>
+    <div onclick="showSection('s2')" style="flex:1;min-width:130px;background:var(--white);border:1px solid var(--border);border-right:none;padding:16px;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--navy-dim)'" onmouseout="this.style.background='var(--white)'">
+      <div style="font-size:10px;font-weight:700;color:var(--navy);opacity:0.5;letter-spacing:0.08em;margin-bottom:6px">SECTION 02</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px">GR·SAC-P 맥락</div>
+      <div style="font-size:11px;color:var(--text-muted)">상위 모듈 컨설턴트가 알아야 할 이유</div>
+    </div>
+    <div onclick="showSection('s3')" style="flex:1;min-width:130px;background:var(--white);border:1px solid var(--border);border-right:none;padding:16px;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--navy-dim)'" onmouseout="this.style.background='var(--white)'">
+      <div style="font-size:10px;font-weight:700;color:var(--navy);opacity:0.5;letter-spacing:0.08em;margin-bottom:6px">SECTION 03</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px">Group Valuation</div>
+      <div style="font-size:11px;color:var(--text-muted)">설정 체계·분개 비교·ACDOCA 구조</div>
+    </div>
+    <div onclick="showSection('s4')" style="flex:1;min-width:130px;background:var(--white);border:1px solid var(--border);border-right:none;padding:16px;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--navy-dim)'" onmouseout="this.style.background='var(--white)'">
+      <div style="font-size:10px;font-weight:700;color:var(--navy);opacity:0.5;letter-spacing:0.08em;margin-bottom:6px">SECTION 04</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px">도입 고려사항</div>
+      <div style="font-size:11px;color:var(--text-muted)">운영 난이도·도입 가치 프로파일</div>
+    </div>
+    <div onclick="showSection('s5')" style="flex:1;min-width:130px;background:var(--white);border:1px solid var(--border);border-right:none;padding:16px;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--navy-dim)'" onmouseout="this.style.background='var(--white)'">
+      <div style="font-size:10px;font-weight:700;color:var(--navy);opacity:0.5;letter-spacing:0.08em;margin-bottom:6px">SECTION 05</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px">SAC-P 대안</div>
+      <div style="font-size:11px;color:var(--text-muted)">Allocation Step·Data Action 설계</div>
+    </div>
+    <div onclick="showSection('s6')" style="flex:1;min-width:130px;background:var(--navy);border:1px solid var(--navy);padding:16px;cursor:pointer">
+      <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:0.08em;margin-bottom:6px">SECTION 06</div>
+      <div style="font-size:13px;font-weight:600;color:white;margin-bottom:4px">판단·체크리스트</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.6)">Go/No-Go 매트릭스 + Take Away</div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ────────────────────────────────────────────────────────── -->
+<!-- SECTION 1 -->
+<!-- ────────────────────────────────────────────────────────── -->
+<section id="s1" class="section">
+  <div class="section-header">
+    <div class="section-num">Section 01</div>
+    <div class="section-title">생산오더 원가정산 프로세스</div>
+    <p class="section-desc">월말 결산 시 생산오더의 원가를 확정·배부하는 3단계 핵심 트랜잭션. 선후 관계를 위반하면 FI/CO 데이터 왜곡이 발생한다.</p>
+  </div>
+
+  <div class="card-grid cols-3">
+    <div class="card accent-top">
+      <div class="card-num">①</div>
+      <div class="card-title"><span class="mono">KKAX</span> — WIP 계산</div>
+      <div class="card-body">미완성 오더(REL 상태)의 재공품 금액을 산출. <strong>FI 전표 미발생 — 순수 시뮬레이션 단계.</strong> Test Run으로 오류 검증 후 본 실행 필수.</div>
+    </div>
+    <div class="card accent-top">
+      <div class="card-num">②</div>
+      <div class="card-title"><span class="mono">KKS2</span> — 분산 계산</div>
+      <div class="card-body">완료 오더(DLV/TECO)의 표준원가 vs 실제 투입원가 차이를 산출. 선택 실행이나 TECO 오더 존재 시 KO88 전 반드시 선행.</div>
+    </div>
+    <div class="card accent-top">
+      <div class="card-num">③</div>
+      <div class="card-title"><span class="mono">KO88</span> — 오더 정산</div>
+      <div class="card-body">오더 잔액을 수신 객체로 배부·클리어. <strong>실제 FI/CO 전표를 생성하는 종착지.</strong> 정상 마감 시 오더 잔액은 원칙적으로 0이어야 한다. (Settlement Rule 오류·Variance 미정산·RA 잔액 등으로 잔액이 남을 수 있으므로 반드시 사후 검증 필요)</div>
+    </div>
+  </div>
+
+  <h3>오더 상태별 KO88 처리 방식</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>오더 상태</th><th>처리 내용</th><th>차변 (Dr.)</th><th>대변 (Cr.)</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>REL</strong><br><span class="text-muted" style="font-size:11px">진행 중 / WIP</span></td>
+          <td>재공품 자산 전기</td>
+          <td class="mono">재공품 (BS)</td>
+          <td class="mono">재공품 정산변동 (P&L)</td>
+        </tr>
+        <tr>
+          <td><strong>TECO</strong><br><span class="text-muted" style="font-size:11px">기술 완료 / Variance</span></td>
+          <td>원가 차액을 손익·CO-PA로 정산</td>
+          <td class="mono">분산차액 (P&L)</td>
+          <td class="mono">생산오더 클리어</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>월말 결산 실행 순서</h3>
+  <div class="step-flow">
+    <div class="step-item">
+      <div class="step-left"><div class="step-dot muted">▶</div><div class="step-line"></div></div>
+      <div class="step-content">
+        <div class="step-title">입고·확인 작업지시 완료</div>
+        <div class="step-body"><span class="mono">CO11N</span> / <span class="mono">MFBF</span> / <span class="mono">MIGO</span> — 활동 배부 확인 <span class="mono">KB21N</span> / <span class="mono">CO43</span></div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-left"><div class="step-dot">1</div><div class="step-line"></div></div>
+      <div class="step-content">
+        <div class="step-tag">KKAX</div>
+        <div class="step-title">WIP 금액 계산</div>
+        <div class="step-body">FI 전표 미발생. 시뮬레이션 단계. Test Run → 본 실행 순서 필수.</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-left"><div class="step-dot">2</div><div class="step-line"></div></div>
+      <div class="step-content">
+        <div class="step-tag">KKS2</div>
+        <div class="step-title">완료 오더 분산 계산 <span style="font-weight:400;font-size:12px;color:var(--text-muted)">(선택)</span></div>
+        <div class="step-body">TECO 처리된 오더가 있는 경우 선행 실행. 분산 미계산 시 KO88에서 원가 차액 왜곡.</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-left"><div class="step-dot">3</div><div class="step-line"></div></div>
+      <div class="step-content">
+        <div class="step-tag">KO88 / CO88</div>
+        <div class="step-title">오더 잔액 정산 → FI/CO 전표 생성</div>
+        <div class="step-body">개별 오더: <span class="mono">KO88</span> · 공장 대량 마감: <span class="mono">KKAO</span>(대량 WIP) → <span class="mono">CO88</span>(대량 정산)</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-left"><div class="step-dot muted">4</div><div class="step-line"></div></div>
+      <div class="step-content">
+        <div class="step-tag">CKMLCP</div>
+        <div class="step-title">ML 실제원가 계층 정산 <span style="font-weight:400;font-size:12px;color:var(--text-muted)">(ML 사용 시)</span></div>
+        <div class="step-body">실제원가 배부 완료 후 개별 법인 시산표(Trial Balance) 확정.</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-left"><div class="step-dot" style="background:var(--correct)">✓</div></div>
+      <div class="step-content">
+        <div class="step-title" style="color:var(--correct)">개별 법인 시산표 확정 — GR Data Collection 준비 완료</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-label">⚠ 대량 처리 주의</div>
+    공장 전체를 일괄 마감할 때 개별 <span class="mono">KO88</span> 대신 <strong>KKAO → CO88</strong> 경로를 사용한다. KO88을 공장 단위로 반복 실행하면 처리 시간이 과도하게 증가하고 Lock 충돌 위험이 높아진다.
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────── -->
+<!-- SECTION 2 -->
+<!-- ────────────────────────────────────────────────────────── -->
+<section id="s2" class="section">
+  <div class="section-header">
+    <div class="section-num">Section 02</div>
+    <div class="section-title">GR · SAC-P 컨설턴트가 이해해야 할 업무 맥락</div>
+    <p class="section-desc">KO88은 CO 컨설턴트만의 트랜잭션이 아니다. GR·SAC-P 컨설턴트가 이 프로세스를 이해해야 하는 이유를 역할별로 정리한다.</p>
+  </div>
+
+  <div class="bridge-box">
+    <div class="bridge-label">왜 알아야 하는가</div>
+    KO88이 완료되지 않으면 개별 법인의 원가 관련 계정 잔액이 미확정 상태로 남는다. 이 상태에서 GR이 데이터를 수집하면 연결 조정의 기초 데이터 신뢰성이 훼손되고, SAC-P가 실적 데이터를 수신하면 계획 대비 분석(Actual vs. Plan)이 오염된다. <strong>KO88 완료는 상위 시스템 전체의 데이터 신뢰성을 보장하는 게이트키퍼다.</strong>
+  </div>
+
+  <div class="card-grid cols-2 mt-24">
+    <div class="card">
+      <div class="card-title" style="font-size:15px;margin-bottom:14px">📊 SAC-P 컨설턴트 관점</div>
+      <h4>① 데이터 인터페이스 시점 통제</h4>
+      <p style="font-size:13px">S/4HANA 실적 데이터를 SAC-P로 전송하는 스케줄은 반드시 <strong>KO88 완료 시그널 이후</strong>로 동기화되어야 한다. 위반 시 미확정 원가가 수익성 리포트에 반영되어 경영진 의사결정을 왜곡한다.</p>
+      <div class="callout navy" style="margin-top:12px">
+        <div class="callout-label">설계 원칙</div>
+        SAC-P 데이터 로드 배치 → KO88 완료 이벤트를 트리거로 설정할 것. 일정 시간 기준 스케줄보다 이벤트 기반 연동이 안전하다.
+      </div>
+      <h4>② 수익성 예측 모델 드라이버</h4>
+      <p style="font-size:13px">KO88으로 확정된 원가 분산(Variance) 데이터는 SAC-P의 수익성 계획 모델에서 <strong>미래 원가 상승률 및 생산 효율성 시뮬레이션의 핵심 입력 드라이버</strong>로 활용된다.</p>
+    </div>
+    <div class="card">
+      <div class="card-title" style="font-size:15px;margin-bottom:14px">🏢 Group Reporting 컨설턴트 관점</div>
+      <h4>① 개별 시산표 확정의 게이트키퍼</h4>
+      <p style="font-size:13px">KO88이 누락되면 원가 관련 계정 잔액이 미확정 상태로 남아 개별 법인 시산표의 신뢰성이 훼손된다. GR 데이터 수집(Data Collection / Release) 전 개별 법인의 원가 마감 완료 여부를 통제하는 것은 GR 컨설턴트의 필수 체크포인트다.</p>
+      <h4>② 미실현 손익 제거의 기초 소스</h4>
+      <p style="font-size:13px">KKAX/KO88으로 확정된 기말 재공품(WIP) 및 재고 금액 내부에는 <strong>관계사 간 유통 마진(Intercompany Markup)이 포함</strong>되어 있다. 이를 파악하여 연결 조정 분개 시 미실현 이익을 제거하는 기초 소스로 활용해야 한다.</p>
+      <div class="callout warn" style="margin-top:12px">
+        <div class="callout-label">⚠ 실무 함정</div>
+        KO88 미실행 상태에서 GR이 데이터를 수집하면, 원가 관련 계정 잔액이 미확정인 채로 연결 조정이 시작된다. 이후 법인이 재마감하면 GR 데이터와 차이가 발생하며 조정 공수가 급증한다.
+      </div>
+    </div>
+  </div>
+
+  <h3>상호의존 구조 요약</h3>
+  <div class="flow-row">
+    <div class="flow-box accent">KO88<br><span style="font-size:11px;opacity:0.7">오더 잔액 정산 완료</span></div>
+    <div style="font-size:20px;color:var(--navy);opacity:0.5;padding:0 4px">→</div>
+    <div class="flow-box">개별 법인<br>시산표 확정</div>
+    <div style="font-size:20px;color:var(--navy);opacity:0.5;padding:0 4px">→</div>
+    <div class="flow-box">GR<br>Data Collection</div>
+    <div style="font-size:20px;color:var(--navy);opacity:0.5;padding:0 4px">→</div>
+    <div class="flow-box">연결<br>재무제표</div>
+  </div>
+  <div class="flow-row mt-8">
+    <div class="flow-box accent">KO88<br><span style="font-size:11px;opacity:0.7">Variance 데이터 확정</span></div>
+    <div style="font-size:20px;color:var(--navy);opacity:0.5;padding:0 4px">→</div>
+    <div class="flow-box">S/4HANA<br>Actual 전송</div>
+    <div style="font-size:20px;color:var(--navy);opacity:0.5;padding:0 4px">→</div>
+    <div class="flow-box">SAC-P<br>실적 수신</div>
+    <div style="font-size:20px;color:var(--navy);opacity:0.5;padding:0 4px">→</div>
+    <div class="flow-box">수익성<br>분석 보고</div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────── -->
+<!-- SECTION 3 -->
+<!-- ────────────────────────────────────────────────────────── -->
+<section id="s3" class="section">
+  <div class="section-header">
+    <div class="section-num">Section 03</div>
+    <div class="section-title">Group Valuation 설정 및 작동 프로세스</div>
+    <p class="section-desc">자재원장(ML) 기반 Parallel Valuation 구조로 Legal과 Group 두 개의 평가 뷰를 병렬 기록하는 원리. 설정 체계의 개념부터 STO 거래 기준 실제 분개 비교까지 해설한다.</p>
+  </div>
+
+  <h3>5-1. 개념 구조: 3개의 Valuation View</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Valuation View</th><th>목적</th><th>기준 가격</th><th>사용 주체</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="tag-pill legal">Legal</span></td>
+          <td>개별 법인 재무제표 (세법·공시)</td>
+          <td class="mono">이전가격 (Transfer Price)</td>
+          <td>각국 국세청, 감사인</td>
+        </tr>
+        <tr>
+          <td><span class="tag-pill group">Group</span></td>
+          <td>연결 재무제표 (내부거래 제거)</td>
+          <td class="mono">제조원가 (Cost of Production)</td>
+          <td>그룹 CFO, GR 연결팀</td>
+        </tr>
+        <tr>
+          <td><span class="tag-pill" style="background:#f3e8ff;color:#4c1d95">Profit Center</span></td>
+          <td>사업부 수익성 관리</td>
+          <td class="mono">PC 간 내부 정산가</td>
+          <td>경영관리팀, SAC-P</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout navy">
+    <div class="callout-label">핵심 원리</div>
+    동일한 STO 거래에 대해 Legal View에는 이전가격(예: 120)이, Group View에는 제조원가(예: 100)가 기록된다. 그 차이 <strong>20이 연결 조정 대상 미실현 이익</strong>이다. Universal Journal(ACDOCA)에서 Valuation View별 금액은 Ledger·Currency Type·Valuation View의 조합으로 별도 관리되며, 실제 필드 구조는 시스템 릴리즈 및 설정에 따라 다를 수 있다.
+  </div>
+
+  <hr>
+  <h3>5-2. 사전 요건 (Prerequisites)</h3>
+  <div class="accordion">
+    <div class="accordion-item open">
+      <button class="accordion-trigger" onclick="toggleAcc(this)">
+        <span>① 자재원장(Material Ledger) 활성화</span>
+        <span class="accordion-arrow">▾</span>
+      </button>
+      <div class="accordion-body">
+        <p style="font-size:13px">ML은 Group Valuation의 <strong>필수 전제</strong>입니다. ML 없이 Group Valuation은 작동하지 않습니다. Plant 레벨에서 활성화하며, <strong>한번 활성화 후 비활성화 불가(Irreversible)</strong>입니다.</p>
+        <div class="code-block"><span class="c-dim">SPRO →</span> <span class="c-green">Controlling → Product Cost Controlling</span>
+     <span class="c-dim">→</span> <span class="c-yellow">Actual Costing/Material Ledger</span>
+     <span class="c-dim">→</span> <span class="c-white">Activate Valuation Areas for Material Ledger</span></div>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <button class="accordion-trigger" onclick="toggleAcc(this)">
+        <span>② 통화 설정 (Currency Types) — Plant당 최대 3개</span>
+        <span class="accordion-arrow">▾</span>
+      </button>
+      <div class="accordion-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Currency Type</th><th>코드</th><th>용도</th><th>예시</th></tr></thead>
+            <tbody>
+              <tr><td>Company Code Currency</td><td class="mono">10</td><td>개별 법인 기능통화</td><td>KRW</td></tr>
+              <tr><td>Group Currency</td><td class="mono">30</td><td>연결 기준 통화</td><td>USD</td></tr>
+              <tr><td>Hard Currency / Index</td><td class="mono">40</td><td>인플레이션 국가 대응</td><td>선택사항</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout warn" style="margin-top:12px">
+          <div class="callout-label">⚠ 설정 누락 시</div>
+          Currency Type 30(Group)을 할당하지 않으면 Group Valuation 데이터가 ACDOCA에 생성되지 않는다.
+        </div>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <button class="accordion-trigger" onclick="toggleAcc(this)">
+        <span>③ Ledger 구성 — ACDOCA Universal Journal</span>
+        <span class="accordion-arrow">▾</span>
+      </button>
+      <div class="accordion-body">
+        <p style="font-size:13px">S/4HANA Universal Journal(ACDOCA) 기준으로 <strong>Leading Ledger(0L)</strong>에 Legal Valuation이 기록됩니다. Group Valuation 금액은 Valuation View별로 별도 관리되며, 실제 분리 방식(Ledger·Currency Type·Valuation View 조합)은 시스템 릴리즈 및 설정에 따라 다를 수 있습니다. 프로젝트 착수 시 해당 시스템의 ML 설정을 먼저 확인하는 것이 선행되어야 합니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+  <h3>3. 설정 체계 개요 (Configuration Overview)</h3>
+  <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px">아래 4단계는 Group Valuation 구현에 필요한 설정 영역의 <strong>개념적 순서</strong>다. 각 단계의 실제 SPRO 경로와 화면은 시스템 버전·ML 구성·Transfer Pricing 시나리오에 따라 달라지므로, 실제 프로젝트에서는 SAP Note 및 해당 릴리즈 IMG를 반드시 병행 확인해야 한다.</p>
+
+  <div class="step-flow">
+    <div class="step-item">
+      <div class="step-left"><div class="step-dot">1</div><div class="step-line"></div></div>
+      <div class="step-content">
+        <div class="step-tag">ML Type 설정</div>
+        <div class="step-title">Currency Type 10·30 할당</div>
+        <div class="step-body">
+          <div class="code-block" style="margin-top:8px"><span class="c-dim">SPRO → Controlling → Product Cost Controlling</span>
+<span class="c-dim">     → Actual Costing/Material Ledger</span>
+<span class="c-green">     → Assign Currency Types to Material Ledger Type</span></div>
+          ML Type에 Legal(10), Group(30) Currency Type을 할당. 미할당 시 Group 데이터 미생성.
+        </div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-left"><div class="step-dot">2</div><div class="step-line"></div></div>
+      <div class="step-content">
+        <div class="step-tag">Parallel Valuation / Group Valuation 활성화</div>
+        <div class="step-title">Material Ledger 기반 병렬 평가 체계 설정</div>
+        <div class="step-body">
+          <div class="callout warn" style="margin-top:8px;margin-bottom:12px">
+            <div class="callout-label">개념 먼저 이해</div>
+            Group Valuation은 <strong>SAP Group Reporting의 기능이 아니다.</strong> 정확히는 <strong>Material Ledger(ML) 기반 Parallel Valuation</strong>의 일부로, Transfer Pricing 시나리오를 위해 설계된 기능이다. "GR을 구축하면 자동으로 쓸 수 있는 기능"이라는 오해가 프로젝트 현장에서 자주 발생하므로 주의가 필요하다.
+          </div>
+          <p style="font-size:13px;color:var(--text-muted)">활성화 경로는 SAP 릴리즈(On-Premise EHP 버전 / S/4HANA Cloud / Private Cloud)와 ML 설정 구성에 따라 다르며, 일반적으로 <strong>Controlling → Product Cost Controlling → Actual Costing/Material Ledger</strong> 체계 안에서 Parallel Valuation 옵션을 활성화하는 방식으로 구성된다. 특정 SPRO 경로를 단정하기보다 해당 시스템의 ML Type 및 Valuation Profile을 먼저 확인해야 한다.</p>
+          <p style="font-size:13px;color:var(--text-muted)">활성화 즉시 해당 Plant/Company Code의 모든 재고 이동에 Group View 평가금액이 Legal과 병렬로 기록된다.</p>
+        </div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-left"><div class="step-dot">3</div><div class="step-line"></div></div>
+      <div class="step-content">
+        <div class="step-tag">이전가격 설정</div>
+        <div class="step-title">STO 법인 간 조건 유형 정의</div>
+        <div class="step-body">
+          <div class="table-wrap" style="margin-top:8px">
+            <table>
+              <thead><tr><th>항목</th><th>내용</th><th>숫자 예시</th></tr></thead>
+              <tbody>
+                <tr><td>Legal Price (이전가격)</td><td>구매정보레코드(PIR) 또는 계약 조건</td><td class="mono">KRW 120,000/EA</td></tr>
+                <tr><td>Group Price (제조원가)</td><td>Standard Cost 또는 ML Actual Cost</td><td class="mono">KRW 100,000/EA</td></tr>
+                <tr><td>Markup (내부 마진)</td><td>Legal − Group</td><td class="mono">KRW 20,000/EA (20%)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-left"><div class="step-dot">4</div></div>
+      <div class="step-content">
+        <div class="step-tag">GL 계정 매핑</div>
+        <div class="step-title">Group Valuation 전용 전기 계정 설정</div>
+        <div class="step-body">
+          <div class="code-block" style="margin-top:8px"><span class="c-dim">SPRO → Financial Accounting → General Ledger</span>
+<span class="c-dim">     → Business Transactions → Prepare Automatic Postings</span>
+<span class="c-green">     → Group Valuation Difference Accounts</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+  <h3>4. 작동 프로세스 — STO 거래 기준 Legal vs Group 분개 비교</h3>
+
+  <div class="callout warn" style="margin-bottom:16px">
+    <div class="callout-label">📌 교육 목적 단순화 예시</div>
+    아래 분개는 <strong>개념 이해를 위해 단순화한 예시</strong>다. 실제 STO 분개는 SD Billing 여부, Intercompany Billing 구성, Valuated Stock in Transit 활성화 여부 등 설정에 따라 전표 구조가 완전히 달라진다. 실제 프로젝트에서는 해당 STO 시나리오의 계정 결정(Account Determination) 설정을 별도로 확인해야 한다.
+  </div>
+
+  <div class="callout navy" style="margin-bottom:20px">
+    <div class="callout-label">전제 조건 (숫자 예시)</div>
+    공급 법인: <strong>한국 본사 KR01</strong> → 수령 법인: <strong>미국 판매법인 US01</strong><br>
+    제조원가(Group Price): <strong>KRW 100,000/EA</strong> · 이전가격(Legal Price): <strong>KRW 120,000/EA</strong> (내부 마진 20,000 = 20%) · 수량: 1EA<br>
+    기말 기준 US01 창고에 재고 보유 중 (미판매 상태)
+  </div>
+
+  <h4>① STO 출고 시점 (MIGO — KR01 출고 처리)</h4>
+  <div class="compare-grid">
+    <div class="compare-col">
+      <div class="compare-head legal">Legal Valuation — 개별 법인 장부</div>
+      <div class="compare-body">
+        <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:8px;letter-spacing:0.05em">KR01 공급 법인</div>
+        <div class="journal-line journal-dr">Dr. 법인 간 매출채권 (AR-IC) <span class="journal-amount">120,000</span></div>
+        <div class="journal-line journal-cr">Cr. 재고 (Finished Goods) <span class="journal-amount">100,000</span></div>
+        <div class="journal-line journal-cr">Cr. 내부 매출 (IC Revenue) <span class="journal-amount">20,000</span></div>
+        <div class="journal-note">→ KR01 P&L에 내부 이익 20,000 인식</div>
+        <hr style="margin:12px 0;border-color:var(--border)">
+        <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:8px;letter-spacing:0.05em">US01 수령 법인</div>
+        <div class="journal-line journal-dr">Dr. 재고 (Inventory) <span class="journal-amount">120,000</span></div>
+        <div class="journal-line journal-cr">Cr. 법인 간 매입채무 (AP-IC) <span class="journal-amount">120,000</span></div>
+        <div class="journal-note">→ 이전가격(120,000)으로 재고 입고</div>
+      </div>
+    </div>
+    <div class="compare-col">
+      <div class="compare-head group">Group Valuation — 연결 관리 장부 (동시 생성)</div>
+      <div class="compare-body">
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);margin-bottom:8px;letter-spacing:0.05em">KR01 Group View</div>
+        <div class="journal-line journal-dr">Dr. 법인 간 매출채권 (AR-IC/Group) <span class="journal-amount">100,000</span></div>
+        <div class="journal-line journal-cr group-val">Cr. 재고 (Group Valuation) <span class="journal-amount">100,000</span></div>
+        <div class="journal-line journal-cr group-val">Cr. IC Revenue (Group) <span class="journal-amount">0</span></div>
+        <div class="journal-note">→ 내부 이익 미인식. 제조원가 기준 이동.</div>
+        <hr style="margin:12px 0;border-color:var(--border)">
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);margin-bottom:8px;letter-spacing:0.05em">US01 Group View</div>
+        <div class="journal-line journal-dr">Dr. 재고 (Group Valuation) <span class="journal-amount">100,000</span></div>
+        <div class="journal-line journal-cr group-val">Cr. 법인 간 매입채무 (AP-IC/Group) <span class="journal-amount">100,000</span></div>
+        <div class="journal-note" style="color:#7ecfab">→ 제조원가(100,000)로 입고. 미실현 이익 포함 안 됨.</div>
+      </div>
+    </div>
+  </div>
+
+  <h4>② 월말 CKMLCP 실행 후 (실제원가 확정 — 실제원가 5,000 초과 발생 시나리오)</h4>
+  <div class="compare-grid">
+    <div class="compare-col">
+      <div class="compare-head legal">Legal Valuation</div>
+      <div class="compare-body">
+        <div class="journal-note">이전가격 불변. US01 재고 120,000 그대로 유지.</div>
+        <div style="margin-top:12px;font-size:13px;color:var(--text)">미실현 이익 잔액: <strong>120,000 − 105,000 = 15,000</strong><br>(연결 조정 대상)</div>
+      </div>
+    </div>
+    <div class="compare-col">
+      <div class="compare-head group">Group Valuation — 재고 재평가</div>
+      <div class="compare-body">
+        <div class="journal-line journal-dr">Dr. 재고 (Group Valuation) <span class="journal-amount">5,000</span></div>
+        <div class="journal-line journal-cr group-val">Cr. 가격차이 (Price Difference/Group) <span class="journal-amount">5,000</span></div>
+        <div class="journal-note" style="color:#7ecfab">→ US01 Group Valuation 재고 최종: <strong>105,000</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <h4>③ US01에서 외부 고객 판매 완료 시 (미실현 → 실현)</h4>
+  <div class="compare-grid">
+    <div class="compare-col">
+      <div class="compare-head legal">Legal Valuation</div>
+      <div class="compare-body">
+        <div class="journal-line journal-dr">Dr. 매출채권 <span class="journal-amount">180,000</span></div>
+        <div class="journal-line journal-cr">Cr. 매출 (External Revenue) <span class="journal-amount">180,000</span></div>
+        <div class="journal-line journal-dr" style="margin-top:8px">Dr. 매출원가 (COGS) <span class="journal-amount">120,000</span></div>
+        <div class="journal-line journal-cr">Cr. 재고 <span class="journal-amount">120,000</span></div>
+        <div class="journal-note">Legal 합산 순이익: KR01(20,000) + US01(60,000) = <strong>80,000</strong></div>
+      </div>
+    </div>
+    <div class="compare-col">
+      <div class="compare-head group">Group Valuation</div>
+      <div class="compare-body">
+        <div class="journal-line journal-dr">Dr. 매출원가 (COGS/Group) <span class="journal-amount">105,000</span></div>
+        <div class="journal-line journal-cr group-val">Cr. 재고 (Group Valuation) <span class="journal-amount">105,000</span></div>
+        <div class="journal-note" style="color:#7ecfab">그룹 연결 순이익: 180,000 − 105,000 = <strong>75,000</strong><br>차이 5,000 = CKMLCP 실제원가 차이 반영분</div>
+      </div>
+    </div>
+  </div>
+
+  <h4>분개 비교 요약표</h4>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>시점</th><th>구분</th><th>US01 재고</th><th>미실현 이익</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td>STO 출고 직후</td><td><span class="tag-pill legal">Legal</span></td><td class="mono">120,000</td><td class="mono">20,000</td><td class="muted">연결 조정 필요</td></tr>
+        <tr><td>STO 출고 직후</td><td><span class="tag-pill group">Group</span></td><td class="mono" style="color:var(--correct);font-weight:700">100,000</td><td class="mono" style="color:var(--correct)">0</td><td class="muted">자동 제거</td></tr>
+        <tr><td>CKMLCP 후</td><td><span class="tag-pill legal">Legal</span></td><td class="mono">120,000</td><td class="mono">15,000</td><td class="muted">실제원가 반영 전</td></tr>
+        <tr><td>CKMLCP 후</td><td><span class="tag-pill group">Group</span></td><td class="mono" style="color:var(--correct);font-weight:700">105,000</td><td class="mono" style="color:var(--correct)">0</td><td class="muted">실제원가 재평가</td></tr>
+        <tr><td>외부 판매 후</td><td><span class="tag-pill legal">Legal</span></td><td class="mono">0</td><td class="mono">0</td><td class="muted">실현 완료</td></tr>
+        <tr><td>외부 판매 후</td><td><span class="tag-pill group">Group</span></td><td class="mono">0</td><td class="mono">0</td><td class="muted">실현 완료</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr>
+  <h3>5. Universal Journal(ACDOCA) 기록 구조 — 개념 참고</h3>
+  <p style="font-size:14px">Group Valuation이 활성화된 경우, <strong>동일 거래에 대해 Legal View와 Group View의 금액이 Universal Journal 내에서 별도 Valuation View로 관리</strong>된다. 실제 저장 방식(관련 필드, Ledger 구성, Currency Type 매핑)은 Transfer Pricing 활성화 여부, SAP 릴리즈, Valuation Profile 설정에 따라 다르다.</p>
+
+  <div class="callout warn" style="margin:16px 0">
+    <div class="callout-label">⚠ 프로젝트 착수 시 반드시 확인</div>
+    특정 필드값(예: VALUATIONCATEGORY, CURTYPE 등)을 단정하여 조회 조건으로 사용하면 고객 시스템과 맞지 않을 수 있다. 반드시 해당 시스템의 <strong>ML Type 설정 → Valuation Profile → Parallel Valuation 구성</strong>을 먼저 확인한 후 조회 조건을 수립해야 한다.
+  </div>
+
+  <div class="card-grid cols-2" style="margin-top:4px">
+    <div class="card">
+      <div class="card-title">Legal Valuation View</div>
+      <div class="card-body">개별 법인 이전가격(Transfer Price) 기준 금액. 각국 세법·공시 기준 장부의 근거가 되는 데이터.</div>
+    </div>
+    <div class="card" style="border-top: 2px solid var(--navy)">
+      <div class="card-title">Group Valuation View</div>
+      <div class="card-body">제조원가(Cost of Production) 기준 금액. 법인 간 내부 마진이 제거된 뷰이며, 연결 수익성 분석의 기초 데이터로 활용된다.</div>
+    </div>
+  </div>
+
+  <div class="callout correct" style="margin-top:16px">
+    <div class="callout-label">조회 접근 방법</div>
+    ACDOCA에서 두 Valuation View의 금액 차이를 비교하면 법인 간 내부 마진 규모를 파악할 수 있다. 단, 실제 조회 필터 조건은 해당 시스템의 ML 설정을 확인한 후 수립해야 하며, 특정 필드값을 사전에 단정하지 않도록 주의한다.
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────── -->
+<!-- SECTION 4 -->
+<!-- ────────────────────────────────────────────────────────── -->
+<section id="s4" class="section">
+  <div class="section-header">
+    <div class="section-num">Section 04</div>
+    <div class="section-title">Group Valuation 도입 시 고려사항 및 운영 난이도</div>
+    <p class="section-desc">Group Valuation은 SAP 표준 기능으로서 유효하다. 다만 대규모 글로벌 제조기업 외에는 운영 복잡성으로 인해 채택 사례가 제한적이다. 도입 전 검토해야 할 4가지 고려사항을 정리한다.</p>
+  </div>
+
+  <div class="callout correct">
+    <div class="callout-label">기능의 가치</div>
+    자재원장(ML) 기반으로 관계사 간 거래의 내부 마진을 자재 코드 레벨에서 실시간 분리·기록한다. 추정치가 아닌 실제 물류 흐름 데이터이므로 완전한 Audit Trail이 확보되어 외부 감사 대응력이 높다. 조건이 갖춰진 기업에서는 연결 결산 자동화의 핵심 기반이 된다.
+  </div>
+
+  <h3>Group Valuation 도입 가치가 높은 기업 프로파일</h3>
+  <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px">운영 난이도 검토 전에, Group Valuation이 실질적인 가치를 발휘하는 기업 조건을 먼저 확인한다. 아래 항목에 해당할수록 도입 효과가 크다.</p>
+  <div class="card-grid cols-2" style="margin-bottom:12px">
+    <div class="card" style="border-left:3px solid var(--correct);padding-left:19px">
+      <div style="font-size:11px;font-weight:700;color:var(--correct);letter-spacing:0.06em;margin-bottom:8px">비즈니스 특성</div>
+      <div style="font-size:13px;color:var(--text);line-height:1.75">
+        ✓ 글로벌 제조·판매 법인 간 재고 이전(STO) 거래 비중이 높음<br>
+        ✓ Transfer Pricing 이슈가 세무·공시 측면에서 중요하게 관리됨<br>
+        ✓ 실시간 연결 손익 파악이 경영 의사결정에 필수적<br>
+        ✓ 법인 간 제품 믹스(Product Mix) 변동이 크고 평균 마진율 추정이 불정확
+      </div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--correct);padding-left:19px">
+      <div style="font-size:11px;font-weight:700;color:var(--correct);letter-spacing:0.06em;margin-bottom:8px">운영 인프라 조건</div>
+      <div style="font-size:13px;color:var(--text);line-height:1.75">
+        ✓ 전사 S/4HANA 환경 표준화 완료 (공급망 법인 포함)<br>
+        ✓ D+3~5일 내 연결 마감을 시스템으로 달성해야 하는 요건<br>
+        ✓ 자재원장(ML) 실제원가 계산 체계가 이미 안정적으로 운영 중<br>
+        ✓ MDM 거버넌스 조직이 존재하여 이전가격 마스터를 상시 관리 가능
+      </div>
+    </div>
+  </div>
+  <div class="callout navy" style="margin-bottom:28px">
+    <div class="callout-label">컨설턴트 진단 시작점</div>
+    위 조건 중 비즈니스 특성 2개 이상 + 운영 인프라 조건 3개 이상이 충족된다면 Group Valuation Full 도입을 진지하게 검토할 수 있다. 그렇지 않다면 아래 운영 난이도 요인을 먼저 점검하고 Section 05의 SAC-P 대안 아키텍처를 우선 고려한다.
+  </div>
+
+  <h3>4가지 운영 난이도 요인</h3>
+  <div class="card-grid cols-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-num">01</div>
+      <div class="card-title">글로벌 ERP 통합 범위</div>
+      <div class="card-body">공급망 내 법인들이 서로 다른 ERP를 사용하는 경우 실시간 마진 추적 체인이 단절될 수 있다. 전 법인이 단일 S/4HANA 환경으로 통합되어 있을수록 Group Valuation의 효과가 커진다.</div>
+    </div>
+    <div class="card">
+      <div class="card-num">02</div>
+      <div class="card-title">ML 마감 순서와 일정 압박</div>
+      <div class="card-body">법인 간 원가 마감 릴레이(본사 → 해외 제조 → 판매법인)가 완료되어야 최종 그룹 마진이 확정된다. 마감 일정이 촉박한 환경에서는 이 릴레이 지연이 연결 마감 일정에 영향을 줄 수 있다.</div>
+    </div>
+    <div class="card">
+      <div class="card-num">03</div>
+      <div class="card-title">Legal·Group 이중 검증 부담</div>
+      <div class="card-body">각국 세법은 법적 실체 기준 장부(Legal Valuation)만 인정한다. Group View를 병행 운영하면 재무팀이 두 개의 장부를 동시에 검증해야 하므로 결산 업무 부담이 증가한다. 조직 역량과 프로세스 설계가 선행되어야 한다.</div>
+    </div>
+    <div class="card">
+      <div class="card-num">04</div>
+      <div class="card-title">기준정보(Master Data) 유지 체계</div>
+      <div class="card-body">법인 간 이전가격과 내부 마진 요소를 구매정보레코드(PIR) 등에 지속적으로 최신화해야 정확한 Group View가 산출된다. MDM 거버넌스와 담당 조직이 갖춰지지 않으면 데이터 품질이 빠르게 저하된다.</div>
+    </div>
+  </div>
+
+  <h3>실제 활성화 사례 유형</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>유형</th><th>대상 기업 특성</th><th>실제 운영 방식</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>유형 1</strong><br><span class="text-muted" style="font-size:11px">글로벌 단일 인스턴스</span></td>
+          <td>전 세계 법인이 하나의 S/4HANA 환경으로 통합된 대규모 글로벌 제조기업</td>
+          <td>Group Valuation View 실시간 운영 가능</td>
+        </tr>
+        <tr>
+          <td><strong>유형 2</strong><br><span class="text-muted" style="font-size:11px">글로벌 표준 템플릿</span></td>
+          <td>배터리·바이오 등 최근 글로벌 표준 템플릿 기반 구축, SKU가 통제 가능한 장치 산업</td>
+          <td>주요 공장·법인 중심으로 제한적 활용</td>
+        </tr>
+        <tr style="background:#fffbeb">
+          <td><strong>혼합 운영</strong></td>
+          <td>기능을 활성화했으나 데이터 정합성 이슈가 발생하는 경우</td>
+          <td>시스템 데이터와 별도 검증 마진율을 병행 사용하는 하이브리드 운영. 완전 자동화까지 추가적인 거버넌스 정비가 필요하다.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout navy" style="margin-top:20px">
+    <div class="callout-label">컨설턴트 진단 접근법</div>
+    고객이 Group Valuation 도입을 검토할 때, 위 4가지 운영 난이도 요인 중 몇 개가 이미 갖춰져 있는지를 먼저 진단한다. 다수 요인이 미충족 상태라면 중장기 로드맵으로 전환 조건을 명시하고, 단기적으로는 Section 05의 SAC-P 대안 아키텍처를 제안하는 것이 현실적이다.
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────── -->
+<!-- SECTION 5 -->
+<!-- ────────────────────────────────────────────────────────── -->
+<section id="s5" class="section">
+  <div class="section-header">
+    <div class="section-num">Section 05</div>
+    <div class="section-title">SAC-P 기반 대안 아키텍처</div>
+    <p class="section-desc">ERP 자재원장의 부하 없이 SAC-P의 계산 엔진을 활용하여 경영관리 목적의 연결 수익성을 시뮬레이션하는 현실적 대안. SAC-P는 연결회계 엔진이 아니므로 이 아키텍처의 결과물은 <strong>법적 연결 재무제표가 아닌 경영관리용 연결 수익성 분석</strong>임을 명확히 구분해야 한다.</p>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-label">딜레마</div>
+    임의 추정 마진율 업로드 방식은 <strong>제품 믹스(Product Mix) 왜곡, 물류 경로 추적 불가, 제조 원가 분산(Variance) 실종</strong>을 유발한다. Group Valuation이 아키텍처상 더 정확하지만, CFO 입장에서는 적시 공시와 세무 안정성이 우선이므로 운영 복잡도가 높은 Group Valuation을 즉시 도입하기 어려운 상황이 많다.
+  </div>
+
+  <h3>전체 아키텍처 플로우</h3>
+  <div class="step-flow" style="margin-top:20px">
+    <div class="step-item">
+      <div class="step-left"><div class="step-dot">1</div><div class="step-line"></div></div>
+      <div class="step-content">
+        <div class="step-tag">S/4HANA — 개별 법인</div>
+        <div class="step-title">KO88 정산 완료 후 법인별 실제 원가·매출 전송</div>
+        <div class="step-body">법인 간 재고이전(STO) 물류 흐름 정보(출발-도착-품목그룹)를 함께 매핑하여 SAC-P로 전달. Live Connection(SAP_COM_0065) 또는 배치 전송.</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-left"><div class="step-dot">2</div><div class="step-line"></div></div>
+      <div class="step-content">
+        <div class="step-tag">SAC-P — 연결 경영관리</div>
+        <div class="step-title">거래 관계 마스터화 + 경영관리 목적 연결 수익성 시뮬레이션</div>
+        <div class="step-body">[출발-도착-품목그룹별] 실제 거래 관계를 마스터 데이터로 구성. Allocation Step + Data Action을 통해 품목 레벨 내부 마진을 차감한 <strong>경영관리 목적 연결 수익성 뷰</strong>를 산출한다. 법적 연결 재무제표와는 별도로 관리되어야 한다.</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-left"><div class="step-dot">3</div></div>
+      <div class="step-content">
+        <div class="step-tag">최종 아웃풋</div>
+        <div class="step-title">인과관계가 확보된 시스템 기반 연결 수익성 보고서</div>
+        <div class="step-body">품목별·노선별 연결 수익성 분석(CO) 데이터를 경영진에게 적시 제공. 엑셀 추정치 대비 인과관계 추적 가능.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+  <h3>SAC-P 핵심 기능 — Allocation Step 설계</h3>
+  <p style="font-size:14px">SAC-P의 <strong>Allocation Step</strong>은 특정 기준에 따라 금액을 자동 배부하는 계산 단계다. 미실현 이익 제거에는 아래 2단계 Allocation을 순차 실행한다.</p>
+
+  <div class="card-grid cols-2" style="margin-top:16px">
+    <div class="card accent-top">
+      <div class="card-title">Step A — 마진율 테이블 적용</div>
+      <div class="card-body">
+        <p style="font-size:13px;margin-bottom:12px">STO 거래별 실제 마진율을 SAC-P 마스터 테이블에 로드하고, 해당 마진율을 법인별 재고 금액에 곱하여 <strong>경영관리 목적의 내부 마진 차감 금액</strong>을 산출한다. 이는 회계적 미실현 이익 제거(연결조정 분개)와는 구분되는 관리회계 계산이다.</p>
+        <div class="code-block">Allocation Step A:
+<span class="c-dim">  Source:</span>  <span class="c-green">재고(Inventory)</span> × <span class="c-yellow">마진율(Markup%)</span>
+<span class="c-dim">  Driver:</span>  <span class="c-green">[출발법인 × 품목그룹 × 도착법인]</span>
+<span class="c-dim">  Target:</span>  <span class="c-red">미실현이익 계정 (Unrealized Profit)</span>
+<span class="c-dim">  Method:</span>  <span class="c-white">Override (마스터 테이블 참조)</span></div>
+      </div>
+    </div>
+    <div class="card accent-top">
+      <div class="card-title">Step B — 경영관리 연결 P&L 재구성</div>
+      <div class="card-body">
+        <p style="font-size:13px;margin-bottom:12px">Step A에서 산출된 내부 마진을 <strong>경영관리 P&L에서 차감</strong>하고, 법인 간 내부 매출·매입을 상계하여 외부 매출 기준 연결 수익성을 완성한다. 법적 연결 재무제표는 GR에서 별도 생성되며, 이 결과물은 경영관리 보고 전용이다.</p>
+        <div class="code-block">Allocation Step B:
+<span class="c-dim">  Source:</span>  <span class="c-red">미실현이익 (Step A 결과)</span>
+<span class="c-dim">  Action:</span>  <span class="c-green">Group P&L에서 차감</span>
+<span class="c-dim">         </span>  <span class="c-green">IC Revenue / IC COGS 상계</span>
+<span class="c-dim">  Output:</span> <span class="c-white">연결 수익성 (External View)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+  <h3>SAC-P Data Action 설계 예시</h3>
+  <p style="font-size:14px"><strong>Data Action</strong>은 SAC-P Planning Model 내 데이터를 조건부로 읽고 쓰는 스크립트 엔진이다. 아래는 경영관리 목적 내부 마진 차감 로직의 구성 예시이며, 회계적 연결조정 분개와는 별도로 관리되어야 한다.</p>
+
+  <div class="code-block">// Data Action: IC_Margin_Adjustment_for_Management_Reporting
+// 목적: 경영관리 목적 연결 수익성 시뮬레이션 (법적 연결조정 아님)
+// 실행 시점: 매월 KO88 완료 이벤트 후 자동 트리거
+
+<span class="c-dim">// Step 1. STO 재고 잔액 조회</span>
+<span class="c-green">DATA</span> lv_inventory = 
+  READ(Account = "INVENTORY", 
+       Entity   = [Sender_Entity],
+       Product  = [Product_Group],
+       Version  = "ACTUAL")
+
+<span class="c-dim">// Step 2. 마진율 마스터 참조</span>
+<span class="c-green">DATA</span> lv_markup_rate = 
+  LOOKUP(Table  = "IC_MARKUP_MASTER",
+         Key    = [Sender + Receiver + Product_Group])
+
+<span class="c-dim">// Step 3. 내부 마진 차감 금액 계산 및 기록 (경영관리 뷰)</span>
+<span class="c-yellow">WRITE</span>(Account = "IC_MARGIN_ADJUSTMENT",
+      Entity   = [Consolidated],
+      Value    = lv_inventory * lv_markup_rate * <span class="c-red">-1</span>,
+      Mode     = "OVERRIDE")
+
+<span class="c-dim">// Step 4. IC 매출·매입 상계 (경영관리 목적)</span>
+<span class="c-yellow">WRITE</span>(Account = "IC_REVENUE_MGMT",
+      Value    = READ(Account = "IC_REVENUE") * <span class="c-red">-1</span>)
+<span class="c-yellow">WRITE</span>(Account = "IC_COGS_MGMT", 
+      Value    = READ(Account = "IC_COGS") * <span class="c-red">-1</span>)</div>
+
+  <div class="callout correct" style="margin-top:20px">
+    <div class="callout-label">기대효과</div>
+    <strong>① 결산 속도:</strong> ERP 자재원장(ML) 부하 없이 SAC-P 엔진만으로 경영관리 연결 수익성 보고 가능 — 더 빠른 마감 일정 달성<br>
+    <strong>② 분석 정교성:</strong> 수작업 엑셀 평균 마진율 대비 품목별·노선별·법인별 인과관계 추적 가능한 경영관리 데이터 제공<br>
+    <strong>③ 거버넌스:</strong> IC_MARKUP_MASTER 테이블 단일 통제로 마진율 업데이트 공수 최소화<br>
+    <strong>⚠ 구분 주의:</strong> 이 결과물은 경영관리 보고용이며, 법적 연결 재무제표는 SAP Group Reporting에서 별도 생성된다.
+  </div>
+
+  <h3>Group Valuation vs SAC-P 대안 아키텍처 비교</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>비교 항목</th><th>Group Valuation (ERP Native)</th><th>SAC-P 대안 아키텍처</th></tr></thead>
+      <tbody>
+        <tr><td>데이터 정확도</td><td>자재 코드 레벨 실시간</td><td>품목그룹 레벨 (마스터 정밀도에 의존)</td></tr>
+        <tr><td>Audit Trail</td><td>ACDOCA 완전 자동 기록</td><td>Data Action 로그 + 마스터 테이블 (경영관리 보고 용도)</td></tr>
+        <tr><td>ERP 인프라 요건</td><td>실질적으로 전사 표준화된 S/4HANA 환경이 요구됨</td><td>개별 법인 ERP 무관</td></tr>
+        <tr><td>마감 속도</td><td>ML 릴레이 완료 후</td><td>KO88 완료 후 즉시</td></tr>
+        <tr><td>운영 복잡도</td><td>높음 (PIR 상시 관리, 이중 장부 검증)</td><td>중간 (마스터 테이블 주기 관리)</td></tr>
+        <tr><td>세무 리스크</td><td>Legal/Group 이중 장부 관리 필요</td><td>ERP는 Legal만 운영 (세무 영향 없음)</td></tr>
+        <tr><td><strong>결과물 성격</strong></td><td>법적 연결 재무제표 기반</td><td><strong>경영관리 목적 연결 수익성 분석 (법적 연결조정 아님)</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────── -->
+<!-- SECTION 6 -->
+<!-- ────────────────────────────────────────────────────────── -->
+<section id="s6" class="section">
+  <div class="section-header">
+    <div class="section-num">Section 06</div>
+    <div class="section-title">판단 매트릭스 & 구현 체크리스트</div>
+    <p class="section-desc">프로젝트 현장에서 "Group Valuation vs SAC-P 대안"을 결정하는 기준과, 각 경로별 단계별 구현 체크리스트를 제공한다.</p>
+  </div>
+
+  <h3>Go / No-Go 판단 매트릭스</h3>
+  <div class="table-wrap">
+    <table class="matrix-table">
+      <thead><tr><th>판단 기준</th><th>조건</th><th>Group Valuation</th><th>SAC-P 대안</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>ERP 통합</strong></td>
+          <td>전사 S/4HANA 환경 표준화 완료</td>
+          <td class="go">✅ GO</td>
+          <td class="alt">△ 선택</td>
+        </tr>
+        <tr>
+          <td><strong>ERP 통합</strong></td>
+          <td>일부 법인 타사 ERP 혼재</td>
+          <td class="alt">△ 제한적 적용</td>
+          <td class="go">✅ GO</td>
+        </tr>
+        <tr>
+          <td><strong>SKU 규모</strong></td>
+          <td>통제 가능 (수백 종 이하 장치산업)</td>
+          <td class="go">✅ GO</td>
+          <td class="alt">△ 선택</td>
+        </tr>
+        <tr>
+          <td><strong>SKU 규모</strong></td>
+          <td>다품종 소량 (수천 종 이상)</td>
+          <td class="alt">△ 운영 부담 증가</td>
+          <td class="go">✅ GO</td>
+        </tr>
+        <tr>
+          <td><strong>마감 일정</strong></td>
+          <td>D+5일 이상 여유</td>
+          <td class="go">✅ GO</td>
+          <td class="alt">△ 선택</td>
+        </tr>
+        <tr>
+          <td><strong>마감 일정</strong></td>
+          <td>D+3일 이내 강제</td>
+          <td class="alt">△ 릴레이 지연 리스크</td>
+          <td class="go">✅ GO</td>
+        </tr>
+        <tr>
+          <td><strong>MDM 거버넌스</strong></td>
+          <td>PIR 상시 관리 전담 조직 보유</td>
+          <td class="go">✅ GO</td>
+          <td class="alt">△ 선택</td>
+        </tr>
+        <tr>
+          <td><strong>MDM 거버넌스</strong></td>
+          <td>MDM 전담 조직 부재</td>
+          <td class="alt">△ 데이터 품질 저하 리스크</td>
+          <td class="go">✅ GO</td>
+        </tr>
+        <tr>
+          <td><strong>감사 요건</strong></td>
+          <td>실시간 Audit Trail 필수 (상장·글로벌 공시)</td>
+          <td class="go">✅ GO</td>
+          <td class="alt">△ 보완 필요</td>
+        </tr>
+        <tr>
+          <td><strong>세무 안정성</strong></td>
+          <td>이중 장부 관리 리스크 최소화 우선</td>
+          <td class="alt">△ 추가 검증 부담</td>
+          <td class="go">✅ GO</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout navy" style="margin-top:8px">
+    <div class="callout-label">판독 방법</div>
+    △(리스크) 항목이 다수 해당된다면 Group Valuation 전면 도입보다 <strong>단계적 접근</strong>이 현실적이다. 단기적으로는 SAC-P 대안 아키텍처로 경영관리 수익성 분석을 확보하고, 중장기 로드맵에 Group Valuation 전환 조건(ERP 표준화 완료, 거버넌스 수립 시점)을 명시하는 방식을 검토할 수 있다.
+  </div>
+
+  <hr>
+  <h3>경로 A — Group Valuation 구현 체크리스트</h3>
+  <p class="progress-label" id="prog-label-a">진행률: <strong id="prog-pct-a">0%</strong></p>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-bar-a" style="width:0%"></div></div>
+  <div class="checklist" id="checklist-a">
+    <div class="checklist-group">
+      <div class="checklist-group-title">Phase 1 — 사전 준비 (Pre-requisite)</div>
+      <div class="check-item" onclick="toggleCheck(this,'a')"><div class="check-box"></div><div class="check-label">전사 S/4HANA 환경 표준화 범위 확인 — Group Valuation 적용 대상 법인 및 Plant 범위 확정</div><span class="check-badge pre">사전</span></div>
+      <div class="check-item" onclick="toggleCheck(this,'a')"><div class="check-box"></div><div class="check-label">Plant 레벨 자재원장(ML) 활성화 (비가역 — 반드시 테스트 시스템 선행)</div><span class="check-badge pre">사전</span></div>
+      <div class="check-item" onclick="toggleCheck(this,'a')"><div class="check-box"></div><div class="check-label">Currency Type 10(Legal) · 30(Group) ML Type에 할당</div><span class="check-badge pre">사전</span></div>
+      <div class="check-item" onclick="toggleCheck(this,'a')"><div class="check-box"></div><div class="check-label">글로벌 전 법인 PIR(구매정보레코드) 이전가격 최신화 완료</div><span class="check-badge pre">사전</span></div>
+      <div class="check-item" onclick="toggleCheck(this,'a')"><div class="check-box"></div><div class="check-label">MDM 거버넌스 조직 및 PIR 상시 관리 프로세스 수립</div><span class="check-badge pre">사전</span></div>
+    </div>
+    <div class="checklist-group">
+      <div class="checklist-group-title">Phase 2 — IMG 설정 (Configuration)</div>
+      <div class="check-item" onclick="toggleCheck(this,'a')"><div class="check-box"></div><div class="check-label">Group Valuation / Parallel Valuation 활성화 여부 확인 — ML Type · Valuation Profile 설정 기준 (특정 SPRO 경로는 시스템 릴리즈별로 상이하므로 해당 버전 IMG 확인 필수)</div><span class="check-badge core">설정</span></div>
+      <div class="check-item" onclick="toggleCheck(this,'a')"><div class="check-box"></div><div class="check-label">Group Valuation 관련 GL 계정 매핑 확인 (Difference Accounts — 시스템 설정에 따라 경로 상이)</div><span class="check-badge core">설정</span></div>
+      <div class="check-item" onclick="toggleCheck(this,'a')"><div class="check-box"></div><div class="check-label">법인 간 이전가격 조건 유형(Condition Type) 정의</div><span class="check-badge core">설정</span></div>
+      <div class="check-item" onclick="toggleCheck(this,'a')"><div class="check-box"></div><div class="check-label">Parallel Valuation 데이터(Legal View / Group View) 생성 여부 검증 — SE16N 또는 해당 시스템 조회 화면에서 ML 설정 확인 후 조건 수립</div><span class="check-badge core">설정</span></div>
+    </div>
+    <div class="checklist-group">
+      <div class="checklist-group-title">Phase 3 — 검증 및 운영 (Go-Live)</div>
+      <div class="check-item" onclick="toggleCheck(this,'a')"><div class="check-box"></div><div class="check-label">STO 테스트 거래 생성 → Legal vs Group 분개 금액 차이 검증</div><span class="check-badge post">검증</span></div>
+      <div class="check-item" onclick="toggleCheck(this,'a')"><div class="check-box"></div><div class="check-label">CKMLCP 실행 후 Group Valuation 재평가 금액 정합성 확인</div><span class="check-badge post">검증</span></div>
+      <div class="check-item" onclick="toggleCheck(this,'a')"><div class="check-box"></div><div class="check-label">GR Data Collection 시 Group View 금액 자동 반영 확인</div><span class="check-badge post">검증</span></div>
+      <div class="check-item" onclick="toggleCheck(this,'a')"><div class="check-box"></div><div class="check-label">월 결산 D+N 마감 일정 준수 가능 여부 실측 (최소 3개월 파일럿)</div><span class="check-badge post">검증</span></div>
+    </div>
+  </div>
+
+  <hr>
+  <h3>경로 B — SAC-P 대안 아키텍처 구현 체크리스트</h3>
+  <p class="progress-label" id="prog-label-b">진행률: <strong id="prog-pct-b">0%</strong></p>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-bar-b" style="width:0%"></div></div>
+  <div class="checklist" id="checklist-b">
+    <div class="checklist-group">
+      <div class="checklist-group-title">Phase 1 — 마스터 데이터 설계</div>
+      <div class="check-item" onclick="toggleCheck(this,'b')"><div class="check-box"></div><div class="check-label">[출발법인 × 품목그룹 × 도착법인] 매트릭스 IC_MARKUP_MASTER 테이블 설계</div><span class="check-badge pre">설계</span></div>
+      <div class="check-item" onclick="toggleCheck(this,'b')"><div class="check-box"></div><div class="check-label">STO 물류 흐름 데이터 S/4HANA → SAC-P 인터페이스 정의 (Live Connection 또는 배치)</div><span class="check-badge pre">설계</span></div>
+      <div class="check-item" onclick="toggleCheck(this,'b')"><div class="check-box"></div><div class="check-label">IC_MARKUP_MASTER 분기별 업데이트 프로세스 및 책임자 지정</div><span class="check-badge pre">설계</span></div>
+    </div>
+    <div class="checklist-group">
+      <div class="checklist-group-title">Phase 2 — SAC-P 모델 구축</div>
+      <div class="check-item" onclick="toggleCheck(this,'b')"><div class="check-box"></div><div class="check-label">SAC-P Planning Model에 미실현이익(Unrealized Profit) 계정 차원 추가</div><span class="check-badge core">구축</span></div>
+      <div class="check-item" onclick="toggleCheck(this,'b')"><div class="check-box"></div><div class="check-label">Allocation Step A 구성 (재고 × 마진율 → 미실현이익 계정 WRITE)</div><span class="check-badge core">구축</span></div>
+      <div class="check-item" onclick="toggleCheck(this,'b')"><div class="check-box"></div><div class="check-label">Allocation Step B 구성 (IC Revenue / IC COGS 상계 처리)</div><span class="check-badge core">구축</span></div>
+      <div class="check-item" onclick="toggleCheck(this,'b')"><div class="check-box"></div><div class="check-label">Data Action 스크립트 작성 및 Multi-Action 시퀀스 등록</div><span class="check-badge core">구축</span></div>
+      <div class="check-item" onclick="toggleCheck(this,'b')"><div class="check-box"></div><div class="check-label">KO88 완료 이벤트 → SAC-P Data Action 자동 트리거 연동</div><span class="check-badge core">구축</span></div>
+    </div>
+    <div class="checklist-group">
+      <div class="checklist-group-title">Phase 3 — 검증 및 운영</div>
+      <div class="check-item" onclick="toggleCheck(this,'b')"><div class="check-box"></div><div class="check-label">테스트 데이터로 Allocation Step 실행 → 미실현 이익 차감 금액 수작업 검증</div><span class="check-badge post">검증</span></div>
+      <div class="check-item" onclick="toggleCheck(this,'b')"><div class="check-box"></div><div class="check-label">연결 수익성 리포트 외부 감사팀 Audit Trail 검토 (Data Action 로그 제출)</div><span class="check-badge post">검증</span></div>
+      <div class="check-item" onclick="toggleCheck(this,'b')"><div class="check-box"></div><div class="check-label">D+1~2일 마감 일정 달성 여부 확인 및 병목 구간 기록</div><span class="check-badge post">검증</span></div>
+      <div class="check-item" onclick="toggleCheck(this,'b')"><div class="check-box"></div><div class="check-label">IC_MARKUP_MASTER 분기 업데이트 후 재계산 결과 정합성 확인</div><span class="check-badge post">검증</span></div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- TAKE AWAY -->
+  <div style="background:var(--navy);border-radius:2px;padding:36px 40px;margin-top:8px;position:relative;overflow:hidden">
+    <div style="position:absolute;top:-20px;right:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.04)"></div>
+    <div style="position:absolute;bottom:-30px;left:60px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.03)"></div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.12em;color:rgba(255,255,255,0.4);text-transform:uppercase;margin-bottom:20px">Key Take Away</div>
+    <div style="font-family:'DM Serif Display',Georgia,serif;font-size:22px;color:white;line-height:1.5;margin-bottom:20px;max-width:680px">
+      Group Valuation은 연결조정을 <em style="font-style:italic;opacity:0.75">제거</em>하는 기능이 아니라,<br>
+      연결조정을 <em style="font-style:italic;color:#a8d8ff">사전에 예방</em>하기 위한 운영 모델이다.
+    </div>
+    <div style="width:40px;height:1px;background:rgba(255,255,255,0.2);margin-bottom:20px"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:680px">
+      <div>
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:0.06em;margin-bottom:8px">대부분 기업의 현실</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.7">
+          SAP Group Reporting 기반 <strong style="color:white">사후 연결조정 방식</strong>을 선택한다. 운영 복잡도가 낮고 세무 안정성을 확보하면서도 K-IFRS / IFRS 연결 재무제표 요건을 충족할 수 있다.
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:0.06em;margin-bottom:8px">Group Valuation의 위치</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.7">
+          높은 운영 성숙도(전사 ERP 표준화, MDM 거버넌스, ML 안정화)를 갖춘 기업을 위한 <strong style="color:white">고급 아키텍처</strong>다. 도입 자체가 목적이 아니라, 조건이 갖춰진 후의 자연스러운 진화 단계로 봐야 한다.
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.1);font-size:12px;color:rgba(255,255,255,0.4)">
+      ASPN BAC Division · GR/SAC-P Consultant Education Series
+    </div>
+  </div>
+
+</section>
+
+</div><!-- /page-wrapper -->
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const tabs = document.querySelectorAll('.nav-tab');
+  const ids = ['s0','s1','s2','s3','s4','s5','s6'];
+  tabs[ids.indexOf(id)].classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function toggleAcc(btn) {
+  const item = btn.closest('.accordion-item');
+  item.classList.toggle('open');
+}
+
+function toggleCheck(el, group) {
+  el.classList.toggle('done');
+  if (el.classList.contains('done')) {
+    el.querySelector('.check-box').textContent = '✓';
+  } else {
+    el.querySelector('.check-box').textContent = '';
+  }
+  updateProgress(group);
+}
+
+function updateProgress(group) {
+  const items = document.querySelectorAll(`#checklist-${group} .check-item`);
+  const done = document.querySelectorAll(`#checklist-${group} .check-item.done`);
+  const pct = Math.round(done.length / items.length * 100);
+  document.getElementById(`prog-bar-${group}`).style.width = pct + '%';
+  document.getElementById(`prog-pct-${group}`).textContent = pct + '%';
+}
+</script>
+</body>
+</html>
