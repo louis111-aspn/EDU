@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>프로젝트 위기관리 | ASPN 프로젝트 실전 가이드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #003366;
+  --navy-light: #0a4a8a;
+  --navy-dim: #002244;
+  --navy-muted: rgba(0,51,102,0.08);
+  --bg: #f0f3f8;
+  --white: #ffffff;
+  --text-primary: #1a1a2e;
+  --text-secondary: #4a4a6a;
+  --text-muted: #7a7a9a;
+  --border: #d8dee9;
+  --warn-bg: #fff8e6;
+  --warn-border: #f0a500;
+  --correct-bg: #e8f5e9;
+  --correct-border: #2e7d32;
+  --wrong-bg: #fce8e6;
+  --wrong-border: #c0392b;
+  --pad-x: 96px;
+  --card-radius: 8px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--text-primary); font-size: 15px; line-height: 1.75; }
+
+/* HEADER */
+header {
+  background: var(--navy);
+  padding: 0 var(--pad-x);
+  display: flex; align-items: center; justify-content: space-between;
+  height: 60px; position: sticky; top: 0; z-index: 200;
+}
+.header-brand { display: flex; align-items: center; gap: 10px; }
+.logo-mark { width: 26px; height: 26px; background: #fff; border-radius: 3px; display: flex; align-items: center; justify-content: center; }
+.logo-mark svg { width: 16px; height: 16px; }
+.logo-text { font-size: 14px; font-weight: 700; color: #fff; letter-spacing: 0.04em; }
+.logo-sep { color: rgba(255,255,255,0.3); margin: 0 4px; }
+.logo-sub { font-size: 12px; color: rgba(255,255,255,0.55); }
+.header-meta { font-size: 11px; color: rgba(255,255,255,0.55); letter-spacing: 0.06em; }
+
+/* HERO */
+.hero {
+  background: var(--navy);
+  padding: 52px var(--pad-x) 44px;
+  border-bottom: 3px solid rgba(255,255,255,0.1);
+}
+.hero-series {
+  font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+  font-size: 11px; font-weight: 600;
+  color: rgba(255,255,255,0.45);
+  letter-spacing: 0.16em; text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.hero-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 40px; color: #fff; line-height: 1.2;
+  margin-bottom: 12px;
+}
+.hero-title span { color: rgba(255,255,255,0.55); font-size: 28px; }
+.hero-desc {
+  font-size: 15px; color: rgba(255,255,255,0.68);
+  max-width: 620px; line-height: 1.7;
+  margin-bottom: 28px;
+}
+.hero-meta {
+  display: flex; gap: 24px; flex-wrap: wrap;
+}
+.hero-tag {
+  font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+  font-size: 12px; color: rgba(255,255,255,0.55);
+  display: flex; align-items: center; gap: 6px;
+}
+.hero-tag::before { content: '—'; }
+
+/* NAV */
+nav {
+  background: var(--white);
+  border-bottom: 2px solid var(--border);
+  position: sticky; top: 60px; z-index: 100;
+  padding: 0 var(--pad-x);
+  display: flex; gap: 0; overflow-x: auto;
+}
+nav::-webkit-scrollbar { display: none; }
+.nav-tab {
+  padding: 14px 20px;
+  font-size: 13px; font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer; border: none; background: none;
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.nav-tab:hover { color: var(--navy); }
+.nav-tab.active { color: var(--navy); border-bottom-color: var(--navy); font-weight: 700; }
+
+/* SECTION */
+.section { display: none; padding: 52px var(--pad-x) 72px; max-width: 1200px; }
+.section.active { display: block; }
+
+/* SECTION HEADER */
+.section-header { margin-bottom: 36px; }
+.section-label {
+  font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+  font-size: 11px; font-weight: 600;
+  color: var(--navy); letter-spacing: 0.14em; text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.section-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 30px; color: var(--navy);
+  line-height: 1.25; margin-bottom: 10px;
+}
+.section-sub {
+  font-size: 15px; color: var(--text-secondary); line-height: 1.7;
+}
+
+/* CARD */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  padding: 24px 28px;
+  margin-bottom: 16px;
+}
+.card-title {
+  font-size: 14px; font-weight: 700;
+  color: var(--navy); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
+}
+.card-title .tag {
+  font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+  font-size: 10px; font-weight: 600;
+  background: var(--navy); color: #fff;
+  padding: 2px 7px; border-radius: 3px;
+  letter-spacing: 0.06em;
+}
+.card p { font-size: 15px; color: var(--text-secondary); line-height: 1.75; }
+
+/* CALLOUT */
+.callout {
+  border-radius: var(--card-radius);
+  padding: 18px 22px;
+  margin-bottom: 16px;
+  border-left: 4px solid;
+}
+.callout.navy { background: var(--navy-muted); border-color: var(--navy); }
+.callout.warn { background: var(--warn-bg); border-color: var(--warn-border); }
+.callout.correct { background: var(--correct-bg); border-color: var(--correct-border); }
+.callout.wrong { background: var(--wrong-bg); border-color: var(--wrong-border); }
+.callout-title {
+  font-size: 13px; font-weight: 700;
+  margin-bottom: 6px;
+}
+.callout.navy .callout-title { color: var(--navy); }
+.callout.warn .callout-title { color: #a06800; }
+.callout.correct .callout-title { color: #1b5e20; }
+.callout.wrong .callout-title { color: #8b1a10; }
+.callout p, .callout li { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+.callout ul { padding-left: 18px; }
+.callout li { margin-bottom: 4px; }
+
+/* GRID */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+
+/* PATTERN TABLE */
+.pattern-grid {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.pattern-grid-header {
+  display: grid; grid-template-columns: 180px 1fr 1fr;
+  background: var(--navy); color: #fff;
+  font-size: 12px; font-weight: 700;
+  padding: 10px 16px; letter-spacing: 0.04em;
+}
+.pattern-grid-row {
+  display: grid; grid-template-columns: 180px 1fr 1fr;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.pattern-grid-row:last-child { border-bottom: none; }
+.pattern-grid-row > div { padding: 12px 16px; line-height: 1.6; }
+.pattern-grid-row > div:first-child {
+  font-weight: 700; color: var(--navy);
+  background: rgba(0,51,102,0.04);
+  border-right: 1px solid var(--border);
+}
+.pattern-grid-row > div:nth-child(2) { border-right: 1px solid var(--border); color: var(--text-secondary); }
+.pattern-grid-row > div:nth-child(3) { color: var(--text-secondary); }
+
+/* RISK LEVEL BADGE */
+.risk-badge {
+  display: inline-block;
+  font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+  font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 3px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+.risk-high { background: #fce8e6; color: #c0392b; }
+.risk-mid { background: #fff3e0; color: #e65100; }
+.risk-low { background: #e8f5e9; color: #2e7d32; }
+
+/* SIGNAL CARDS */
+.signal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+.signal-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  padding: 20px;
+  border-top: 4px solid;
+}
+.signal-card.red { border-top-color: #c0392b; }
+.signal-card.amber { border-top-color: #f0a500; }
+.signal-card.green { border-top-color: #2e7d32; }
+.signal-card-label {
+  font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+  margin-bottom: 6px; text-transform: uppercase;
+}
+.signal-card.red .signal-card-label { color: #c0392b; }
+.signal-card.amber .signal-card-label { color: #f0a500; }
+.signal-card.green .signal-card-label { color: #2e7d32; }
+.signal-card-title { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+.signal-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+
+/* STEP FLOW */
+.step-flow { display: flex; gap: 0; margin-bottom: 24px; flex-wrap: wrap; }
+.step-item {
+  flex: 1; min-width: 140px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  padding: 16px 18px;
+  position: relative;
+}
+.step-item:not(:last-child)::after {
+  content: '→';
+  position: absolute; right: -14px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--navy); font-weight: 700; z-index: 1;
+  font-size: 16px;
+}
+.step-item:not(:first-child) { border-left: none; border-radius: 0 var(--card-radius) var(--card-radius) 0; }
+.step-item:not(:last-child) { border-radius: var(--card-radius) 0 0 var(--card-radius); }
+.step-item:only-child { border-radius: var(--card-radius); }
+.step-num {
+  font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+  font-size: 10px; font-weight: 700;
+  color: var(--navy); margin-bottom: 4px; letter-spacing: 0.1em;
+}
+.step-label { font-size: 13px; font-weight: 700; color: var(--text-primary); line-height: 1.4; }
+.step-desc { font-size: 12px; color: var(--text-muted); margin-top: 4px; line-height: 1.5; }
+
+/* COMPARE BOX */
+.compare-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.compare-box {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  overflow: hidden;
+}
+.compare-box-header {
+  padding: 10px 18px;
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+.compare-box.bad .compare-box-header { background: var(--wrong-bg); color: #8b1a10; }
+.compare-box.good .compare-box-header { background: var(--correct-bg); color: #1b5e20; }
+.compare-box-body { padding: 16px 18px; }
+.compare-box-body p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 8px; }
+.compare-box-body p:last-child { margin-bottom: 0; }
+.compare-box-body strong { color: var(--text-primary); }
+
+/* SCRIPT BOX */
+.script-box {
+  background: #f8fafe;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--navy);
+  border-radius: var(--card-radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+.script-label {
+  font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+  font-size: 10px; font-weight: 700;
+  color: var(--navy); letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.script-context {
+  font-size: 12px; color: var(--text-muted);
+  margin-bottom: 10px; font-style: italic;
+}
+.speech-bubble {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin-bottom: 8px;
+  font-size: 14px; color: var(--text-primary); line-height: 1.7;
+}
+.speech-bubble.consultant {
+  border-left: 3px solid var(--navy);
+}
+.speech-who {
+  font-size: 11px; font-weight: 700;
+  color: var(--text-muted); margin-bottom: 4px;
+  letter-spacing: 0.06em;
+}
+
+/* DRILL TOGGLE */
+.drill-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.drill-q {
+  padding: 16px 20px;
+  font-size: 14px; font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+  transition: background 0.15s;
+}
+.drill-q:hover { background: var(--navy-muted); }
+.drill-q .arrow { color: var(--navy); font-weight: 700; transition: transform 0.2s; }
+.drill-q.open .arrow { transform: rotate(90deg); }
+.drill-a {
+  display: none;
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+  font-size: 14px; color: var(--text-secondary);
+  line-height: 1.75; background: #f8fafe;
+}
+.drill-a.show { display: block; }
+.drill-a strong { color: var(--navy); }
+
+/* QUIZ */
+.quiz-block {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  padding: 24px 28px;
+  margin-bottom: 16px;
+}
+.quiz-num {
+  font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+  font-size: 10px; font-weight: 700;
+  color: var(--navy); letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+.quiz-q {
+  font-size: 15px; font-weight: 600;
+  color: var(--text-primary); margin-bottom: 16px;
+  line-height: 1.65;
+}
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-option {
+  padding: 11px 16px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  cursor: pointer; font-size: 14px;
+  color: var(--text-primary);
+  transition: all 0.15s;
+  background: var(--bg);
+}
+.quiz-option:hover:not(.disabled) { border-color: var(--navy); background: var(--navy-muted); }
+.quiz-option.correct { background: var(--correct-bg); border-color: var(--correct-border); color: #1b5e20; }
+.quiz-option.wrong { background: var(--wrong-bg); border-color: var(--wrong-border); color: #8b1a10; }
+.quiz-option.disabled { cursor: not-allowed; }
+.quiz-feedback {
+  margin-top: 12px; padding: 12px 16px;
+  border-radius: 5px; font-size: 14px; display: none;
+  line-height: 1.65;
+}
+.quiz-feedback.correct { display: block; background: var(--correct-bg); color: #1b5e20; }
+.quiz-feedback.wrong { display: block; background: var(--wrong-bg); color: #8b1a10; }
+
+/* CHECKLIST */
+.checklist-section {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  overflow: hidden; margin-bottom: 20px;
+}
+.checklist-header {
+  background: var(--navy); color: #fff;
+  padding: 12px 20px;
+  font-size: 13px; font-weight: 700;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.checklist-header .progress-text {
+  font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+  font-size: 12px; color: rgba(255,255,255,0.7);
+}
+.checklist-group-title {
+  padding: 10px 20px 6px;
+  font-size: 12px; font-weight: 700;
+  color: var(--navy); letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--border);
+  background: rgba(0,51,102,0.03);
+}
+.checklist-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid #eef0f5;
+  cursor: pointer; transition: background 0.1s;
+}
+.checklist-item:hover { background: #f8fafe; }
+.checklist-item:last-child { border-bottom: none; }
+.check-box {
+  width: 18px; height: 18px; min-width: 18px;
+  border: 2px solid var(--border);
+  border-radius: 3px; margin-top: 2px;
+  transition: all 0.15s;
+}
+.checklist-item.done .check-box {
+  background: var(--navy); border-color: var(--navy);
+}
+.check-label { font-size: 14px; color: var(--text-primary); line-height: 1.6; }
+.checklist-item.done .check-label { color: var(--text-muted); text-decoration: line-through; }
+.progress-bar-wrap {
+  height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; width: 120px;
+}
+.progress-bar-fill { height: 100%; background: #fff; border-radius: 2px; transition: width 0.3s; }
+
+/* TABLE */
+.data-table {
+  width: 100%; border-collapse: collapse;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  overflow: hidden; margin-bottom: 20px;
+  font-size: 13px;
+}
+.data-table thead tr { background: var(--navy); color: #fff; }
+.data-table th { padding: 11px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; }
+.data-table td { padding: 11px 16px; border-bottom: 1px solid var(--border); color: var(--text-secondary); line-height: 1.6; vertical-align: top; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:nth-child(even) td { background: rgba(0,51,102,0.02); }
+.data-table td:first-child { font-weight: 600; color: var(--text-primary); }
+
+/* LEVER BOX */
+.lever-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+.lever-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  padding: 20px;
+  border-top: 4px solid var(--navy);
+}
+.lever-num {
+  font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+  font-size: 11px; font-weight: 700;
+  color: var(--navy); margin-bottom: 6px;
+}
+.lever-name { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; }
+.lever-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+.lever-card ul { padding-left: 16px; margin-top: 6px; }
+.lever-card li { font-size: 13px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 3px; }
+
+/* ESCALATION TYPE */
+.escal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.escal-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  overflow: hidden;
+}
+.escal-header {
+  padding: 10px 18px;
+  background: var(--navy-muted);
+  border-bottom: 1px solid var(--border);
+}
+.escal-type {
+  font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 2px;
+}
+.escal-desc { font-size: 12px; color: var(--text-muted); }
+.escal-body { padding: 16px 18px; }
+.escal-body p { font-size: 14px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 6px; }
+.escal-body p:last-child { margin-bottom: 0; }
+.escal-body strong { color: var(--text-primary); }
+
+/* DIVIDER */
+.divider { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+h3 { font-size: 17px; font-weight: 700; color: var(--navy); margin-bottom: 14px; margin-top: 28px; }
+h3:first-child { margin-top: 0; }
+p.body-text { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 14px; }
+ul.body-list { padding-left: 20px; margin-bottom: 14px; }
+ul.body-list li { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 4px; }
+
+@media (max-width: 900px) {
+  :root { --pad-x: 24px; }
+  .grid-2, .grid-3, .signal-grid, .compare-wrap, .lever-grid, .escal-grid, .pattern-grid-header, .pattern-grid-row { grid-template-columns: 1fr; }
+  .hero-title { font-size: 30px; }
+  .step-flow { flex-direction: column; }
+  .step-item::after { display: none; }
+  .step-item { border-radius: var(--card-radius) !important; border-left: 1px solid var(--border) !important; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-brand">
+    <div class="logo-mark">
+      <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="6" height="6" fill="#003366"/>
+        <rect x="9" y="1" width="6" height="6" fill="#003366"/>
+        <rect x="1" y="9" width="6" height="6" fill="#003366"/>
+        <rect x="9" y="9" width="6" height="6" fill="#ccd8e8"/>
+      </svg>
+    </div>
+    <span class="logo-text">ASPN</span>
+    <span class="logo-sep">|</span>
+    <span class="logo-sub">BAC사업부 교육 포털</span>
+  </div>
+  <div class="header-meta">프로젝트 실전 가이드 · Module 5</div>
+</header>
+
+<div class="hero">
+  <div class="hero-series">프로젝트 실전 가이드 #5</div>
+  <h1 class="hero-title">
+    프로젝트 위기관리<br>
+    <span>불이 났을 때 어떻게 하는가</span>
+  </h1>
+  <p class="hero-desc">불이 났을 때 어떻게 하는가. 위기 징후 조기 감지부터 Change Request 협상, 고객 에스컬레이션 대응, Go-Live 연기 결정까지 — 실전 판단 기준을 다룹니다.</p>
+  <div class="hero-meta">
+    <span class="hero-tag">GR · SAC-P 컨설턴트</span>
+    <span class="hero-tag">위기 대응 실전</span>
+    <span class="hero-tag">Section 4 + 체크리스트 + 퀴즈</span>
+  </div>
+</div>
+
+<nav>
+  <button class="nav-tab active" onclick="showTab('s1', this)">① 위기의 징후</button>
+  <button class="nav-tab" onclick="showTab('s2', this)">② CR 협상</button>
+  <button class="nav-tab" onclick="showTab('s3', this)">③ 에스컬레이션 대응</button>
+  <button class="nav-tab" onclick="showTab('s4', this)">④ Go-Live 연기 결정</button>
+  <button class="nav-tab" onclick="showTab('s5', this)">⑤ 체크리스트</button>
+  <button class="nav-tab" onclick="showTab('s6', this)">⑥ 확인 문제</button>
+</nav>
+
+<!-- ============================================================ SECTION 1 -->
+<div id="tab-s1" class="section active">
+  <div class="section-header">
+    <div class="section-label">Section 01</div>
+    <h2 class="section-title">위기의 징후 — 이미 늦었는가?</h2>
+    <p class="section-sub">프로젝트 위기는 갑자기 오지 않는다. 대부분은 2~4주 전부터 신호가 있다. 문제는 컨설턴트가 그것을 "이슈"로 처리하며 넘기는 습관에 있다.</p>
+  </div>
+
+  <div class="callout navy">
+    <div class="callout-title">이슈(Issue)와 위기(Crisis)의 차이</div>
+    <p><strong>이슈</strong>는 현재 진행 중인 계획 안에서 해결 가능한 문제다. <strong>위기</strong>는 현재 계획과 자원으로는 해결이 불가능하여 프로젝트 목표 자체가 위협받는 상태다. 컨설턴트가 이슈를 위기로 잘못 분류하면 과잉 반응이, 반대로 위기를 이슈로 처리하면 골든타임을 잃는다.</p>
+  </div>
+
+  <h3>1-1. 컨설턴트가 놓치는 조기 경보 신호</h3>
+  <p class="body-text">아래 신호들은 하나만 나타나도 주의, 두 개 이상이면 즉각 점검이 필요하다.</p>
+
+  <div class="signal-grid">
+    <div class="signal-card red">
+      <div class="signal-card-label">🔴 RED — 즉시 대응</div>
+      <div class="signal-card-title">핵심 의사결정이 2주 이상 지연</div>
+      <p>고객 Key User가 Fit-Gap 결과 확정을 미루거나, Gap 처리 방식 합의가 안 되는 상태. 이 지연은 하류 전체 일정을 연쇄 압박한다.</p>
+    </div>
+    <div class="signal-card red">
+      <div class="signal-card-label">🔴 RED — 즉시 대응</div>
+      <div class="signal-card-title">테스트 케이스 미작성 & UAT 일정 고정</div>
+      <p>UAT 시작일은 계약에 박혀 있는데 시나리오가 50% 미완성인 상태. 이 조합이 나타나면 UAT 품질 붕괴가 예정된 것이다.</p>
+    </div>
+    <div class="signal-card amber">
+      <div class="signal-card-label">🟡 AMBER — 적극 모니터링</div>
+      <div class="signal-card-title">고객 담당자 회의 참여율 하락</div>
+      <p>Key User가 미팅에 빠지거나 권한 없는 대리인을 보낸다. 내부적으로 프로젝트 우선순위가 낮아진 신호일 수 있다.</p>
+    </div>
+    <div class="signal-card amber">
+      <div class="signal-card-label">🟡 AMBER — 적극 모니터링</div>
+      <div class="signal-card-title">이슈 로그 처리율 60% 미만</div>
+      <p>등록된 이슈 중 40% 이상이 2주 넘도록 상태 변화 없음. 이슈가 쌓이는 속도 &gt; 해결 속도인 상태다.</p>
+    </div>
+    <div class="signal-card amber">
+      <div class="signal-card-label">🟡 AMBER — 적극 모니터링</div>
+      <div class="signal-card-title">잦은 "잠깐만" 요청</div>
+      <p>합의된 TO-BE에 대해 고객이 "다시 한번 검토하겠다"를 반복. 요건 재정의나 범위 확대의 전조다.</p>
+    </div>
+    <div class="signal-card green">
+      <div class="signal-card-label">🟢 GREEN — 기록만 유지</div>
+      <div class="signal-card-title">Sprint 속도(Velocity) 10% 저하</div>
+      <p>Sprint 완료 건수가 2회 연속 계획 대비 10% 이상 미달. 단독으로는 이슈지만 다른 신호와 겹치면 위기 전환점이다.</p>
+    </div>
+  </div>
+
+  <h3>1-2. GR·SAC-P별 특유의 위기 패턴</h3>
+
+  <div class="pattern-grid">
+    <div class="pattern-grid-header">
+      <div>위기 유형</div>
+      <div>GR (Group Reporting)</div>
+      <div>SAC-P (Planning)</div>
+    </div>
+    <div class="pattern-grid-row">
+      <div>데이터 품질 위기</div>
+      <div>IC 내부거래 Trading Partner 미등록 법인이 마감 직전 발견. ICMR 자동 제거 불가로 수작업 폭증.</div>
+      <div>Write-Back 후 ACDOCP 데이터가 FI Actual과 매핑 불일치. 계획/실적 비교 수치가 통째로 왜곡.</div>
+    </div>
+    <div class="pattern-grid-row">
+      <div>요건 폭발 위기</div>
+      <div>연결조정 분개 케이스가 계약 당시 15개였으나 UAT 진입 시 47개로 증가. 자동화 범위 외 수동 처리 요구.</div>
+      <div>배분 로직(드라이버)이 사업부별로 달라서 Data Action을 사업부 수 × 지표 수만큼 각개 제작 요구.</div>
+    </div>
+    <div class="pattern-grid-row">
+      <div>통합 연계 위기</div>
+      <div>S/4HANA ACDOCA → GR ACDOCU 데이터 흐름에서 특정 회사코드 누락. 연결 범위 불완전.</div>
+      <div>SAC Live Connection OAuth 인증 만료 반복. QAS 환경 데이터 최신화 지연.</div>
+    </div>
+    <div class="pattern-grid-row">
+      <div>일정 압착 위기</div>
+      <div>연결 마감 사이클(월말)이 UAT와 겹쳐 Key User가 테스트 참여 불가. 마감 업무 vs. UAT 이중 부담.</div>
+      <div>사업계획 수립 일정(예: 10월 예산 편성)이 시스템 구축 일정과 충돌. 고객이 구 시스템으로 병행 운영 요구.</div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-title">⚠ GR 프로젝트의 구조적 취약점</div>
+    <ul>
+      <li>연결 결산 마감 주기(월/분기/연간)가 UAT·이관 일정과 충돌하는 경우 고객 리소스 가용성이 급격히 줄어든다.</li>
+      <li>초기 Fit-Gap에서 정의한 연결 범위(연결 법인 수)와 실제 마감 시 처리 법인 수가 다를 수 있다 — 중간에 지분 변동, 신규 자회사 설립이 발생한다.</li>
+      <li>이 두 위험은 프로젝트 초기에 고객과 명시적으로 합의해두어야 한다.</li>
+    </ul>
+  </div>
+
+  <h3>1-3. 이슈 → 위기 전환 임계점 판단 기준</h3>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">이슈(Issue)로 처리 가능한 조건</div>
+      <ul class="body-list">
+        <li>현재 계획과 자원으로 2주 내 해결 가능</li>
+        <li>다른 작업 스트림에 영향 없음</li>
+        <li>책임 소재와 해결 방법이 명확</li>
+        <li>고객 최종 의사결정 불필요</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">위기(Crisis)로 전환하는 조건</div>
+      <ul class="body-list">
+        <li>현재 자원과 일정으로 해결 불가</li>
+        <li>2개 이상의 작업 스트림 지연 연쇄 발생</li>
+        <li>고객 측 의사결정(예산, 범위 변경) 필요</li>
+        <li>Go-Live 일정 변경 가능성이 20% 이상</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>드릴 — 위기 신호 판독</h3>
+  <div class="drill-card">
+    <div class="drill-q" onclick="toggleDrill(this)">
+      <span>UAT 3일 전, GR IC 제거 로직에서 특정 거래 유형이 제거되지 않는 버그가 발견됐다. 이슈인가, 위기인가?</span>
+      <span class="arrow">▶</span>
+    </div>
+    <div class="drill-a">
+      <strong>상황에 따라 다르다 — 하지만 기본값은 "위기 처리"로 접근해야 한다.</strong><br><br>
+      ① 해당 거래 유형이 해당 분기 마감에 중요한 금액인가? → Yes이면 Go-Live 영향 직결<br>
+      ② 3일 안에 수정·재테스트·재승인까지 완료 가능한가? → 현실적으로 빠듯하다면 일정 위기<br>
+      ③ 해당 거래 유형이 Go-Live 범위에서 제외 가능한가? → 범위 조정으로 해결 가능하면 이슈<br><br>
+      <strong>실전 원칙:</strong> UAT 단계에서 Core 기능 버그는 이슈 로그가 아닌 위기 관리 트랙으로 즉시 상향 보고한다. 3일 후 Go-Live에서 발견되면 수습 비용이 10배다.
+    </div>
+  </div>
+
+  <div class="drill-card">
+    <div class="drill-q" onclick="toggleDrill(this)">
+      <span>SAC-P 프로젝트에서 고객 Key User가 2주 연속 Sprint Review에 불참하고 있다. 어떻게 행동해야 하는가?</span>
+      <span class="arrow">▶</span>
+    </div>
+    <div class="drill-a">
+      <strong>즉각적 사실 확인 → 리스크 기록 → PM 보고 → 고객 스폰서 확인이 순서다.</strong><br><br>
+      "바빠서"라고 넘기면 안 된다. 이 패턴의 70%는 내부 우선순위 변동 또는 프로젝트에 대한 불만/불신 신호다.<br><br>
+      ① PM에게 즉시 공유 — "Key User 참여 패턴 이상 관찰"을 이슈 로그에 기록<br>
+      ② 1:1로 Key User에게 직접 연락 — 참여 어려움의 이유 파악<br>
+      ③ 필요시 PM → 고객 프로젝트 스폰서에게 참여 보장 요청<br>
+      ④ Sprint Review 결과물에 대한 서면 승인을 이메일로 확보 (참여 대신 최소 안전장치)
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ SECTION 2 -->
+<div id="tab-s2" class="section">
+  <div class="section-header">
+    <div class="section-label">Section 02</div>
+    <h2 class="section-title">범위 변경(Change Request) 협상</h2>
+    <p class="section-sub">CR은 프로젝트의 적이 아니다. 다루지 못할 때 적이 된다. CR 협상의 구조를 이해하면 고객 관계를 지키면서 범위를 방어할 수 있다.</p>
+  </div>
+
+  <div class="callout navy">
+    <div class="callout-title">CR이 발생하는 구조적 이유</div>
+    <p>대부분의 CR은 악의 없이 발생한다. Fit-Gap 당시 고객이 몰랐던 업무가 구현 과정에서 수면 위로 올라오거나, 조직 내 이해관계자들이 뒤늦게 요건을 추가한다. 그러나 컨설턴트가 "다 해드리겠습니다"를 반복하면 계약 범위가 암묵적으로 무한 확장된다.</p>
+  </div>
+
+  <h3>2-1. CR 판단 기준 — 무엇이 CR인가</h3>
+
+  <table class="data-table">
+    <thead><tr><th>구분</th><th>설명</th><th>처리 방향</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>계약 범위 내<br><span class="risk-badge risk-low">NOT CR</span></td>
+        <td>Fit-Gap 문서에 명시된 Gap 처리 항목, 계약서에 기술된 기능 구현</td>
+        <td>정상 진행. 별도 CR 불필요</td>
+      </tr>
+      <tr>
+        <td>해석 차이<br><span class="risk-badge risk-mid">판단 필요</span></td>
+        <td>계약서 문구가 모호하여 고객과 컨설턴트가 다르게 이해한 경우</td>
+        <td>양측 원문 확인 후 협의. PM 및 법무 검토 필요할 수 있음</td>
+      </tr>
+      <tr>
+        <td>명백한 추가 요건<br><span class="risk-badge risk-high">CR</span></td>
+        <td>최초 Fit-Gap에 없던 신규 리포트, 화면, 인터페이스, 연결 법인 추가</td>
+        <td>CR 문서 작성 → 견적 → 합의 → 계약 변경</td>
+      </tr>
+      <tr>
+        <td>규제·법령 변경<br><span class="risk-badge risk-high">CR</span></td>
+        <td>프로젝트 진행 중 새로운 회계기준(예: IFRS 18), 세법 변경으로 인한 추가 요건</td>
+        <td>CR 처리. 단, 불가피성을 문서화하여 협상 시 활용</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>2-2. CR 협상의 3가지 레버</h3>
+
+  <div class="lever-grid">
+    <div class="lever-card">
+      <div class="lever-num">LEVER 01</div>
+      <div class="lever-name">범위 (Scope)</div>
+      <p>추가 요건을 수용하되 기존 범위 중 일부를 Phase 2로 이연한다. 총 작업량을 유지하는 방식.</p>
+      <ul>
+        <li>조건: Phase 2 대상 기능이 Go-Live 필수가 아닐 것</li>
+        <li>리스크: 고객이 Phase 2를 계약화하지 않으면 흐지부지될 수 있음</li>
+        <li>협상 문구: "이번 Go-Live에 꼭 필요한 기능과 다음 단계에서 구현 가능한 기능을 함께 정리해봅시다"</li>
+      </ul>
+    </div>
+    <div class="lever-card">
+      <div class="lever-num">LEVER 02</div>
+      <div class="lever-name">일정 (Schedule)</div>
+      <p>추가 요건을 수용하되 Go-Live 일정을 연장한다. 범위를 유지하고 시간을 조정하는 방식.</p>
+      <ul>
+        <li>조건: 고객에게 Go-Live 연장 의사결정권이 있을 것</li>
+        <li>리스크: 고객이 일정 고수 입장이면 협상 불가</li>
+        <li>협상 문구: "현재 팀 역량으로 품질을 보장하며 추가 요건을 구현하려면 X주가 필요합니다"</li>
+      </ul>
+    </div>
+    <div class="lever-card">
+      <div class="lever-num">LEVER 03</div>
+      <div class="lever-name">자원 (Resource)</div>
+      <p>추가 요건을 위한 추가 예산을 요청한다. 범위와 일정은 유지하고 비용을 조정하는 방식.</p>
+      <ul>
+        <li>조건: 고객에게 예산 추가 의사결정권이 있을 것</li>
+        <li>리스크: 예산 협의 시간 자체가 지연을 유발</li>
+        <li>협상 문구: "추가 요건 구현을 위한 공수를 산정하여 다음 주 중 제안서를 드리겠습니다"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-title">⚠ CR 협상의 3가지 금기</div>
+    <ul>
+      <li><strong>그냥 해드리는 것</strong> — "이건 어렵지 않아서 그냥 해드릴게요"는 이번만으로 끝나지 않는다. 다음 CR의 기준점이 된다.</li>
+      <li><strong>즉석 수락</strong> — CR 요청을 회의 자리에서 바로 수락하면 공수 산정 없이 약속이 성립된다. 항상 "검토 후 말씀드리겠습니다"로 시간을 확보한다.</li>
+      <li><strong>구두 합의만 남기는 것</strong> — CR은 반드시 이메일이나 문서로 합의 사항을 기록한다. "그때 그렇게 했잖아요"는 분쟁의 시작이다.</li>
+    </ul>
+  </div>
+
+  <h3>2-3. CR 처리 프로세스 — 5단계</h3>
+
+  <div class="step-flow">
+    <div class="step-item">
+      <div class="step-num">STEP 01</div>
+      <div class="step-label">요청 접수 & 기록</div>
+      <div class="step-desc">CR 로그에 요청자·일시·내용 기록. 즉석 수락 금지.</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">STEP 02</div>
+      <div class="step-label">범위 분류</div>
+      <div class="step-desc">계약 범위 내/해석 차이/명백한 추가 중 판단.</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">STEP 03</div>
+      <div class="step-label">공수 산정</div>
+      <div class="step-desc">추가 구현에 필요한 공수(M/D) 및 영향 일정 산출.</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">STEP 04</div>
+      <div class="step-label">레버 선택 & 협상</div>
+      <div class="step-desc">범위/일정/자원 중 협상 레버 결정. 고객과 합의.</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">STEP 05</div>
+      <div class="step-label">문서화 & 계약 반영</div>
+      <div class="step-desc">합의 내용 이메일 확인. 필요시 계약 변경.</div>
+    </div>
+  </div>
+
+  <h3>드릴 — CR 대응 시뮬레이션</h3>
+  <div class="drill-card">
+    <div class="drill-q" onclick="toggleDrill(this)">
+      <span>고객이 "GR에서 내부거래 제거 후 세그먼트별 잔액도 리포트로 뽑아달라"고 요청했다. Fit-Gap에는 이 리포트가 없다. 어떻게 대응하는가?</span>
+      <span class="arrow">▶</span>
+    </div>
+    <div class="drill-a">
+      <strong>즉석 대응 금지. 3단계로 분리하여 처리한다.</strong><br><br>
+      ① <strong>사실 확인:</strong> Fit-Gap 문서와 계약서에 해당 리포트가 명시되어 있는지 확인. 없으면 CR 대상.<br>
+      ② <strong>내용 파악:</strong> "어떤 세그먼트 기준인지, 어떤 주기(월/분기)인지, 현재 GR Standard Report로 커버되는지" 추가 질문. 표준 기능으로 해결 가능하면 공수 최소화.<br>
+      ③ <strong>처리 방향 제안:</strong> 표준 리포트 활용 가능 → 범위 내 처리 가능 여부 검토 후 답변. 커스텀 개발 필요 → CR 문서 작성 및 공수 산정 후 제안.<br><br>
+      <strong>절대 하면 안 되는 대응:</strong> "어렵지 않아요, 해드릴게요" — 이 리포트 하나가 향후 5개의 커스텀 리포트 요청의 시작점이 된다.
+    </div>
+  </div>
+
+  <div class="drill-card">
+    <div class="drill-q" onclick="toggleDrill(this)">
+      <span>SAC-P 프로젝트에서 고객이 "다른 회사는 이 기능 다 해준다던데요"라고 말하며 범위 외 기능을 요청한다. 어떻게 대응하는가?</span>
+      <span class="arrow">▶</span>
+    </div>
+    <div class="drill-a">
+      <strong>"다른 회사는 해줬다"는 논리는 협상 전술이다. 감정적으로 반응하지 않는다.</strong><br><br>
+      ① <strong>공감 표현 후 사실로 전환:</strong> "좋은 기능이라는 것은 공감합니다. 다만 현재 프로젝트에서 그 기능이 구현되려면 어떤 조건이 필요한지 함께 확인해보겠습니다."<br>
+      ② <strong>계약 기준으로 돌아오기:</strong> "이번 프로젝트의 기준은 저희가 합의한 Fit-Gap 문서입니다. 해당 기능이 포함되어 있는지 확인하고 말씀드리겠습니다."<br>
+      ③ <strong>CR 제안:</strong> 포함되어 있지 않으면 "추가 구현을 원하신다면 변경 요청서를 작성하여 공수와 일정 영향을 정식으로 검토해드리겠습니다."<br><br>
+      <strong>핵심:</strong> 감정적 방어가 아닌 프로세스로 대응한다. 계약과 Fit-Gap 문서가 최종 방어선이다.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ SECTION 3 -->
+<div id="tab-s3" class="section">
+  <div class="section-header">
+    <div class="section-label">Section 03</div>
+    <h2 class="section-title">고객 에스컬레이션 대응</h2>
+    <p class="section-sub">에스컬레이션은 컨설턴트를 시험하는 순간이 아니라, 신뢰를 구축하는 기회다. 단, 잘못 대응하면 고객 관계가 회복 불가능하게 손상된다.</p>
+  </div>
+
+  <div class="callout navy">
+    <div class="callout-title">에스컬레이션(Escalation)의 정의</div>
+    <p>현장 실무 레벨에서 해결하지 못한 이슈가 고객 혹은 컨설팅 펌의 상위 의사결정자에게 상향 보고되는 상황. 고객이 먼저 에스컬레이션하기 전에 컨설턴트가 선제적으로 에스컬레이션하는 것이 원칙이다.</p>
+  </div>
+
+  <h3>3-1. 에스컬레이션 유형 분류</h3>
+
+  <div class="escal-grid">
+    <div class="escal-card">
+      <div class="escal-header">
+        <div class="escal-type">유형 A — 기술/기능 이슈 에스컬레이션</div>
+        <div class="escal-desc">시스템이 안 된다는 유형</div>
+      </div>
+      <div class="escal-body">
+        <p><strong>특징:</strong> "GR에서 IC 제거가 특정 거래 유형에서 안 된다", "SAC Data Action이 특정 조건에서 오작동한다" 등 기술적 사실에 기반.</p>
+        <p><strong>대응:</strong> 사실을 빠르게 인정하고 근본 원인 분석(RCA) 및 해결 일정을 명확히 제시. "조사 중"만 남기면 신뢰가 무너진다.</p>
+        <p><strong>타임라인:</strong> 24시간 내 1차 분석 결과 공유가 원칙.</p>
+      </div>
+    </div>
+    <div class="escal-card">
+      <div class="escal-header">
+        <div class="escal-type">유형 B — 범위/기대치 차이 에스컬레이션</div>
+        <div class="escal-desc">약속한 것을 안 해준다는 유형</div>
+      </div>
+      <div class="escal-body">
+        <p><strong>특징:</strong> "처음에는 다 해준다고 했는데", "왜 이게 범위 밖이냐" 등 계약 해석 차이에서 발생. 감정적 불만이 포함되는 경우 많음.</p>
+        <p><strong>대응:</strong> 즉각적인 감정 해소 → 계약서와 Fit-Gap 원문 확인 → 중립적 사실 제시. 방어적 태도는 금물.</p>
+        <p><strong>타임라인:</strong> 48시간 내 계약 기준 검토 결과 공유.</p>
+      </div>
+    </div>
+    <div class="escal-card">
+      <div class="escal-header">
+        <div class="escal-type">유형 C — 일정/품질 에스컬레이션</div>
+        <div class="escal-desc">늦었다, 품질이 나쁘다는 유형</div>
+      </div>
+      <div class="escal-body">
+        <p><strong>특징:</strong> "Go-Live 일정이 지켜지지 않을 것 같다", "UAT에서 결함이 너무 많다" 등. 고객 경영진이 직접 개입하는 경우 많음.</p>
+        <p><strong>대응:</strong> 현황을 과장 없이 정직하게 보고 → 원인과 대응 계획을 동시에 제시. "잘 되고 있다"는 낙관 보고는 나중에 신뢰를 더 크게 손상시킨다.</p>
+        <p><strong>타임라인:</strong> 즉시 PM → 리더십 보고 후 고객에게 상황 공유.</p>
+      </div>
+    </div>
+    <div class="escal-card">
+      <div class="escal-header">
+        <div class="escal-type">유형 D — 팀/개인 불만 에스컬레이션</div>
+        <div class="escal-desc">컨설턴트 태도 문제 유형</div>
+      </div>
+      <div class="escal-body">
+        <p><strong>특징:</strong> 특정 컨설턴트의 커뮤니케이션 방식, 전문성, 태도에 대한 불만. 가장 민감하고 처리하기 어려운 유형.</p>
+        <p><strong>대응:</strong> PM이 즉각 개인 면담 실시. 사실 확인 후 필요 시 멤버 교체나 역할 조정. 고객에게 재발 방지 조치를 명시적으로 보고.</p>
+        <p><strong>타임라인:</strong> 48시간 내 PM의 공식 입장 전달.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>3-2. 에스컬레이션 대응 스크립트</h3>
+
+  <div class="script-box">
+    <div class="script-label">시나리오 A — 기술 이슈 에스컬레이션</div>
+    <div class="script-context">상황: 고객 CFO가 "GR 연결 마감이 5시간째 진행 중인데 왜 아무도 연락을 안 주나"며 PM에게 직접 연락했다.</div>
+    <div class="speech-bubble">
+      <div class="speech-who">고객 CFO</div>
+      "오늘 연결 마감이 5시간째 걸리고 있는데, 컨설턴트들은 뭐하고 있는 거예요? 이러다 재무제표 마감 못 하는 거 아닌가요?"
+    </div>
+    <div class="speech-bubble consultant">
+      <div class="speech-who">컨설턴트 PM</div>
+      "CFO님, 먼저 늦게 연락드린 점 사과드립니다. 현재 상황을 말씀드리겠습니다. IC 제거 처리 중 특정 회사코드 그룹에서 데이터 불일치가 발생하여 처리 시간이 지연되고 있습니다. 현재 GR 전문 컨설턴트가 직접 시스템을 확인하고 있으며, 30분 내에 1차 원인 분석 결과를 드리겠습니다. 오늘 마감 가능 여부는 그 시점에 정확히 말씀드릴 수 있습니다. 지금 바로 현황 공유 채널을 열겠습니다."
+    </div>
+    <div class="callout correct" style="margin-top:12px; margin-bottom:0;">
+      <div class="callout-title">✓ 이 스크립트의 핵심 원칙</div>
+      <p>① 감정 해소 (사과) → ② 현황 사실 공유 → ③ 다음 행동과 타임라인 명확히 → ④ 커뮤니케이션 채널 유지 약속. "열심히 하고 있습니다"는 아무 정보가 없다.</p>
+    </div>
+  </div>
+
+  <div class="script-box">
+    <div class="script-label">시나리오 B — 범위 차이 에스컬레이션</div>
+    <div class="script-context">상황: 고객 담당 임원이 "처음부터 이 기능을 다 구현해주겠다고 했는데 왜 CR이라고 하나"며 항의 메일을 보냈다.</div>
+    <div class="speech-bubble">
+      <div class="speech-who">고객 임원 (메일)</div>
+      "킥오프 당시 이 기능도 구현 범위라고 명확히 말씀하셨습니다. 이제 와서 CR이라고 하는 건 신뢰 문제입니다."
+    </div>
+    <div class="speech-bubble consultant">
+      <div class="speech-who">컨설턴트 PM (답장)</div>
+      "임원님, 우려를 제기해주셔서 감사합니다. 해당 기능에 대한 이견이 발생한 점 유감스럽게 생각합니다. 저희는 계약서와 킥오프 당시 합의된 Fit-Gap 문서를 기준으로 판단하고 있습니다. 명확한 사실 확인을 위해 관련 문서를 함께 검토하는 자리를 내일 중으로 잡고 싶습니다. 어떤 시간이 괜찮으신지 알려주시면 바로 일정을 조율하겠습니다."
+    </div>
+    <div class="callout correct" style="margin-top:12px; margin-bottom:0;">
+      <div class="callout-title">✓ 핵심</div>
+      <p>메일로 범위 논쟁을 해결하려 하면 안 된다. 미팅을 잡고 문서를 기준으로 사실을 확인하는 것이 유일한 방법이다.</p>
+    </div>
+  </div>
+
+  <h3>3-3. 에스컬레이션 이후 후속 관리</h3>
+
+  <div class="card">
+    <div class="card-title">에스컬레이션 이후 반드시 해야 할 3가지</div>
+    <ul class="body-list">
+      <li><strong>24시간 내 서면 요약:</strong> 에스컬레이션 미팅/통화 후 논의 내용, 합의 사항, 다음 행동(Action Item)을 이메일로 요약 전송. 기억이 아닌 기록이 증거다.</li>
+      <li><strong>내부 사후 분석(Post-Mortem):</strong> 왜 에스컬레이션이 발생했는가를 팀 내부에서 분석. 조기 감지 실패 여부, 커뮤니케이션 갭 식별.</li>
+      <li><strong>재발 방지 조치 공유:</strong> 고객에게 에스컬레이션 원인과 재발 방지 조치를 명시적으로 전달. 조치 없이 "앞으로 잘 하겠다"는 신뢰를 회복하지 못한다.</li>
+    </ul>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-title">⚠ 에스컬레이션 대응 실패 패턴</div>
+    <ul>
+      <li><strong>방어적 태도:</strong> "저희는 잘못한 게 없습니다" — 설령 사실이더라도, 이 말이 나오는 순간 고객과의 파트너십은 끝난다.</li>
+      <li><strong>낙관적 보고:</strong> "잘 해결될 겁니다" — 구체적 근거 없는 낙관은 신뢰를 갉아먹는다.</li>
+      <li><strong>연락 두절:</strong> 위기 상황일수록 커뮤니케이션 빈도를 높여야 한다. 해결책이 없어도 현황은 공유한다.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============================================================ SECTION 4 -->
+<div id="tab-s4" class="section">
+  <div class="section-header">
+    <div class="section-label">Section 04</div>
+    <h2 class="section-title">Go-Live 연기 결정 & 프로젝트 마무리</h2>
+    <p class="section-sub">Go-Live 연기는 실패가 아니다. 준비 안 된 상태로 오픈하는 것이 실패다. 연기 결정의 기준, 방법, 그리고 고객 관계를 지키는 마무리법을 다룬다.</p>
+  </div>
+
+  <div class="callout navy">
+    <div class="callout-title">Go-Live 연기를 두려워하는 이유와 현실</div>
+    <p>많은 컨설턴트가 Go-Live 연기를 "실패 선언"으로 인식한다. 하지만 결함이 있는 상태로 오픈하면 고객의 실제 업무(연결 결산, 예산 수립)에 직접 타격을 준다. 이 경우의 신뢰 손상이 연기보다 훨씬 크다. 연기는 "우리는 품질을 중시한다"는 메시지다.</p>
+  </div>
+
+  <h3>4-1. Go-Live 연기 결정 기준</h3>
+
+  <table class="data-table">
+    <thead><tr><th>판단 항목</th><th>Go-Live 가능</th><th>연기 검토 필요</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Critical 결함</td>
+        <td>0개</td>
+        <td>1개 이상</td>
+      </tr>
+      <tr>
+        <td>Major 결함</td>
+        <td>3개 이하, 모두 Workaround 확보</td>
+        <td>4개 이상 또는 Workaround 없는 항목 존재</td>
+      </tr>
+      <tr>
+        <td>UAT 승인율</td>
+        <td>핵심 시나리오 100% 고객 사인오프</td>
+        <td>핵심 시나리오 미서명 항목 존재</td>
+      </tr>
+      <tr>
+        <td>데이터 이관 검증</td>
+        <td>Cutover 리허설 1회 이상 완료, 오류율 1% 미만</td>
+        <td>리허설 미완료 또는 오류율 1% 초과</td>
+      </tr>
+      <tr>
+        <td>운영 준비</td>
+        <td>Key User 교육 완료, 운영 매뉴얼 전달</td>
+        <td>교육 미완료 또는 매뉴얼 미전달</td>
+      </tr>
+      <tr>
+        <td>GR 특화: 연결 사이클 검증</td>
+        <td>연결 마감 전체 사이클 1회 이상 시뮬레이션 완료</td>
+        <td>마감 사이클 시뮬레이션 미수행</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>4-2. 연기 결정 시 커뮤니케이션 원칙</h3>
+
+  <div class="compare-wrap">
+    <div class="compare-box bad">
+      <div class="compare-box-header">✗ 잘못된 대응</div>
+      <div class="compare-box-body">
+        <p>"결함이 몇 개 있긴 한데, 일단 오픈하고 운영 중에 고치겠습니다."</p>
+        <p>"Go-Live 일정은 계약상 고정이니 어떻게든 맞춰야 합니다."</p>
+        <p>"<strong>고객이 화낼 것 같아서</strong> 말을 못 꺼내겠습니다."</p>
+      </div>
+    </div>
+    <div class="compare-box good">
+      <div class="compare-box-header">✓ 올바른 대응</div>
+      <div class="compare-box-body">
+        <p>"현재 Critical 결함 1건이 해결되지 않은 상태입니다. X주 연기를 공식 제안드립니다."</p>
+        <p>"연기 시 추가 비용과 일정을 함께 제안서로 준비하겠습니다."</p>
+        <p>"<strong>고객의 업무 안정성</strong>을 위한 결정임을 명확히 전달합니다."</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>4-3. 프로젝트 비정상 종료 — 고객 관계를 지키는 방법</h3>
+
+  <div class="callout warn">
+    <div class="callout-title">⚠ 프로젝트가 중단되거나 조기 종료되는 경우</div>
+    <p>드문 경우지만, 고객 내부 사정(예산 삭감, 조직 변경, M&A)이나 기술적 이유로 프로젝트가 중단될 수 있다. 이 경우 컨설턴트의 마지막 행동이 향후 레퍼런스와 관계를 결정한다.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">비정상 종료 시 반드시 해야 할 것</div>
+      <ul class="body-list">
+        <li><strong>지식 이전 문서 전달:</strong> 완성된 부분의 설정 문서, 테스트 결과, 이슈 로그를 패키지로 전달.</li>
+        <li><strong>공식 종료 회의:</strong> 구두로만 끝내지 않는다. 무엇이 완료되었고 무엇이 남았는지 공식 정리.</li>
+        <li><strong>향후 재개를 위한 로드맵:</strong> 중단 이유가 고객 내부 사정이라면 재개 시 단계를 제안해두면 재계약 가능성이 높아진다.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">비정상 종료 시 하면 안 되는 것</div>
+      <ul class="body-list">
+        <li><strong>책임 전가:</strong> "고객이 협조를 안 해서"라는 말은 절대 하지 않는다. 내부 분석용이고 외부 발언이 되면 영구적 관계 단절.</li>
+        <li><strong>문서 미전달:</strong> 접근권 회수나 문서 미정리 상태로 떠나면 나중에 법적 문제가 될 수 있다.</li>
+        <li><strong>일방적 철수:</strong> 계약에 따른 종료 절차 없이 갑자기 팀을 회수하면 계약 위반이 될 수 있다.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>드릴 — Go-Live 연기 결정 시뮬레이션</h3>
+
+  <div class="drill-card">
+    <div class="drill-q" onclick="toggleDrill(this)">
+      <span>GR 프로젝트 Go-Live D-3. IC 제거 로직에서 Critical 결함 1건이 발견됐다. 해당 거래 유형은 해당 월에 실제 거래가 없다. 연기해야 하는가?</span>
+      <span class="arrow">▶</span>
+    </div>
+    <div class="drill-a">
+      <strong>원칙은 "연기"지만, 조건부 오픈을 검토할 수 있다 — 단, 엄격한 조건 하에.</strong><br><br>
+      조건부 오픈을 검토하는 조건:<br>
+      ① 해당 거래 유형의 발생 가능성이 운영 초기 3개월 내 거의 없음을 문서로 확인<br>
+      ② 해당 결함에 대한 Workaround가 수작업으로 확보됨<br>
+      ③ 결함 수정 완료 목표 일자를 명확히 설정하고 고객 서면 승인 확보<br>
+      ④ 고객 CFO/CIO 레벨이 이 리스크를 인지하고 서명 승인<br><br>
+      <strong>단, 이 모든 조건 중 하나라도 충족되지 않으면 연기가 정답이다.</strong> "해당 월에 거래 없다"는 구두 확인만으로 오픈하는 것은 컨설턴트가 리스크를 떠안는 행위다.
+    </div>
+  </div>
+
+  <div class="drill-card">
+    <div class="drill-q" onclick="toggleDrill(this)">
+      <span>고객 임원이 "무조건 이번 달 오픈해야 한다, 결함은 나중에 고쳐달라"고 강하게 요구한다. 어떻게 대응하는가?</span>
+      <span class="arrow">▶</span>
+    </div>
+    <div class="drill-a">
+      <strong>고객의 요청을 이해하되, 리스크는 고객이 서면으로 인수해야 한다.</strong><br><br>
+      ① <strong>리스크를 명확히 서면으로 전달:</strong> "현재 결함이 운영 중 발생할 경우 [연결 마감 오류/데이터 왜곡/수작업 폭증] 가능성이 있습니다. 이 사항을 문서로 드리겠습니다."<br>
+      ② <strong>리스크 인수 서명 요청:</strong> "오픈을 진행하려면 해당 리스크 인식과 책임 소재에 대해 임원님 서명이 필요합니다."<br>
+      ③ <strong>내부 보고 의무:</strong> 고객이 리스크를 인수하더라도 ASPN 내부 PM과 리더십에게 반드시 보고하고 의사결정 승인을 받는다.<br><br>
+      <strong>컨설턴트가 절대 하면 안 되는 것:</strong> 임원의 구두 지시만 믿고 오픈. 이후 문제가 생겼을 때 컨설턴트가 공동 책임을 지게 된다.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ SECTION 5 -->
+<div id="tab-s5" class="section">
+  <div class="section-header">
+    <div class="section-label">Section 05</div>
+    <h2 class="section-title">위기관리 실전 체크리스트</h2>
+    <p class="section-sub">프로젝트 위기 상황별 대응 항목을 점검하세요. 항목 클릭으로 완료 처리됩니다.</p>
+  </div>
+
+  <div class="checklist-section" id="cl-main">
+    <div class="checklist-header">
+      <span>위기 초기 대응 체크리스트</span>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="pb-a" style="width:0%"></div></div>
+        <span class="progress-text" id="pt-a">0 / 6</span>
+      </div>
+    </div>
+    <div class="checklist-group-title">Step 1 — 상황 파악</div>
+    <div class="checklist-item" onclick="toggleCheck(this,'a')">
+      <div class="check-box"></div>
+      <div class="check-label">이슈 vs. 위기 분류 기준(해결 가능 여부·영향 범위·의사결정 필요 여부)을 적용하여 현재 상황을 판단했다</div>
+    </div>
+    <div class="checklist-item" onclick="toggleCheck(this,'a')">
+      <div class="check-box"></div>
+      <div class="check-label">GR 특유(IC 제거, Trading Partner 누락) 또는 SAC-P 특유(Write-Back 오류, Data Action 오작동) 위기 패턴을 확인했다</div>
+    </div>
+    <div class="checklist-group-title">Step 2 — 내부 보고</div>
+    <div class="checklist-item" onclick="toggleCheck(this,'a')">
+      <div class="check-box"></div>
+      <div class="check-label">PM에게 즉시 보고하고, 이슈 로그에 위기 수준으로 상향 기록했다</div>
+    </div>
+    <div class="checklist-item" onclick="toggleCheck(this,'a')">
+      <div class="check-box"></div>
+      <div class="check-label">ASPN 리더십 보고 필요 여부를 PM과 협의했다</div>
+    </div>
+    <div class="checklist-group-title">Step 3 — 고객 커뮤니케이션</div>
+    <div class="checklist-item" onclick="toggleCheck(this,'a')">
+      <div class="check-box"></div>
+      <div class="check-label">고객에게 현황(사실) + 다음 행동 + 타임라인을 함께 전달했다 (낙관적 보고 금지)</div>
+    </div>
+    <div class="checklist-item" onclick="toggleCheck(this,'a')">
+      <div class="check-box"></div>
+      <div class="check-label">커뮤니케이션 이후 모든 논의를 이메일로 요약하여 기록으로 남겼다</div>
+    </div>
+  </div>
+
+  <div class="checklist-section">
+    <div class="checklist-header">
+      <span>CR 협상 체크리스트</span>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="pb-b" style="width:0%"></div></div>
+        <span class="progress-text" id="pt-b">0 / 5</span>
+      </div>
+    </div>
+    <div class="checklist-item" onclick="toggleCheck(this,'b')">
+      <div class="check-box"></div>
+      <div class="check-label">CR 요청을 즉석에서 수락하지 않고 "검토 후 말씀드리겠습니다"로 시간을 확보했다</div>
+    </div>
+    <div class="checklist-item" onclick="toggleCheck(this,'b')">
+      <div class="check-box"></div>
+      <div class="check-label">계약서 및 Fit-Gap 문서 기준으로 CR 해당 여부를 판단했다</div>
+    </div>
+    <div class="checklist-item" onclick="toggleCheck(this,'b')">
+      <div class="check-box"></div>
+      <div class="check-label">범위/일정/자원 3가지 협상 레버 중 적절한 것을 선택하여 제안했다</div>
+    </div>
+    <div class="checklist-item" onclick="toggleCheck(this,'b')">
+      <div class="check-box"></div>
+      <div class="check-label">CR 처리 결과를 이메일로 확인하고 CR 로그에 기록했다</div>
+    </div>
+    <div class="checklist-item" onclick="toggleCheck(this,'b')">
+      <div class="check-box"></div>
+      <div class="check-label">필요 시 계약 변경(Change Order) 절차를 밟았다</div>
+    </div>
+  </div>
+
+  <div class="checklist-section">
+    <div class="checklist-header">
+      <span>Go-Live 연기 결정 체크리스트</span>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="pb-c" style="width:0%"></div></div>
+        <span class="progress-text" id="pt-c">0 / 6</span>
+      </div>
+    </div>
+    <div class="checklist-item" onclick="toggleCheck(this,'c')">
+      <div class="check-box"></div>
+      <div class="check-label">Critical 결함 0건, Major 결함 Workaround 확보 여부를 검토했다</div>
+    </div>
+    <div class="checklist-item" onclick="toggleCheck(this,'c')">
+      <div class="check-box"></div>
+      <div class="check-label">핵심 UAT 시나리오 100% 고객 사인오프 여부를 확인했다</div>
+    </div>
+    <div class="checklist-item" onclick="toggleCheck(this,'c')">
+      <div class="check-box"></div>
+      <div class="check-label">Cutover 리허설 1회 이상 완료, 오류율 1% 미만을 확인했다</div>
+    </div>
+    <div class="checklist-item" onclick="toggleCheck(this,'c')">
+      <div class="check-box"></div>
+      <div class="check-label">연기 결정 시 연기 사유, 추가 기간, 조치 계획을 서면으로 고객에게 제시했다</div>
+    </div>
+    <div class="checklist-item" onclick="toggleCheck(this,'c')">
+      <div class="check-box"></div>
+      <div class="check-label">고객이 리스크를 감수하고 강행을 요구하는 경우 리스크 인수 서명을 받았다</div>
+    </div>
+    <div class="checklist-item" onclick="toggleCheck(this,'c')">
+      <div class="check-box"></div>
+      <div class="check-label">Go-Live 결정(진행 또는 연기) 모두 ASPN 리더십 승인을 받았다</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ SECTION 6 -->
+<div id="tab-s6" class="section">
+  <div class="section-header">
+    <div class="section-label">Section 06</div>
+    <h2 class="section-title">확인 문제</h2>
+    <p class="section-sub">각 문항을 읽고 가장 적절한 답을 선택하세요. 즉각적인 피드백을 제공합니다.</p>
+  </div>
+
+  <div class="quiz-block">
+    <div class="quiz-num">Q 01</div>
+    <div class="quiz-q">다음 중 "이슈(Issue)"가 아닌 "위기(Crisis)"로 판단해야 하는 상황은?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ans(this,'wrong','q1')">SAC Data Action에서 특정 계정의 합산 오류가 발견되었다. 수정 예상 시간은 3시간이다.</div>
+      <div class="quiz-option" onclick="ans(this,'wrong','q1')">UAT 중 Minor 결함 2건이 등록되었고, 모두 Workaround가 있다.</div>
+      <div class="quiz-option" onclick="ans(this,'correct','q1')">연결 마감을 48시간 앞두고 IC 제거 로직에 결함이 발견됐다. 수정에 최소 1주일이 필요하며, 현재 팀 자원으로는 해결이 불가능하다.</div>
+      <div class="quiz-option" onclick="ans(this,'wrong','q1')">Sprint 완료율이 계획 대비 8% 미달이다.</div>
+    </div>
+    <div class="quiz-feedback" id="q1fb"></div>
+  </div>
+
+  <div class="quiz-block">
+    <div class="quiz-num">Q 02</div>
+    <div class="quiz-q">고객이 Fit-Gap에 없는 신규 리포트를 요청했다. 다음 중 CR 협상의 올바른 첫 번째 단계는?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ans(this,'wrong','q2')">어렵지 않으니 바로 개발을 시작한다.</div>
+      <div class="quiz-option" onclick="ans(this,'correct','q2')">계약서와 Fit-Gap 문서를 확인하여 CR 해당 여부를 판단하고, 즉석 수락을 하지 않는다.</div>
+      <div class="quiz-option" onclick="ans(this,'wrong','q2')">고객에게 불가능하다고 즉시 통보한다.</div>
+      <div class="quiz-option" onclick="ans(this,'wrong','q2')">PM에게만 보고하고 고객에게는 알리지 않는다.</div>
+    </div>
+    <div class="quiz-feedback" id="q2fb"></div>
+  </div>
+
+  <div class="quiz-block">
+    <div class="quiz-num">Q 03</div>
+    <div class="quiz-q">고객 임원으로부터 "왜 일정이 늦어지냐"는 에스컬레이션 메일을 받았다. 다음 중 가장 적절한 대응은?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ans(this,'wrong','q3')">고객의 협조 부족이 원인임을 메일로 정중히 설명한다.</div>
+      <div class="quiz-option" onclick="ans(this,'wrong','q3')">현재 열심히 진행 중이니 걱정 마시라는 메일을 보낸다.</div>
+      <div class="quiz-option" onclick="ans(this,'wrong','q3')">메일 답장 없이 PM에게만 보고한다.</div>
+      <div class="quiz-option" onclick="ans(this,'correct','q3')">현황 사실을 간결하게 공유하고, 다음 행동과 타임라인을 포함하여 미팅을 제안하는 메일을 보낸다.</div>
+    </div>
+    <div class="quiz-feedback" id="q3fb"></div>
+  </div>
+
+  <div class="quiz-block">
+    <div class="quiz-num">Q 04</div>
+    <div class="quiz-q">GR 프로젝트 Go-Live D-1. Critical 결함 1건이 발견됐다. 고객 임원이 "무조건 내일 오픈하라"고 지시한다. 올바른 대응은?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ans(this,'wrong','q4')">임원 지시이므로 그대로 오픈한다.</div>
+      <div class="quiz-option" onclick="ans(this,'wrong','q4')">오픈을 거부하고 팀을 철수한다.</div>
+      <div class="quiz-option" onclick="ans(this,'correct','q4')">결함과 리스크를 서면으로 정리하여 전달하고, 임원 서명을 포함한 리스크 인수 확인서를 받은 뒤 ASPN 내부 승인을 거쳐 결정한다.</div>
+      <div class="quiz-option" onclick="ans(this,'wrong','q4')">결함을 고객에게 알리지 않고 오픈 후 빠르게 수정한다.</div>
+    </div>
+    <div class="quiz-feedback" id="q4fb"></div>
+  </div>
+
+  <div class="quiz-block">
+    <div class="quiz-num">Q 05</div>
+    <div class="quiz-q">다음 중 GR이 아닌 SAC-P 특유의 위기 패턴은?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ans(this,'correct','q5')">ACDOCP Write-Back 후 Plan Version 불일치로 계획/실적 비교 수치가 왜곡된다.</div>
+      <div class="quiz-option" onclick="ans(this,'wrong','q5')">IC 내부거래 Trading Partner 미등록 법인이 마감 직전 발견된다.</div>
+      <div class="quiz-option" onclick="ans(this,'wrong','q5')">연결 마감 일정이 UAT 일정과 겹쳐 Key User가 테스트에 참여하지 못한다.</div>
+      <div class="quiz-option" onclick="ans(this,'wrong','q5')">S/4HANA ACDOCA → GR ACDOCU 데이터 흐름에서 특정 회사코드가 누락된다.</div>
+    </div>
+    <div class="quiz-feedback" id="q5fb"></div>
+  </div>
+</div>
+
+<script>
+function showTab(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  el.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleDrill(el) {
+  el.classList.toggle('open');
+  const ans = el.nextElementSibling;
+  ans.classList.toggle('show');
+}
+
+const checkCounts = { a: 6, b: 5, c: 6 };
+function toggleCheck(el, group) {
+  el.classList.toggle('done');
+  const items = el.closest('.checklist-section').querySelectorAll('.checklist-item');
+  const done = el.closest('.checklist-section').querySelectorAll('.checklist-item.done').length;
+  const total = checkCounts[group];
+  document.getElementById('pb-' + group).style.width = (done / total * 100) + '%';
+  document.getElementById('pt-' + group).textContent = done + ' / ' + total;
+}
+
+const FB = {
+  q1: {
+    correct: '정답입니다! 현재 자원으로 해결 불가능하고 마감에 직접 영향을 미치는 상황은 위기입니다. 즉각적인 PM 보고와 고객 에스컬레이션이 필요합니다.',
+    wrong: '아닙니다. 이 상황은 현재 계획 내에서 해결 가능한 이슈입니다. 위기는 현재 계획과 자원으로 해결 불가능하며 프로젝트 목표 자체가 위협받는 상태입니다.'
+  },
+  q2: {
+    correct: '정답입니다! CR 대응의 첫 단계는 계약서와 Fit-Gap 원문 확인입니다. 즉석 수락은 범위 확장의 시작점이 됩니다.',
+    wrong: '아닙니다. CR 요청을 즉석에서 수락하거나 거부하는 것은 올바른 대응이 아닙니다. 계약 기준을 확인하고 검토 후 대응하는 것이 원칙입니다.'
+  },
+  q3: {
+    correct: '정답입니다! 에스컬레이션 대응의 핵심은 사실(현황) + 다음 행동 + 타임라인을 명확히 전달하고, 커뮤니케이션 채널을 유지하는 것입니다.',
+    wrong: '아닙니다. 에스컬레이션 시 책임 전가, 낙관적 보고, 연락 두절은 신뢰를 더 크게 손상시킵니다. 사실과 대응 계획을 함께 전달해야 합니다.'
+  },
+  q4: {
+    correct: '정답입니다! 고객의 강행 요구 시에도 리스크를 서면으로 전달하고 리스크 인수 서명을 받아야 합니다. 구두 지시만으로 오픈하면 이후 문제 발생 시 컨설턴트가 공동 책임을 지게 됩니다.',
+    wrong: '아닙니다. 임원 지시라도 Critical 결함 상태의 무조건 오픈은 컨설턴트가 리스크를 함께 지는 행위입니다. 리스크를 문서로 남기고 내부 승인을 거쳐야 합니다.'
+  },
+  q5: {
+    correct: '정답입니다! ACDOCP Write-Back 후 Plan Version 불일치는 SAC-P 특유의 위기 패턴입니다. Trading Partner 누락, 마감-UAT 일정 충돌, ACDOCA→ACDOCU 누락은 GR 특유의 위기 패턴입니다.',
+    wrong: '아닙니다. 이 항목은 GR(Group Reporting) 특유의 위기 패턴입니다. ACDOCP Write-Back Plan Version 불일치는 SAC-P 특유의 패턴입니다.'
+  }
+};
+
+function ans(opt, result, qid) {
+  opt.closest('.quiz-options').querySelectorAll('.quiz-option').forEach(o => {
+    o.classList.add('disabled');
+    o.onclick = null;
+  });
+  opt.classList.add(result);
+  const fb = document.getElementById(qid + 'fb');
+  fb.className = 'quiz-feedback ' + result;
+  fb.textContent = FB[qid][result];
+}
+</script>
+</body>
+</html>

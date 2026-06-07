@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>제안 단계 생존법 | ASPN 프로젝트 실전 가이드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #003366;
+  --navy-light: #0a4a8a;
+  --navy-dim: #002244;
+  --navy-muted: rgba(0,51,102,0.08);
+  --bg: #f0f3f8;
+  --white: #ffffff;
+  --text-primary: #1a1a2e;
+  --text-secondary: #4a4a6a;
+  --text-muted: #7a7a9a;
+  --border: #d8dee9;
+  --warn-bg: #fff8e6;
+  --warn-border: #f0a500;
+  --correct-bg: #e8f5e9;
+  --correct-border: #2e7d32;
+  --wrong-bg: #fce8e6;
+  --wrong-border: #c0392b;
+  --pad-x: 96px;
+  --card-radius: 8px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+/* ── HEADER ── */
+header {
+  background: var(--navy);
+  padding: 0 var(--pad-x);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+.header-brand { display: flex; align-items: center; gap: 12px; }
+.logo-mark {
+  width: 28px; height: 28px;
+  background: #fff; border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+}
+.logo-text { font-size: 14px; font-weight: 600; color: #fff; }
+.logo-sub { font-size: 11px; color: rgba(255,255,255,0.6); }
+.header-meta { font-size: 11px; color: rgba(255,255,255,0.55); letter-spacing: 0.06em; }
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy);
+  padding: 56px var(--pad-x) 48px;
+  border-bottom: 3px solid rgba(255,255,255,0.12);
+}
+.hero-series {
+  font-size: 11px; font-weight: 600;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 0.14em; text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.hero-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 40px; color: #fff;
+  line-height: 1.2; margin-bottom: 12px;
+}
+.hero-title span { color: rgba(255,255,255,0.55); font-size: 28px; }
+.hero-sub {
+  font-size: 15px; color: rgba(255,255,255,0.7);
+  max-width: 600px; line-height: 1.7;
+}
+.hero-tags { margin-top: 20px; display: flex; gap: 8px; flex-wrap: wrap; }
+.tag {
+  font-size: 11px; font-weight: 600;
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.8);
+  padding: 4px 12px; border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.18);
+  letter-spacing: 0.03em;
+}
+
+/* ── NAV TABS ── */
+.nav-bar {
+  background: var(--white);
+  border-bottom: 1.5px solid var(--border);
+  padding: 0 var(--pad-x);
+  position: sticky;
+  top: 60px;
+  z-index: 100;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.nav-bar::-webkit-scrollbar { display: none; }
+.nav-tab {
+  padding: 14px 20px;
+  font-size: 13px; font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2.5px solid transparent;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+  text-decoration: none;
+}
+.nav-tab:hover { color: var(--navy); }
+.nav-tab.active { color: var(--navy); border-bottom-color: var(--navy); }
+
+/* ── MAIN ── */
+main { padding: 48px var(--pad-x) 96px; max-width: 1100px; margin: 0 auto; }
+
+/* ── SECTION HEADING ── */
+.section-heading {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--navy);
+}
+.section-num {
+  font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+  font-size: 11px; font-weight: 600;
+  color: var(--white);
+  background: var(--navy);
+  padding: 3px 10px; border-radius: 2px;
+  letter-spacing: 0.08em;
+}
+.section-title-text {
+  font-family: 'DM Serif Display', serif;
+  font-size: 24px; color: var(--navy);
+}
+.section-desc {
+  font-size: 14px; color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* ── CARDS ── */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  padding: 28px 32px;
+  margin-bottom: 16px;
+}
+.card-title {
+  font-size: 16px; font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 10px;
+}
+.card-title::before {
+  content: '';
+  display: inline-block;
+  width: 4px; height: 18px;
+  background: var(--navy);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.card p { font-size: 15px; color: var(--text-secondary); margin-bottom: 10px; }
+.card p:last-child { margin-bottom: 0; }
+
+/* ── CALLOUT ── */
+.callout {
+  border-left: 4px solid var(--navy);
+  background: var(--navy-muted);
+  padding: 16px 20px;
+  border-radius: 0 6px 6px 0;
+  margin: 16px 0;
+}
+.callout.warn {
+  border-left-color: var(--warn-border);
+  background: var(--warn-bg);
+}
+.callout.correct {
+  border-left-color: var(--correct-border);
+  background: var(--correct-bg);
+}
+.callout.wrong {
+  border-left-color: var(--wrong-border);
+  background: var(--wrong-bg);
+}
+.callout-label {
+  font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--navy); margin-bottom: 6px;
+}
+.callout.warn .callout-label { color: var(--warn-border); }
+.callout.correct .callout-label { color: var(--correct-border); }
+.callout.wrong .callout-label { color: var(--wrong-border); }
+.callout p { font-size: 14px; color: var(--text-secondary); margin: 0; }
+
+/* ── FLOW DIAGRAM ── */
+.flow {
+  display: flex; gap: 0;
+  overflow-x: auto;
+  margin: 20px 0;
+  padding-bottom: 4px;
+}
+.flow-step {
+  display: flex; align-items: center;
+  flex-shrink: 0;
+}
+.flow-box {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 16px;
+  text-align: center;
+  min-width: 100px;
+}
+.flow-box.active {
+  border-color: var(--navy);
+  background: var(--navy-muted);
+}
+.flow-box-num {
+  font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+  font-size: 10px; font-weight: 600;
+  color: var(--navy); letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+.flow-box-label {
+  font-size: 12px; font-weight: 500;
+  color: var(--text-primary);
+}
+.flow-arrow {
+  font-size: 18px; color: var(--border);
+  padding: 0 8px; flex-shrink: 0;
+}
+
+/* ── TABLE ── */
+.data-table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+.data-table th {
+  background: var(--navy); color: #fff;
+  font-size: 12px; font-weight: 600;
+  padding: 10px 14px; text-align: left;
+  letter-spacing: 0.03em;
+}
+.data-table td {
+  padding: 10px 14px; font-size: 13.5px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+  vertical-align: top;
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:nth-child(even) td { background: rgba(240,243,248,0.5); }
+.badge {
+  display: inline-block;
+  font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 20px;
+  letter-spacing: 0.04em;
+}
+.badge-high { background: #fce8e6; color: #c0392b; }
+.badge-mid { background: #fff8e6; color: #d68910; }
+.badge-low { background: #e8f5e9; color: #2e7d32; }
+
+/* ── DRILL ACCORDION ── */
+.drill-wrap { margin-bottom: 12px; }
+.drill-toggle {
+  width: 100%;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer;
+  font-size: 14px; font-weight: 500;
+  color: var(--text-primary);
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+}
+.drill-toggle:hover { border-color: var(--navy); background: var(--navy-muted); }
+.drill-toggle.open { border-color: var(--navy); background: var(--navy-muted); }
+.drill-chevron { font-size: 12px; color: var(--text-muted); transition: transform 0.2s; }
+.drill-toggle.open .drill-chevron { transform: rotate(180deg); }
+.drill-body {
+  display: none;
+  background: var(--white);
+  border: 1px solid var(--navy);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  padding: 20px 24px;
+}
+.drill-body.open { display: block; }
+.drill-body p { font-size: 14px; color: var(--text-secondary); margin-bottom: 8px; }
+.drill-body p:last-child { margin-bottom: 0; }
+
+/* ── CHECKLIST ── */
+.checklist { list-style: none; margin: 0; }
+.checklist li {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+.checklist li:last-child { border-bottom: none; }
+.check-box {
+  width: 20px; height: 20px; flex-shrink: 0;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 2px;
+  transition: background 0.15s, border-color 0.15s;
+}
+.check-box.checked { background: var(--navy); border-color: var(--navy); }
+.check-box.checked::after { content: '✓'; color: #fff; font-size: 11px; font-weight: 700; }
+.check-text { color: var(--text-secondary); }
+.check-text.checked { text-decoration: line-through; color: var(--text-muted); }
+
+.progress-bar-wrap {
+  background: var(--border); border-radius: 10px;
+  height: 6px; margin: 16px 0 4px;
+  overflow: hidden;
+}
+.progress-bar { height: 100%; background: var(--navy); border-radius: 10px; width: 0; transition: width 0.3s; }
+.progress-label { font-size: 12px; color: var(--text-muted); text-align: right; }
+
+/* ── QUIZ ── */
+.quiz-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  padding: 24px 28px;
+  margin-bottom: 14px;
+}
+.quiz-q {
+  font-size: 15px; font-weight: 600;
+  color: var(--text-primary); margin-bottom: 16px;
+}
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-option {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px; cursor: pointer;
+  font-size: 14px; color: var(--text-secondary);
+  transition: all 0.15s;
+}
+.quiz-option:hover { border-color: var(--navy); color: var(--navy); }
+.quiz-option.correct { border-color: var(--correct-border); background: var(--correct-bg); color: var(--correct-border); }
+.quiz-option.wrong { border-color: var(--wrong-border); background: var(--wrong-bg); color: var(--wrong-border); }
+.quiz-option.disabled { cursor: default; opacity: 0.7; }
+.quiz-option.disabled:hover { border-color: var(--border); color: var(--text-secondary); }
+.quiz-option.correct.disabled { opacity: 1; border-color: var(--correct-border); color: var(--correct-border); }
+.quiz-feedback {
+  margin-top: 12px; font-size: 13px;
+  padding: 10px 14px; border-radius: 6px;
+  display: none;
+}
+.quiz-feedback.correct { background: var(--correct-bg); color: var(--correct-border); display: block; }
+.quiz-feedback.wrong { background: var(--wrong-bg); color: var(--wrong-border); display: block; }
+
+/* ── SECTION HIDDEN ── */
+.section-content { display: none; }
+.section-content.active { display: block; }
+
+/* ── KEYWORD ── */
+.keyword {
+  font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+  background: var(--navy-muted);
+  color: var(--navy);
+  padding: 1px 7px; border-radius: 3px;
+  font-size: 13px; font-weight: 600;
+}
+
+/* ── TWO COLUMN ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  :root { --pad-x: 20px; }
+  .hero-title { font-size: 28px; }
+  .hero-title span { font-size: 20px; }
+  .section-title-text { font-size: 20px; }
+  .two-col { grid-template-columns: 1fr; }
+  .flow { flex-wrap: nowrap; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-brand">
+    <div class="logo-mark">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <rect x="1" y="1" width="7" height="7" fill="#003366"/>
+        <rect x="10" y="1" width="7" height="7" fill="#003366"/>
+        <rect x="1" y="10" width="7" height="7" fill="#003366"/>
+        <rect x="10" y="10" width="7" height="7" fill="#003366" opacity="0.4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-text">ASPN</div>
+      <div class="logo-sub">BAC Business Division</div>
+    </div>
+  </div>
+  <div class="header-meta">프로젝트 실전 가이드 · Module 1</div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-series">프로젝트 실전 가이드 #1</div>
+  <div class="hero-title">
+    제안 단계 생존법<br>
+    <span>RFP 수령부터 PT까지</span>
+  </div>
+  <div class="hero-sub">
+    제안에 참여하는 컨설턴트가 가장 많이 실수하는 구간은 기술이 부족해서가 아니라,
+    읽어야 할 것을 잘못 읽고 써야 할 것을 빠뜨리기 때문입니다.
+    이 모듈은 GR·SAC-P 컨설턴트가 방법론에 구애받지 않고 실전에서 살아남는 감각을 체득하도록 설계되었습니다.
+  </div>
+  <div class="hero-tags">
+    <span class="tag">GR / SAC-P</span>
+    <span class="tag">방법론 중립</span>
+    <span class="tag">개념 + 체크리스트</span>
+    <span class="tag">주니어 ~ 중급</span>
+  </div>
+</div>
+
+<!-- NAV TABS -->
+<nav class="nav-bar" id="navBar">
+  <a class="nav-tab active" onclick="switchTab(event,'s1')">① RFP 독해</a>
+  <a class="nav-tab" onclick="switchTab(event,'s2')">② 범위 정의 &amp; 견적</a>
+  <a class="nav-tab" onclick="switchTab(event,'s3')">③ 리스크 &amp; 가정 조건</a>
+  <a class="nav-tab" onclick="switchTab(event,'s4')">④ 제안 PT</a>
+  <a class="nav-tab" onclick="switchTab(event,'s5')">⑤ 체크리스트</a>
+  <a class="nav-tab" onclick="switchTab(event,'s6')">⑥ 확인 문제</a>
+</nav>
+
+<main>
+
+<!-- ──────────────────────────────────────────
+  SECTION 1: RFP 독해
+────────────────────────────────────────── -->
+<div class="section-content active" id="s1">
+
+  <div class="section-heading">
+    <span class="section-num">SECTION 01</span>
+    <div>
+      <div class="section-title-text">RFP, 제대로 읽는 법</div>
+      <div class="section-desc">무엇을 숨기고 있는가 — 배점에서 전략이 나온다</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">RFP의 구조 해부</div>
+    <p>
+      RFP(Request for Proposal)는 단순한 요청서가 아닙니다. 고객이 지금 어디서 막혀 있는지,
+      어떤 답을 원하는지, 그리고 어떤 답을 <em>이미 가정하고 있는지</em>가 모두 담겨 있습니다.
+      대부분의 RFP는 세 개의 레이어로 구성됩니다.
+    </p>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>레이어</th>
+          <th>포함 내용</th>
+          <th>읽는 목적</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>표면 레이어</strong></td>
+          <td>배경, 목적, 요구사항 서술</td>
+          <td>공식 범위 파악 — 반드시 커버해야 할 항목</td>
+        </tr>
+        <tr>
+          <td><strong>구조 레이어</strong></td>
+          <td>평가 기준표, 배점 구조</td>
+          <td>고객이 무엇을 '가장 중요하게' 생각하는지 역산</td>
+        </tr>
+        <tr>
+          <td><strong>행간 레이어</strong></td>
+          <td>용어의 모호함, 빠진 항목</td>
+          <td>범위 함정 식별 — 나중에 분쟁이 되는 지점</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">범위 함정 식별: "포함된 것"보다 "명시되지 않은 것"을 먼저 보라</div>
+    <p>
+      범위 분쟁은 대부분 "우리는 당연히 포함되는 줄 알았다"는 고객 발언에서 시작됩니다.
+      RFP에 명시된 항목보다 <span class="keyword">명시되지 않은 인접 영역</span>을 먼저 목록화하는 훈련이 필요합니다.
+    </p>
+    <div class="callout warn">
+      <div class="callout-label">⚠ 주의 — GR/SAC-P 프로젝트 대표적 범위 함정</div>
+      <p>"연결결산 구현" → ICMR(내부거래 대사) 포함 여부가 빠진 경우 / SAC-P "계획 수립" → 실적 데이터 연동 범위 미명시 / "표준 보고서 개발" → 커스터마이징 횟수 무제한으로 해석되는 경우</p>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">방법론별 주의점</div>
+      <p><strong>Waterfall/Gate 기반 (GR 구현):</strong> 단계 산출물이 명확히 정의되지 않으면 범위 분쟁 발생 가능성 높음. 각 Gate 기준을 사전에 합의해야 합니다.</p>
+      <p style="margin-top:8px"><strong>Agile/Sprint 기반 (SAC-P 구현):</strong> 스프린트 백로그가 무한 확장될 위험이 있음. 스프린트 수와 변경 관리 기준을 명시해야 합니다.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">평가 기준표 역독법 — 배점에서 전략이 나온다</div>
+    <p>
+      평가 기준표는 고객이 '실제로' 원하는 것의 가중치를 보여줍니다.
+      제안서를 쓰기 전에 배점 분포를 먼저 매핑하면, 어디에 서술 밀도를 높여야 할지 결정할 수 있습니다.
+    </p>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-box active">
+          <div class="flow-box-num">STEP 1</div>
+          <div class="flow-box-label">평가항목 목록화</div>
+        </div>
+        <div class="flow-arrow">→</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-box">
+          <div class="flow-box-num">STEP 2</div>
+          <div class="flow-box-label">배점 비율 계산</div>
+        </div>
+        <div class="flow-arrow">→</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-box">
+          <div class="flow-box-num">STEP 3</div>
+          <div class="flow-box-label">최고 배점 3개 확인</div>
+        </div>
+        <div class="flow-arrow">→</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-box">
+          <div class="flow-box-num">STEP 4</div>
+          <div class="flow-box-label">제안서 구성 역설계</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout correct">
+      <div class="callout-label">✓ 좋은 예시</div>
+      <p>"기술 적합성 40점, 사업수행 능력 30점, 가격 30점"이라면 → 기술 적합성 섹션에 분량과 레퍼런스를 집중하고, 가격 경쟁력을 사업 실행력으로 보완한다.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ──────────────────────────────────────────
+  SECTION 2: 범위 정의 & 견적
+────────────────────────────────────────── -->
+<div class="section-content" id="s2">
+
+  <div class="section-heading">
+    <span class="section-num">SECTION 02</span>
+    <div>
+      <div class="section-title-text">범위 정의와 견적 논리</div>
+      <div class="section-desc">공수 산정의 함정과 방법론별 견적 차이</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">WBS 초안 작성법 — 누락 없는 범위 분해</div>
+    <p>
+      WBS(Work Breakdown Structure)는 제안서의 범위를 계층적으로 분해한 구조입니다.
+      GR·SAC-P 프로젝트에서 WBS를 작성할 때 자주 빠지는 영역이 있습니다.
+    </p>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>흔히 빠지는 항목</th>
+          <th>왜 빠지는가</th>
+          <th>영향</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>데이터 클렌징 / 마이그레이션</td>
+          <td>당연히 고객이 준비한다고 가정</td>
+          <td><span class="badge badge-high">HIGH</span> 공수 폭증</td>
+        </tr>
+        <tr>
+          <td>변경관리 (Change Management)</td>
+          <td>기술 구현에만 집중</td>
+          <td><span class="badge badge-mid">MID</span> 전환 실패</td>
+        </tr>
+        <tr>
+          <td>운영 이관 / 핸드오버</td>
+          <td>Go-Live 이후를 범위 밖으로 인식</td>
+          <td><span class="badge badge-high">HIGH</span> 클레임 발생</td>
+        </tr>
+        <tr>
+          <td>테스트 환경 구성</td>
+          <td>인프라는 고객 업무로 분류</td>
+          <td><span class="badge badge-mid">MID</span> 일정 지연</td>
+        </tr>
+        <tr>
+          <td>사용자 교육 및 매뉴얼</td>
+          <td>추가 과업으로 간주</td>
+          <td><span class="badge badge-low">LOW~MID</span> 추가 요청</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">공수 산정의 함정: 낙관 편향 vs. 버퍼 전략</div>
+    <p>
+      신입·중급 컨설턴트가 가장 많이 틀리는 부분이 공수 산정입니다.
+      심리적으로 낙관적으로 산정하는 경향(<span class="keyword">Planning Fallacy</span>)이 강하게 작용합니다.
+    </p>
+    <div class="two-col">
+      <div class="callout wrong">
+        <div class="callout-label">✗ 낙관 편향 패턴</div>
+        <p>"이전에 해봤으니 빠를 것이다" / "고객이 협조적이니 문제없을 것이다" / "단순한 요구사항이니 1주면 충분하다"</p>
+      </div>
+      <div class="callout correct">
+        <div class="callout-label">✓ 버퍼 전략</div>
+        <p>기본 공수 산정 후 <strong>리스크 유형별</strong> 버퍼를 별도 계상합니다. 예상치 못한 범위 변경(+15%), 고객 응답 지연(+10%), 기술적 불확실성(+10~20%)</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">방법론별 공수 차이 — Waterfall vs. Agile</div>
+    <p>
+      GR 구현은 주로 SAP Activate(단계형 Waterfall) 기반, SAC-P 구현은 Agile/Sprint 기반으로 진행됩니다.
+      두 방법론은 공수 산정 로직이 근본적으로 다릅니다.
+    </p>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>구분</th>
+          <th>Waterfall / Gate 기반 (GR)</th>
+          <th>Agile / Sprint 기반 (SAC-P)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>공수 계상 단위</strong></td>
+          <td>Phase별 산출물 기준</td>
+          <td>스프린트 수 × 스프린트당 Man-Day</td>
+        </tr>
+        <tr>
+          <td><strong>버퍼 위치</strong></td>
+          <td>각 Phase 종료 시 UAT 버퍼</td>
+          <td>Sprint 총수에 리팩터링 스프린트 추가</td>
+        </tr>
+        <tr>
+          <td><strong>변경 대응</strong></td>
+          <td>공식 CR(Change Request) 프로세스</td>
+          <td>백로그 재우선순위화 (단, 스프린트 수 고정)</td>
+        </tr>
+        <tr>
+          <td><strong>위험 시점</strong></td>
+          <td>Phase 간 전환 지연</td>
+          <td>백로그 미완료 누적 → 스프린트 초과</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout">
+      <div class="callout-label">POINT</div>
+      <p>어느 방법론이든 제안서에는 <strong>"변경 요청이 발생하는 경우의 처리 기준"</strong>을 반드시 명시해야 합니다. 이 한 줄이 없으면 후반 협상에서 크게 불리해집니다.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ──────────────────────────────────────────
+  SECTION 3: 리스크 & 가정 조건
+────────────────────────────────────────── -->
+<div class="section-content" id="s3">
+
+  <div class="section-heading">
+    <span class="section-num">SECTION 03</span>
+    <div>
+      <div class="section-title-text">리스크 헷징과 가정 조건 명시</div>
+      <div class="section-desc">우리가 지는 리스크와 고객이 지는 리스크의 경계 설정</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">제안서에 반드시 넣어야 할 가정 조건(Assumption) 유형</div>
+    <p>
+      가정 조건(Assumption)은 제안서의 보험입니다. 가정 조건이 명시되면,
+      해당 조건이 깨졌을 때 범위·일정·비용 재협상의 근거가 됩니다.
+      GR·SAC-P 프로젝트에서 자주 필요한 가정 조건 유형은 다음과 같습니다.
+    </p>
+    <ul class="checklist" id="assumList">
+      <li>
+        <div class="check-box" onclick="toggleCheck(this)"></div>
+        <div class="check-text"><strong>데이터 제공 가정:</strong> 고객이 제공하는 기초 데이터(마스터, 잔액)의 품질 및 제공 시점이 X일 이내임을 가정한다.</div>
+      </li>
+      <li>
+        <div class="check-box" onclick="toggleCheck(this)"></div>
+        <div class="check-text"><strong>의사결정 가정:</strong> 주요 의사결정(설계 방향, 화면 컨펌 등)은 영업일 기준 N일 이내에 고객 측 담당자가 승인한다.</div>
+      </li>
+      <li>
+        <div class="check-box" onclick="toggleCheck(this)"></div>
+        <div class="check-text"><strong>인프라 가정:</strong> 시스템 환경(서버, 라이선스, 네트워크 접근권)은 착수 기준 N일 이내 준비 완료를 가정한다.</div>
+      </li>
+      <li>
+        <div class="check-box" onclick="toggleCheck(this)"></div>
+        <div class="check-text"><strong>법인/조직 범위 가정:</strong> 본 제안의 범위는 X개 법인, Y개 OU 기준임을 가정하며, 추가 법인은 별도 견적 대상이다.</div>
+      </li>
+      <li>
+        <div class="check-box" onclick="toggleCheck(this)"></div>
+        <div class="check-text"><strong>인터페이스 가정:</strong> 외부 시스템과의 인터페이스 개발은 상대 시스템 사양서 제공을 전제로 한다.</div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">"우리가 지는 리스크 vs. 고객이 지는 리스크" 경계 설정</div>
+    <p>
+      리스크 책임 경계를 명확히 하지 않으면, 프로젝트 후반에 모든 문제가 컨설턴트 책임으로 귀결됩니다.
+    </p>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>리스크 유형</th>
+          <th>컨설턴트 부담</th>
+          <th>고객 부담</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>설계 오류 (당사 산출물)</td>
+          <td>✅ 재작업 포함</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>요구사항 변경 (고객 요인)</td>
+          <td></td>
+          <td>✅ 추가 공수 CR 처리</td>
+        </tr>
+        <tr>
+          <td>데이터 품질 문제</td>
+          <td>클렌징 지원 (범위 내 한정)</td>
+          <td>✅ 원천 데이터 품질 책임</td>
+        </tr>
+        <tr>
+          <td>외부 시스템 연동 장애</td>
+          <td>인터페이스 사양 적용</td>
+          <td>✅ 상대 시스템 준비</td>
+        </tr>
+        <tr>
+          <td>인프라 환경 준비 지연</td>
+          <td></td>
+          <td>✅ 일정 지연 책임 부담</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">변경관리(CR) 여지를 남기는 문구 설계</div>
+    <p>
+      제안서에 다음 문구를 넣으면 CR 협상에서 명백한 근거를 확보할 수 있습니다.
+    </p>
+
+    <div class="drill-wrap">
+      <button class="drill-toggle" onclick="toggleDrill(this)">
+        📄 CR 근거 문구 예시 보기
+        <span class="drill-chevron">▼</span>
+      </button>
+      <div class="drill-body">
+        <p><strong>기본 문구:</strong> "본 제안서에 명시된 범위를 초과하는 작업, 또는 제안서 가정 조건 변경에 따른 추가 작업은 별도 변경 요청(CR) 절차를 통해 공수 및 일정을 재조정한다."</p>
+        <p style="margin-top:12px"><strong>Agile 환경 추가 문구:</strong> "스프린트 백로그에 포함되지 않은 기능 추가 요청은 다음 스프린트 계획 미팅에서 우선순위 재조정 후 반영하며, 전체 스프린트 수 변경을 초래하는 경우 별도 CR로 처리한다."</p>
+        <p style="margin-top:12px"><strong>핵심 원칙:</strong> 문구는 구체적일수록 강력합니다. "당사 판단에 따라"보다 "가정 조건 X, Y, Z 항목 변경 시"가 훨씬 명확한 근거가 됩니다.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ──────────────────────────────────────────
+  SECTION 4: 제안 PT
+────────────────────────────────────────── -->
+<div class="section-content" id="s4">
+
+  <div class="section-heading">
+    <span class="section-num">SECTION 04</span>
+    <div>
+      <div class="section-title-text">제안 PT — 설득의 구조</div>
+      <div class="section-desc">고객이 듣고 싶은 것 vs. 우리가 말하고 싶은 것</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">고객이 듣고 싶은 것 vs. 우리가 말하고 싶은 것</div>
+    <p>
+      제안 PT에서 가장 흔한 실수는 <em>우리가 얼마나 잘 아는가</em>를 설명하는 데 집중하고,
+      <em>고객의 문제를 어떻게 해결하는가</em>를 후순위로 미루는 것입니다.
+    </p>
+    <div class="two-col">
+      <div class="callout wrong">
+        <div class="callout-label">✗ 컨설턴트 중심 PT</div>
+        <p>"저희 회사는 GR 구현 레퍼런스가 N건이며, 전문 인력 XX명을 보유하고 있습니다. 방법론은 SAP Activate를 활용하며…"</p>
+      </div>
+      <div class="callout correct">
+        <div class="callout-label">✓ 고객 중심 PT</div>
+        <p>"현재 귀사의 내부거래 대사가 월 마감 시 X일이 소요되는 문제를 확인했습니다. 저희는 ICMR 자동화를 통해 이를 Y일로 단축한 경험이 있으며, 이번 프로젝트에서 동일한 접근법을 적용합니다."</p>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="callout-label">STRUCTURE</div>
+      <p>고객 문제 진단 → 해결 방향 제시 → 당사 역량 연결 → 기대 효과 수치화 → 실행 계획</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Q&A 대응: 예상 질문 시나리오와 답변 프레임</div>
+    <p>
+      제안 PT에서 Q&A는 평가위원이 합격·불합격을 확정하는 순간입니다.
+      사전에 예상 질문을 시나리오별로 준비해야 합니다.
+    </p>
+
+    <div class="drill-wrap">
+      <button class="drill-toggle" onclick="toggleDrill(this)">
+        Q. "제안 금액이 경쟁사보다 높은 이유는?"
+        <span class="drill-chevron">▼</span>
+      </button>
+      <div class="drill-body">
+        <p><strong>나쁜 답변:</strong> "저희 인건비가 높아서입니다" / "품질을 위해 인력을 많이 투입합니다"</p>
+        <p style="margin-top:8px"><strong>좋은 답변 프레임:</strong> "저희 견적에는 [구체 항목]이 포함되어 있습니다. 특히 [리스크 X]를 예방하기 위한 [버퍼/추가 활동]이 포함되었으며, 이를 제거하면 [결과 Y]가 발생할 수 있습니다. 총비용 관점에서 저희 접근이 더 유리합니다."</p>
+      </div>
+    </div>
+
+    <div class="drill-wrap">
+      <button class="drill-toggle" onclick="toggleDrill(this)">
+        Q. "레퍼런스가 우리 업종과 다른데 적용 가능한가?"
+        <span class="drill-chevron">▼</span>
+      </button>
+      <div class="drill-body">
+        <p><strong>나쁜 답변:</strong> "기본적인 원리는 같아서 문제없습니다"</p>
+        <p style="margin-top:8px"><strong>좋은 답변 프레임:</strong> "레퍼런스 업종과 귀사 업종의 차이는 [A]입니다. 저희는 이 차이를 사전에 인식했고, 분석 단계에서 [B 방식]으로 업종 특성을 반영할 계획입니다. 실제로 이 접근법은 [유사 사례 C]에서 적용한 바 있습니다."</p>
+      </div>
+    </div>
+
+    <div class="drill-wrap">
+      <button class="drill-toggle" onclick="toggleDrill(this)">
+        Q. "일정이 너무 빡빡하지 않은가?"
+        <span class="drill-chevron">▼</span>
+      </button>
+      <div class="drill-body">
+        <p><strong>나쁜 답변:</strong> "최대한 노력하겠습니다"</p>
+        <p style="margin-top:8px"><strong>좋은 답변 프레임:</strong> "제안한 일정은 [핵심 가정 조건 3가지]를 전제로 산정되었습니다. 이 조건이 충족될 경우 일정 준수가 가능하며, 조건 이탈 시 [Critical Path 상의 활동 X]를 우선 조정합니다. 위험 일정은 [날짜 Y]이며, 해당 시점에서 명시적인 의사결정을 요청드릴 예정입니다."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">제안 실패의 공통 패턴 — 사후 부검 사례</div>
+    <p>
+      제안에서 탈락했을 때 원인을 분석하는 것이 다음 제안의 경쟁력을 만듭니다.
+      가장 자주 등장하는 실패 패턴 다섯 가지입니다.
+    </p>
+    <table class="data-table">
+      <thead>
+        <tr><th>#</th><th>실패 패턴</th><th>개선 방향</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>RFP의 핵심 요구사항 미충족</td>
+          <td>제안서 제출 전 평가 기준표와 1:1 대조 검증</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>제안 금액이 예산을 초과</td>
+          <td>초기 예산 파악 및 분리 견적 옵션 준비</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>PT 발표자의 도메인 이해 부족 노출</td>
+          <td>PT 담당자와 기술 내용 사전 리허설 필수</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>일정 계획이 비현실적으로 보임</td>
+          <td>주요 마일스톤에 버퍼 근거 명시</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>고객 특성 분석 없는 Generic 제안서</td>
+          <td>RFP 배경 정보를 제안서 도입부에 반영</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- ──────────────────────────────────────────
+  SECTION 5: 체크리스트
+────────────────────────────────────────── -->
+<div class="section-content" id="s5">
+
+  <div class="section-heading">
+    <span class="section-num">SECTION 05</span>
+    <div>
+      <div class="section-title-text">제안 단계 마스터 체크리스트</div>
+      <div class="section-desc">제출 전 반드시 확인해야 할 항목들</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 RFP 분석 단계</div>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="pb1"></div></div>
+    <div class="progress-label" id="pl1">0 / 5 완료</div>
+    <ul class="checklist" id="cl1">
+      <li><div class="check-box" onclick="toggleCheckList(this,'cl1','pb1','pl1',5)"></div><div class="check-text">RFP 전문 통독 후 평가 기준표 항목 목록화 완료</div></li>
+      <li><div class="check-box" onclick="toggleCheckList(this,'cl1','pb1','pl1',5)"></div><div class="check-text">최고 배점 3개 항목 식별 및 제안 전략에 반영</div></li>
+      <li><div class="check-box" onclick="toggleCheckList(this,'cl1','pb1','pl1',5)"></div><div class="check-text">명시되지 않은 인접 범위 목록화 (최소 5개)</div></li>
+      <li><div class="check-box" onclick="toggleCheckList(this,'cl1','pb1','pl1',5)"></div><div class="check-text">방법론 확인 (Waterfall 또는 Agile) 및 공수 기준 설정</div></li>
+      <li><div class="check-box" onclick="toggleCheckList(this,'cl1','pb1','pl1',5)"></div><div class="check-text">제안 예산 범위 파악 (가능하면 사전 인터뷰)</div></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 제안서 작성 단계</div>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="pb2"></div></div>
+    <div class="progress-label" id="pl2">0 / 6 완료</div>
+    <ul class="checklist" id="cl2">
+      <li><div class="check-box" onclick="toggleCheckList(this,'cl2','pb2','pl2',6)"></div><div class="check-text">WBS 작성 후 누락 영역 점검 (데이터, 교육, 핸드오버 포함 여부)</div></li>
+      <li><div class="check-box" onclick="toggleCheckList(this,'cl2','pb2','pl2',6)"></div><div class="check-text">공수 산정 완료 — 리스크 유형별 버퍼 별도 계상</div></li>
+      <li><div class="check-box" onclick="toggleCheckList(this,'cl2','pb2','pl2',6)"></div><div class="check-text">가정 조건(Assumption) 최소 5개 이상 명시</div></li>
+      <li><div class="check-box" onclick="toggleCheckList(this,'cl2','pb2','pl2',6)"></div><div class="check-text">리스크 책임 경계(우리 vs. 고객) 표로 정리</div></li>
+      <li><div class="check-box" onclick="toggleCheckList(this,'cl2','pb2','pl2',6)"></div><div class="check-text">CR 처리 기준 문구 삽입 확인</div></li>
+      <li><div class="check-box" onclick="toggleCheckList(this,'cl2','pb2','pl2',6)"></div><div class="check-text">평가 기준표와 제안서 목차 1:1 대조 검증</div></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 PT 준비 단계</div>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="pb3"></div></div>
+    <div class="progress-label" id="pl3">0 / 5 완료</div>
+    <ul class="checklist" id="cl3">
+      <li><div class="check-box" onclick="toggleCheckList(this,'cl3','pb3','pl3',5)"></div><div class="check-text">PT 구조: 고객 문제 → 해결 방향 → 역량 → 효과 → 계획 순서 확인</div></li>
+      <li><div class="check-box" onclick="toggleCheckList(this,'cl3','pb3','pl3',5)"></div><div class="check-text">발표자 리허설 최소 1회 완료 (도메인 질문 대응 포함)</div></li>
+      <li><div class="check-box" onclick="toggleCheckList(this,'cl3','pb3','pl3',5)"></div><div class="check-text">예상 Q&A 목록 10개 이상 작성 및 답변 준비</div></li>
+      <li><div class="check-box" onclick="toggleCheckList(this,'cl3','pb3','pl3',5)"></div><div class="check-text">가격 관련 질문 답변 프레임 사전 합의</div></li>
+      <li><div class="check-box" onclick="toggleCheckList(this,'cl3','pb3','pl3',5)"></div><div class="check-text">PT 자료에 고객 업종 특성 반영 여부 확인</div></li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ──────────────────────────────────────────
+  SECTION 6: 확인 문제
+────────────────────────────────────────── -->
+<div class="section-content" id="s6">
+
+  <div class="section-heading">
+    <span class="section-num">SECTION 06</span>
+    <div>
+      <div class="section-title-text">확인 문제</div>
+      <div class="section-desc">핵심 개념 이해도 점검</div>
+    </div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Q1. RFP 평가 기준표를 읽을 때 가장 먼저 확인해야 할 것은 무엇인가?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="answerQuiz(this,'wrong','q1')">① RFP 제출 기한과 제출 형식</div>
+      <div class="quiz-option" onclick="answerQuiz(this,'correct','q1')">② 배점 비율이 높은 항목과 그 의미</div>
+      <div class="quiz-option" onclick="answerQuiz(this,'wrong','q1')">③ 경쟁사의 예상 제안 전략</div>
+      <div class="quiz-option" onclick="answerQuiz(this,'wrong','q1')">④ 담당자의 연락처</div>
+    </div>
+    <div class="quiz-feedback" id="q1fb"></div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Q2. 가정 조건(Assumption)을 제안서에 명시하는 가장 중요한 이유는?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="answerQuiz(this,'wrong','q2')">① 제안서 분량을 늘리기 위해</div>
+      <div class="quiz-option" onclick="answerQuiz(this,'wrong','q2')">② 고객에게 우리의 전문성을 보여주기 위해</div>
+      <div class="quiz-option" onclick="answerQuiz(this,'correct','q2')">③ 조건 변경 시 범위·일정·비용 재협상의 계약적 근거를 확보하기 위해</div>
+      <div class="quiz-option" onclick="answerQuiz(this,'wrong','q2')">④ 평가위원을 혼란스럽게 해 경쟁사를 따돌리기 위해</div>
+    </div>
+    <div class="quiz-feedback" id="q2fb"></div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Q3. Agile/Sprint 기반(SAC-P) 프로젝트의 공수 산정에서 가장 주의해야 할 리스크는?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="answerQuiz(this,'wrong','q3')">① 설계 문서 산출물 부재</div>
+      <div class="quiz-option" onclick="answerQuiz(this,'correct','q3')">② 스프린트 백로그 미완료 누적으로 인한 스프린트 수 초과</div>
+      <div class="quiz-option" onclick="answerQuiz(this,'wrong','q3')">③ UAT 단계 불필요한 반복</div>
+      <div class="quiz-option" onclick="answerQuiz(this,'wrong','q3')">④ Phase 간 전환 승인 지연</div>
+    </div>
+    <div class="quiz-feedback" id="q3fb"></div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Q4. 제안 PT에서 "가격이 높은 이유" 질문에 대한 올바른 답변 방향은?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="answerQuiz(this,'wrong','q4')">① "우리 인력 단가가 높기 때문"이라고 솔직하게 말한다</div>
+      <div class="quiz-option" onclick="answerQuiz(this,'wrong','q4')">② "최대한 노력해 비용을 낮춰보겠다"고 협상 여지를 열어둔다</div>
+      <div class="quiz-option" onclick="answerQuiz(this,'correct','q4')">③ 견적에 포함된 구체 항목과 리스크 예방 활동을 설명하고, 총비용 관점의 우위를 제시한다</div>
+      <div class="quiz-option" onclick="answerQuiz(this,'wrong','q4')">④ 경쟁사가 제외한 항목을 지적하며 비교 우위를 강조한다</div>
+    </div>
+    <div class="quiz-feedback" id="q4fb"></div>
+  </div>
+
+</div>
+
+</main>
+
+<!-- FOOTER -->
+<footer style="background: var(--navy-dim); padding: 24px var(--pad-x); display: flex; align-items: center; justify-content: space-between;">
+  <div style="font-size:12px; color:rgba(255,255,255,0.45);">© ASPN BAC사업부 · 프로젝트 실전 가이드 #1 · INTERNAL USE ONLY</div>
+  <div style="font-size:11px; color:rgba(255,255,255,0.35); letter-spacing:0.06em;">CONFIDENTIAL</div>
+</footer>
+
+<script>
+// ── TAB SWITCH ──
+function switchTab(e, id) {
+  e.preventDefault();
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  e.target.classList.add('active');
+  document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 120, behavior: 'smooth' });
+}
+
+// ── DRILL ACCORDION ──
+function toggleDrill(btn) {
+  btn.classList.toggle('open');
+  const body = btn.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+// ── SIMPLE CHECKLIST TOGGLE ──
+function toggleCheck(box) {
+  box.classList.toggle('checked');
+  const txt = box.nextElementSibling;
+  txt.classList.toggle('checked');
+}
+
+// ── CHECKLIST WITH PROGRESS ──
+function toggleCheckList(box, listId, pbId, plId, total) {
+  box.classList.toggle('checked');
+  const txt = box.nextElementSibling;
+  txt.classList.toggle('checked');
+
+  const list = document.getElementById(listId);
+  const done = list.querySelectorAll('.check-box.checked').length;
+  const pct = (done / total) * 100;
+
+  document.getElementById(pbId).style.width = pct + '%';
+  document.getElementById(plId).textContent = done + ' / ' + total + ' 완료';
+}
+
+// ── QUIZ ──
+const feedbacks = {
+  q1: { correct: '정답입니다! 배점 비율이 높은 항목이 고객이 가장 중요하게 생각하는 것을 반영합니다. 이를 제안서 구성의 출발점으로 삼아야 합니다.', wrong: '아닙니다. 배점 비율을 통해 고객의 우선순위를 역산하는 것이 핵심입니다.' },
+  q2: { correct: '정답입니다! 가정 조건은 계약적 보험입니다. 조건이 깨졌을 때의 재협상 근거를 사전에 확보해야 합니다.', wrong: '아닙니다. 가정 조건의 핵심 목적은 향후 분쟁 시 계약적 근거를 확보하는 것입니다.' },
+  q3: { correct: '정답입니다! Agile에서는 백로그가 계속 추가되면서 스프린트 수가 예상을 초과하는 것이 가장 큰 위험입니다.', wrong: '아닙니다. Agile/Sprint 환경의 특수한 리스크는 백로그 무한 확장으로 인한 스프린트 수 초과입니다.' },
+  q4: { correct: '정답입니다! 단가가 높은 이유를 설명하는 것이 아니라, 포함된 항목의 가치와 리스크 예방 효과, 총비용 관점의 우위를 제시하는 것이 올바른 접근입니다.', wrong: '아닙니다. 가격 질문에는 포함 항목의 가치와 총비용 관점의 우위를 구체적으로 제시해야 합니다.' }
+};
+
+function answerQuiz(opt, result, qid) {
+  const options = opt.closest('.quiz-options').querySelectorAll('.quiz-option');
+  options.forEach(o => {
+    o.classList.add('disabled');
+    o.onclick = null;
+  });
+  opt.classList.add(result);
+
+  const fb = document.getElementById(qid + 'fb');
+  fb.className = 'quiz-feedback ' + result;
+  fb.textContent = feedbacks[qid][result];
+}
+</script>
+</body>
+</html>

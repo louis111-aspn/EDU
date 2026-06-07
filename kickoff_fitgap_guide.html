@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>프로젝트 착수 & Fit-Gap | ASPN 프로젝트 실전 가이드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #003366;
+  --navy-light: #0a4a8a;
+  --navy-dim: #002244;
+  --navy-muted: rgba(0,51,102,0.08);
+  --bg: #f0f3f8;
+  --white: #ffffff;
+  --text-primary: #1a1a2e;
+  --text-secondary: #4a4a6a;
+  --text-muted: #7a7a9a;
+  --border: #d8dee9;
+  --warn-bg: #fff8e6;
+  --warn-border: #f0a500;
+  --correct-bg: #e8f5e9;
+  --correct-border: #2e7d32;
+  --wrong-bg: #fce8e6;
+  --wrong-border: #c0392b;
+  --pad-x: 96px;
+  --card-radius: 8px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--text-primary); font-size: 15px; line-height: 1.75; }
+
+/* HEADER */
+header { background: var(--navy); padding: 0 var(--pad-x); display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 200; }
+.header-brand { display: flex; align-items: center; gap: 12px; }
+.logo-mark { width: 28px; height: 28px; background: #fff; border-radius: 3px; display: flex; align-items: center; justify-content: center; }
+.logo-text { font-size: 14px; font-weight: 600; color: #fff; }
+.logo-sub { font-size: 11px; color: rgba(255,255,255,0.6); }
+.header-meta { font-size: 11px; color: rgba(255,255,255,0.55); letter-spacing: 0.06em; }
+
+/* HERO */
+.hero { background: var(--navy); padding: 56px var(--pad-x) 48px; border-bottom: 3px solid rgba(255,255,255,0.12); }
+.hero-series { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.55); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 8px; }
+.hero-title { font-family: 'DM Serif Display', serif; font-size: 40px; color: #fff; line-height: 1.2; margin-bottom: 12px; }
+.hero-title span { color: rgba(255,255,255,0.55); font-size: 28px; }
+.hero-sub { font-size: 15px; color: rgba(255,255,255,0.7); max-width: 640px; line-height: 1.7; }
+.hero-tags { margin-top: 20px; display: flex; gap: 8px; flex-wrap: wrap; }
+.tag { font-size: 11px; font-weight: 600; background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.8); padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.18); letter-spacing: 0.03em; }
+
+/* NAV */
+.nav-bar { background: var(--white); border-bottom: 1.5px solid var(--border); padding: 0 var(--pad-x); position: sticky; top: 60px; z-index: 100; display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; }
+.nav-bar::-webkit-scrollbar { display: none; }
+.nav-tab { padding: 14px 20px; font-size: 13px; font-weight: 500; color: var(--text-muted); cursor: pointer; border-bottom: 2.5px solid transparent; white-space: nowrap; transition: color 0.15s, border-color 0.15s; text-decoration: none; }
+.nav-tab:hover { color: var(--navy); }
+.nav-tab.active { color: var(--navy); border-bottom-color: var(--navy); }
+
+/* MAIN */
+main { padding: 48px var(--pad-x) 96px; max-width: 1100px; margin: 0 auto; }
+
+/* SECTION HEADING */
+.section-heading { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 2px solid var(--navy); }
+.section-num { font-family: 'JetBrains Mono', 'Noto Sans KR', monospace; font-size: 11px; font-weight: 600; color: var(--white); background: var(--navy); padding: 3px 10px; border-radius: 2px; letter-spacing: 0.08em; }
+.section-title-text { font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--navy); }
+.section-desc { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+
+/* CARD */
+.card { background: var(--white); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 28px 32px; margin-bottom: 16px; }
+.card-title { font-size: 16px; font-weight: 600; color: var(--navy); margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+.card-title::before { content: ''; display: inline-block; width: 4px; height: 18px; background: var(--navy); border-radius: 2px; flex-shrink: 0; }
+.card p { font-size: 15px; color: var(--text-secondary); margin-bottom: 10px; }
+.card p:last-child { margin-bottom: 0; }
+
+/* CALLOUT */
+.callout { border-left: 4px solid var(--navy); background: var(--navy-muted); padding: 16px 20px; border-radius: 0 6px 6px 0; margin: 16px 0; }
+.callout.warn { border-left-color: var(--warn-border); background: var(--warn-bg); }
+.callout.correct { border-left-color: var(--correct-border); background: var(--correct-bg); }
+.callout.wrong { border-left-color: var(--wrong-border); background: var(--wrong-bg); }
+.callout-label { font-family: 'JetBrains Mono', 'Noto Sans KR', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--navy); margin-bottom: 6px; }
+.callout.warn .callout-label { color: var(--warn-border); }
+.callout.correct .callout-label { color: var(--correct-border); }
+.callout.wrong .callout-label { color: var(--wrong-border); }
+.callout p { font-size: 14px; color: var(--text-secondary); margin: 0; }
+.callout p + p { margin-top: 8px; }
+
+/* TWO-COL COMPARE */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+.compare-head { font-family: 'JetBrains Mono', 'Noto Sans KR', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 6px 12px; border-radius: 4px 4px 0 0; text-align: center; }
+.compare-head.gr { background: var(--navy); color: #fff; }
+.compare-head.sacp { background: #0a4a8a; color: #fff; }
+.compare-body { border: 1.5px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; padding: 16px; font-size: 14px; color: var(--text-secondary); }
+.compare-body.gr { border-color: var(--navy); }
+.compare-body.sacp { border-color: #0a4a8a; }
+
+/* FLOW */
+.flow { display: flex; gap: 0; overflow-x: auto; margin: 20px 0; padding-bottom: 4px; }
+.flow-step { display: flex; align-items: center; flex-shrink: 0; }
+.flow-box { background: var(--white); border: 1.5px solid var(--border); border-radius: 6px; padding: 12px 16px; text-align: center; min-width: 110px; }
+.flow-box.active { border-color: var(--navy); background: var(--navy-muted); }
+.flow-box.warn-box { border-color: var(--warn-border); background: var(--warn-bg); }
+.flow-box-num { font-family: 'JetBrains Mono', 'Noto Sans KR', monospace; font-size: 10px; font-weight: 600; color: var(--navy); letter-spacing: 0.08em; margin-bottom: 4px; }
+.flow-box-label { font-size: 12px; font-weight: 500; color: var(--text-primary); }
+.flow-arrow { font-size: 18px; color: var(--border); padding: 0 8px; flex-shrink: 0; }
+
+/* TABLE */
+.data-table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+.data-table th { background: var(--navy); color: #fff; font-size: 12px; font-weight: 600; padding: 10px 14px; text-align: left; letter-spacing: 0.03em; }
+.data-table td { padding: 10px 14px; font-size: 13.5px; border-bottom: 1px solid var(--border); color: var(--text-secondary); vertical-align: top; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:nth-child(even) td { background: rgba(240,243,248,0.5); }
+.badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; letter-spacing: 0.04em; }
+.badge-high { background: #fce8e6; color: #c0392b; }
+.badge-mid { background: #fff8e6; color: #d68910; }
+.badge-low { background: #e8f5e9; color: #2e7d32; }
+.badge-gr { background: rgba(0,51,102,0.12); color: var(--navy); }
+.badge-sacp { background: rgba(10,74,138,0.12); color: #0a4a8a; }
+
+/* DRILL */
+.drill-wrap { margin-bottom: 12px; }
+.drill-toggle { width: 100%; background: var(--white); border: 1px solid var(--border); border-radius: 6px; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-size: 14px; font-weight: 500; color: var(--text-primary); text-align: left; transition: border-color 0.15s, background 0.15s; }
+.drill-toggle:hover { border-color: var(--navy); background: var(--navy-muted); }
+.drill-toggle.open { border-color: var(--navy); background: var(--navy-muted); border-radius: 6px 6px 0 0; }
+.drill-chevron { font-size: 12px; color: var(--text-muted); transition: transform 0.2s; }
+.drill-toggle.open .drill-chevron { transform: rotate(180deg); }
+.drill-body { display: none; background: var(--white); border: 1px solid var(--navy); border-top: none; border-radius: 0 0 6px 6px; padding: 20px 24px; }
+.drill-body.open { display: block; }
+.drill-body p { font-size: 14px; color: var(--text-secondary); margin-bottom: 8px; }
+.drill-body p:last-child { margin-bottom: 0; }
+
+/* CHECKLIST */
+.checklist { list-style: none; margin: 0; }
+.checklist li { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+.checklist li:last-child { border-bottom: none; }
+.check-box { width: 20px; height: 20px; flex-shrink: 0; border: 2px solid var(--border); border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-top: 2px; transition: background 0.15s, border-color 0.15s; }
+.check-box.checked { background: var(--navy); border-color: var(--navy); }
+.check-box.checked::after { content: '✓'; color: #fff; font-size: 11px; font-weight: 700; }
+.check-text { color: var(--text-secondary); }
+.check-text.checked { text-decoration: line-through; color: var(--text-muted); }
+.progress-bar-wrap { background: var(--border); border-radius: 10px; height: 6px; margin: 16px 0 4px; overflow: hidden; }
+.progress-bar { height: 100%; background: var(--navy); border-radius: 10px; width: 0; transition: width 0.3s; }
+.progress-label { font-size: 12px; color: var(--text-muted); text-align: right; }
+
+/* QUIZ */
+.quiz-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 24px 28px; margin-bottom: 14px; }
+.quiz-q { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-option { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border: 1.5px solid var(--border); border-radius: 6px; cursor: pointer; font-size: 14px; color: var(--text-secondary); transition: all 0.15s; }
+.quiz-option:hover { border-color: var(--navy); color: var(--navy); }
+.quiz-option.correct { border-color: var(--correct-border); background: var(--correct-bg); color: var(--correct-border); }
+.quiz-option.wrong { border-color: var(--wrong-border); background: var(--wrong-bg); color: var(--wrong-border); }
+.quiz-option.disabled { cursor: default; opacity: 0.7; }
+.quiz-option.disabled:hover { border-color: var(--border); color: var(--text-secondary); }
+.quiz-option.correct.disabled { opacity: 1; border-color: var(--correct-border); color: var(--correct-border); }
+.quiz-feedback { margin-top: 12px; font-size: 13px; padding: 10px 14px; border-radius: 6px; display: none; }
+.quiz-feedback.correct { background: var(--correct-bg); color: var(--correct-border); display: block; }
+.quiz-feedback.wrong { background: var(--wrong-bg); color: var(--wrong-border); display: block; }
+
+/* MISC */
+.section-content { display: none; }
+.section-content.active { display: block; }
+.keyword { font-family: 'JetBrains Mono', 'Noto Sans KR', monospace; background: var(--navy-muted); color: var(--navy); padding: 1px 7px; border-radius: 3px; font-size: 13px; font-weight: 600; }
+.label-gr { font-family: 'JetBrains Mono', 'Noto Sans KR', monospace; font-size: 10px; font-weight: 700; background: var(--navy); color: #fff; padding: 2px 7px; border-radius: 3px; letter-spacing: 0.06em; }
+.label-sacp { font-family: 'JetBrains Mono', 'Noto Sans KR', monospace; font-size: 10px; font-weight: 700; background: #0a4a8a; color: #fff; padding: 2px 7px; border-radius: 3px; letter-spacing: 0.06em; }
+
+@media (max-width: 768px) {
+  :root { --pad-x: 20px; }
+  .hero-title { font-size: 28px; }
+  .hero-title span { font-size: 20px; }
+  .two-col { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-brand">
+    <div class="logo-mark">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <rect x="1" y="1" width="7" height="7" fill="#003366"/>
+        <rect x="10" y="1" width="7" height="7" fill="#003366"/>
+        <rect x="1" y="10" width="7" height="7" fill="#003366"/>
+        <rect x="10" y="10" width="7" height="7" fill="#003366" opacity="0.4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-text">ASPN</div>
+      <div class="logo-sub">BAC Business Division</div>
+    </div>
+  </div>
+  <div class="header-meta">프로젝트 실전 가이드 · Module 2</div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-series">프로젝트 실전 가이드 #2</div>
+  <div class="hero-title">
+    프로젝트 착수 &amp; Fit-Gap<br>
+    <span>Kick-off부터 Gap 문서화까지</span>
+  </div>
+  <div class="hero-sub">
+    계약이 체결된 순간, 진짜 전쟁이 시작됩니다.
+    착수 단계에서 놓친 것은 구현 단계에서 두 배의 비용으로 돌아옵니다.
+    GR과 SAC-P 양 방법론에서 착수와 Fit-Gap을 어떻게 다르게 다뤄야 하는지 정리합니다.
+  </div>
+  <div class="hero-tags">
+    <span class="tag">GR / SAC-P 병행</span>
+    <span class="tag">방법론 중립</span>
+    <span class="tag">개념 + 체크리스트</span>
+    <span class="tag">주니어 ~ 중급</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav-bar">
+  <a class="nav-tab active" onclick="switchTab(event,'s1')">① Kick-off 준비</a>
+  <a class="nav-tab" onclick="switchTab(event,'s2')">② AS-IS 인터뷰</a>
+  <a class="nav-tab" onclick="switchTab(event,'s3')">③ TO-BE Visioning</a>
+  <a class="nav-tab" onclick="switchTab(event,'s4')">④ Fit-Gap 판정</a>
+  <a class="nav-tab" onclick="switchTab(event,'s5')">⑤ Gap 문서화</a>
+  <a class="nav-tab" onclick="switchTab(event,'s6')">⑥ 체크리스트</a>
+  <a class="nav-tab" onclick="switchTab(event,'s7')">⑦ 확인 문제</a>
+</nav>
+
+<main>
+
+<!-- ── SECTION 1: Kick-off 준비 ── -->
+<div class="section-content active" id="s1">
+  <div class="section-heading">
+    <span class="section-num">SECTION 01</span>
+    <div>
+      <div class="section-title-text">Kick-off 준비</div>
+      <div class="section-desc">계약 직후 72시간 — 이 시간이 프로젝트 전체 분위기를 결정한다</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Kick-off의 두 가지 목적</div>
+    <p>Kick-off 미팅은 인사 자리가 아닙니다. 두 가지 명확한 목적이 있습니다.</p>
+    <div class="two-col">
+      <div>
+        <div class="compare-head gr">목적 1 — 범위 재확인</div>
+        <div class="compare-body gr">
+          제안서에서 합의된 범위를 프로젝트 팀 전원이 동일하게 이해하고 있는지 검증합니다. 특히 고객 담당자가 영업 단계에서 배제되었던 경우, 범위에 대한 기대치 차이가 크게 나타납니다.
+        </div>
+      </div>
+      <div>
+        <div class="compare-head sacp">목적 2 — 거버넌스 수립</div>
+        <div class="compare-body sacp">
+          의사결정 권한자, 커뮤니케이션 채널, 이슈 에스컬레이션 경로를 확정합니다. 이것이 Kick-off에서 합의되지 않으면 프로젝트 중반에 결정권자가 없는 상태로 표류하게 됩니다.
+        </div>
+      </div>
+    </div>
+    <div class="callout warn">
+      <div class="callout-label">⚠ 흔한 실수</div>
+      <p>Kick-off를 "프로젝트 소개 PT"로 준비하는 경우입니다. 고객은 이미 우리가 무엇을 할지 알고 있습니다. Kick-off에서 중요한 것은 <strong>앞으로 어떻게 함께 일할 것인가</strong>의 합의입니다.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">방법론별 Kick-off 준비 포인트</div>
+    <div class="two-col">
+      <div>
+        <div class="compare-head gr">GR 구현 — SAP Activate</div>
+        <div class="compare-body gr">
+          <p>• <strong>프로젝트 헌장(Project Charter)</strong> 초안 지참 — 범위, 마일스톤, 역할/책임 포함</p>
+          <p style="margin-top:8px">• Phase 게이트(Gate) 기준 사전 제시 — 각 단계 종료 조건 명시</p>
+          <p style="margin-top:8px">• 고객 측 <strong>시스템 오너</strong> 확정 요청 — GR 설정 변경 권한자</p>
+          <p style="margin-top:8px">• SAP 라이선스 및 릴리즈 버전 확인 — S/4HANA 버전에 따라 GR 기능 차이 존재</p>
+        </div>
+      </div>
+      <div>
+        <div class="compare-head sacp">SAC-P — Agile/Sprint 0</div>
+        <div class="compare-body sacp">
+          <p>• <strong>Product Backlog 초안</strong> 지참 — 우선순위 미확정이어도 무방</p>
+          <p style="margin-top:8px">• Sprint 주기, 리뷰/회고 일정 합의 — 고객 담당자 참석 가능 여부 확인 필수</p>
+          <p style="margin-top:8px">• <strong>Product Owner</strong> 역할 담당자 확정 요청 — 백로그 우선순위 결정권자</p>
+          <p style="margin-top:8px">• SAC 테넌트 접근권 및 기존 모델 현황 파악</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">거버넌스 수립: 반드시 Kick-off에서 합의해야 할 항목</div>
+    <table class="data-table">
+      <thead>
+        <tr><th>항목</th><th>내용</th><th>미합의 시 리스크</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>의사결정 권한자</strong></td>
+          <td>설계 컨펌, 범위 변경 승인 가능한 고객 측 단일 창구</td>
+          <td><span class="badge badge-high">HIGH</span> 결정 지연 → 일정 초과</td>
+        </tr>
+        <tr>
+          <td><strong>커뮤니케이션 채널</strong></td>
+          <td>공식 이슈는 이메일, 실시간 협의는 메신저 등 채널 구분</td>
+          <td><span class="badge badge-mid">MID</span> 비공식 요청 누적</td>
+        </tr>
+        <tr>
+          <td><strong>이슈 에스컬레이션</strong></td>
+          <td>N일 내 미결 이슈 → 상위 책임자 보고 기준</td>
+          <td><span class="badge badge-high">HIGH</span> 이슈 방치 → 리스크 확대</td>
+        </tr>
+        <tr>
+          <td><strong>산출물 검토 기한</strong></td>
+          <td>컨설턴트 제출 후 고객 피드백까지 N영업일</td>
+          <td><span class="badge badge-mid">MID</span> 일정 계획 무력화</td>
+        </tr>
+        <tr>
+          <td><strong>회의체 주기</strong></td>
+          <td>주간 진행 보고, 월간 스티어링 등 정례 회의 일정</td>
+          <td><span class="badge badge-low">LOW</span> 진행 상황 공유 단절</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">착수 단계 실수 사례 — 드릴</div>
+    <div class="drill-wrap">
+      <button class="drill-toggle" onclick="toggleDrill(this)">
+        🔴 사례 1: 고객 담당자 교체를 Kick-off 이후에 통보받은 경우
+        <span class="drill-chevron">▼</span>
+      </button>
+      <div class="drill-body">
+        <p><strong>상황:</strong> Kick-off 미팅 2주 후 고객 담당자가 갑작스럽게 교체되었습니다. 신임 담당자는 제안서 내용을 모르는 상태였고, 범위 전반에 대한 재설명 요청이 들어왔습니다.</p>
+        <p><strong>예방:</strong> Kick-off 직후 범위 요약 문서(1~2페이지)를 고객에게 서면으로 전달합니다. 담당자 교체가 발생해도 이 문서가 인수인계 근거가 됩니다. 또한 Kick-off 의사록에 참석자 서명 또는 이메일 확인을 반드시 받아야 합니다.</p>
+      </div>
+    </div>
+    <div class="drill-wrap">
+      <button class="drill-toggle" onclick="toggleDrill(this)">
+        🔴 사례 2: GR 프로젝트에서 SAP 릴리즈 버전을 착수 후 확인한 경우
+        <span class="drill-chevron">▼</span>
+      </button>
+      <div class="drill-body">
+        <p><strong>상황:</strong> 착수 후 SAP 환경을 확인했더니 고객사가 S/4HANA 2020 버전을 사용 중이었습니다. 제안서에서 가정했던 Group Reporting 일부 기능이 해당 릴리즈에서 제한적으로 지원됨을 뒤늦게 발견했습니다.</p>
+        <p><strong>예방:</strong> 제안 단계에서 SAP 릴리즈 버전을 가정 조건으로 명시하고, Kick-off 전에 반드시 실제 버전을 확인합니다. S/4HANA 버전별 GR 기능 지원 범위(예: ICMR, Top-side Adjustment 등)를 사전 매핑해 두는 것이 좋습니다.</p>
+      </div>
+    </div>
+    <div class="drill-wrap">
+      <button class="drill-toggle" onclick="toggleDrill(this)">
+        🔴 사례 3: SAC-P에서 Product Owner가 실질적 결정권이 없었던 경우
+        <span class="drill-chevron">▼</span>
+      </button>
+      <div class="drill-body">
+        <p><strong>상황:</strong> 고객이 지정한 Product Owner가 실무 담당자였으나 실제 설계 방향 결정은 CFO 라인의 승인이 필요했습니다. 스프린트 리뷰마다 "상위 보고 후 확정"이 반복되며 스프린트 주기가 사실상 2배로 늘어났습니다.</p>
+        <p><strong>예방:</strong> Kick-off에서 "Product Owner는 스프린트 리뷰 당일 백로그 우선순위와 기능 컨펌을 최종 결정할 권한이 있어야 한다"는 조건을 명문화합니다. 결정권이 상위에 있다면 스프린트 주기를 처음부터 더 길게 설정하거나 의사결정 구조 자체를 재설계해야 합니다.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 2: AS-IS 인터뷰 ── -->
+<div class="section-content" id="s2">
+  <div class="section-heading">
+    <span class="section-num">SECTION 02</span>
+    <div>
+      <div class="section-title-text">AS-IS 인터뷰 설계</div>
+      <div class="section-desc">무엇을 묻고, 무엇을 듣고, 무엇을 기록할 것인가</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">AS-IS 인터뷰의 목적 — 현황 파악이 아니다</div>
+    <p>
+      AS-IS 인터뷰를 "현재 업무 방식 파악"으로만 이해하면 얕은 수준에 머무릅니다.
+      진짜 목적은 세 가지입니다.
+    </p>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-box active">
+          <div class="flow-box-num">목적 1</div>
+          <div class="flow-box-label">Pain Point 발굴</div>
+        </div>
+        <div class="flow-arrow">→</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-box active">
+          <div class="flow-box-num">목적 2</div>
+          <div class="flow-box-label">숨겨진 요구사항 포착</div>
+        </div>
+        <div class="flow-arrow">→</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-box active">
+          <div class="flow-box-num">목적 3</div>
+          <div class="flow-box-label">Fit-Gap 판정 근거 수집</div>
+        </div>
+      </div>
+    </div>
+    <p>
+      특히 <span class="keyword">숨겨진 요구사항</span>을 포착하는 것이 핵심입니다.
+      고객은 자신이 원하는 것을 항상 명확하게 말하지 않습니다.
+      "현재 이렇게 하고 있습니다"라는 설명 뒤에 "그래서 사실 이게 불편합니다"가 있고,
+      그 뒤에 "정말로는 이렇게 되었으면 합니다"가 숨어 있습니다.
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">GR / SAC-P별 인터뷰 대상 및 핵심 질문</div>
+
+    <div style="margin-bottom:20px">
+      <span class="label-gr">GR 구현</span>
+      <table class="data-table" style="margin-top:10px">
+        <thead>
+          <tr><th>인터뷰 대상</th><th>핵심 질문</th><th>포착해야 할 것</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>연결결산 담당자</td>
+            <td>"월 마감 시 가장 오래 걸리는 작업은 무엇입니까?"</td>
+            <td>내부거래 대사 현황, 수동 조정 규모</td>
+          </tr>
+          <tr>
+            <td>재무 회계 담당자</td>
+            <td>"현재 BPC/Excel로 처리하는 작업 중 GR로 넘기고 싶은 것은?"</td>
+            <td>BPC → GR 마이그레이션 잠재 범위</td>
+          </tr>
+          <tr>
+            <td>IT 담당자</td>
+            <td>"현재 SAP 시스템 구성과 법인별 버전 차이가 있습니까?"</td>
+            <td>Trading Partner 설정 현황, FS Item 매핑 복잡도</td>
+          </tr>
+          <tr>
+            <td>CFO / 재무임원</td>
+            <td>"이 프로젝트가 끝난 후 가장 달라지기를 원하는 것은?"</td>
+            <td>프로젝트 성공 기준(KPI), 우선순위 재조정 근거</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <span class="label-sacp">SAC-P 구현</span>
+      <table class="data-table" style="margin-top:10px">
+        <thead>
+          <tr><th>인터뷰 대상</th><th>핵심 질문</th><th>포착해야 할 것</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>경영계획 담당자</td>
+            <td>"현재 계획 수립 프로세스에서 가장 비효율적인 단계는?"</td>
+            <td>Bottom-Up/Top-Down 계획 구조, 반복 사이클</td>
+          </tr>
+          <tr>
+            <td>LOB 관리자</td>
+            <td>"지금 어떤 데이터를 어디서 받아서 계획에 씁니까?"</td>
+            <td>데이터 소스 다양성, 수동 통합 공수</td>
+          </tr>
+          <tr>
+            <td>IT 담당자</td>
+            <td>"현재 SAC 테넌트 구성과 기존 모델이 있습니까?"</td>
+            <td>기존 SAC 모델 재사용 가능 여부, 데이터 연결 현황</td>
+          </tr>
+          <tr>
+            <td>CFO / 재무임원</td>
+            <td>"계획 대비 실적 분석을 얼마나 빨리, 어떤 형태로 보고 싶습니까?"</td>
+            <td>보고 주기, 필요 뷰의 granularity(법인별/제품별 등)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">인터뷰 기록 원칙 — 들은 것과 해석한 것을 분리하라</div>
+    <p>
+      인터뷰 메모에서 가장 흔한 실수는 고객이 말한 것과 컨설턴트가 해석한 것을 구분하지 않는 것입니다.
+      나중에 "그런 말 한 적 없다"는 분쟁이 생깁니다.
+    </p>
+    <div class="two-col">
+      <div class="callout wrong">
+        <div class="callout-label">✗ 나쁜 기록 방식</div>
+        <p>"고객은 내부거래 대사를 자동화하고 싶어한다. → ICMR 구현 필요."</p>
+        <p style="margin-top:6px">→ 고객 발언과 컨설턴트 해석이 뒤섞여 있습니다.</p>
+      </div>
+      <div class="callout correct">
+        <div class="callout-label">✓ 좋은 기록 방식</div>
+        <p><strong>[고객 발언]</strong> "매월 내부거래 대사에 3일이 걸리고 수작업 오류가 많습니다."</p>
+        <p style="margin-top:6px"><strong>[해석]</strong> ICMR 자동화 요구 가능성 → Fit-Gap 확인 필요.</p>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="callout-label">POINT</div>
+      <p>인터뷰 후 24시간 내 메모를 정리하고, 핵심 내용은 고객 담당자에게 이메일로 확인을 요청합니다. "이렇게 이해했습니다 — 맞습니까?"라는 한 문장이 나중의 분쟁을 막습니다.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 3: TO-BE Visioning ── -->
+<div class="section-content" id="s3">
+  <div class="section-heading">
+    <span class="section-num">SECTION 03</span>
+    <div>
+      <div class="section-title-text">TO-BE Visioning</div>
+      <div class="section-desc">AS-IS를 파악했다면 — 우리는 어디로 가야 하는가</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">TO-BE Visioning이 왜 Fit-Gap 이전에 필요한가</div>
+    <p>
+      많은 프로젝트에서 AS-IS 파악 직후 곧바로 Fit-Gap 분석으로 넘어갑니다.
+      그 결과 Fit-Gap이 "<span class="keyword">현재 업무를 시스템으로 옮기는 작업</span>"으로 전락합니다.
+      이것이 구현 후 고객이 "바뀐 게 없다"고 말하는 가장 큰 이유입니다.
+    </p>
+    <p>
+      TO-BE Visioning은 AS-IS의 Pain Point를 해소한 <strong>미래 상태(Future State)</strong>를 먼저 그리는 작업입니다.
+      TO-BE가 확정된 이후에야 Fit-Gap은 의미를 가집니다.
+      <span class="keyword">Fit-Gap = TO-BE와 표준 기능 사이의 거리</span>이기 때문입니다.
+    </p>
+    <div class="callout">
+      <div class="callout-label">AS-IS → TO-BE → Fit-Gap 흐름</div>
+      <p><strong>AS-IS:</strong> 현재 무엇이 문제인가 (인터뷰로 파악)</p>
+      <p><strong>TO-BE:</strong> 문제가 해결된 미래 상태는 어떤 모습인가 (Visioning)</p>
+      <p><strong>Fit-Gap:</strong> TO-BE를 시스템으로 구현하려면 표준 기능으로 어디까지 되고 어디서 막히는가</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">TO-BE Vision의 두 가지 레벨</div>
+    <p>
+      TO-BE는 두 레벨에서 동시에 그려야 합니다.
+      어느 한 레벨만 있으면 Vision이 공허해지거나 지나치게 세부적으로 흐릅니다.
+    </p>
+    <div class="two-col">
+      <div>
+        <div class="compare-head gr">레벨 1 — 비즈니스 Vision</div>
+        <div class="compare-body gr">
+          <p>"이 프로젝트가 끝나면 무엇이 어떻게 달라지는가"를 <strong>수치와 업무 결과</strong>로 표현합니다.</p>
+          <p style="margin-top:8px">예시 — GR: "월 마감 소요 시간 X일 → Y일 단축" / SAC-P: "계획 수립 사이클 N주 → M주, 시나리오 분석 자동화"</p>
+          <p style="margin-top:8px">CFO·임원 보고 시 쓰이는 언어입니다. <strong>기술 용어 없이</strong> 작성해야 합니다.</p>
+        </div>
+      </div>
+      <div>
+        <div class="compare-head sacp">레벨 2 — 프로세스/시스템 Vision</div>
+        <div class="compare-body sacp">
+          <p>비즈니스 Vision을 달성하기 위해 <strong>업무 프로세스와 시스템이 어떻게 바뀌는지</strong>를 표현합니다.</p>
+          <p style="margin-top:8px">예시 — GR: "ICMR 자동화 → 수동 Excel 대사 제거, FS Item 재설계 → IFRS 18 세그먼트 보고 자동 생성" / SAC-P: "S/4HANA Live 연동 → 실적 자동 반영, Data Action → Top-Down 배분 자동화"</p>
+          <p style="margin-top:8px">Fit-Gap 분석의 직접 입력값이 됩니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">GR 구현 — TO-BE Visioning 핵심 관점</div>
+    <p>
+      GR 프로젝트의 TO-BE는 <strong>연결결산 마감 프로세스의 재설계</strong>를 중심으로 그립니다.
+      단순히 BPC·Excel을 GR로 대체하는 것이 아니라,
+      마감 프로세스 자체가 어떻게 달라지는지를 명확히 해야 합니다.
+    </p>
+    <table class="data-table">
+      <thead>
+        <tr><th>AS-IS Pain Point</th><th>TO-BE Vision</th><th>핵심 설계 포인트</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>내부거래 대사 수작업 (Excel)</td>
+          <td>ICMR 자동 대사 → 차이 항목만 수동 처리</td>
+          <td>Trading Partner 코드 체계 표준화 선행</td>
+        </tr>
+        <tr>
+          <td>법인별 개별 마감 후 수동 통합</td>
+          <td>GR 내 통합 마감 프로세스 — 법인 제출 → 그룹 검증 자동화</td>
+          <td>Consolidation Unit·Group 구조 설계</td>
+        </tr>
+        <tr>
+          <td>IFRS 기준 보고서 수작업 작성</td>
+          <td>FS Item 기반 자동 재무제표 생성</td>
+          <td>FS Item ↔ GL 계정 매핑 설계</td>
+        </tr>
+        <tr>
+          <td>시나리오별 수동 계산 (BPC/Excel)</td>
+          <td>Top-side Adjustment 구조화 → 감사 추적 가능</td>
+          <td>Journal Entry 승인 워크플로우 설계</td>
+        </tr>
+        <tr>
+          <td>지분법 평가 수동 처리</td>
+          <td>IAS 28 기준 GR 내 자동 계산 (범위 내 한도 내)</td>
+          <td>손실 중단·회복 케이스 수동 병행 구조 확정</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout warn">
+      <div class="callout-label">⚠ GR TO-BE 설계 시 흔한 실수</div>
+      <p>BPC의 커스텀 로직을 GR로 1:1 이식하려는 시도입니다. GR의 표준 프로세스를 먼저 이해하고, BPC의 커스텀이 <em>정말 필요한 것</em>인지 TO-BE 단계에서 재검토해야 합니다. 불필요한 커스텀 이식은 유지보수 부담만 늘립니다.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">SAC-P 구현 — TO-BE Visioning 핵심 관점</div>
+    <p>
+      SAC-P 프로젝트의 TO-BE는 <strong>계획 수립 사이클의 재설계</strong>를 중심으로 그립니다.
+      데이터 흐름(실적 → 계획 → 분석)과 조직 간 협업 구조가
+      어떻게 바뀌는지까지 포함해야 합니다.
+    </p>
+    <table class="data-table">
+      <thead>
+        <tr><th>AS-IS Pain Point</th><th>TO-BE Vision</th><th>핵심 설계 포인트</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Excel 계획 파일 수작업 취합</td>
+          <td>SAC Input Form 기반 LOB별 직접 입력 → 자동 집계</td>
+          <td>데이터 모델 차원 구조 설계 (법인/제품/기간)</td>
+        </tr>
+        <tr>
+          <td>실적 데이터 수동 복사·붙여넣기</td>
+          <td>S/4HANA Live 연동 또는 Import 자동화 → 실적 자동 반영</td>
+          <td>데이터 소스 연결 방식 및 갱신 주기 확정</td>
+        </tr>
+        <tr>
+          <td>시나리오 분석 별도 Excel 작업</td>
+          <td>SAC 버전 관리 기반 시나리오 분기 → 비교 분석 자동화</td>
+          <td>버전 명명 규칙·잠금 정책·권한 구조 합의</td>
+        </tr>
+        <tr>
+          <td>Top-Down 목표 배분 수동 계산</td>
+          <td>Data Action 기반 자동 배분 로직 구현</td>
+          <td>배분 기준(매출 비중·인원 등) 사전 확정 필수</td>
+        </tr>
+        <tr>
+          <td>계획 대비 실적 보고 별도 작성</td>
+          <td>SAC Story 기반 계획-실적 자동 대비 보고</td>
+          <td>보고 granularity(법인별/제품별/월별) 합의</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout warn">
+      <div class="callout-label">⚠ SAC-P TO-BE 설계 시 흔한 실수</div>
+      <p>데이터 모델(차원 구조)을 TO-BE Visioning 단계에서 확정하지 않고 Sprint 중반에 변경하는 경우입니다. SAC-P에서 데이터 모델 변경은 이미 완성된 Data Action·Story를 전면 재작업해야 하는 치명적 리스크입니다. <strong>TO-BE Vision 확정과 함께 데이터 모델 초안을 동시에 승인받아야 합니다.</strong></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">TO-BE Vision 확정을 위한 워크숍 구조</div>
+    <p>
+      TO-BE Vision은 컨설턴트가 혼자 만들어서 고객에게 제시하는 것이 아닙니다.
+      AS-IS 인터뷰 결과를 바탕으로 고객과 함께 만들어야 고객의 주인의식이 생깁니다.
+    </p>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-box active">
+          <div class="flow-box-num">PREP</div>
+          <div class="flow-box-label">AS-IS 정리본 + Pain Point 목록 사전 배포</div>
+        </div>
+        <div class="flow-arrow">→</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-box active">
+          <div class="flow-box-num">STEP 1</div>
+          <div class="flow-box-label">Pain Point 우선순위 투표</div>
+        </div>
+        <div class="flow-arrow">→</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-box active">
+          <div class="flow-box-num">STEP 2</div>
+          <div class="flow-box-label">TO-BE 프로세스 흐름 공동 작성</div>
+        </div>
+        <div class="flow-arrow">→</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-box active">
+          <div class="flow-box-num">STEP 3</div>
+          <div class="flow-box-label">성공 기준(KPI) 수치화 합의</div>
+        </div>
+        <div class="flow-arrow">→</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-box active">
+          <div class="flow-box-num">OUT</div>
+          <div class="flow-box-label">TO-BE Vision 문서 서명</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout correct">
+      <div class="callout-label">✓ TO-BE Vision 문서 최소 구성</div>
+      <p><strong>비즈니스 Vision:</strong> 달성 목표 수치 (마감 X일 단축, 계획 사이클 Y주 단축 등)</p>
+      <p><strong>프로세스 Vision:</strong> AS-IS → TO-BE 프로세스 흐름 비교도</p>
+      <p><strong>범위 경계:</strong> 이번 프로젝트에서 달성하는 TO-BE vs. 향후 과제</p>
+      <p><strong>선결 조건:</strong> TO-BE 달성을 위해 고객이 선행해야 할 것 (데이터 정비, 조직 변경 등)</p>
+    </div>
+
+    <div class="drill-wrap" style="margin-top:16px">
+      <button class="drill-toggle" onclick="toggleDrill(this)">
+        💡 TO-BE Vision이 Fit-Gap에 미치는 실제 영향 — 사례
+        <span class="drill-chevron">▼</span>
+      </button>
+      <div class="drill-body">
+        <p><strong>상황 (GR):</strong> AS-IS 인터뷰에서 "내부거래 대사에 3일 소요"라는 Pain Point를 발견했습니다.</p>
+        <p style="margin-top:8px"><strong>TO-BE Vision 없이 Fit-Gap:</strong> "내부거래 대사 기능 구현 → ICMR Fit" 으로 단순 판정. 실제로 Trading Partner 코드 체계가 법인별로 제각각이어서 구현 후에도 자동 대사율이 40%에 불과했습니다.</p>
+        <p style="margin-top:8px"><strong>TO-BE Vision 포함 후 Fit-Gap:</strong> "대사율 95% 이상 달성"을 TO-BE 수치로 확정 → Fit-Gap에서 Trading Partner 코드 표준화(Gap-Config), 미매핑 계정 처리 로직(Gap-Enhancement) 이 추가로 식별되어 구현 전 해결.</p>
+        <p style="margin-top:8px"><strong>결론:</strong> TO-BE Vision의 수치가 구체적일수록 Fit-Gap의 정확도가 높아집니다.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 4: Fit-Gap 판정 ── -->
+<div class="section-content" id="s4">
+  <div class="section-heading">
+    <span class="section-num">SECTION 03</span>
+    <div>
+      <div class="section-title-text">Fit-Gap 판정 기준</div>
+      <div class="section-desc">Fit인가, Gap인가 — 그리고 Gap이라면 어떤 종류인가</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Fit-Gap이란 무엇인가</div>
+    <p>
+      Fit-Gap 분석은 고객의 요구사항(Requirements)과
+      시스템의 표준 기능(Standard Functionality) 사이의 일치도를 판정하는 작업입니다.
+    </p>
+    <table class="data-table">
+      <thead>
+        <tr><th>판정</th><th>의미</th><th>대응</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Fit</strong></td>
+          <td>표준 기능으로 요구사항을 충족할 수 있음</td>
+          <td>설정(Configuration)으로 구현</td>
+        </tr>
+        <tr>
+          <td><strong>Partial Fit</strong></td>
+          <td>표준 기능으로 일부 충족 가능, 프로세스 조정 필요</td>
+          <td>업무 프로세스 변경 + 부분 설정</td>
+        </tr>
+        <tr>
+          <td><strong>Gap — Config</strong></td>
+          <td>표준 기능 내에서 추가 설정으로 해결 가능</td>
+          <td>추가 설정 공수 반영</td>
+        </tr>
+        <tr>
+          <td><strong>Gap — Enhancement</strong></td>
+          <td>표준 기능을 벗어난 커스터마이징 필요 (ABAP 등)</td>
+          <td>개발 공수 및 유지보수 비용 별도 산정</td>
+        </tr>
+        <tr>
+          <td><strong>Gap — 3rd Party</strong></td>
+          <td>외부 솔루션 연동으로만 해결 가능</td>
+          <td>인터페이스 개발 + 외부 벤더 협의</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout warn">
+      <div class="callout-label">⚠ 중요</div>
+      <p>Gap을 발견했을 때 즉각적인 개발(Enhancement) 결론을 내리는 것은 금물입니다. 먼저 <strong>업무 프로세스 변경으로 해결할 수 없는지</strong>를 검토해야 합니다. 개발은 항상 유지보수 부담을 수반합니다.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">GR 구현 — 대표적 Fit-Gap 판정 포인트</div>
+    <table class="data-table">
+      <thead>
+        <tr><th>요구사항 예시</th><th>판정 경향</th><th>주의 사항</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>법인 간 내부거래 자동 대사</td>
+          <td><span class="badge badge-low">Fit</span> ICMR 표준 기능</td>
+          <td>Trading Partner 설정 선행 필요</td>
+        </tr>
+        <tr>
+          <td>지분법 평가 (IAS 28)</td>
+          <td><span class="badge badge-mid">Partial Fit</span></td>
+          <td>GR 표준 지원, 단 손실 중단·회복은 수동 조정 병행</td>
+        </tr>
+        <tr>
+          <td>특정 그룹사 커스텀 제거 분개</td>
+          <td><span class="badge badge-high">Gap — Enhancement</span></td>
+          <td>ABAP 개발 또는 Top-side Journal 활용 여부 판단</td>
+        </tr>
+        <tr>
+          <td>IFRS 18 신규 계정 분류 보고</td>
+          <td><span class="badge badge-high">Gap — Config</span></td>
+          <td>FS Item 재설계 필요, 릴리즈 버전 지원 여부 확인</td>
+        </tr>
+        <tr>
+          <td>다통화 환산 (IAS 21)</td>
+          <td><span class="badge badge-low">Fit</span></td>
+          <td>환산 방법(전기말/평균) 설정 확인</td>
+        </tr>
+        <tr>
+          <td>세그먼트 보고 (IFRS 8)</td>
+          <td><span class="badge badge-mid">Partial Fit</span></td>
+          <td>Profit Center 구조와 연결 범위 매핑 필요</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">SAC-P 구현 — 대표적 Fit-Gap 판정 포인트</div>
+    <table class="data-table">
+      <thead>
+        <tr><th>요구사항 예시</th><th>판정 경향</th><th>주의 사항</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>매출 계획 Top-Down 입력</td>
+          <td><span class="badge badge-low">Fit</span> 표준 입력 모델</td>
+          <td>데이터 모델 설계(차원 구조) 사전 확정 필요</td>
+        </tr>
+        <tr>
+          <td>비용 Bottom-Up 계획 취합</td>
+          <td><span class="badge badge-mid">Partial Fit</span></td>
+          <td>Data Action으로 집계 로직 구현, 복잡도에 따라 공수 증가</td>
+        </tr>
+        <tr>
+          <td>BOM 전개 기반 제조원가 계획</td>
+          <td><span class="badge badge-high">Gap — Config</span></td>
+          <td>SAC 표준 미지원 → 별도 Data Action 또는 외부 연산 필요</td>
+        </tr>
+        <tr>
+          <td>실적 데이터 자동 연동 (S/4HANA)</td>
+          <td><span class="badge badge-low">Fit</span> Live Connection</td>
+          <td>네트워크 레이턴시 및 데이터 볼륨 사전 점검 필요</td>
+        </tr>
+        <tr>
+          <td>계획 시나리오 버전 관리</td>
+          <td><span class="badge badge-low">Fit</span> 표준 버전 기능</td>
+          <td>버전 명명 규칙 및 잠금 정책 합의 필요</td>
+        </tr>
+        <tr>
+          <td>외부 ERP(비SAP) 실적 연동</td>
+          <td><span class="badge badge-high">Gap — 3rd Party</span></td>
+          <td>Import 방식 또는 중간 ETL 레이어 검토 필요</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Fit-Gap 판정 시 가장 어려운 순간 — Gap인지 요구사항 과잉인지</div>
+    <p>
+      때로는 Gap처럼 보이는 것이 실제로는 <span class="keyword">요구사항 과잉</span>인 경우가 있습니다.
+      표준 기능으로 충분한데 고객이 익숙한 방식을 고집하는 경우입니다.
+    </p>
+    <div class="callout">
+      <div class="callout-label">판단 기준</div>
+      <p>"이 요구사항이 충족되지 않으면 업무(결산/보고/계획 수립)가 불가능한가?"</p>
+      <p>"아니라면, 표준 기능으로 업무 목적을 달성할 수 있는 대안이 있는가?"</p>
+      <p>이 두 질문에 답할 수 있어야 Gap 여부를 확정할 수 있습니다.</p>
+    </div>
+    <div class="drill-wrap">
+      <button class="drill-toggle" onclick="toggleDrill(this)">
+        💡 사례: "현재 Excel 형식 그대로 SAC에서 입력하고 싶다"
+        <span class="drill-chevron">▼</span>
+      </button>
+      <div class="drill-body">
+        <p><strong>고객 요구:</strong> 기존 Excel 계획 시트와 동일한 레이아웃으로 SAC에서 입력하고 싶다.</p>
+        <p><strong>잘못된 대응:</strong> 즉시 커스텀 개발 검토 → 공수 폭증.</p>
+        <p><strong>올바른 대응:</strong> SAC 표준 입력 화면(Input Form)이 제공하는 기능을 먼저 시연합니다. 고객이 원하는 것은 "Excel 레이아웃"이 아니라 "빠르고 편한 입력"인 경우가 대부분입니다. 표준 Input Form 커스터마이징 범위(열 순서, 집계 표시 등)로 해결 가능한지 먼저 검증해야 합니다.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 5: Gap 문서화 ── -->
+<div class="section-content" id="s5">
+  <div class="section-heading">
+    <span class="section-num">SECTION 04</span>
+    <div>
+      <div class="section-title-text">Gap 문서화</div>
+      <div class="section-desc">발견한 Gap을 어떻게 기록하고, 고객과 합의하는가</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Fit-Gap 문서의 구성 요소</div>
+    <p>
+      Fit-Gap 문서는 단순한 목록이 아닙니다.
+      각 항목이 <strong>왜 Gap인지</strong>, <strong>어떤 대안이 있는지</strong>,
+      <strong>고객이 선택해야 할 것은 무엇인지</strong>가 담겨야 합니다.
+    </p>
+    <table class="data-table">
+      <thead>
+        <tr><th>항목</th><th>기재 내용</th><th>필수/선택</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>요구사항 ID</strong></td><td>추적 가능한 고유 번호 (예: GR-FG-001)</td><td>필수</td></tr>
+        <tr><td><strong>요구사항 설명</strong></td><td>고객 인터뷰에서 포착한 요구사항 원문 또는 요약</td><td>필수</td></tr>
+        <tr><td><strong>판정</strong></td><td>Fit / Partial Fit / Gap-Config / Gap-Enhancement / Gap-3rd</td><td>필수</td></tr>
+        <tr><td><strong>표준 기능 설명</strong></td><td>표준으로 어디까지 지원되는지 명시</td><td>필수</td></tr>
+        <tr><td><strong>Gap 설명</strong></td><td>Gap이 발생하는 이유 — 업무 요건과 표준 기능의 차이</td><td>Gap 시 필수</td></tr>
+        <tr><td><strong>대안 솔루션</strong></td><td>프로세스 변경 / Config / 개발 / 3rd Party 등 옵션 제시</td><td>Gap 시 필수</td></tr>
+        <tr><td><strong>추가 공수 예상</strong></td><td>대안 구현에 필요한 공수(Man-Day) 개략 산정</td><td>권장</td></tr>
+        <tr><td><strong>고객 의사결정 필요 여부</strong></td><td>고객이 선택해야 하는 경우 명시</td><td>필수</td></tr>
+        <tr><td><strong>우선순위</strong></td><td>High / Medium / Low — 프로젝트 일정에 미치는 영향 기준</td><td>필수</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Gap 문서화의 핵심 원칙</div>
+    <div class="two-col">
+      <div class="callout wrong">
+        <div class="callout-label">✗ 피해야 할 패턴</div>
+        <p>"Gap 발견 → 개발 필요 → 공수 추가" 식의 단선적 문서화.</p>
+        <p>고객은 선택지를 받지 못하고, 개발 비용만 통보받는 구조가 됩니다.</p>
+      </div>
+      <div class="callout correct">
+        <div class="callout-label">✓ 권장 패턴</div>
+        <p>"Gap 발견 → 대안 A, B, C 제시 → 각 대안의 공수/리스크 비교 → 고객 결정 요청".</p>
+        <p>고객을 의사결정 주체로 세우면 나중의 클레임을 막습니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Gap 합의 워크숍 — 어떻게 진행하는가</div>
+    <p>
+      Fit-Gap 문서를 작성하면 반드시 고객과 함께 검토하는 워크숍을 진행해야 합니다.
+      이메일로 문서를 보내고 "확인 요청"하는 방식은 대부분 피드백 없이 끝납니다.
+    </p>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-box active">
+          <div class="flow-box-num">STEP 1</div>
+          <div class="flow-box-label">Fit 항목 일괄 확인</div>
+        </div>
+        <div class="flow-arrow">→</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-box active">
+          <div class="flow-box-num">STEP 2</div>
+          <div class="flow-box-label">Partial Fit 프로세스 조정 협의</div>
+        </div>
+        <div class="flow-arrow">→</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-box warn-box">
+          <div class="flow-box-num">STEP 3</div>
+          <div class="flow-box-label">Gap 대안 선택 결정</div>
+        </div>
+        <div class="flow-arrow">→</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-box active">
+          <div class="flow-box-num">STEP 4</div>
+          <div class="flow-box-label">의사록 서명/이메일 확인</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <div class="callout-label">⚠ STEP 3이 가장 중요하다</div>
+      <p>Gap 대안 선택은 반드시 <strong>고객이 결정</strong>해야 합니다. 컨설턴트가 "이 방향이 좋겠습니다"라고 결론 내리면, 나중에 문제가 생겼을 때 "그때 컨설턴트가 그렇게 하라고 했다"는 책임 전가가 발생합니다. 대안을 제시하되 결정은 고객에게, 결정 근거는 반드시 문서화해야 합니다.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">방법론별 Gap 처리 우선순위 기준</div>
+    <div class="two-col">
+      <div>
+        <div class="compare-head gr">GR — Waterfall/Gate</div>
+        <div class="compare-body gr">
+          <p>Blueprint/Realization Phase 경계 전에 모든 Gap의 대안이 확정되어야 합니다. Realization 중 Gap이 추가 발견되면 일정에 직접 영향을 줍니다.</p>
+          <p style="margin-top:8px"><strong>우선순위 기준:</strong> 월 마감 Critical Path에 영향을 주는 Gap → High. Enhancement(개발) Gap은 가능한 초반에 확정해야 개발 일정을 확보할 수 있습니다.</p>
+        </div>
+      </div>
+      <div>
+        <div class="compare-head sacp">SAC-P — Agile/Sprint</div>
+        <div class="compare-body sacp">
+          <p>Gap은 백로그 항목으로 관리됩니다. Sprint 0(Discovery)에서 High 우선순위 Gap을 식별하고 초기 스프린트에 배치합니다.</p>
+          <p style="margin-top:8px"><strong>우선순위 기준:</strong> 계획 수립 핵심 흐름(매출→비용→손익)을 막는 Gap → Sprint 1~2 배치. 보고 형식 Gap은 후반 스프린트로 조정 가능합니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 6: 체크리스트 ── -->
+<div class="section-content" id="s6">
+  <div class="section-heading">
+    <span class="section-num">SECTION 06</span>
+    <div>
+      <div class="section-title-text">착수 &amp; Fit-Gap 마스터 체크리스트</div>
+      <div class="section-desc">단계별 완료 기준 점검</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 Kick-off 준비 단계</div>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="pb1"></div></div>
+    <div class="progress-label" id="pl1">0 / 6 완료</div>
+    <ul class="checklist" id="cl1">
+      <li><div class="check-box" onclick="tck(this,'cl1','pb1','pl1',6)"></div><div class="check-text">프로젝트 헌장(GR) 또는 Product Backlog 초안(SAC-P) 준비 완료</div></li>
+      <li><div class="check-box" onclick="tck(this,'cl1','pb1','pl1',6)"></div><div class="check-text">SAP 릴리즈 버전 및 SAC 테넌트 현황 사전 확인</div></li>
+      <li><div class="check-box" onclick="tck(this,'cl1','pb1','pl1',6)"></div><div class="check-text">의사결정 권한자 (GR: 시스템 오너 / SAC-P: Product Owner) 지정 요청</div></li>
+      <li><div class="check-box" onclick="tck(this,'cl1','pb1','pl1',6)"></div><div class="check-text">커뮤니케이션 채널 및 이슈 에스컬레이션 기준 합의</div></li>
+      <li><div class="check-box" onclick="tck(this,'cl1','pb1','pl1',6)"></div><div class="check-text">산출물 검토 기한(고객 피드백 N영업일) 합의</div></li>
+      <li><div class="check-box" onclick="tck(this,'cl1','pb1','pl1',6)"></div><div class="check-text">Kick-off 의사록 작성 및 이메일 확인 수령</div></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 AS-IS 인터뷰 단계</div>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="pb2"></div></div>
+    <div class="progress-label" id="pl2">0 / 5 완료</div>
+    <ul class="checklist" id="cl2">
+      <li><div class="check-box" onclick="tck(this,'cl2','pb2','pl2',5)"></div><div class="check-text">인터뷰 대상자 목록 확정 (재무/IT/임원 포함)</div></li>
+      <li><div class="check-box" onclick="tck(this,'cl2','pb2','pl2',5)"></div><div class="check-text">질문지 사전 작성 — 도메인별(GR/SAC-P) 특화 질문 포함</div></li>
+      <li><div class="check-box" onclick="tck(this,'cl2','pb2','pl2',5)"></div><div class="check-text">인터뷰 메모: 고객 발언과 컨설턴트 해석 분리 기록</div></li>
+      <li><div class="check-box" onclick="tck(this,'cl2','pb2','pl2',5)"></div><div class="check-text">인터뷰 후 24시간 내 메모 정리 완료</div></li>
+      <li><div class="check-box" onclick="tck(this,'cl2','pb2','pl2',5)"></div><div class="check-text">핵심 이해 내용 고객 이메일 확인 요청</div></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 TO-BE Visioning 단계</div>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="pb3"></div></div>
+    <div class="progress-label" id="pl3">0 / 5 완료</div>
+    <ul class="checklist" id="cl3">
+      <li><div class="check-box" onclick="tck(this,'cl3','pb3','pl3',5)"></div><div class="check-text">AS-IS Pain Point 목록 기반 TO-BE Vision 워크숍 일정 수립 및 진행</div></li>
+      <li><div class="check-box" onclick="tck(this,'cl3','pb3','pl3',5)"></div><div class="check-text">비즈니스 Vision — 달성 목표 수치(마감 단축일, 계획 사이클 단축 등) 합의 완료</div></li>
+      <li><div class="check-box" onclick="tck(this,'cl3','pb3','pl3',5)"></div><div class="check-text">프로세스 Vision — AS-IS→TO-BE 프로세스 흐름 비교도 작성 완료</div></li>
+      <li><div class="check-box" onclick="tck(this,'cl3','pb3','pl3',5)"></div><div class="check-text">GR: 데이터 모델(FS Item·Trading Partner 체계) 초안 승인 / SAC-P: 차원 구조 초안 승인</div></li>
+      <li><div class="check-box" onclick="tck(this,'cl3','pb3','pl3',5)"></div><div class="check-text">TO-BE Vision 문서 — 범위 경계·선결 조건 포함 서명 완료</div></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 Fit-Gap 판정 단계</div>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="pb4"></div></div>
+    <div class="progress-label" id="pl4">0 / 5 완료</div>
+    <ul class="checklist" id="cl4">
+      <li><div class="check-box" onclick="tck(this,'cl4','pb4','pl4',5)"></div><div class="check-text">전체 요구사항 목록 작성 완료 (ID 부여)</div></li>
+      <li><div class="check-box" onclick="tck(this,'cl4','pb4','pl4',5)"></div><div class="check-text">각 요구사항에 Fit/Partial Fit/Gap 판정 완료</div></li>
+      <li><div class="check-box" onclick="tck(this,'cl4','pb4','pl4',5)"></div><div class="check-text">Gap 항목: 업무 프로세스 변경 가능 여부 우선 검토 완료</div></li>
+      <li><div class="check-box" onclick="tck(this,'cl4','pb4','pl4',5)"></div><div class="check-text">Gap 항목: 대안 솔루션 (최소 2개) 및 공수 개략 산정 완료</div></li>
+      <li><div class="check-box" onclick="tck(this,'cl4','pb4','pl4',5)"></div><div class="check-text">우선순위 분류(High/Mid/Low) 완료</div></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 Gap 문서화 및 합의 단계</div>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="pb5"></div></div>
+    <div class="progress-label" id="pl5">0 / 4 완료</div>
+    <ul class="checklist" id="cl5">
+      <li><div class="check-box" onclick="tck(this,'cl5','pb5','pl5',4)"></div><div class="check-text">Fit-Gap 문서 구성 요소 전항목 기재 완료</div></li>
+      <li><div class="check-box" onclick="tck(this,'cl5','pb5','pl5',4)"></div><div class="check-text">고객 Gap 합의 워크숍 일정 확정 및 진행</div></li>
+      <li><div class="check-box" onclick="tck(this,'cl5','pb5','pl5',4)"></div><div class="check-text">Gap 대안 선택을 고객이 문서로 결정·서명</div></li>
+      <li><div class="check-box" onclick="tck(this,'cl5','pb5','pl5',4)"></div><div class="check-text">추가 공수 발생 Gap은 CR 또는 계획 조정 반영 완료</div></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ── SECTION 7: 확인 문제 ── -->
+<div class="section-content" id="s7">
+  <div class="section-heading">
+    <span class="section-num">SECTION 07</span>
+    <div>
+      <div class="section-title-text">확인 문제</div>
+      <div class="section-desc">핵심 개념 이해도 점검</div>
+    </div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Q1. TO-BE Visioning이 Fit-Gap 분석보다 먼저 이루어져야 하는 이유는?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ans(this,'wrong','q0')">① 고객에게 프로젝트 일정을 먼저 보여주기 위해</div>
+      <div class="quiz-option" onclick="ans(this,'correct','q0')">② Fit-Gap은 TO-BE와 표준 기능 사이의 거리를 측정하는 것이므로, TO-BE가 없으면 Fit-Gap 판정 기준 자체가 없기 때문이다</div>
+      <div class="quiz-option" onclick="ans(this,'wrong','q0')">③ AS-IS 인터뷰 결과를 검토할 시간이 필요하기 때문이다</div>
+      <div class="quiz-option" onclick="ans(this,'wrong','q0')">④ 고객의 예산을 미리 파악하기 위해</div>
+    </div>
+    <div class="quiz-feedback" id="q0fb"></div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Q1. Kick-off 미팅에서 반드시 합의해야 하는 가장 중요한 항목은?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ans(this,'wrong','q1')">① 프로젝트 팀 소개 및 역할 인사</div>
+      <div class="quiz-option" onclick="ans(this,'wrong','q1')">② 전체 제안 내용 PT 재발표</div>
+      <div class="quiz-option" onclick="ans(this,'correct','q1')">③ 의사결정 권한자, 커뮤니케이션 채널, 이슈 에스컬레이션 기준 등 거버넌스 수립</div>
+      <div class="quiz-option" onclick="ans(this,'wrong','q1')">④ 프로젝트 완료 후 유지보수 계획 협의</div>
+    </div>
+    <div class="quiz-feedback" id="q1fb"></div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Q2. AS-IS 인터뷰 메모 작성 시 가장 중요한 원칙은?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ans(this,'wrong','q2')">① 최대한 상세하게 모든 발언을 받아 적는다</div>
+      <div class="quiz-option" onclick="ans(this,'correct','q2')">② 고객이 말한 것(발언)과 컨설턴트가 해석한 것을 명확히 분리해 기록한다</div>
+      <div class="quiz-option" onclick="ans(this,'wrong','q2')">③ 결론만 간단히 요약해 기록한다</div>
+      <div class="quiz-option" onclick="ans(this,'wrong','q2')">④ 인터뷰 종료 후 일주일 내에 정리하면 충분하다</div>
+    </div>
+    <div class="quiz-feedback" id="q2fb"></div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Q3. Fit-Gap 분석에서 Gap이 발견되었을 때 가장 먼저 해야 할 것은?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ans(this,'wrong','q3')">① 즉시 개발(Enhancement) 공수를 산정해 고객에게 통보한다</div>
+      <div class="quiz-option" onclick="ans(this,'correct','q3')">② 업무 프로세스 변경으로 표준 기능 내에서 해결할 수 없는지 먼저 검토한다</div>
+      <div class="quiz-option" onclick="ans(this,'wrong','q3')">③ Gap을 프로젝트 범위에서 제외하고 다음 단계로 넘어간다</div>
+      <div class="quiz-option" onclick="ans(this,'wrong','q3')">④ 경쟁사 솔루션을 먼저 확인한다</div>
+    </div>
+    <div class="quiz-feedback" id="q3fb"></div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Q4. SAC-P 프로젝트에서 "매출 계획 Top-Down 입력" 요구사항의 일반적인 Fit-Gap 판정은?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ans(this,'correct','q4')">① Fit — SAC 표준 입력 모델로 구현 가능</div>
+      <div class="quiz-option" onclick="ans(this,'wrong','q4')">② Gap-Enhancement — 커스텀 개발 필요</div>
+      <div class="quiz-option" onclick="ans(this,'wrong','q4')">③ Gap-3rd Party — 외부 솔루션 필요</div>
+      <div class="quiz-option" onclick="ans(this,'wrong','q4')">④ Partial Fit — 업무 프로세스 전면 변경 필요</div>
+    </div>
+    <div class="quiz-feedback" id="q4fb"></div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-q">Q5. Gap 합의 워크숍에서 Gap 대안의 최종 선택은 누가 해야 하는가?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ans(this,'wrong','q5')">① 기술적 판단이 어려운 고객을 대신해 컨설턴트가 결정한다</div>
+      <div class="quiz-option" onclick="ans(this,'wrong','q5')">② 프로젝트 PM이 비용 효율을 고려해 결정한다</div>
+      <div class="quiz-option" onclick="ans(this,'correct','q5')">③ 대안과 각 대안의 공수/리스크를 제시하고, 최종 선택은 반드시 고객이 결정하도록 한다</div>
+      <div class="quiz-option" onclick="ans(this,'wrong','q5')">④ 가장 저렴한 대안을 자동으로 선택한다</div>
+    </div>
+    <div class="quiz-feedback" id="q5fb"></div>
+  </div>
+</div>
+
+</main>
+
+<footer style="background:var(--navy-dim);padding:24px var(--pad-x);display:flex;align-items:center;justify-content:space-between;">
+  <div style="font-size:12px;color:rgba(255,255,255,0.45);">© ASPN BAC사업부 · 프로젝트 실전 가이드 #2 · INTERNAL USE ONLY</div>
+  <div style="font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:0.06em;">CONFIDENTIAL</div>
+</footer>
+
+<script>
+function switchTab(e, id) {
+  e.preventDefault();
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  e.target.classList.add('active');
+  document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 120, behavior: 'smooth' });
+}
+function toggleDrill(btn) {
+  btn.classList.toggle('open');
+  btn.nextElementSibling.classList.toggle('open');
+}
+function tck(box, listId, pbId, plId, total) {
+  box.classList.toggle('checked');
+  box.nextElementSibling.classList.toggle('checked');
+  const done = document.getElementById(listId).querySelectorAll('.check-box.checked').length;
+  document.getElementById(pbId).style.width = (done / total * 100) + '%';
+  document.getElementById(plId).textContent = done + ' / ' + total + ' 완료';
+}
+const FB = {
+  q0: { correct:'정답입니다! Fit-Gap = TO-BE와 표준 기능 사이의 거리입니다. TO-BE가 확정되지 않으면 Fit-Gap은 "현재 업무를 시스템으로 옮기는 작업"에 불과해지고, 구현 후 고객은 "바뀐 게 없다"고 말하게 됩니다.', wrong:'아닙니다. Fit-Gap은 TO-BE와 표준 기능 사이의 거리를 측정하는 것입니다. TO-BE 없이는 판정 기준 자체가 없습니다.' },
+  q1: { correct:'정답입니다! 거버넌스 수립이 Kick-off의 핵심입니다. 의사결정 권한, 커뮤니케이션 채널, 에스컬레이션 기준이 합의되지 않으면 프로젝트 중반에 표류합니다.', wrong:'아닙니다. Kick-off의 핵심은 인사가 아니라 거버넌스 수립입니다.' },
+  q2: { correct:'정답입니다! 발언과 해석을 분리하지 않으면 "그런 말 한 적 없다"는 분쟁이 발생합니다. 인터뷰 후 24시간 내 정리하고 고객 확인을 받는 것도 필수입니다.', wrong:'아닙니다. 발언과 해석 분리가 핵심입니다. 또한 인터뷰 후 24시간 내 정리가 원칙입니다.' },
+  q3: { correct:'정답입니다! 개발은 항상 유지보수 부담을 수반합니다. Gap이 발견되면 먼저 업무 프로세스 변경으로 표준 기능 내에서 해결할 수 있는지 검토해야 합니다.', wrong:'아닙니다. Gap 발견 시 가장 먼저 할 것은 업무 프로세스 변경 가능 여부 검토입니다.' },
+  q4: { correct:'정답입니다! SAC-P의 매출 계획 Top-Down 입력은 SAC 표준 입력 모델(Input Form)로 구현 가능한 Fit 항목입니다. 단 데이터 모델(차원 구조) 사전 확정이 필요합니다.', wrong:'아닙니다. SAC 표준 입력 모델로 구현 가능한 Fit 항목입니다. 단 데이터 모델 설계가 선행되어야 합니다.' },
+  q5: { correct:'정답입니다! 컨설턴트는 대안과 각 대안의 장단점을 제시하는 역할입니다. 최종 결정은 반드시 고객이 해야 하며, 이 결정을 문서화해야 나중의 책임 전가를 막을 수 있습니다.', wrong:'아닙니다. Gap 대안의 최종 결정은 반드시 고객이 해야 합니다. 컨설턴트가 결정하면 나중에 모든 책임이 컨설턴트에게 돌아옵니다.' }
+};
+function ans(opt, result, qid) {
+  opt.closest('.quiz-options').querySelectorAll('.quiz-option').forEach(o => { o.classList.add('disabled'); o.onclick = null; });
+  opt.classList.add(result);
+  const fb = document.getElementById(qid + 'fb');
+  fb.className = 'quiz-feedback ' + result;
+  fb.textContent = FB[qid][result];
+}
+</script>
+</body>
+</html>
