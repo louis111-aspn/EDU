@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LOB별 원가계획 수립 방법론 — 교육자료</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #003366;
+    --navy-mid: #004899;
+    --navy-light: #e8eef5;
+    --white: #ffffff;
+    --gray-dark: #333333;
+    --gray-mid: #666666;
+    --gray-light: #f4f6f9;
+    --gray-border: #d0d8e4;
+    --correct: #1a6e3c;
+    --correct-bg: #e8f5ee;
+    --wrong: #8b1a1a;
+    --wrong-bg: #fdf0f0;
+    --warn: #7a5200;
+    --warn-bg: #fdf6e3;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #f0f3f8;
+    color: var(--gray-dark);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 48px 0 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 320px; height: 320px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 50%;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -40px;
+    width: 220px; height: 220px;
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 50%;
+  }
+  .header-inner {
+    max-width: 100%;
+    padding: 0 clamp(20px, 5vw, 80px);
+    position: relative;
+    z-index: 1;
+  }
+  .header-tag {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 16px;
+  }
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.25;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+  header h1 em { font-style: italic; color: rgba(255,255,255,0.75); }
+  header p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+    max-width: 600px;
+  }
+
+  /* ── NAV TABS ── */
+  .nav-tabs {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .nav-tabs-inner {
+    padding: 0 clamp(12px, 4vw, 80px);
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-tabs-inner::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    padding: 14px clamp(10px, 1.5vw, 18px);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: clamp(11px, 1.2vw, 13px);
+    font-weight: 500;
+    color: var(--gray-mid);
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .tab-btn:hover { color: var(--navy); }
+  .tab-btn.active {
+    color: var(--navy);
+    border-bottom-color: var(--navy);
+    font-weight: 700;
+  }
+
+  /* ── MAIN ── */
+  main {
+    max-width: 100%;
+    padding: 40px clamp(20px, 5vw, 80px) 80px;
+  }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    font-weight: 400;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .section-subtitle {
+    font-size: 13px;
+    color: var(--gray-mid);
+    margin-bottom: 32px;
+    line-height: 1.6;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--gray-border);
+    border-radius: 2px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 14px;
+  }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-left: 3px solid var(--navy);
+    background: var(--navy-light);
+    padding: 16px 20px;
+    margin: 20px 0;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .callout.correct { border-left-color: var(--correct); background: var(--correct-bg); color: var(--correct); }
+  .callout.wrong   { border-left-color: var(--wrong);   background: var(--wrong-bg);   color: var(--wrong); }
+  .callout.warn    { border-left-color: var(--warn);    background: var(--warn-bg);    color: var(--warn); }
+  .callout strong  { font-weight: 700; }
+
+  /* ── MATH BLOCK ── */
+  .math-block {
+    background: #1a1f2e;
+    color: #e8f0ff;
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 13px;
+    line-height: 2;
+    padding: 24px 28px;
+    margin: 20px 0;
+    border-radius: 2px;
+    overflow-x: auto;
+  }
+  .math-block .comment  { color: #5a7aaa; }
+  .math-block .hl       { color: #7dd3fc; font-weight: 600; }
+  .math-block .result   { color: #86efac; font-weight: 600; }
+  .math-block .diff     { color: #fca5a5; font-weight: 600; }
+  .math-block .warn-txt { color: #fcd34d; font-weight: 600; }
+
+  /* ── FLOW ── */
+  .flow { display: flex; flex-direction: column; gap: 0; margin: 24px 0; }
+  .flow-step { display: flex; align-items: stretch; gap: 0; }
+  .flow-connector { display: flex; justify-content: center; padding: 4px 0; padding-left: 44px; }
+  .flow-connector-line { width: 2px; background: var(--navy); height: 20px; }
+  .flow-num {
+    width: 44px; min-width: 44px;
+    display: flex; align-items: flex-start;
+    padding-top: 14px; justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px; color: var(--navy); opacity: 0.3;
+  }
+  .flow-content {
+    flex: 1;
+    border: 1px solid var(--gray-border);
+    padding: 14px 18px;
+    background: var(--white);
+  }
+  .flow-content.active-step { border-color: var(--navy); background: var(--navy-light); }
+  .flow-title { font-weight: 700; font-size: 13px; color: var(--navy); margin-bottom: 4px; }
+  .flow-desc  { font-size: 13px; color: var(--gray-mid); line-height: 1.6; }
+  .flow-tag {
+    display: inline-block; margin-top: 6px;
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 10px; padding: 2px 7px;
+    background: var(--navy); color: var(--white); letter-spacing: 0.5px;
+  }
+  .flow-tag.warn { background: var(--warn); }
+
+  /* ── PATH DIAGRAM ── */
+  .path-diagram {
+    display: grid;
+    grid-template-columns: 1fr 40px 1fr;
+    gap: 0;
+    margin: 24px 0;
+    align-items: start;
+  }
+  .path-box {
+    border: 1px solid var(--gray-border);
+    background: var(--gray-light);
+    padding: 20px;
+  }
+  .path-box.highlight { border-color: var(--navy); background: var(--navy-light); }
+  .path-label {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 11px; letter-spacing: 1px;
+    color: var(--navy); font-weight: 600; margin-bottom: 10px;
+  }
+  .path-desc { font-size: 13px; line-height: 1.7; color: var(--gray-dark); }
+  .path-vs {
+    display: flex; align-items: center; justify-content: center; padding-top: 28px;
+    font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--gray-mid); font-style: italic;
+  }
+
+  /* ── DATA TABLE ── */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 20px 0; }
+  .data-table th {
+    background: var(--navy); color: var(--white);
+    padding: 10px 16px; text-align: left; font-weight: 500; font-size: 12px;
+  }
+  .data-table td {
+    padding: 12px 16px; border-bottom: 1px solid var(--gray-border);
+    vertical-align: top; line-height: 1.6;
+  }
+  .data-table tr:hover td { background: var(--gray-light); }
+  .data-table tr.row-highlight td { background: var(--navy-light); }
+  .data-table tr.row-warn td { background: var(--warn-bg); }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-block; padding: 2px 8px;
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 11px; font-weight: 600; border-radius: 2px;
+  }
+  .badge-navy    { background: var(--navy); color: var(--white); }
+  .badge-warn    { background: var(--warn-bg);    color: var(--warn);    border: 1px solid var(--warn); }
+  .badge-correct { background: var(--correct-bg); color: var(--correct); border: 1px solid var(--correct); }
+  .badge-wrong   { background: var(--wrong-bg);   color: var(--wrong);   border: 1px solid var(--wrong); }
+  .badge-gray    { background: var(--gray-light);  color: var(--gray-mid); border: 1px solid var(--gray-border); }
+
+  /* ── AXIS GRID (2×2) ── */
+  .axis-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: var(--gray-border);
+    border: 1px solid var(--gray-border); margin: 20px 0;
+  }
+  .axis-cell { background: var(--white); padding: 20px 22px; }
+  .axis-cell.navy-bg { background: var(--navy); }
+  .axis-cell-title {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--navy); font-weight: 600; margin-bottom: 10px;
+  }
+  .axis-cell.navy-bg .axis-cell-title { color: rgba(255,255,255,0.6); }
+  .axis-cell-body { font-size: 13px; line-height: 1.7; color: var(--gray-dark); }
+  .axis-cell.navy-bg .axis-cell-body { color: rgba(255,255,255,0.85); }
+
+  /* ── SUMMARY GRID ── */
+  .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+  .summary-item { border: 1px solid var(--gray-border); padding: 20px; background: var(--white); }
+  .summary-item-title {
+    font-size: 12px; font-weight: 700; color: var(--navy);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--gray-border);
+  }
+  .summary-item p { font-size: 13px; line-height: 1.7; color: var(--gray-dark); }
+
+  /* ── SCATTER ── */
+  .scatter-wrap { position: relative; margin: 24px 0; }
+  .scatter-wrap svg { width: 100%; }
+
+  /* ── QUIZ ── */
+  .quiz-card {
+    background: var(--white); border: 1px solid var(--gray-border);
+    padding: 28px 32px; margin-bottom: 20px;
+  }
+  .quiz-q { font-size: 15px; font-weight: 500; color: var(--gray-dark); line-height: 1.6; margin-bottom: 20px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .quiz-option {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 16px; border: 1px solid var(--gray-border);
+    cursor: pointer; transition: all 0.15s;
+    font-size: 13px; line-height: 1.6; background: var(--gray-light);
+  }
+  .quiz-option:hover { border-color: var(--navy); background: var(--navy-light); }
+  .quiz-option.selected-correct { border-color: var(--correct); background: var(--correct-bg); color: var(--correct); }
+  .quiz-option.selected-wrong   { border-color: var(--wrong);   background: var(--wrong-bg);   color: var(--wrong); }
+  .quiz-option.reveal-correct   { border-color: var(--correct); background: var(--correct-bg); color: var(--correct); }
+  .quiz-idx { font-family: 'JetBrains Mono', 'Noto Sans KR', monospace; font-weight: 700; font-size: 12px; color: var(--navy); min-width: 20px; }
+  .quiz-feedback {
+    font-size: 13px; line-height: 1.7; padding: 14px 18px;
+    border-left: 3px solid var(--navy); background: var(--navy-light);
+    display: none; margin-top: 4px;
+  }
+  .quiz-feedback.show { display: block; }
+
+  /* ── DIVIDER ── */
+  .divider { height: 1px; background: var(--gray-border); margin: 28px 0; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    header h1 { font-size: 24px; }
+    header p  { font-size: 13px; }
+    .section-title { font-size: 22px; }
+    .card { padding: 20px 18px; }
+    .math-block { font-size: 11px; padding: 16px; }
+    .data-table { font-size: 12px; }
+    .data-table th, .data-table td { padding: 8px 10px; }
+    .path-diagram { grid-template-columns: 1fr; }
+    .path-vs { display: none; }
+    .summary-grid { grid-template-columns: 1fr; }
+    .axis-grid { grid-template-columns: 1fr; }
+    .flow-num { width: 32px; min-width: 32px; font-size: 18px; }
+    .quiz-card { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-tag">Cost Planning Methodology · Consultant Insight Series · 내부 교육자료</div>
+    <h1>LOB별 원가계획 수립 방법론의<br><em>비즈니스 구조적 차이</em></h1>
+    <p>원가계획 방법론의 선택도 기법이 아니라 비즈니스 구조의 문제다. LOB마다 원가 발생 구조, 고정/변동 비율, 통제 가능성이 다르며 — 이 세 축이 원가계획의 설계를 결정한다.</p>
+  </div>
+</header>
+
+<nav class="nav-tabs">
+  <div class="nav-tabs-inner">
+    <button class="tab-btn active" onclick="showTab('s1',this)">① 분석 프레임워크</button>
+    <button class="tab-btn" onclick="showTab('s2',this)">② 제조업</button>
+    <button class="tab-btn" onclick="showTab('s3',this)">③ 유통·리테일</button>
+    <button class="tab-btn" onclick="showTab('s4',this)">④ 서비스업</button>
+    <button class="tab-btn" onclick="showTab('s5',this)">⑤ 구독·SaaS</button>
+    <button class="tab-btn" onclick="showTab('s6',this)">⑥ 금융·보험</button>
+    <button class="tab-btn" onclick="showTab('s7',this)">⑦ LOB 차이 비교</button>
+    <button class="tab-btn" onclick="showTab('s8',this)">⑧ 확인 문제</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ════════════════════════════════════════
+     S1. 분석 프레임워크
+════════════════════════════════════════ -->
+<div id="s1" class="section active">
+  <div class="section-title">분석 프레임워크</div>
+  <div class="section-subtitle">원가계획 방법론의 차이를 만드는 세 가지 진단 축. 매출계획 프레임워크와 쌍을 이루며, 두 계획의 연동 구조를 이해하는 것이 출발점이다.</div>
+
+  <div class="card">
+    <div class="card-title">원가계획 방법론 선택의 3축</div>
+    <p style="font-size:14px;line-height:1.8;margin-bottom:16px;">매출계획이 "무엇이 매출을 결정하는가"의 구조를 진단하듯, 원가계획은 <strong>"무엇이 원가를 발생시키는가"</strong>의 구조를 먼저 진단해야 한다. 이 진단 없이 원가 항목을 나열하는 것은 계획이 아니라 집계다.</p>
+  </div>
+
+  <div class="axis-grid">
+    <div class="axis-cell navy-bg">
+      <div class="axis-cell-title">① 원가 발생 구조 (Cost Driver)</div>
+      <div class="axis-cell-body">무엇이 원가를 유발하는가? 물량인가, 인력인가, 리스크인가. Cost Driver가 다르면 계획 단위와 드라이버 지표가 달라진다.</div>
+    </div>
+    <div class="axis-cell">
+      <div class="axis-cell-title">Cost Driver 유형별 계획 단위</div>
+      <div class="axis-cell-body">
+        <strong>물량 기반</strong> → 품목·공정 단위 적산 (제조)<br>
+        <strong>인력 기반</strong> → FTE × 단가 모델 (서비스)<br>
+        <strong>거래 기반</strong> → 매입단가 × 수량 (유통)<br>
+        <strong>리스크 기반</strong> → 손해율·충당금 시나리오 (금융)
+      </div>
+    </div>
+    <div class="axis-cell">
+      <div class="axis-cell-title">고정/변동 비율의 함의</div>
+      <div class="axis-cell-body">
+        <strong>고정비 비중 높음</strong> → 조업도 변동 시 단위원가 급변. 손익분기점 관리가 핵심<br>
+        <strong>변동비 비중 높음</strong> → 매출 연동 원가율 관리. 마진 방어가 핵심<br>
+        <strong>혼합형</strong> → 고정비 레버리지 구간 분석 필수
+      </div>
+    </div>
+    <div class="axis-cell navy-bg">
+      <div class="axis-cell-title">② 고정/변동 비율 (Cost Behavior)</div>
+      <div class="axis-cell-body">원가가 조업도·매출에 연동되는가, 독립적으로 발생하는가. 이 비율이 손익분기점 구조와 원가 레버리지를 결정한다.</div>
+    </div>
+    <div class="axis-cell navy-bg">
+      <div class="axis-cell-title">③ 통제 가능성 (Controllability)</div>
+      <div class="axis-cell-body">원가를 내부 의사결정으로 줄일 수 있는가, 외부 시장·규제가 결정하는가. 통제 가능 원가와 불가 원가를 분리해야 계획에 의미가 생긴다.</div>
+    </div>
+    <div class="axis-cell">
+      <div class="axis-cell-title">통제 가능성과 계획 설계</div>
+      <div class="axis-cell-body">
+        <strong>내부 통제</strong> → 효율화·프로세스 개선이 레버<br>
+        <strong>시장 연동</strong> → 헤징·조달 전략 + 시나리오 설계<br>
+        <strong>규제 연동</strong> → 외생 변수 Macro 시나리오 필수
+      </div>
+    </div>
+  </div>
+
+  <div class="callout correct">
+    <strong>핵심 원칙:</strong> 원가계획은 매출계획의 하위 계획이 아니다. <strong>매출 드라이버와 원가 드라이버가 연동되는 구조</strong>를 먼저 파악해야 한다. 매출이 늘 때 원가가 어떻게 움직이는지를 모르면 이익계획은 의미가 없다.
+  </div>
+
+  <div class="card">
+    <div class="card-title">매출계획과의 연동 원칙</div>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <div class="flow-content active-step">
+          <div class="flow-title">매출 드라이버 확인</div>
+          <div class="flow-desc">무엇이 매출을 결정하는가? (물량, 단가, 인력, ARR…) 매출 드라이버가 원가 드라이버의 출발점이 된다.</div>
+          <span class="flow-tag">REVENUE DRIVER</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <div class="flow-content">
+          <div class="flow-title">원가 발생 구조 매핑</div>
+          <div class="flow-desc">매출 드라이버가 변할 때 원가가 어떻게 변하는가? 연동 원가(변동비)와 독립 원가(고정비)를 분리한다.</div>
+          <span class="flow-tag">COST DRIVER MAPPING</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <div class="flow-content">
+          <div class="flow-title">통제 가능 원가 분리</div>
+          <div class="flow-desc">내부 의사결정으로 줄일 수 있는 원가와 외부 변수로 결정되는 원가를 구분. 계획의 레버는 전자에만 있다.</div>
+          <span class="flow-tag">CONTROLLABLE vs UNCONTROLLABLE</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">4</div>
+        <div class="flow-content active-step">
+          <div class="flow-title">이익 구조 연동</div>
+          <div class="flow-desc">매출계획 × 원가계획 → 이익계획. 시나리오별 매출 변동 시 이익이 어떻게 움직이는지 감응도 분석으로 완성.</div>
+          <span class="flow-tag">P&amp;L INTEGRATION</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <strong>컨설턴트 경계:</strong> 원가 항목을 나열하고 전년 대비 % 증감을 적용하는 것은 원가계획이 아니라 원가 예산이다. <strong>드라이버 기반의 원가 계획</strong>만이 경영 의사결정의 근거로 활용될 수 있다.
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     S2. 제조업
+════════════════════════════════════════ -->
+<div id="s2" class="section">
+  <div class="section-title">제조업 (Manufacturing)</div>
+  <div class="section-subtitle">원가가 물량 × 투입단가 구조로 발생하며, 고정비 흡수율이 조업도에 따라 급변한다. 표준원가와 실제원가의 차이 관리가 계획 정확도의 핵심이다.</div>
+
+  <div class="card">
+    <div class="card-title">원가 구조 진단</div>
+    <table class="data-table">
+      <thead><tr><th>진단 축</th><th>제조업 특성</th><th>계획 설계 함의</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-navy">원가 발생 구조</span></td>
+          <td>재료비 · 노무비 · 제조간접비 3원가. BOM 기반 물량 × 단가</td>
+          <td>품목별 BOM 적산이 원가계획의 기본 단위. 공정별 원가 배분 구조 필요</td>
+        </tr>
+        <tr class="row-highlight">
+          <td><span class="badge badge-navy">고정/변동 비율</span></td>
+          <td>재료비(변동) + 직접노무비(준변동) + 제조간접비(고정 비중 높음)</td>
+          <td>조업도 변동 시 단위원가 급변. 손익분기 조업도 관리 필수</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-navy">통제 가능성</span></td>
+          <td>재료비 — 시장 연동. 노무비 — 내부 통제. 간접비 — 배분 방식에 의존</td>
+          <td>통제 가능 원가(노무, 간접비 효율화)와 시장 연동 원가(재료비) 분리 계획</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">원가계획 공식 구조</div>
+    <div class="math-block">
+<span class="comment">// 제조업 원가계획 기본 구조</span>
+제조원가 = <span class="hl">재료비</span> + <span class="hl">노무비</span> + <span class="hl">제조간접비</span>
+
+<span class="comment">// 재료비 — 변동비, BOM 기반</span>
+재료비 = Σ (품목별 BOM 소요량 × 원자재 단가 × 생산계획 수량)
+       ± <span class="warn-txt">수율 손실</span> (불량률, 스크랩율 반영)
+
+<span class="comment">// 노무비 — 준변동비</span>
+노무비 = 직접인원 × 시간당 임률 × 투입 시간
+       + <span class="warn-txt">잔업·특근</span> (조업도 초과 시 추가 발생)
+
+<span class="comment">// 제조간접비 — 고정비 중심, 조업도로 배부</span>
+제조간접비 배부율 = 연간 간접비 예산 ÷ <span class="hl">기준 조업도</span>
+단위 제품 간접비 = 배부율 × 제품별 배부 기준
+
+<span class="comment">// 고정비 흡수율 이슈</span>
+실제 조업도 &lt; 기준 조업도 → <span class="diff">고정비 미흡수 → 단위원가 상승</span>
+실제 조업도 &gt; 기준 조업도 → <span class="result">고정비 과흡수 → 단위원가 하락</span>
+    </div>
+  </div>
+
+  <div class="callout correct">
+    <strong>방법론 포지션:</strong> BOM 기반 표준원가 Bottom-Up 적산. 조업도 시나리오별 단위원가 변동 분석 병행 필수.
+  </div>
+
+  <div class="card">
+    <div class="card-title">핵심 드라이버 &amp; 컨설턴트 인사이트</div>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">①</div>
+        <div class="flow-content active-step">
+          <div class="flow-title">고정비 흡수율 — 조업도가 단위원가를 결정</div>
+          <div class="flow-desc">제조간접비(감가상각, 임차료, 관리인건비)는 생산량과 무관하게 발생한다. 생산량이 줄면 제품 한 개에 배부되는 고정비가 늘어 단위원가가 올라간다. 매출 감소 → 생산 감소 → 원가율 상승의 악순환 구조를 계획 단계에서 시나리오화해야 한다.</div>
+          <span class="flow-tag">FIXED COST ABSORPTION</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">②</div>
+        <div class="flow-content">
+          <div class="flow-title">재료비 — 원자재 단가 시나리오 분리</div>
+          <div class="flow-desc">재료비는 변동비이지만 단가가 시장에서 결정된다. 수량 계획(내부 통제)과 단가 계획(시장 연동)을 분리하여 수립. 원자재 가격 ±10% 시나리오별 재료비 감응도를 정량화할 것.</div>
+          <span class="flow-tag">MATERIAL PRICE SCENARIO</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">③</div>
+        <div class="flow-content">
+          <div class="flow-title">불량률·수율 — 숨은 원가 레버</div>
+          <div class="flow-desc">불량률 1%p 개선이 재료비와 노무비에 미치는 영향을 정량화하면 공정 개선 투자의 ROI를 계산할 수 있다. 원가계획에 수율 목표를 명시적으로 반영하는 것이 실행력을 높인다.</div>
+          <span class="flow-tag">YIELD RATE MANAGEMENT</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">④</div>
+        <div class="flow-content">
+          <div class="flow-title">제품 Mix — 원가율은 Mix에 따라 변한다</div>
+          <div class="flow-desc">고마진 제품과 저마진 제품의 생산 비중이 달라지면 전체 원가율이 변한다. 총 매출이 동일해도 제품 Mix가 다르면 이익이 달라진다. 원가계획에 Mix 시뮬레이션을 반드시 포함할 것.</div>
+          <span class="flow-tag">PRODUCT MIX SIMULATION</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout wrong">
+    <strong>Consultant Trap:</strong> 표준원가를 실제원가로 오인하는 오류. 표준원가는 계획의 기준선일 뿐이며, <strong>실제 조업도와 불량률에 따라 실제원가는 표준원가와 반드시 차이가 난다.</strong> 원가 차이(Variance) 분석 없이 표준원가만으로 수익성을 판단하면 오판이 발생한다.
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     S3. 유통·리테일
+════════════════════════════════════════ -->
+<div id="s3" class="section">
+  <div class="section-title">유통·리테일 (Retail / Distribution)</div>
+  <div class="section-subtitle">원가의 핵심이 매입단가(COGS)이며, 채널별로 원가 구조가 근본적으로 다르다. Gross Margin 계층 관리와 채널 Mix 변화에 따른 원가율 변동이 계획의 핵심이다.</div>
+
+  <div class="card">
+    <div class="card-title">원가 구조 진단</div>
+    <table class="data-table">
+      <thead><tr><th>진단 축</th><th>유통·리테일 특성</th><th>계획 설계 함의</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-navy">원가 발생 구조</span></td>
+          <td>매입원가(COGS)가 지배적. 물류비·판촉비·반품 처리 비용이 추가</td>
+          <td>매입 협상력이 원가의 1차 레버. SKU별·공급사별 매입단가 관리 필수</td>
+        </tr>
+        <tr class="row-highlight">
+          <td><span class="badge badge-navy">고정/변동 비율</span></td>
+          <td>COGS는 변동비. 점포 임차료·인건비는 고정비. 온라인은 고정비 비중 낮음</td>
+          <td>채널별 원가 구조가 다름 → 채널 통합 원가율로 판단 금지</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-navy">통제 가능성</span></td>
+          <td>COGS — 매입 협상으로 부분 통제. 물류비 — 내부 효율화 가능. 반품 — 상품·운영 품질 연동</td>
+          <td>통제 레버: 매입단가 협상 / 재고회전율 / 반품률 감소</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">원가계획 공식 구조 — Gross Margin 계층</div>
+    <div class="math-block">
+<span class="comment">// 유통·리테일 손익 계층 구조</span>
+매출액 (Gross Revenue)
+  - <span class="hl">매입원가</span>       (COGS = 매입단가 × 판매수량)
+  - <span class="warn-txt">반품·할인</span>      (Returns &amp; Allowances)
+= <span class="result">Gross Profit</span>   → Gross Margin % 관리
+
+  - <span class="hl">물류비</span>         (입고·보관·출고·라스트마일)
+  - <span class="hl">판촉비</span>         (프로모션·쿠폰·광고)
+= <span class="result">Net Margin</span>     → 채널별 분리 필수
+
+<span class="comment">// 채널별 원가 구조 차이</span>
+오프라인: 고정비 높음 (임차료 + 인건비) → <span class="warn-txt">손익분기점 높음</span>
+온라인:   변동비 높음 (물류비 + 수수료)  → <span class="warn-txt">물량 증가 시 원가율 유지</span>
+
+<span class="comment">// 재고 원가 — 숨은 원가 항목</span>
+재고 관련 원가 = 보유 원가 (금융비용) + 진부화 손실 + 폐기
+    </div>
+  </div>
+
+  <div class="callout correct">
+    <strong>방법론 포지션:</strong> Gross Margin 계층별 원가율 관리. 채널별 분리 계획 필수. SKU ABC 등급별 원가율 차등 관리.
+  </div>
+
+  <div class="card">
+    <div class="card-title">핵심 드라이버 &amp; 컨설턴트 인사이트</div>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">①</div>
+        <div class="flow-content active-step">
+          <div class="flow-title">채널별 원가 구조 — 통합 마진으로 보면 안 된다</div>
+          <div class="flow-desc">온라인 채널은 임차료가 없는 대신 물류비·플랫폼 수수료가 높다. 오프라인은 임차료·인건비가 고정 발생한다. 채널 Mix가 온라인 방향으로 이동하면 Gross Margin은 올라가지만 Net Margin은 물류비 증가로 제자리일 수 있다.</div>
+          <span class="flow-tag">CHANNEL COST STRUCTURE</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">②</div>
+        <div class="flow-content">
+          <div class="flow-title">재고회전율 — 원가율을 결정하는 숨은 지표</div>
+          <div class="flow-desc">재고회전율이 낮아지면 보유 원가(자본 기회비용), 진부화 손실, 폐기 비용이 증가한다. 원가계획에 재고회전율 목표를 명시적으로 반영하지 않으면 실제 원가율이 계획보다 항상 높게 나온다.</div>
+          <span class="flow-tag">INVENTORY TURNOVER</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">③</div>
+        <div class="flow-content">
+          <div class="flow-title">반품률 — 매출과 원가를 동시에 오염</div>
+          <div class="flow-desc">반품은 매출을 줄이는 동시에 역물류 비용을 발생시킨다. 반품률 1%p 증가의 Gross Margin 영향을 정량화하고 원가계획에 반품 버퍼를 명시적으로 포함할 것.</div>
+          <span class="flow-tag">RETURN RATE BUFFER</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">④</div>
+        <div class="flow-content">
+          <div class="flow-title">판촉비 — 변동비지만 원가율에 직결</div>
+          <div class="flow-desc">프로모션 비용은 매출을 끌어올리지만 동시에 원가율을 높인다. 판촉비 집행 계획을 매출계획과 연동하지 않으면 매출은 목표 달성, 이익은 목표 미달이라는 전형적 오류가 발생한다.</div>
+          <span class="flow-tag">PROMO COST vs MARGIN</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout wrong">
+    <strong>Consultant Trap:</strong> 채널 통합 Gross Margin으로 수익성을 판단하는 오류. <strong>채널별 원가 구조가 다르기 때문에 채널 Mix가 바뀌면 통합 마진율은 실제 수익성을 왜곡한다.</strong> 반드시 채널별 Contribution Margin으로 분리 분석해야 한다.
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     S4. 서비스업
+════════════════════════════════════════ -->
+<div id="s4" class="section">
+  <div class="section-title">서비스업 (Professional Service)</div>
+  <div class="section-subtitle">원가의 70~80%가 인건비이며, Utilization Rate가 원가율을 결정한다. 직접원가(프로젝트 투입)와 간접원가(오버헤드) 배분 방식이 프로젝트별 수익성 판단을 좌우한다.</div>
+
+  <div class="card">
+    <div class="card-title">원가 구조 진단</div>
+    <table class="data-table">
+      <thead><tr><th>진단 축</th><th>서비스업 특성</th><th>계획 설계 함의</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-navy">원가 발생 구조</span></td>
+          <td>인건비가 원가의 70~80%. 직접 인건비(프로젝트 투입) + 간접 인건비(비투입 시간)</td>
+          <td>FTE × 단가 × Utilization 모델이 원가계획의 기본 구조</td>
+        </tr>
+        <tr class="row-highlight">
+          <td><span class="badge badge-navy">고정/변동 비율</span></td>
+          <td>인건비는 준고정비 (단기 조정 어려움). Utilization이 낮아도 인건비는 발생</td>
+          <td>Utilization 하락 = 고정비 증가 효과. 손익분기 Utilization 관리 필수</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-navy">통제 가능성</span></td>
+          <td>인건비 — 인력 규모로 중기 통제. 오버헤드 — 구조적 비용. Utilization — 영업·배치로 통제</td>
+          <td>단기 원가 레버는 Utilization 향상. 중기 레버는 인력 구조 최적화</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">원가계획 공식 구조</div>
+    <div class="math-block">
+<span class="comment">// 서비스업 원가 구조</span>
+총 원가 = <span class="hl">직접 인건비</span> + <span class="hl">오버헤드</span> + 기타 직접비
+
+<span class="comment">// 직접 인건비 — Utilization과 역관계</span>
+직접 인건비 = FTE × 연간 임률
+프로젝트 배부 원가 = 직접 인건비 × <span class="hl">Utilization Rate</span>
+비투입 원가 (Bench) = 직접 인건비 × <span class="warn-txt">(1 - Utilization Rate)</span>
+
+<span class="comment">// 오버헤드 배부 — 방식에 따라 프로젝트 수익성이 달라진다</span>
+오버헤드 배부율 = 총 오버헤드 ÷ 총 직접 인건비
+프로젝트 원가 = 직접 인건비 × (1 + <span class="warn-txt">오버헤드 배부율</span>)
+
+<span class="comment">// 손익분기 Utilization</span>
+BEP Utilization = 총 고정비 ÷ (FTE × 연간 임률 × Bill Rate 마진율)
+<span class="result">목표 Utilization 75~85% → BEP 통상 60~65% 수준</span>
+    </div>
+  </div>
+
+  <div class="callout correct">
+    <strong>방법론 포지션:</strong> FTE × Utilization 기반 원가 모델. 직접원가와 오버헤드를 분리 계획하고, Utilization 시나리오별 원가율 감응도 분석 필수.
+  </div>
+
+  <div class="card">
+    <div class="card-title">핵심 드라이버 &amp; 컨설턴트 인사이트</div>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">①</div>
+        <div class="flow-content active-step">
+          <div class="flow-title">Utilization — 원가율의 직접 결정자</div>
+          <div class="flow-desc">Utilization 1%p 변동이 전체 원가율에 미치는 영향을 정량화할 것. Utilization 75% vs 65%에서의 프로젝트 마진율 차이가 얼마인지 계획 단계에서 계산해야 실행 목표가 생긴다.</div>
+          <span class="flow-tag">UTILIZATION vs MARGIN</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">②</div>
+        <div class="flow-content">
+          <div class="flow-title">오버헤드 배부 방식 — 수익성 판단을 왜곡</div>
+          <div class="flow-desc">오버헤드 배부율이 높으면 소규모 프로젝트가 대규모 프로젝트보다 불리하게 보인다. 배부 방식(직접 인건비 기준 / 매출 기준 / 시간 기준)에 따라 동일 프로젝트의 이익률이 달라진다. 배부 방식을 명확히 정의하지 않으면 프로젝트 선택 의사결정이 왜곡된다.</div>
+          <span class="flow-tag">OVERHEAD ALLOCATION METHOD</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">③</div>
+        <div class="flow-content">
+          <div class="flow-title">인력 구조 — 직급 Mix가 원가율을 결정</div>
+          <div class="flow-desc">시니어 인력 비중이 높으면 Bill Rate도 높지만 단위 인건비도 높다. 주니어 비중이 높으면 반대다. 최적 직급 Mix는 프로젝트 유형에 따라 다르며, 인력 채용 계획이 원가계획과 연동되어야 한다.</div>
+          <span class="flow-tag">SENIORITY MIX OPTIMIZATION</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">④</div>
+        <div class="flow-content">
+          <div class="flow-title">Bench Cost — 비투입 인력이 이익을 잠식</div>
+          <div class="flow-desc">프로젝트에 투입되지 않은 인력(Bench)의 인건비는 그대로 발생한다. Bench Cost를 원가계획에 명시적으로 포함하지 않으면 개별 프로젝트 이익은 높아 보이지만 법인 전체 이익은 낮게 나오는 구조적 오류가 생긴다.</div>
+          <span class="flow-tag">BENCH COST VISIBILITY</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout wrong">
+    <strong>Consultant Trap:</strong> 오버헤드를 배부하지 않고 직접 인건비만으로 프로젝트 수익성을 판단하는 오류. <strong>직접 인건비 기준 이익률 30%가 오버헤드 포함 시 5%로 줄어드는 경우가 빈번하다.</strong> 프로젝트 수익성 판단은 반드시 완전원가(Full Cost) 기준으로 해야 한다.
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     S5. 구독·SaaS
+════════════════════════════════════════ -->
+<div id="s5" class="section">
+  <div class="section-title">구독·SaaS (Subscription / Recurring Revenue)</div>
+  <div class="section-subtitle">COGS(매출원가)와 OpEx(운영비)의 구분이 다른 LOB와 근본적으로 다르다. Gross Margin 80%+ 구조를 이해하고, 규모 확장 시 원가 행동 패턴을 계획에 반영해야 한다.</div>
+
+  <div class="card">
+    <div class="card-title">원가 구조 진단</div>
+    <table class="data-table">
+      <thead><tr><th>진단 축</th><th>구독·SaaS 특성</th><th>계획 설계 함의</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-navy">원가 발생 구조</span></td>
+          <td>COGS = 인프라비(클라우드) + CS 인건비. R&D·S&M·G&A는 OpEx</td>
+          <td>COGS와 OpEx 분리가 핵심. 혼동하면 Gross Margin이 무의미해진다</td>
+        </tr>
+        <tr class="row-highlight">
+          <td><span class="badge badge-navy">고정/변동 비율</span></td>
+          <td>인프라비 — 고객 수에 연동(변동). CS 인건비 — 준고정. R&D·G&A — 고정</td>
+          <td>규모 확장 시 인프라비 단가 하락(규모의 경제). Gross Margin이 ARR 성장과 함께 개선</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-navy">통제 가능성</span></td>
+          <td>인프라비 — 아키텍처 최적화로 통제. CS 비용 — 제품 품질(버그·UX)에 연동</td>
+          <td>인프라 효율화 + 제품 품질 개선이 Gross Margin의 핵심 레버</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">원가계획 공식 구조</div>
+    <div class="math-block">
+<span class="comment">// SaaS 손익 구조 — COGS vs OpEx 분리가 핵심</span>
+ARR / MRR
+  - <span class="hl">COGS</span>          (인프라비 + CS 인건비 + 결제 수수료)
+= <span class="result">Gross Profit</span>   → <span class="result">Gross Margin 목표: 70~85%</span>
+
+  - <span class="hl">S&amp;M</span>           (영업·마케팅 — CAC 발생)
+  - <span class="hl">R&amp;D</span>           (제품 개발 인건비)
+  - <span class="hl">G&amp;A</span>           (일반관리비)
+= <span class="warn-txt">Operating Profit</span>  → EBITDA 관리
+
+<span class="comment">// CAC · LTV 연동 — 원가계획의 전략적 축</span>
+CAC (고객 획득 원가) = S&amp;M 비용 ÷ 신규 고객 수
+LTV (고객 생애가치) = ARPU × Gross Margin % ÷ Churn Rate
+LTV/CAC 목표: <span class="result">3배 이상</span> → 투자 효율 확인
+
+<span class="comment">// 규모의 경제 — ARR 성장 시 Gross Margin 개선 패턴</span>
+인프라 단가: ARR 2배 성장 시 인프라비 1.5배 수준 (규모 할인)
+CS 비용:    제품 품질 개선 → 티켓 수 감소 → CS 인당 고객 증가
+    </div>
+  </div>
+
+  <div class="callout correct">
+    <strong>방법론 포지션:</strong> COGS / S&M / R&D / G&A 4계층 분리 계획. ARR 성장 시나리오별 Gross Margin 개선 경로를 계획에 명시.
+  </div>
+
+  <div class="card">
+    <div class="card-title">핵심 드라이버 &amp; 컨설턴트 인사이트</div>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">①</div>
+        <div class="flow-content active-step">
+          <div class="flow-title">Gross Margin 80% — 구조의 의미를 이해해야</div>
+          <div class="flow-desc">SaaS의 높은 Gross Margin은 COGS에 인건비 대부분이 빠져 있기 때문이다. R&D·S&M 인건비는 OpEx다. 제조업이나 서비스업과 Gross Margin을 직접 비교하면 의미가 없다. SaaS의 수익성 지표는 Operating Margin 또는 Rule of 40으로 봐야 한다.</div>
+          <span class="flow-tag">GROSS MARGIN INTERPRETATION</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">②</div>
+        <div class="flow-content">
+          <div class="flow-title">CAC Payback Period — 원가 회수 기간</div>
+          <div class="flow-desc">CAC를 회수하는 데 몇 개월이 걸리는지(Payback Period)는 현금흐름 계획의 핵심이다. Payback Period = CAC ÷ (ARPU × Gross Margin %). 12개월 이하가 건강한 수준. 원가계획에서 S&M 예산과 Payback Period를 연동하지 않으면 성장할수록 현금이 부족해진다.</div>
+          <span class="flow-tag">CAC PAYBACK PERIOD</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">③</div>
+        <div class="flow-content">
+          <div class="flow-title">인프라 비용 — 아키텍처가 원가를 결정</div>
+          <div class="flow-desc">클라우드 인프라비는 기술 아키텍처 의사결정에 의해 결정된다. 멀티테넌시 vs 단독 인스턴스, 캐싱 전략, 쿼리 최적화가 원가에 직결된다. 원가계획 수립 시 엔지니어링 팀의 아키텍처 계획과 반드시 연동해야 한다.</div>
+          <span class="flow-tag">INFRASTRUCTURE COST DESIGN</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">④</div>
+        <div class="flow-content">
+          <div class="flow-title">R&D 비용 — 미래 원가 구조를 결정</div>
+          <div class="flow-desc">R&D 투자는 현재 OpEx이지만 미래 제품 품질과 인프라 효율을 결정한다. R&D 비용 절감이 장기적으로 CS 비용 증가와 인프라 비효율로 이어질 수 있다. 원가계획에서 R&D 예산의 장기 효과를 고려하지 않으면 단기 이익 개선이 장기 경쟁력을 훼손한다.</div>
+          <span class="flow-tag">R&amp;D AS FUTURE COST LEVER</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout wrong">
+    <strong>Consultant Trap:</strong> COGS와 S&M 비용을 혼동하여 수익성을 오판하는 오류. <strong>고객 획득 비용(S&M)을 원가(COGS)로 분류하면 Gross Margin이 실제보다 낮게 계산되고, 반대로 분류하면 CAC가 과소 계상된다.</strong> SaaS 원가계획의 출발점은 4계층(COGS / S&M / R&D / G&A) 분류 기준을 명확히 정의하는 것이다.
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     S6. 금융·보험
+════════════════════════════════════════ -->
+<div id="s6" class="section">
+  <div class="section-title">금융·보험 (Financial Services)</div>
+  <div class="section-subtitle">원가가 이자비용·손해율·충당금으로 구성되며, 외생 변수(금리·시장·리스크 이벤트) 종속성이 극대화된다. 원가 통제보다 리스크 관리와 시나리오 설계가 계획의 핵심이다.</div>
+
+  <div class="card">
+    <div class="card-title">원가 구조 진단</div>
+    <table class="data-table">
+      <thead><tr><th>진단 축</th><th>금융·보험 특성</th><th>계획 설계 함의</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-navy">원가 발생 구조</span></td>
+          <td>은행: 이자비용(조달원가) + 충당금. 보험: 손해율(보험금지급) + 사업비</td>
+          <td>원가가 리스크 이벤트에 의해 결정됨. 확률 기반 기대원가 계획이 필수</td>
+        </tr>
+        <tr class="row-highlight">
+          <td><span class="badge badge-navy">고정/변동 비율</span></td>
+          <td>이자비용 — 금리 연동(변동). 손해율 — 사고 발생 확률 기반(변동). 사업비 — 준고정</td>
+          <td>변동성이 극대화. 단일 계획보다 시나리오 범위 관리가 더 의미 있음</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-navy">통제 가능성</span></td>
+          <td>이자비용 — 금리 환경에 종속. 손해율 — 언더라이팅·리스크 선별로 부분 통제. 사업비 — 내부 통제</td>
+          <td>통제 가능 원가(사업비·운영비)와 불가 원가(이자·손해율)를 명확히 분리</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">원가계획 공식 구조</div>
+    <div class="math-block">
+<span class="comment">// 은행 — 순이자마진(NIM) 구조</span>
+이자수익  = 운용자산 × 운용수익률
+이자비용  = 조달부채 × <span class="hl">조달금리</span>  (금리 연동)
+NIM       = (이자수익 - 이자비용) ÷ 평균 운용자산
+충당금    = 대출잔액 × <span class="warn-txt">예상 부도율(PD)</span> × 손실률(LGD)
+
+<span class="comment">// 보험 — 합산비율(Combined Ratio) 구조</span>
+손해율    = 보험금 지급액 ÷ 경과보험료  (<span class="warn-txt">손해 사고 빈도 × 심도</span>)
+사업비율  = 영업비용 ÷ 경과보험료
+합산비율  = 손해율 + 사업비율
+<span class="result">합산비율 &lt; 100%</span> → 언더라이팅 이익 발생
+<span class="diff">합산비율 &gt; 100%</span> → 언더라이팅 손실 → 투자이익으로 보전 필요
+
+<span class="comment">// 공통 — 시나리오 기반 원가 계획</span>
+Base:     현재 금리·손해율 유지
+Stress:   금리 +200bp 또는 대형 손해 사고 발생
+Reverse:  금리 하락 + 경기침체 → 충당금 급증
+    </div>
+  </div>
+
+  <div class="callout correct">
+    <strong>방법론 포지션:</strong> 확률 기반 기대원가 + Macro 시나리오 분기. 단일 계획보다 시나리오별 원가 범위(Range)를 관리하는 것이 본질.
+  </div>
+
+  <div class="card">
+    <div class="card-title">핵심 드라이버 &amp; 컨설턴트 인사이트</div>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">①</div>
+        <div class="flow-content active-step">
+          <div class="flow-title">이자비용 — 금리 시나리오가 원가계획의 축</div>
+          <div class="flow-desc">은행의 조달원가는 기준금리에 직결된다. 금리 100bp 변동 시 NIM 변화를 정량화하고, 금리 시나리오별(기준·상승·하락) 이자비용 계획을 수립해야 한다. 단일 금리 가정으로 원가계획을 세우면 실제와의 괴리가 불가피하다.</div>
+          <span class="flow-tag">INTEREST RATE SENSITIVITY</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">②</div>
+        <div class="flow-content">
+          <div class="flow-title">손해율 — 빈도와 심도의 확률 모델</div>
+          <div class="flow-desc">보험의 손해율은 사고 빈도(Frequency) × 사고 심도(Severity)로 결정된다. 과거 손해율 데이터로 기대 손해율을 추정하되, 대형 사고(Cat Loss) 발생 시나리오를 별도로 계획에 포함해야 한다. 평균 손해율만으로 계획하면 꼬리 리스크(Tail Risk)를 놓친다.</div>
+          <span class="flow-tag">LOSS RATIO — FREQUENCY × SEVERITY</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">③</div>
+        <div class="flow-content">
+          <div class="flow-title">충당금 — 경기 사이클과 연동</div>
+          <div class="flow-desc">대출 충당금은 경기 침체 시 급증한다. IFRS9 기준에서는 기대신용손실(ECL)을 선행적으로 반영해야 한다. 경기 사이클 시나리오(성장·침체·회복)별 충당금 계획을 수립하지 않으면 원가 변동성에 대응하지 못한다.</div>
+          <span class="flow-tag">CREDIT LOSS PROVISIONING</span>
+        </div>
+      </div>
+      <div class="flow-connector"><div class="flow-connector-line"></div></div>
+      <div class="flow-step">
+        <div class="flow-num">④</div>
+        <div class="flow-content">
+          <div class="flow-title">사업비 — 유일하게 내부 통제 가능한 원가</div>
+          <div class="flow-desc">이자비용·손해율·충당금이 외생 변수에 종속되는 반면, 사업비(인건비·IT비·마케팅비)는 내부 통제 가능하다. 그러나 사업비 과도한 절감은 언더라이팅 품질 저하(손해율 상승)나 고객 이탈(보험료 수익 감소)로 이어진다. 사업비 절감의 2차 효과를 반드시 고려해야 한다.</div>
+          <span class="flow-tag">EXPENSE RATIO MANAGEMENT</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout wrong">
+    <strong>Consultant Trap:</strong> 단일 손해율·금리 가정으로 원가계획을 수립하는 오류. <strong>금융·보험의 원가는 본질적으로 확률 분포를 갖는다. 평균값 계획은 실제 결과와 항상 차이가 난다.</strong> 계획의 목적이 "맞추는 것"이 아니라 "범위를 관리하는 것"임을 클라이언트에게 명확히 인식시켜야 한다.
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     S7. LOB 차이 비교
+════════════════════════════════════════ -->
+<div id="s7" class="section">
+  <div class="section-title">LOB 차이 비교</div>
+  <div class="section-subtitle">LOB별 원가 구조의 차이를 나란히 놓고 비교한다. 차이의 원인이 비즈니스 구조에 있음을 확인하는 것이 목적이다.</div>
+
+  <div class="card">
+    <div class="card-title">LOB별 원가 구조 전체 비교</div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width:13%">LOB</th>
+          <th style="width:18%">원가의 본질</th>
+          <th style="width:20%">지배적 원가 항목</th>
+          <th style="width:14%">고정비 비중</th>
+          <th style="width:35%">핵심 계획 레버</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>제조업</strong></td>
+          <td>물량 × 투입단가</td>
+          <td>재료비·노무비·제조간접비</td>
+          <td><span class="badge badge-gray">중간</span></td>
+          <td>조업도·수율·제품 Mix·원자재 단가</td>
+        </tr>
+        <tr class="row-highlight">
+          <td><strong>유통·리테일</strong></td>
+          <td>매입가 × 판매량</td>
+          <td>COGS + 물류비·판촉비</td>
+          <td><span class="badge badge-wrong">채널별 상이</span></td>
+          <td>매입단가·재고회전율·반품률·채널 Mix</td>
+        </tr>
+        <tr>
+          <td><strong>서비스업</strong></td>
+          <td>인력 × 시간</td>
+          <td>인건비(직접+오버헤드)</td>
+          <td><span class="badge badge-warn">높음</span></td>
+          <td>Utilization·오버헤드 배부·직급 Mix</td>
+        </tr>
+        <tr class="row-highlight">
+          <td><strong>구독·SaaS</strong></td>
+          <td>규모의 경제</td>
+          <td>인프라비·CS 인건비 (COGS)</td>
+          <td><span class="badge badge-correct">낮음</span></td>
+          <td>인프라 효율화·CAC·Gross Margin 개선</td>
+        </tr>
+        <tr>
+          <td><strong>금융·보험</strong></td>
+          <td>리스크 × 운용</td>
+          <td>이자비용·손해율·충당금</td>
+          <td><span class="badge badge-gray">중간</span></td>
+          <td>금리 시나리오·손해율·사업비율</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">고정비 레버리지 구조 비교</div>
+    <p style="font-size:13px;color:var(--gray-mid);line-height:1.7;margin-bottom:16px;">고정비 비중이 높을수록 매출 증가 시 이익 개선 속도가 빠르지만(레버리지 효과), 매출 감소 시 손실 확대 속도도 빠르다. LOB별 고정비 레버리지 구조를 이해해야 이익 감응도 분석이 가능하다.</p>
+    <div class="path-diagram">
+      <div class="path-box">
+        <div class="path-label">고정비 레버리지 높음 — 서비스업</div>
+        <div class="path-desc" style="font-size:13px;line-height:1.8;">
+          인건비가 준고정비. 매출 증가 시 한계이익이 이익으로 직결.<br><br>
+          <strong>↑ 매출 10%</strong> → 이익 20~30% 개선 가능<br>
+          <strong>↓ 매출 10%</strong> → 이익 20~30% 악화 위험<br><br>
+          Utilization 관리가 핵심 방어 수단.
+        </div>
+      </div>
+      <div class="path-vs">vs</div>
+      <div class="path-box highlight">
+        <div class="path-label">변동비 지배 — 유통·리테일</div>
+        <div class="path-desc" style="font-size:13px;line-height:1.8;">
+          COGS가 매출에 비례하여 발생. 레버리지 효과 낮음.<br><br>
+          <strong>↑ 매출 10%</strong> → 이익 10% 수준 개선<br>
+          <strong>↓ 매출 10%</strong> → 이익도 비례 감소<br><br>
+          마진율 방어가 핵심 관리 지표.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">원가 통제 가능성 비교 — 내부 통제 vs 외부 연동</div>
+    <div class="scatter-wrap">
+      <svg viewBox="0 0 820 380" xmlns="http://www.w3.org/2000/svg" style="font-family:'Noto Sans KR',sans-serif;">
+        <rect width="820" height="380" fill="#f4f6f9" rx="2"/>
+        <!-- Grid lines -->
+        <line x1="80" y1="60" x2="740" y2="60" stroke="#d0d8e4" stroke-width="1"/>
+        <line x1="80" y1="60" x2="80" y2="300" stroke="#d0d8e4" stroke-width="1"/>
+        <line x1="740" y1="60" x2="740" y2="300" stroke="#d0d8e4" stroke-width="1"/>
+        <line x1="80" y1="300" x2="740" y2="300" stroke="#d0d8e4" stroke-width="1"/>
+        <line x1="410" y1="60" x2="410" y2="300" stroke="#003366" stroke-width="1" stroke-dasharray="5,4" opacity="0.25"/>
+        <line x1="80" y1="180" x2="740" y2="180" stroke="#003366" stroke-width="1" stroke-dasharray="5,4" opacity="0.25"/>
+        <!-- grid dashes -->
+        <line x1="245" y1="60" x2="245" y2="300" stroke="#d0d8e4" stroke-width="0.5" stroke-dasharray="3,4"/>
+        <line x1="575" y1="60" x2="575" y2="300" stroke="#d0d8e4" stroke-width="0.5" stroke-dasharray="3,4"/>
+        <line x1="80" y1="120" x2="740" y2="120" stroke="#d0d8e4" stroke-width="0.5" stroke-dasharray="3,4"/>
+        <line x1="80" y1="240" x2="740" y2="240" stroke="#d0d8e4" stroke-width="0.5" stroke-dasharray="3,4"/>
+        <!-- Axis labels -->
+        <text x="410" y="335" text-anchor="middle" font-size="12" fill="#666">원가 통제 가능성</text>
+        <text x="92" y="340" font-size="11" fill="#999">낮음</text>
+        <text x="700" y="340" font-size="11" fill="#999">높음</text>
+        <text x="38" y="184" text-anchor="middle" font-size="12" fill="#666" transform="rotate(-90,38,184)">고정비 비중</text>
+        <text x="68" y="64" text-anchor="end" font-size="11" fill="#999">높음</text>
+        <text x="68" y="304" text-anchor="end" font-size="11" fill="#999">낮음</text>
+        <!-- Quadrant labels -->
+        <text x="220" y="100" text-anchor="middle" font-size="10" fill="#003366" opacity="0.45">고정비 높음</text>
+        <text x="220" y="113" text-anchor="middle" font-size="10" fill="#003366" opacity="0.45">통제 어려움</text>
+        <text x="600" y="100" text-anchor="middle" font-size="10" fill="#003366" opacity="0.45">고정비 높음</text>
+        <text x="600" y="113" text-anchor="middle" font-size="10" fill="#003366" opacity="0.45">통제 가능</text>
+        <text x="600" y="268" text-anchor="middle" font-size="10" fill="#666" opacity="0.5">변동비 중심</text>
+        <text x="600" y="281" text-anchor="middle" font-size="10" fill="#666" opacity="0.5">통제 가능</text>
+        <text x="220" y="268" text-anchor="middle" font-size="10" fill="#666" opacity="0.5">변동비 중심</text>
+        <text x="220" y="281" text-anchor="middle" font-size="10" fill="#666" opacity="0.5">통제 어려움</text>
+
+        <!-- 제조업: ctrl=58, fixed=60 → x=80+(58/100)*660=463, y=300-(60/100)*240=156 -->
+        <circle cx="463" cy="156" r="13" fill="#003366" opacity="0.85"/>
+        <text x="479" y="146" font-size="12" font-weight="700" fill="#003366">제조업</text>
+
+        <!-- 유통·리테일: ctrl=52, fixed=35 → x=80+(52/100)*660=423, y=300-(35/100)*240=216 -->
+        <circle cx="423" cy="216" r="13" fill="#0F6E56" opacity="0.85"/>
+        <text x="407" y="205" font-size="12" font-weight="700" fill="#0F6E56" text-anchor="end">유통·리테일</text>
+
+        <!-- 서비스업: ctrl=65, fixed=75 → x=80+(65/100)*660=509, y=300-(75/100)*240=120 -->
+        <circle cx="509" cy="120" r="13" fill="#993C1D" opacity="0.85"/>
+        <text x="525" y="110" font-size="12" font-weight="700" fill="#993C1D">서비스업</text>
+
+        <!-- SaaS: ctrl=72, fixed=28 → x=80+(72/100)*660=555, y=300-(28/100)*240=233 -->
+        <circle cx="555" cy="233" r="13" fill="#533AB7" opacity="0.85"/>
+        <text x="541" y="222" font-size="12" font-weight="700" fill="#533AB7" text-anchor="end">구독·SaaS</text>
+
+        <!-- 금융·보험: ctrl=28, fixed=50 → x=80+(28/100)*660=265, y=300-(50/100)*240=180 -->
+        <circle cx="265" cy="180" r="13" fill="#888780" opacity="0.85"/>
+        <text x="251" y="168" font-size="12" font-weight="700" fill="#555" text-anchor="end">금융·보험</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Consultant Trap 요약 — LOB별 전형적 원가계획 오류</div>
+    <table class="data-table">
+      <thead><tr><th style="width:15%">LOB</th><th>전형적 오류</th><th>올바른 접근</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>제조업</strong></td>
+          <td>표준원가를 실제원가로 오인. 조업도 변동 효과 미반영</td>
+          <td>조업도 시나리오별 단위원가 변동 분석 + Variance 관리 체계 수립</td>
+        </tr>
+        <tr class="row-warn">
+          <td><strong>유통·리테일</strong></td>
+          <td>채널 통합 Gross Margin으로 수익성 판단</td>
+          <td>채널별 Contribution Margin 분리 + 재고·반품 버퍼 원가에 포함</td>
+        </tr>
+        <tr>
+          <td><strong>서비스업</strong></td>
+          <td>오버헤드 미배부 상태로 프로젝트 수익성 과대 계상</td>
+          <td>완전원가(Full Cost) 기준 프로젝트 수익성 + Bench Cost 가시화</td>
+        </tr>
+        <tr class="row-warn">
+          <td><strong>구독·SaaS</strong></td>
+          <td>COGS와 S&M 혼동. Gross Margin 오계산</td>
+          <td>4계층(COGS / S&M / R&D / G&A) 분류 기준 명확화 선행</td>
+        </tr>
+        <tr>
+          <td><strong>금융·보험</strong></td>
+          <td>단일 손해율·금리 가정으로 계획 수립</td>
+          <td>확률 기반 기대원가 + Stress 시나리오 원가 범위(Range) 관리</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="summary-grid">
+    <div class="summary-item">
+      <div class="summary-item-title">물량 기반 원가 (제조·유통)</div>
+      <p>원가 드라이버가 물량·거래에 연동. Bottom-Up 적산 방식이 유효. 단가 시나리오와 수량 계획을 분리하여 관리해야 시장 변동 리스크를 파악할 수 있다.</p>
+    </div>
+    <div class="summary-item">
+      <div class="summary-item-title">인력 기반 원가 (서비스)</div>
+      <p>인건비가 지배적이며 준고정비 성격. Utilization과 원가율이 역관계. HR 계획과의 통합 없이는 원가계획이 공허해진다.</p>
+    </div>
+    <div class="summary-item">
+      <div class="summary-item-title">규모 기반 원가 (SaaS)</div>
+      <p>ARR 성장과 함께 단위 원가가 하락하는 구조. COGS / OpEx 분리가 선행되어야 Gross Margin의 의미가 생긴다. CAC Payback 관리가 현금흐름 계획의 핵심.</p>
+    </div>
+    <div class="summary-item">
+      <div class="summary-item-title">리스크 기반 원가 (금융·보험)</div>
+      <p>원가가 외생 변수와 확률 이벤트에 종속. 단일 계획이 아닌 시나리오 범위 관리가 본질. 통제 가능 원가(사업비)와 불가 원가(금리·손해율)를 명확히 분리해야 계획에 의미가 생긴다.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>종합 인사이트:</strong> 원가계획 방법론의 선택은 LOB의 비즈니스 구조가 결정한다. 동일한 원가 항목(예: 인건비)도 서비스업과 SaaS에서 발생 구조와 계획 방식이 다르다. <strong>항목이 아닌 구조를 먼저 진단하는 것이 컨설턴트의 역할이다.</strong>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     S8. 확인 문제
+════════════════════════════════════════ -->
+<div id="s8" class="section">
+  <div class="section-title">확인 문제</div>
+  <div class="section-subtitle">원가계획 방법론의 핵심 원리를 스스로 검증한다. 각 문항을 클릭하여 정답을 확인하세요.</div>
+
+  <!-- Q1 -->
+  <div class="quiz-card">
+    <div class="quiz-q">Q1. 제조업에서 실제 조업도가 기준 조업도보다 낮을 때 단위 제품 원가는 어떻게 변하는가?</div>
+    <div class="quiz-options" id="q1">
+      <div class="quiz-option" onclick="answer(this,'q1',false,'q1fb')">
+        <span class="quiz-idx">A</span>
+        <span>변동비가 줄어들므로 단위원가가 낮아진다.</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q1',true,'q1fb')">
+        <span class="quiz-idx">B</span>
+        <span>제조간접비(고정비)가 더 적은 수량에 배부되므로 단위원가가 올라간다.</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q1',false,'q1fb')">
+        <span class="quiz-idx">C</span>
+        <span>고정비는 총액이 변하지 않으므로 단위원가도 변하지 않는다.</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q1',false,'q1fb')">
+        <span class="quiz-idx">D</span>
+        <span>재료비가 절감되어 단위원가가 낮아진다.</span>
+      </div>
+    </div>
+    <div class="quiz-feedback" id="q1fb">
+      <strong>정답 B.</strong> 제조간접비(감가상각·임차료·관리인건비 등)는 생산량과 무관하게 발생한다. 생산량이 줄어들면 동일한 고정비가 더 적은 수량에 나눠서 배부되므로 단위 제품당 원가가 올라간다. 이것이 "고정비 미흡수" 현상이며, 매출 감소 → 생산 감소 → 원가율 상승의 악순환 구조다.
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-card">
+    <div class="quiz-q">Q2. 유통·리테일에서 온라인 채널 비중이 증가할 때 Gross Margin과 Net Margin의 관계로 가장 올바른 설명은?</div>
+    <div class="quiz-options" id="q2">
+      <div class="quiz-option" onclick="answer(this,'q2',false,'q2fb')">
+        <span class="quiz-idx">A</span>
+        <span>임차료가 절감되어 Gross Margin과 Net Margin이 모두 개선된다.</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q2',false,'q2fb')">
+        <span class="quiz-idx">B</span>
+        <span>온라인은 원가가 전혀 없으므로 Gross Margin이 100%에 가까워진다.</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q2',true,'q2fb')">
+        <span class="quiz-idx">C</span>
+        <span>임차료 절감으로 Gross Margin은 개선될 수 있지만, 물류비·플랫폼 수수료 증가로 Net Margin은 제자리이거나 악화될 수 있다.</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q2',false,'q2fb')">
+        <span class="quiz-idx">D</span>
+        <span>온라인 채널은 반품률이 낮으므로 Net Margin이 반드시 개선된다.</span>
+      </div>
+    </div>
+    <div class="quiz-feedback" id="q2fb">
+      <strong>정답 C.</strong> 온라인 채널은 임차료·점포 인건비가 없어 COGS 구조상 Gross Margin이 높아 보인다. 그러나 물류비(라스트마일), 플랫폼 수수료, 온라인 특유의 높은 반품률 처리 비용이 증가한다. 채널 통합 마진으로 판단하면 이 구조적 차이를 놓치게 된다.
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-card">
+    <div class="quiz-q">Q3. 서비스업에서 오버헤드를 프로젝트에 배부하지 않고 직접 인건비만으로 수익성을 판단하면 어떤 문제가 발생하는가?</div>
+    <div class="quiz-options" id="q3">
+      <div class="quiz-option" onclick="answer(this,'q3',false,'q3fb')">
+        <span class="quiz-idx">A</span>
+        <span>프로젝트 수익성이 실제보다 낮게 계산되어 수주를 포기하게 된다.</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q3',true,'q3fb')">
+        <span class="quiz-idx">B</span>
+        <span>프로젝트 수익성이 실제보다 높게 계산되어 수익성 없는 프로젝트를 수주하거나, 개별 프로젝트 이익의 합이 법인 전체 이익보다 크게 나오는 구조적 오류가 생긴다.</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q3',false,'q3fb')">
+        <span class="quiz-idx">C</span>
+        <span>Utilization Rate 계산이 불가능해진다.</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q3',false,'q3fb')">
+        <span class="quiz-idx">D</span>
+        <span>Bill Rate 설정에 오류가 생긴다.</span>
+      </div>
+    </div>
+    <div class="quiz-feedback" id="q3fb">
+      <strong>정답 B.</strong> 오버헤드(사무실 임차료, 비투입 인력 인건비, IT 비용 등)는 모든 프로젝트에 걸쳐 발생하는 공통 비용이다. 이를 배부하지 않으면 개별 프로젝트 마진은 실제보다 높게 나온다. 결과적으로 법인 전체 이익은 낮은데 모든 프로젝트가 흑자로 보이는 "이익의 미스터리"가 발생한다.
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-card">
+    <div class="quiz-q">Q4. SaaS 기업에서 COGS(매출원가)에 포함되어야 하는 항목으로 가장 올바른 것은?</div>
+    <div class="quiz-options" id="q4">
+      <div class="quiz-option" onclick="answer(this,'q4',false,'q4fb')">
+        <span class="quiz-idx">A</span>
+        <span>신규 고객 유치를 위한 디지털 광고비</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q4',false,'q4fb')">
+        <span class="quiz-idx">B</span>
+        <span>신제품 기능 개발을 위한 엔지니어 인건비</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q4',true,'q4fb')">
+        <span class="quiz-idx">C</span>
+        <span>서비스 운영에 직접 사용되는 클라우드 인프라 비용과 고객 지원(CS) 인건비</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q4',false,'q4fb')">
+        <span class="quiz-idx">D</span>
+        <span>경영진 및 재무팀 인건비</span>
+      </div>
+    </div>
+    <div class="quiz-feedback" id="q4fb">
+      <strong>정답 C.</strong> SaaS의 COGS는 서비스를 운영하고 고객에게 전달하는 데 직접 발생하는 비용이다. 클라우드 인프라비와 CS 인건비가 대표적이다. 광고비는 S&M(영업·마케팅), 개발 인건비는 R&D, 경영진·재무팀은 G&A로 분류된다. 이 4계층 구분이 SaaS 원가계획의 출발점이다.
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-card">
+    <div class="quiz-q">Q5. 금융·보험 원가계획에서 단일 손해율·금리 가정을 사용하는 방식의 근본적인 문제는?</div>
+    <div class="quiz-options" id="q5">
+      <div class="quiz-option" onclick="answer(this,'q5',false,'q5fb')">
+        <span class="quiz-idx">A</span>
+        <span>계산이 복잡해져서 이사회에 보고하기 어렵다.</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q5',false,'q5fb')">
+        <span class="quiz-idx">B</span>
+        <span>금리와 손해율은 매년 동일하므로 단일 가정으로도 충분하다.</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q5',false,'q5fb')">
+        <span class="quiz-idx">C</span>
+        <span>규제 당국이 시나리오 계획을 의무화하고 있기 때문이다.</span>
+      </div>
+      <div class="quiz-option" onclick="answer(this,'q5',true,'q5fb')">
+        <span class="quiz-idx">D</span>
+        <span>금융·보험의 원가는 본질적으로 확률 분포를 가지므로, 평균값 하나로는 실제 발생 가능한 원가의 범위를 표현할 수 없고 꼬리 리스크(Tail Risk)를 놓치게 된다.</span>
+      </div>
+    </div>
+    <div class="quiz-feedback" id="q5fb">
+      <strong>정답 D.</strong> 금리는 경기·통화정책에 따라 변동하고, 손해율은 사고 빈도와 심도의 확률 분포에서 실현된다. 평균값 하나는 "가장 가능성 높은 값"일 뿐이며, 실제로는 그 주변의 분포가 중요하다. 특히 대형 사고(Cat Loss)나 금융위기는 평균 시나리오에서 완전히 누락된다. 금융·보험 원가계획의 목적은 "정확한 수치"가 아니라 "관리 가능한 범위의 설정"이다.
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>학습 포인트 요약:</strong> 원가계획의 핵심은 항목 나열이 아니라 <strong>원가 발생 구조 진단 → Cost Driver 파악 → 통제 가능 원가 분리 → 드라이버 기반 계획 수립</strong>의 순서다. LOB별 구조를 먼저 이해하면 클라이언트의 원가 문제를 정확히 진단할 수 있다.
+  </div>
+</div>
+
+</main>
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function answer(el, qId, isCorrect, fbId) {
+  const container = document.getElementById(qId);
+  if (container.dataset.answered) return;
+  container.dataset.answered = 'true';
+  container.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.style.pointerEvents = 'none';
+  });
+  if (isCorrect) {
+    el.classList.add('selected-correct');
+  } else {
+    el.classList.add('selected-wrong');
+  }
+  container.querySelectorAll('.quiz-option').forEach(opt => {
+    const handler = opt.getAttribute('onclick');
+    if (handler && handler.includes(',true,')) {
+      opt.classList.add('reveal-correct');
+    }
+  });
+  document.getElementById(fbId).classList.add('show');
+}
+</script>
+</body>
+</html>
