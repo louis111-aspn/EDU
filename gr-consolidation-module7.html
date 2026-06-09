@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모듈 7 — 연결재무제표 표시 | SAP Group Reporting</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#003366; --navy-light:#e8eef5; --navy-mid:#ccd9e8;
+    --bg:#f0f3f8; --white:#ffffff; --text:#1a1a2e; --text-muted:#5a6a7a;
+    --border:#d0dae6;
+    --warn-bg:#fff8e6; --warn-border:#e6a800;
+    --correct-bg:#e8f5ee; --correct-border:#2a7a4f;
+    --wrong-bg:#fce8e8; --wrong-border:#c0392b;
+    --purple-bg:#f5eeff; --purple:#7a4a9a; --purple-border:#c8a8f8;
+    --pad-x:48px; --radius:4px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Noto Sans KR',sans-serif;font-size:15px;background:var(--bg);color:var(--text);line-height:1.75;}
+
+  .page-header{background:var(--navy);color:var(--white);padding:40px var(--pad-x) 36px;}
+  .page-header .series-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:13px;color:var(--navy-mid);letter-spacing:.08em;margin-bottom:12px;}
+  .page-header h1{font-family:'DM Serif Display',serif;font-size:36px;font-weight:400;line-height:1.25;margin-bottom:10px;}
+  .page-header .subtitle{font-size:15px;color:var(--navy-mid);font-weight:300;}
+
+  .scenario-bar{background:#002244;border-top:1px solid #004488;padding:10px var(--pad-x);display:flex;gap:24px;flex-wrap:wrap;}
+  .sc-item{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;color:var(--navy-mid);}
+  .sc-item span{color:#7fb3e0;font-weight:500;}
+
+  .progress-bar-wrap{background:var(--border);height:3px;}
+  .progress-bar-fill{background:var(--navy);height:3px;transition:width .3s ease;}
+
+  .nav-wrap{position:sticky;top:0;z-index:100;background:var(--white);border-bottom:2px solid var(--navy);overflow-x:auto;}
+  .nav-tabs{display:flex;list-style:none;padding:0 var(--pad-x);white-space:nowrap;}
+  .nav-tabs li a{display:block;padding:14px 16px;font-size:12px;font-family:'JetBrains Mono','Noto Sans KR',monospace;color:var(--text-muted);text-decoration:none;border-bottom:3px solid transparent;margin-bottom:-2px;transition:color .2s,border-color .2s;}
+  .nav-tabs li a:hover,.nav-tabs li a.active{color:var(--navy);border-bottom-color:var(--navy);font-weight:500;}
+
+  .main{max-width:980px;margin:0 auto;padding:48px var(--pad-x) 80px;}
+
+  .section{display:none;animation:fadeIn .3s ease;}
+  .section.active{display:block;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+  .section-eyebrow{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;color:var(--navy);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
+  .section-title{font-family:'DM Serif Display',serif;font-size:30px;font-weight:400;color:var(--navy);margin-bottom:6px;line-height:1.3;}
+  .section-lead{font-size:15px;color:var(--text-muted);margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid var(--border);}
+  h2{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;color:var(--navy);margin:36px 0 14px;}
+  h3{font-size:16px;font-weight:700;color:var(--text);margin:28px 0 10px;}
+  p{margin-bottom:14px;}
+
+  .card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:14px;}
+  .card-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+  .card-grid.three{grid-template-columns:repeat(3,1fr);}
+  @media(max-width:680px){.card-grid,.card-grid.three{grid-template-columns:1fr;}}
+  .card .card-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:11px;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+  .card .card-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px;}
+  .card p{font-size:13px;color:var(--text-muted);margin-bottom:0;}
+
+  .callout{border-left:4px solid var(--navy);background:var(--navy-light);padding:14px 18px;border-radius:0 var(--radius) var(--radius) 0;margin:18px 0;font-size:14px;}
+  .callout.warn{border-left-color:var(--warn-border);background:var(--warn-bg);}
+  .callout.correct{border-left-color:var(--correct-border);background:var(--correct-bg);}
+  .callout.wrong{border-left-color:var(--wrong-border);background:var(--wrong-bg);}
+  .callout.purple{border-left-color:var(--purple);background:var(--purple-bg);}
+  .callout .callout-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--navy);margin-bottom:5px;}
+  .callout.warn .callout-label{color:var(--warn-border);}
+  .callout.correct .callout-label{color:var(--correct-border);}
+  .callout.wrong .callout-label{color:var(--wrong-border);}
+  .callout.purple .callout-label{color:var(--purple);}
+
+  .tbl-wrap{overflow-x:auto;margin:18px 0;}
+  table{width:100%;border-collapse:collapse;font-size:14px;}
+  th{background:var(--navy);color:var(--white);padding:9px 14px;text-align:left;font-weight:500;font-size:12px;font-family:'JetBrains Mono','Noto Sans KR',monospace;}
+  td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+  tr:nth-child(even) td{background:var(--navy-light);}
+  tr:last-child td{border-bottom:none;}
+  td strong{color:var(--navy);}
+  .num{font-family:'JetBrains Mono','Noto Sans KR',monospace;text-align:right;}
+  .num-neg{color:var(--wrong-border);}
+  .num-pos{color:var(--correct-border);}
+  .row-total td{font-weight:700;border-top:2px solid var(--navy)!important;background:var(--navy-light)!important;}
+  .row-sub td{background:#f7f9fc!important;font-size:13px;color:var(--text-muted);padding-left:28px!important;}
+  .row-header td{background:var(--navy-light)!important;font-weight:700;font-size:13px;color:var(--navy);}
+  .row-nci td{background:var(--warn-bg)!important;font-weight:500;color:#7a5c00;}
+  .row-oci td{background:var(--correct-bg)!important;font-weight:500;color:#1a5c2a;}
+
+  .badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:500;font-family:'JetBrains Mono','Noto Sans KR',monospace;white-space:nowrap;}
+  .badge-navy{background:var(--navy);color:white;}
+  .badge-warn{background:var(--warn-bg);color:#7a5c00;border:1px solid var(--warn-border);}
+  .badge-ok{background:var(--correct-bg);color:var(--correct-border);border:1px solid var(--correct-border);}
+  .badge-purple{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-border);}
+  .badge-ifrs18{background:#fff0f8;color:#8a1a5a;border:1px solid #e8a8d0;}
+
+  /* FS STRUCTURE */
+  .fs-block{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:18px 0;}
+  .fs-block .fb-header{background:var(--navy);color:white;padding:10px 16px;font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;font-weight:500;display:flex;justify-content:space-between;align-items:center;}
+  .fs-row{display:flex;justify-content:space-between;align-items:center;padding:9px 16px;border-bottom:1px solid var(--border);font-size:14px;}
+  .fs-row:last-child{border-bottom:none;}
+  .fs-row.indent{padding-left:32px;color:var(--text-muted);font-size:13px;}
+  .fs-row.total{font-weight:700;color:var(--navy);border-top:2px solid var(--navy);background:var(--navy-light);}
+  .fs-row.section-break{background:var(--navy-light);font-weight:700;font-size:13px;color:var(--navy);}
+  .fs-row.nci{background:var(--warn-bg);color:#7a5c00;}
+  .fs-row.oci{background:var(--correct-bg);color:#1a5c2a;}
+  .fs-row.unique{border-left:3px solid var(--navy);}
+  .fs-val{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-weight:500;}
+  .fs-tag{font-size:10px;padding:1px 7px;border-radius:8px;margin-left:8px;font-family:'JetBrains Mono','Noto Sans KR',monospace;}
+  .tag-unique{background:var(--navy);color:white;}
+  .tag-oci{background:var(--correct-border);color:white;}
+  .tag-nci{background:var(--warn-border);color:white;}
+
+  /* CF COMPARE */
+  .cf-compare{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:18px 0;}
+  .cf-col{background:var(--white);}
+  .cf-col .cc-header{padding:12px 18px;font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;font-weight:700;text-align:center;}
+  .cf-col.direct .cc-header{background:var(--navy);color:white;}
+  .cf-col.indirect .cc-header{background:var(--navy-light);color:var(--navy);}
+  .cf-row{padding:9px 16px;border-top:1px solid var(--border);font-size:13px;color:var(--text-muted);}
+  .cf-row.highlight{color:var(--text);font-weight:500;}
+  @media(max-width:600px){.cf-compare{grid-template-columns:1fr;}}
+
+  /* ADDIN PIPELINE */
+  .pipeline{display:flex;flex-direction:column;gap:0;margin:20px 0;}
+  .pipe-step{display:grid;grid-template-columns:36px 1fr auto;gap:0;align-items:stretch;}
+  .pipe-num{background:var(--navy);color:white;font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center;min-height:64px;}
+  .pipe-body{background:var(--white);border:1px solid var(--border);border-left:none;padding:14px 18px;}
+  .pipe-body strong{display:block;font-size:15px;color:var(--navy);margin-bottom:3px;}
+  .pipe-body span{font-size:13px;color:var(--text-muted);}
+  .pipe-gr{background:var(--navy-light);border:1px solid var(--border);border-left:none;padding:12px 16px;min-width:180px;display:flex;flex-direction:column;justify-content:center;}
+  .pipe-gr .pg-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:10px;color:var(--text-muted);margin-bottom:4px;}
+  .pipe-gr .pg-val{font-size:12px;font-weight:500;color:var(--navy);}
+  .pipe-step+.pipe-step .pipe-num{border-top:1px solid rgba(255,255,255,.1);}
+  .pipe-step.highlight .pipe-body{border-color:var(--purple);background:var(--purple-bg);}
+  .pipe-step.highlight .pipe-body strong{color:var(--purple);}
+  .pipe-step.highlight .pipe-num{background:var(--purple);}
+  .pipe-step.highlight .pipe-gr{border-color:var(--purple-border);background:var(--purple-bg);}
+  .pipe-step.highlight .pipe-gr .pg-val{color:var(--purple);}
+  @media(max-width:600px){.pipe-gr{display:none;} .pipe-step{grid-template-columns:36px 1fr;}}
+
+  .quiz-block{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:22px 26px;margin:18px 0;}
+  .quiz-q{font-size:15px;font-weight:500;margin-bottom:14px;}
+  .quiz-options{display:flex;flex-direction:column;gap:8px;}
+  .quiz-option{display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+  .quiz-option:hover{border-color:var(--navy);background:var(--navy-light);}
+  .quiz-option.correct-ans{border-color:var(--correct-border);background:var(--correct-bg);}
+  .quiz-option.wrong-ans{border-color:var(--wrong-border);background:var(--wrong-bg);}
+  .quiz-marker{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+  .quiz-option.correct-ans .quiz-marker{border-color:var(--correct-border);background:var(--correct-border);color:white;}
+  .quiz-option.wrong-ans .quiz-marker{border-color:var(--wrong-border);background:var(--wrong-border);color:white;}
+  .quiz-feedback{margin-top:12px;padding:11px 14px;border-radius:var(--radius);font-size:14px;display:none;}
+  .quiz-feedback.show{display:block;}
+  .quiz-feedback.ok{background:var(--correct-bg);border-left:4px solid var(--correct-border);}
+  .quiz-feedback.ng{background:var(--wrong-bg);border-left:4px solid var(--wrong-border);}
+
+  .section-nav{display:flex;justify-content:space-between;align-items:center;margin-top:48px;padding-top:24px;border-top:1px solid var(--border);}
+  .btn{padding:10px 22px;border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;border:2px solid var(--navy);transition:background .15s,color .15s;font-family:'Noto Sans KR',sans-serif;}
+  .btn-primary{background:var(--navy);color:var(--white);}
+  .btn-primary:hover{background:#002244;}
+  .btn-ghost{background:transparent;color:var(--navy);}
+  .btn-ghost:hover{background:var(--navy-light);}
+  .btn:disabled{opacity:.3;cursor:default;}
+  .progress-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;color:var(--text-muted);}
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="series-label">SAP GROUP REPORTING · 연결회계 입문 시리즈 · MODULE 07</div>
+  <h1>연결재무제표 표시</h1>
+  <div class="subtitle">B/S·I/S·CF·자본변동표·주석 — ASPN Group 최종 산출물 완결</div>
+</header>
+
+<div class="scenario-bar">
+  <div class="sc-item">기준 <span>ASPN Group 20X1년 연결 확정 수치</span></div>
+  <div class="sc-item">표시통화 <span>KRW 억원</span></div>
+  <div class="sc-item">보고기준 <span>IFRS (IAS 1)</span></div>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-bar-fill" id="progressBar" style="width:20%"></div>
+</div>
+
+<nav class="nav-wrap">
+  <ul class="nav-tabs" id="navTabs">
+    <li><a href="#" class="active" data-section="0">01 재무상태표</a></li>
+    <li><a href="#" data-section="1">02 손익계산서</a></li>
+    <li><a href="#" data-section="2">03 현금흐름표</a></li>
+    <li><a href="#" data-section="3">04 자본변동표</a></li>
+    <li><a href="#" data-section="4">05 주석공시</a></li>
+  </ul>
+</nav>
+
+<main class="main">
+
+<!-- ══════════════════════════════════════════════
+     SECTION 1 — 연결 재무상태표 표시
+══════════════════════════════════════════════ -->
+<section class="section active" id="sec-0">
+  <div class="section-eyebrow">Section 01</div>
+  <div class="section-title">연결 재무상태표 표시</div>
+  <div class="section-lead">연결 B/S는 별도 B/S와 구조가 같지만, 연결 고유 항목(영업권·NCI·CTA)의 표시 위치와 방법이 핵심이다.</div>
+
+  <h2>IAS 1 표시 기준 — 유동·비유동 구분</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>구분</th><th>기준</th><th>예외</th></tr></thead>
+      <tbody>
+        <tr><td><strong>유동자산</strong></td><td>보고기간 후 12개월 이내 실현 예상 / 정상 영업주기 내 실현</td><td>금융업: 유동성 순서 표시 허용</td></tr>
+        <tr><td><strong>비유동자산</strong></td><td>위 기준 미충족 자산 전체</td><td>영업권은 비유동으로 분류</td></tr>
+        <tr><td><strong>유동부채</strong></td><td>보고기간 후 12개월 이내 결제 예상 / 정상 영업주기 내 결제</td><td>—</td></tr>
+        <tr><td><strong>비유동부채</strong></td><td>위 기준 미충족 부채 전체</td><td>장기 차입금, 리스부채 등</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>ASPN Group 연결 재무상태표 — 20X1년 말</h2>
+  <p>단위: 억원 / 모듈 2 연결조정 확정 수치 기준</p>
+
+  <div class="fs-block">
+    <div class="fb-header">
+      <span>연결 재무상태표</span>
+      <span style="font-size:11px;color:var(--navy-mid);">ASPN Group / 20X1.12.31</span>
+    </div>
+    <div class="fs-row section-break"><span>자산</span></div>
+    <div class="fs-row section-break" style="background:#f5f8fc;"><span>유동자산</span></div>
+    <div class="fs-row indent"><span>현금 및 현금성자산</span><span class="fs-val">108</span></div>
+    <div class="fs-row indent"><span>매출채권</span><span class="fs-val">102</span></div>
+    <div class="fs-row indent"><span>재고자산</span><span class="fs-val">89</span></div>
+    <div class="fs-row total"><span>유동자산 합계</span><span class="fs-val">299</span></div>
+    <div class="fs-row section-break" style="background:#f5f8fc;"><span>비유동자산</span></div>
+    <div class="fs-row indent"><span>유형자산</span><span class="fs-val">200</span></div>
+    <div class="fs-row indent unique">
+      <span>영업권 <span class="fs-tag tag-unique">연결 고유</span></span>
+      <span class="fs-val">60.4</span>
+    </div>
+    <div class="fs-row indent">
+      <span>관계기업투자주식 (Tech)</span>
+      <span class="fs-val">92.4</span>
+    </div>
+    <div class="fs-row total"><span>비유동자산 합계</span><span class="fs-val">352.8</span></div>
+    <div class="fs-row total"><span>자산 합계</span><span class="fs-val">651.8</span></div>
+
+    <div class="fs-row section-break"><span>부채 및 자본</span></div>
+    <div class="fs-row section-break" style="background:#f5f8fc;"><span>유동부채</span></div>
+    <div class="fs-row indent"><span>매입채무</span><span class="fs-val">54</span></div>
+    <div class="fs-row section-break" style="background:#f5f8fc;"><span>비유동부채</span></div>
+    <div class="fs-row indent"><span>차입금</span><span class="fs-val">172</span></div>
+    <div class="fs-row total"><span>부채 합계</span><span class="fs-val">226</span></div>
+
+    <div class="fs-row section-break" style="background:#f5f8fc;"><span>자본</span></div>
+    <div class="fs-row indent"><span>자본금 (지배주주 귀속)</span><span class="fs-val">200</span></div>
+    <div class="fs-row indent"><span>이익잉여금 (지배주주 귀속)</span><span class="fs-val">193.9</span></div>
+    <div class="fs-row indent oci">
+      <span>기타포괄손익 — CTA <span class="fs-tag tag-oci">OCI</span></span>
+      <span class="fs-val">9.5</span>
+    </div>
+    <div class="fs-row indent oci">
+      <span>기타포괄손익 — 지분법 OCI <span class="fs-tag tag-oci">OCI</span></span>
+      <span class="fs-val">1.5</span>
+    </div>
+    <div class="fs-row indent nci">
+      <span>비지배지분 (NCI) <span class="fs-tag tag-nci">연결 고유</span></span>
+      <span class="fs-val">22.4</span>
+    </div>
+    <div class="fs-row total"><span>자본 합계</span><span class="fs-val">425.8</span></div>
+    <div class="fs-row total"><span>부채·자본 합계</span><span class="fs-val">651.8</span></div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-label">이익잉여금 수치 안내</div>
+    이익잉여금 193.9억은 자산합계 651.8억에서 부채(226억)·자본금(200억)·CTA(9.5억)·지분법OCI(1.5억)·NCI(22.4억)를 차감한 대차일치 기준 역산 값이다. 모듈 2 이후 모듈 3~6에서 추가된 심화 조정(단계취득 재측정·지분법 OCI 등)이 반영된 결과로, 본 모듈은 표시 구조 학습이 목적이므로 차대일치 확인에 집중한다.
+  </div>
+
+  <h2>연결 고유 항목 표시 원칙</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>항목</th><th>표시 위치</th><th>표시 방법</th></tr></thead>
+      <tbody>
+        <tr><td><strong>영업권</strong></td><td>비유동자산</td><td>별도 계정으로 표시. 손상차손 누계액 차감 후 순액.</td></tr>
+        <tr><td><strong>비지배지분 (NCI)</strong></td><td>자본 내 별도 구분</td><td>지배주주 귀속 자본과 명확히 구분. 자본 합계에 포함.</td></tr>
+        <tr><td><strong>CTA</strong></td><td>기타포괄손익 (OCI) 내</td><td>누적 환산차이로 표시. 처분 시 P&L 재분류.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <div class="callout-label">GR — FS Item Hierarchy (B/S)</div>
+    GR에서 연결 B/S는 FS Item Hierarchy에 따라 자동 생성된다. 영업권·NCI·CTA 각각 별도 FS Item으로 설정되어 있어야 올바른 위치에 표시된다. FS Item 미설정 시 "미분류" 계정으로 처리되어 보고서 오류가 발생한다.
+  </div>
+
+  <!-- QUIZ -->
+  <h3>확인 문제</h3>
+  <div class="quiz-block">
+    <div class="quiz-q">연결 재무상태표에서 비지배지분(NCI)은 어디에 표시되는가?</div>
+    <div class="quiz-options" id="quiz0">
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz0',false)">
+        <div class="quiz-marker"></div>부채 항목으로 표시한다
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz0',true)">
+        <div class="quiz-marker"></div>자본 내에 지배주주 귀속 자본과 구분하여 별도 표시한다
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz0',false)">
+        <div class="quiz-marker"></div>자산 차감 항목으로 표시한다
+      </div>
+    </div>
+    <div class="quiz-feedback" id="quiz0-fb"></div>
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" disabled>← 이전</button>
+    <span class="progress-label">1 / 5</span>
+    <button class="btn btn-primary" onclick="goSection(1)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 2 — 연결 손익계산서 표시
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-1">
+  <div class="section-eyebrow">Section 02</div>
+  <div class="section-title">연결 손익계산서 표시</div>
+  <div class="section-lead">연결 I/S의 핵심은 당기순이익을 지배주주와 비지배주주 귀속으로 구분 표시하는 것과 기타포괄손익의 분류다.</div>
+
+  <h2>비용 분류 방법 — 성격별 vs 기능별</h2>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-label">성격별 분류 (By Nature)</div>
+      <div class="card-title">비용의 경제적 성격 기준</div>
+      <p>원재료비·인건비·감가상각비 등 비용 성격으로 분류. 제조업에 적합. 기능별 배분 불필요.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">기능별 분류 (By Function)</div>
+      <div class="card-title">매출원가·판관비 등 기능 기준</div>
+      <p>매출원가·판매비·관리비로 분류. 한국 상장사 대부분 채택. 기능 간 배분 기준 공시 필요.</p>
+    </div>
+  </div>
+
+  <h2>ASPN Group 연결 손익계산서 — 20X1년</h2>
+
+  <div class="fs-block">
+    <div class="fb-header">
+      <span>연결 손익계산서 (기능별 분류)</span>
+      <span style="font-size:11px;color:var(--navy-mid);">ASPN Group / 20X1.1.1~12.31</span>
+    </div>
+    <div class="fs-row"><span>매출</span><span class="fs-val">405</span></div>
+    <div class="fs-row indent"><span>매출원가</span><span class="fs-val num-neg">△256</span></div>
+    <div class="fs-row total"><span>매출총이익</span><span class="fs-val">149</span></div>
+    <div class="fs-row indent"><span>판매관리비</span><span class="fs-val num-neg">△67</span></div>
+    <div class="fs-row total"><span>영업이익</span><span class="fs-val">82</span></div>
+    <div class="fs-row indent"><span>지분법이익 (Tech)</span><span class="fs-val">2.4</span></div>
+    <div class="fs-row indent"><span>기타영업외손익</span><span class="fs-val num-neg">△20.55</span></div>
+    <div class="fs-row total"><span>법인세비용차감전순이익</span><span class="fs-val">63.85</span></div>
+    <div class="fs-row indent"><span>법인세비용</span><span class="fs-val num-neg">△약 16</span></div>
+    <div class="fs-row total"><span>당기순이익</span><span class="fs-val">약 47.85</span></div>
+    <div class="fs-row nci">
+      <span>비지배주주 귀속 순이익 <span class="fs-tag tag-nci">연결 고유</span></span>
+      <span class="fs-val">약 4</span>
+    </div>
+    <div class="fs-row" style="font-weight:700;color:var(--navy);">
+      <span>지배주주 귀속 순이익</span>
+      <span class="fs-val">약 43.85</span>
+    </div>
+
+    <div class="fs-row section-break"><span>기타포괄손익</span></div>
+    <div class="fs-row indent oci">
+      <span>외화환산차이 (CTA) <span class="fs-tag tag-oci">OCI</span></span>
+      <span class="fs-val">9.5</span>
+    </div>
+    <div class="fs-row indent oci">
+      <span>지분법기타포괄손익 (Tech OCI 지분) <span class="fs-tag tag-oci">OCI</span></span>
+      <span class="fs-val">1.5</span>
+    </div>
+    <div class="fs-row total"><span>총포괄이익</span><span class="fs-val">약 58.85</span></div>
+    <div class="fs-row nci"><span>비지배주주 귀속 총포괄이익</span><span class="fs-val">약 5.9</span></div>
+    <div class="fs-row" style="font-weight:700;color:var(--navy);">
+      <span>지배주주 귀속 총포괄이익</span>
+      <span class="fs-val">약 52.95</span>
+    </div>
+  </div>
+
+  <h2>기타포괄손익 분류 — 재분류 가능 여부</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>OCI 항목</th><th>재분류 가능 여부</th><th>재분류 시점</th></tr></thead>
+      <tbody>
+        <tr><td><strong>CTA (외화환산차이)</strong></td><td><span class="badge badge-ok">재분류 가능</span></td><td>종속기업 처분 (지배력 상실) 시</td></tr>
+        <tr><td><strong>지분법 OCI 지분</strong></td><td><span class="badge badge-ok">재분류 가능</span></td><td>관계기업 처분 시</td></tr>
+        <tr><td><strong>재평가잉여금</strong></td><td><span class="badge badge-warn">재분류 불가</span></td><td>해당 자산 처분 시 이익잉여금으로 대체</td></tr>
+        <tr><td><strong>확정급여부채 재측정</strong></td><td><span class="badge badge-warn">재분류 불가</span></td><td>영구적으로 OCI에 잔류</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-label">IFRS 18 예고 — 2027년 의무 적용</div>
+    IFRS 18은 손익계산서를 <strong>영업·투자·재무</strong> 3가지 범주로 재분류하도록 요구한다. 현행 영업이익 정의가 표준화되고, 경영성과측정치(MPM) 공시도 추가된다. 2027년 적용 전 GR FS Item 구조의 선제적 검토가 필요하다. 상세는 별도 심화 모듈에서 다룬다.
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(0)">← 이전</button>
+    <span class="progress-label">2 / 5</span>
+    <button class="btn btn-primary" onclick="goSection(2)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 3 — 연결 현금흐름표
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-2">
+  <div class="section-eyebrow">Section 03</div>
+  <div class="section-title">연결 현금흐름표</div>
+  <div class="section-lead">연결 현금흐름표는 내부거래 제거 후 그룹 외부와의 실질적인 현금 유출입만 표시한다. 직접법과 간접법 중 선택하여 작성한다.</div>
+
+  <h2>직접법 vs 간접법</h2>
+
+  <div class="cf-compare">
+    <div class="cf-col direct">
+      <div class="cc-header">직접법 (Direct Method)</div>
+      <div class="cf-row highlight">영업활동 현금흐름</div>
+      <div class="cf-row">고객으로부터 수취한 현금</div>
+      <div class="cf-row">공급자에게 지급한 현금</div>
+      <div class="cf-row">임직원에게 지급한 현금</div>
+      <div class="cf-row">법인세 납부</div>
+      <div class="cf-row highlight">투명성 높음 — IASB 권장</div>
+      <div class="cf-row">실무 작성 부담 큼</div>
+    </div>
+    <div class="cf-col indirect">
+      <div class="cc-header">간접법 (Indirect Method)</div>
+      <div class="cf-row highlight">영업활동 현금흐름</div>
+      <div class="cf-row">당기순이익</div>
+      <div class="cf-row">비현금항목 조정 (감가상각 등)</div>
+      <div class="cf-row">운전자본 변동 조정</div>
+      <div class="cf-row">법인세 납부</div>
+      <div class="cf-row highlight">실무 다수 채택</div>
+      <div class="cf-row">I/S·B/S에서 역산 가능</div>
+    </div>
+  </div>
+
+  <h2>연결 현금흐름표 특유 항목</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>항목</th><th>분류</th><th>연결 특이사항</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>이자 수취</strong></td>
+          <td>영업 또는 투자활동 (선택)</td>
+          <td>내부 이자(Holdings↔Korea 3억)는 제거. 외부 이자만 표시.</td>
+        </tr>
+        <tr>
+          <td><strong>이자 지급</strong></td>
+          <td>영업 또는 재무활동 (선택)</td>
+          <td>동일 원칙 적용. 선택한 분류를 일관되게 유지.</td>
+        </tr>
+        <tr>
+          <td><strong>배당 수취</strong></td>
+          <td>영업 또는 투자활동 (선택)</td>
+          <td>자회사 배당(Korea→Holdings 6.4억)은 연결에서 제거. 관계기업 배당(Tech→Holdings 1.2억)은 투자활동으로 표시.</td>
+        </tr>
+        <tr>
+          <td><strong>배당 지급</strong></td>
+          <td>재무활동</td>
+          <td>지배주주에 대한 배당만 표시. NCI에 대한 배당도 재무활동.</td>
+        </tr>
+        <tr>
+          <td><strong>종속기업 취득</strong></td>
+          <td>투자활동</td>
+          <td>취득 시 인수한 현금 차감 후 순액 표시.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <div class="callout-label">핵심 원칙 — 내부거래 제거</div>
+    연결 현금흐름표에서도 그룹 내부 현금 이동은 제거한다. Holdings → Korea 대여금 100억은 그룹 외부 현금 유출이 아니므로 투자활동에 표시하지 않는다. 외부 차입·상환만 재무활동으로 표시한다.
+  </div>
+
+  <div class="callout">
+    <div class="callout-label">GR — Cash Flow 리포팅</div>
+    GR에서 현금흐름표는 FS Item에 현금흐름 분류(영업·투자·재무)를 태깅하여 생성한다. 간접법 기준으로 당기순이익에서 출발하여 비현금 조정 항목을 FS Item 계층으로 구성하는 방식이 일반적이다.
+  </div>
+
+  <!-- QUIZ -->
+  <h3>확인 문제</h3>
+  <div class="quiz-block">
+    <div class="quiz-q">ASPN Tech(관계기업)로부터 수취한 배당 1.2억은 연결 현금흐름표 어디에 표시되는가?</div>
+    <div class="quiz-options" id="quiz1">
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz1',false)">
+        <div class="quiz-marker"></div>내부거래이므로 제거하여 표시하지 않는다
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz1',true)">
+        <div class="quiz-marker"></div>관계기업은 연결 대상이 아니므로 투자활동 현금흐름으로 표시한다
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz1',false)">
+        <div class="quiz-marker"></div>영업활동 현금흐름으로 반드시 표시한다
+      </div>
+    </div>
+    <div class="quiz-feedback" id="quiz1-fb"></div>
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(1)">← 이전</button>
+    <span class="progress-label">3 / 5</span>
+    <button class="btn btn-primary" onclick="goSection(3)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 4 — 연결 자본변동표
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-3">
+  <div class="section-eyebrow">Section 04</div>
+  <div class="section-title">연결 자본변동표</div>
+  <div class="section-lead">연결 자본변동표는 지배주주 귀속 자본과 비지배지분을 구분하여 각 자본 항목의 기초·변동·기말 잔액을 표시한다.</div>
+
+  <h2>ASPN Group 연결 자본변동표 — 20X1년</h2>
+  <p>단위: 억원</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>항목</th>
+          <th class="num">자본금</th>
+          <th class="num">이익잉여금</th>
+          <th class="num">CTA (OCI)</th>
+          <th class="num">지분법OCI</th>
+          <th class="num">지배지분 소계</th>
+          <th class="num">NCI</th>
+          <th class="num">합계</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row-header"><td colspan="8">기초 잔액 (20X1.1.1)</td></tr>
+        <tr>
+          <td>기초</td>
+          <td class="num">200</td><td class="num">207</td><td class="num">—</td><td class="num">—</td>
+          <td class="num">407</td><td class="num">18.4</td><td class="num">425.4</td>
+        </tr>
+        <tr class="row-header"><td colspan="8">당기 변동</td></tr>
+        <tr>
+          <td>당기순이익</td>
+          <td class="num">—</td><td class="num num-pos">43.85</td><td class="num">—</td><td class="num">—</td>
+          <td class="num num-pos">43.85</td><td class="num num-pos">4</td><td class="num num-pos">47.85</td>
+        </tr>
+        <tr>
+          <td>CTA 발생</td>
+          <td class="num">—</td><td class="num">—</td><td class="num num-pos">9.5</td><td class="num">—</td>
+          <td class="num num-pos">9.5</td><td class="num">—</td><td class="num num-pos">9.5</td>
+        </tr>
+        <tr>
+          <td>지분법 OCI</td>
+          <td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num num-pos">1.5</td>
+          <td class="num num-pos">1.5</td><td class="num">—</td><td class="num num-pos">1.5</td>
+        </tr>
+        <tr>
+          <td>배당 지급</td>
+          <td class="num">—</td><td class="num num-neg">△8.4</td><td class="num">—</td><td class="num">—</td>
+          <td class="num num-neg">△8.4</td><td class="num num-neg">△0.4</td><td class="num num-neg">△8.8</td>
+        </tr>
+        <tr class="row-total">
+          <td><strong>기말 잔액 (20X1.12.31)</strong></td>
+          <td class="num"><strong>200</strong></td>
+          <td class="num"><strong>242.45</strong></td>
+          <td class="num"><strong>9.5</strong></td>
+          <td class="num"><strong>1.5</strong></td>
+          <td class="num"><strong>453.45</strong></td>
+          <td class="num"><strong>22</strong></td>
+          <td class="num"><strong>475.45</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <div class="callout-label">NCI 구분 표시 원칙</div>
+    자본변동표에서 모든 변동 항목(순이익·OCI·배당)은 지배지분과 NCI로 각각 구분 표시한다. NCI는 자본 내 별도 열로 관리되며, NCI 배당은 그룹 외부로의 현금 유출이므로 재무활동으로 처리한다.
+  </div>
+
+  <div class="callout">
+    <div class="callout-label">GR — 자본변동 FS Item</div>
+    GR에서 자본변동표는 자본 관련 FS Item 각각의 기초·당기증감·기말을 Hierarchy로 구성하여 생성한다. CTA·지분법OCI·NCI 각 항목이 별도 FS Item으로 설정되어 있어야 정확한 자본변동표 산출이 가능하다.
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(2)">← 이전</button>
+    <span class="progress-label">4 / 5</span>
+    <button class="btn btn-primary" onclick="goSection(4)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 5 — 주석 공시
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-4">
+  <div class="section-eyebrow">Section 05</div>
+  <div class="section-title">주석 공시</div>
+  <div class="section-lead">연결재무제표 주석은 본문 수치를 보완하는 공시 정보다. 연결 고유 항목과 ASPN GR 애드인의 연결주석 자동화 파이프라인을 함께 살펴본다.</div>
+
+  <h2>연결 고유 주석 항목</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>주석 항목</th><th>주요 공시 내용</th><th>근거 기준</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>연결 범위</strong></td>
+          <td>종속기업·관계기업·공동기업 목록 / 지분율 / 기능통화 / 결산일 차이</td>
+          <td>IFRS 12</td>
+        </tr>
+        <tr>
+          <td><strong>유의적 회계정책</strong></td>
+          <td>연결 기준 / 외화환산 방법 / 영업권 측정 방법 / 지분법 적용 기준</td>
+          <td>IAS 1, IFRS 3</td>
+        </tr>
+        <tr>
+          <td><strong>영업권 세부 내역</strong></td>
+          <td>CGU별 배분액 / 손상 검토 결과 / 회수가능액 추정 방법</td>
+          <td>IAS 36</td>
+        </tr>
+        <tr>
+          <td><strong>비지배지분 (NCI)</strong></td>
+          <td>중요한 NCI 보유 종속기업별 재무 요약 / NCI 손익 배분</td>
+          <td>IFRS 12</td>
+        </tr>
+        <tr>
+          <td><strong>외화환산 (CTA)</strong></td>
+          <td>적용 환율 / CTA 변동 내역 / 기능통화별 익스포저</td>
+          <td>IAS 21</td>
+        </tr>
+        <tr>
+          <td><strong>관계기업 정보</strong></td>
+          <td>관계기업별 재무 요약 / 지분법 손익 / 미인식 손실 잔액</td>
+          <td>IAS 28, IFRS 12</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>ASPN GR 애드인 — 연결주석 자동화 파이프라인</h2>
+  <p>연결주석 작성은 법인별 개별주석 수집부터 환산·합산·조정을 거쳐 연결주석 리포팅까지 이어지는 다단계 프로세스다. ASPN GR 애드인은 이 전 과정을 GR 원장 데이터와 연동하여 자동화한다.</p>
+
+  <div class="pipeline">
+    <div class="pipe-step">
+      <div class="pipe-num">1</div>
+      <div class="pipe-body">
+        <strong>주석 양식 관리</strong>
+        <span>연결주석 양식 템플릿을 중앙에서 관리. 항목별 수집 기준과 작성 가이드를 법인별로 배포.</span>
+      </div>
+      <div class="pipe-gr">
+        <div class="pg-label">애드인 기능</div>
+        <div class="pg-val">양식 버전 관리 / 항목별 작성 규칙 설정</div>
+      </div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">2</div>
+      <div class="pipe-body">
+        <strong>개별법인 주석 작성</strong>
+        <span>각 법인(Korea·Europe 등)이 애드인 내에서 직접 개별주석 작성. 수치 입력 및 서술형 텍스트 모두 지원.</span>
+      </div>
+      <div class="pipe-gr">
+        <div class="pg-label">애드인 기능</div>
+        <div class="pg-val">법인별 입력 화면 / 항목별 유효성 검증</div>
+      </div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">3</div>
+      <div class="pipe-body">
+        <strong>환산 · 합산 · 조정</strong>
+        <span>외화 법인(Europe) 주석 수치를 표시통화(KRW)로 환산. 법인별 주석을 합산하고 연결조정(IC 제거 등) 반영.</span>
+      </div>
+      <div class="pipe-gr">
+        <div class="pg-label">애드인 기능</div>
+        <div class="pg-val">자동 환산 / 합산 엔진 / 조정 분개 반영</div>
+      </div>
+    </div>
+    <div class="pipe-step highlight">
+      <div class="pipe-num">4</div>
+      <div class="pipe-body">
+        <strong>GR 원장 데이터 참조 — 정합성 비교</strong>
+        <span>작성된 주석 수치를 GR 원장 데이터와 자동 대사. 주석 수치와 재무제표 수치 간 불일치를 즉시 감지하여 오류 위험 최소화.</span>
+      </div>
+      <div class="pipe-gr">
+        <div class="pg-label">핵심 기능</div>
+        <div class="pg-val">GR 원장 참조 / 항목별 차이 리포트 / 정합성 검증</div>
+      </div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">5</div>
+      <div class="pipe-body">
+        <strong>연결주석 리포팅</strong>
+        <span>검증 완료된 주석을 연결재무제표 양식에 맞게 최종 출력. 감사 대응용 근거 자료도 함께 생성.</span>
+      </div>
+      <div class="pipe-gr">
+        <div class="pg-label">애드인 기능</div>
+        <div class="pg-val">최종 리포트 출력 / Audit Trail 생성</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout purple">
+    <div class="callout-label">GR 원장 정합성 비교의 의미</div>
+    주석 수치와 재무제표 본문 수치가 다르면 감사 지적 사항이 된다. 기존에는 담당자가 수동으로 대사했으나, ASPN GR 애드인은 GR 원장을 직접 참조하여 <strong>주석 작성 단계에서 실시간으로 불일치를 감지</strong>한다. 결산 막바지 오류 수정 부담을 크게 줄이는 핵심 기능이다.
+  </div>
+
+  <h2>모듈 7 — 핵심 정리</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>재무제표</th><th>연결 고유 표시 항목</th><th>GR 연계</th></tr></thead>
+      <tbody>
+        <tr><td>재무상태표</td><td>영업권(비유동) / NCI(자본 내 별도) / CTA(OCI)</td><td>FS Item Hierarchy — B/S</td></tr>
+        <tr><td>손익계산서</td><td>지배·NCI 귀속 순이익 구분 / OCI 재분류 가능 여부 / IFRS 18 예고</td><td>FS Item Hierarchy — I/S</td></tr>
+        <tr><td>현금흐름표</td><td>내부 현금 제거 / 배당·이자 분류 선택</td><td>CF FS Item 태깅</td></tr>
+        <tr><td>자본변동표</td><td>지배지분·NCI 구분 전 항목 / CTA·지분법OCI 별도 열</td><td>자본변동 FS Item</td></tr>
+        <tr><td>주석</td><td>연결 범위·영업권·NCI·CTA·관계기업 세부</td><td>ASPN GR 애드인 — 연결주석 파이프라인</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout correct">
+    <div class="callout-label">모듈 7 완료</div>
+    연결재무제표 표시의 전 구성요소를 ASPN Group 수치로 완결했다. 모듈 8에서는 모듈 1~7의 전 내용을 통합하는 연결 실전 종합 케이스로 마무리한다.
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(3)">← 이전</button>
+    <span class="progress-label">5 / 5</span>
+    <button class="btn btn-primary" disabled>완료 ✓</button>
+  </div>
+</section>
+
+</main>
+
+<script>
+  const TOTAL = 5;
+  function goSection(idx) {
+    document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i===idx));
+    document.querySelectorAll('.nav-tabs a').forEach((a,i) => a.classList.toggle('active', i===idx));
+    document.getElementById('progressBar').style.width = ((idx+1)/TOTAL*100).toFixed(2)+'%';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  document.querySelectorAll('.nav-tabs a').forEach((a,i) => {
+    a.addEventListener('click', e => { e.preventDefault(); goSection(i); });
+  });
+  function checkQuiz(el, groupId, isCorrect) {
+    const group = document.getElementById(groupId);
+    if (group.querySelector('.correct-ans') || group.querySelector('.wrong-ans')) return;
+    const fb = document.getElementById(groupId+'-fb');
+    el.classList.add(isCorrect ? 'correct-ans' : 'wrong-ans');
+    el.querySelector('.quiz-marker').textContent = isCorrect ? '✓' : '✗';
+    fb.classList.add('show', isCorrect ? 'ok' : 'ng');
+    const msgs = {
+      quiz0: {
+        ok: '정답입니다. IFRS 10과 IAS 1에 따라 NCI는 자본의 일부로 분류하되, 지배주주 귀속 자본과 명확히 구분하여 별도 표시합니다. 과거 소수주주지분을 부채로 처리하던 방식과 다릅니다.',
+        ng: '다시 생각해보세요. NCI는 종속기업 순자산 중 지배주주가 소유하지 않는 부분으로, 자본의 일부입니다.'
+      },
+      quiz1: {
+        ok: '정답입니다. Tech는 관계기업이므로 연결 대상이 아닙니다. 따라서 Tech로부터의 배당은 내부거래가 아니며, 투자활동 현금흐름(또는 선택에 따라 영업활동)으로 표시합니다. 종속기업 Korea로부터의 배당은 연결에서 제거됩니다.',
+        ng: '다시 생각해보세요. Tech는 관계기업(지분법 대상)으로 연결 범위에 포함되지 않습니다. 내부거래 제거는 연결 종속기업 간 거래에만 적용됩니다.'
+      }
+    };
+    fb.textContent = isCorrect ? msgs[groupId].ok : msgs[groupId].ng;
+  }
+</script>
+</body>
+</html>
