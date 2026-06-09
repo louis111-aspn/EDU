@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모듈 6 — 지분법 심화 | SAP Group Reporting</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#003366; --navy-light:#e8eef5; --navy-mid:#ccd9e8;
+    --bg:#f0f3f8; --white:#ffffff; --text:#1a1a2e; --text-muted:#5a6a7a;
+    --border:#d0dae6;
+    --warn-bg:#fff8e6; --warn-border:#e6a800;
+    --correct-bg:#e8f5ee; --correct-border:#2a7a4f;
+    --wrong-bg:#fce8e8; --wrong-border:#c0392b;
+    --purple-bg:#f5eeff; --purple:#7a4a9a; --purple-border:#c8a8f8;
+    --pad-x:48px; --radius:4px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Noto Sans KR',sans-serif;font-size:15px;background:var(--bg);color:var(--text);line-height:1.75;}
+
+  .page-header{background:var(--navy);color:var(--white);padding:40px var(--pad-x) 36px;}
+  .page-header .series-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:13px;color:var(--navy-mid);letter-spacing:.08em;margin-bottom:12px;}
+  .page-header h1{font-family:'DM Serif Display',serif;font-size:36px;font-weight:400;line-height:1.25;margin-bottom:10px;}
+  .page-header .subtitle{font-size:15px;color:var(--navy-mid);font-weight:300;}
+
+  .scenario-bar{background:#002244;border-top:1px solid #004488;padding:10px var(--pad-x);display:flex;gap:24px;flex-wrap:wrap;}
+  .sc-item{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;color:var(--navy-mid);}
+  .sc-item span{color:#7fb3e0;font-weight:500;}
+
+  .progress-bar-wrap{background:var(--border);height:3px;}
+  .progress-bar-fill{background:var(--navy);height:3px;transition:width .3s ease;}
+
+  .nav-wrap{position:sticky;top:0;z-index:100;background:var(--white);border-bottom:2px solid var(--navy);overflow-x:auto;}
+  .nav-tabs{display:flex;list-style:none;padding:0 var(--pad-x);white-space:nowrap;}
+  .nav-tabs li a{display:block;padding:14px 16px;font-size:12px;font-family:'JetBrains Mono','Noto Sans KR',monospace;color:var(--text-muted);text-decoration:none;border-bottom:3px solid transparent;margin-bottom:-2px;transition:color .2s,border-color .2s;}
+  .nav-tabs li a:hover,.nav-tabs li a.active{color:var(--navy);border-bottom-color:var(--navy);font-weight:500;}
+
+  .main{max-width:980px;margin:0 auto;padding:48px var(--pad-x) 80px;}
+
+  .section{display:none;animation:fadeIn .3s ease;}
+  .section.active{display:block;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+  .section-eyebrow{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;color:var(--navy);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
+  .section-title{font-family:'DM Serif Display',serif;font-size:30px;font-weight:400;color:var(--navy);margin-bottom:6px;line-height:1.3;}
+  .section-lead{font-size:15px;color:var(--text-muted);margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid var(--border);}
+  h2{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;color:var(--navy);margin:36px 0 14px;}
+  h3{font-size:16px;font-weight:700;color:var(--text);margin:28px 0 10px;}
+  p{margin-bottom:14px;}
+
+  .card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:14px;}
+  .card-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+  .card-grid.three{grid-template-columns:repeat(3,1fr);}
+  @media(max-width:680px){.card-grid,.card-grid.three{grid-template-columns:1fr;}}
+  .card .card-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:11px;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+  .card .card-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px;}
+  .card p{font-size:13px;color:var(--text-muted);margin-bottom:0;}
+
+  .callout{border-left:4px solid var(--navy);background:var(--navy-light);padding:14px 18px;border-radius:0 var(--radius) var(--radius) 0;margin:18px 0;font-size:14px;}
+  .callout.warn{border-left-color:var(--warn-border);background:var(--warn-bg);}
+  .callout.correct{border-left-color:var(--correct-border);background:var(--correct-bg);}
+  .callout.wrong{border-left-color:var(--wrong-border);background:var(--wrong-bg);}
+  .callout.purple{border-left-color:var(--purple);background:var(--purple-bg);}
+  .callout .callout-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--navy);margin-bottom:5px;}
+  .callout.warn .callout-label{color:var(--warn-border);}
+  .callout.correct .callout-label{color:var(--correct-border);}
+  .callout.wrong .callout-label{color:var(--wrong-border);}
+  .callout.purple .callout-label{color:var(--purple);}
+
+  .tbl-wrap{overflow-x:auto;margin:18px 0;}
+  table{width:100%;border-collapse:collapse;font-size:14px;}
+  th{background:var(--navy);color:var(--white);padding:9px 14px;text-align:left;font-weight:500;font-size:12px;font-family:'JetBrains Mono','Noto Sans KR',monospace;}
+  td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+  tr:nth-child(even) td{background:var(--navy-light);}
+  tr:last-child td{border-bottom:none;}
+  td strong{color:var(--navy);}
+  .num{font-family:'JetBrains Mono','Noto Sans KR',monospace;text-align:right;}
+  .num-neg{color:var(--wrong-border);}
+  .num-pos{color:var(--correct-border);}
+  .row-total td{font-weight:700;border-top:2px solid var(--navy)!important;background:var(--navy-light)!important;}
+  .row-sub td{background:#f7f9fc!important;font-size:13px;color:var(--text-muted);}
+  .row-header td{background:var(--navy-light)!important;font-weight:700;font-size:13px;color:var(--navy);}
+  .row-purple td{background:var(--purple-bg)!important;font-weight:700;color:var(--purple);}
+  .row-warn td{background:var(--warn-bg)!important;font-weight:700;color:#7a5c00;}
+
+  .badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:500;font-family:'JetBrains Mono','Noto Sans KR',monospace;white-space:nowrap;}
+  .badge-h{background:var(--navy);color:white;}
+  .badge-k{background:#1a5276;color:white;}
+  .badge-t{background:var(--navy-light);color:var(--navy);border:1px solid var(--navy-mid);}
+  .badge-epu{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-border);}
+  .badge-manual{background:var(--warn-bg);color:#7a5c00;border:1px solid var(--warn-border);}
+  .badge-auto{background:var(--correct-bg);color:var(--correct-border);border:1px solid var(--correct-border);}
+
+  .journal{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:16px 0;}
+  .journal-header{background:var(--navy-light);padding:8px 16px;font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;color:var(--navy);font-weight:500;display:flex;justify-content:space-between;align-items:center;}
+  .journal-header .j-tag{font-size:10px;background:var(--navy);color:white;padding:2px 8px;border-radius:10px;}
+  .journal-header .j-tag.purple{background:var(--purple);}
+  .journal-header .j-tag.warn{background:var(--warn-border);}
+  .journal table{margin:0;}
+  .journal th{background:#f0f4f8;color:var(--text-muted);font-size:11px;}
+  .journal td{font-size:13px;font-family:'JetBrains Mono','Noto Sans KR',monospace;}
+  .j-dr{padding-left:14px;}
+  .j-cr{padding-left:36px;color:var(--text-muted);}
+  .j-amount-dr{color:var(--navy);font-weight:500;}
+  .j-amount-cr{color:var(--text-muted);}
+
+  /* BV TRACKER */
+  .bv-track{display:flex;flex-direction:column;gap:0;margin:20px 0;}
+  .bv-row{display:grid;grid-template-columns:180px 1fr auto;gap:0;align-items:stretch;}
+  .bv-label{background:var(--navy-light);border:1px solid var(--border);border-bottom:none;padding:10px 14px;font-size:13px;font-weight:500;color:var(--navy);display:flex;align-items:center;}
+  .bv-desc{background:var(--white);border:1px solid var(--border);border-left:none;border-bottom:none;padding:10px 14px;font-size:13px;color:var(--text-muted);display:flex;align-items:center;}
+  .bv-amt{background:var(--white);border:1px solid var(--border);border-left:none;border-bottom:none;padding:10px 16px;font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:14px;font-weight:500;color:var(--navy);display:flex;align-items:center;justify-content:flex-end;min-width:90px;}
+  .bv-row:last-child .bv-label,.bv-row:last-child .bv-desc,.bv-row:last-child .bv-amt{border-bottom:1px solid var(--border);}
+  .bv-row.total .bv-label{background:var(--navy);color:white;}
+  .bv-row.total .bv-desc{background:var(--navy-light);}
+  .bv-row.total .bv-amt{background:var(--navy-light);font-size:16px;color:var(--navy);}
+
+  /* EPU FLOW */
+  .epu-flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0;margin:20px 0;align-items:center;}
+  .epu-box{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;text-align:center;}
+  .epu-box.app{background:var(--purple-bg);border-color:var(--purple-border);}
+  .epu-box.gr{background:var(--navy-light);border-color:var(--navy-mid);}
+  .epu-box .eb-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:10px;color:var(--text-muted);margin-bottom:6px;}
+  .epu-box.app .eb-label{color:var(--purple);}
+  .epu-box.gr .eb-label{color:var(--navy);}
+  .epu-box .eb-title{font-size:14px;font-weight:700;color:var(--text);}
+  .epu-box.app .eb-title{color:var(--purple);}
+  .epu-box.gr .eb-title{color:var(--navy);}
+  .epu-box .eb-desc{font-size:12px;color:var(--text-muted);margin-top:4px;}
+  .epu-arrow{font-size:22px;color:var(--navy);text-align:center;padding:0 8px;}
+  @media(max-width:620px){.epu-flow{grid-template-columns:1fr;}.epu-arrow{display:none;}}
+
+  /* SUSPENSION TIMELINE */
+  .sus-track{display:flex;flex-direction:column;gap:8px;margin:20px 0;}
+  .sus-row{display:grid;grid-template-columns:100px 1fr auto;gap:12px;align-items:center;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;}
+  .sus-year{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:13px;font-weight:700;color:var(--navy);}
+  .sus-desc{font-size:13px;color:var(--text);}
+  .sus-bv{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:14px;font-weight:700;text-align:right;}
+  .sus-row.suspended{border-color:var(--warn-border);background:var(--warn-bg);}
+  .sus-row.suspended .sus-year{color:var(--warn-border);}
+  .sus-row.resume{border-color:var(--correct-border);background:var(--correct-bg);}
+  .sus-row.resume .sus-year{color:var(--correct-border);}
+
+  .running-box{background:var(--white);border:2px solid var(--navy);border-radius:var(--radius);padding:18px 22px;margin:20px 0;}
+  .running-box .rb-title{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:11px;color:var(--navy);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;}
+  .rb-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;}
+  .rb-row:last-child{border-bottom:none;font-weight:700;color:var(--navy);}
+  .rb-val{font-family:'JetBrains Mono','Noto Sans KR',monospace;}
+  .rb-neg{color:var(--wrong-border);}
+  .rb-pos{color:var(--correct-border);}
+
+  .quiz-block{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:22px 26px;margin:18px 0;}
+  .quiz-q{font-size:15px;font-weight:500;margin-bottom:14px;}
+  .quiz-options{display:flex;flex-direction:column;gap:8px;}
+  .quiz-option{display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+  .quiz-option:hover{border-color:var(--navy);background:var(--navy-light);}
+  .quiz-option.correct-ans{border-color:var(--correct-border);background:var(--correct-bg);}
+  .quiz-option.wrong-ans{border-color:var(--wrong-border);background:var(--wrong-bg);}
+  .quiz-marker{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+  .quiz-option.correct-ans .quiz-marker{border-color:var(--correct-border);background:var(--correct-border);color:white;}
+  .quiz-option.wrong-ans .quiz-marker{border-color:var(--wrong-border);background:var(--wrong-border);color:white;}
+  .quiz-feedback{margin-top:12px;padding:11px 14px;border-radius:var(--radius);font-size:14px;display:none;}
+  .quiz-feedback.show{display:block;}
+  .quiz-feedback.ok{background:var(--correct-bg);border-left:4px solid var(--correct-border);}
+  .quiz-feedback.ng{background:var(--wrong-bg);border-left:4px solid var(--wrong-border);}
+
+  .section-nav{display:flex;justify-content:space-between;align-items:center;margin-top:48px;padding-top:24px;border-top:1px solid var(--border);}
+  .btn{padding:10px 22px;border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;border:2px solid var(--navy);transition:background .15s,color .15s;font-family:'Noto Sans KR',sans-serif;}
+  .btn-primary{background:var(--navy);color:var(--white);}
+  .btn-primary:hover{background:#002244;}
+  .btn-ghost{background:transparent;color:var(--navy);}
+  .btn-ghost:hover{background:var(--navy-light);}
+  .btn:disabled{opacity:.3;cursor:default;}
+  .progress-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;color:var(--text-muted);}
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="series-label">SAP GROUP REPORTING · 연결회계 입문 시리즈 · MODULE 06</div>
+  <h1>지분법 심화</h1>
+  <div class="subtitle">적용 절차 전체·EPU 구조·내부거래 조정·중단·회복·손상 완결</div>
+</header>
+
+<div class="scenario-bar">
+  <div class="sc-item">관계기업 <span>ASPN Tech (지분 30% / KRW / IFRS)</span></div>
+  <div class="sc-item">취득원가 <span>90억</span></div>
+  <div class="sc-item">취득일 순자산 공정가치 <span>270억 (30% = 81억)</span></div>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-bar-fill" id="progressBar" style="width:16.67%"></div>
+</div>
+
+<nav class="nav-wrap">
+  <ul class="nav-tabs" id="navTabs">
+    <li><a href="#" class="active" data-section="0">01 적용절차</a></li>
+    <li><a href="#" data-section="1">02 손익·자본변동</a></li>
+    <li><a href="#" data-section="2">03 EPU 구조</a></li>
+    <li><a href="#" data-section="3">04 내부거래 조정</a></li>
+    <li><a href="#" data-section="4">05 중단·회복</a></li>
+    <li><a href="#" data-section="5">06 손상</a></li>
+  </ul>
+</nav>
+
+<main class="main">
+
+<!-- ══════════════════════════════════════════════
+     SECTION 1 — 지분법 적용 절차 전체
+══════════════════════════════════════════════ -->
+<section class="section active" id="sec-0">
+  <div class="section-eyebrow">Section 01</div>
+  <div class="section-title">지분법 적용 절차 전체</div>
+  <div class="section-lead">지분법은 취득원가에서 출발하여 관계기업의 순자산 변동을 투자자 장부가에 지속적으로 반영하는 방법이다.</div>
+
+  <h2>유의적 영향력 판단 (IAS 28)</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>기준</th><th>내용</th><th>ASPN Tech 적용</th></tr></thead>
+      <tbody>
+        <tr><td><strong>지분율 20~50%</strong></td><td>유의적 영향력 추정 (반증 가능)</td><td>30% 보유 → 유의적 영향력 추정</td></tr>
+        <tr><td><strong>이사회 참여</strong></td><td>재무·영업 정책 결정 참여</td><td>이사 1인 선임 가정</td></tr>
+        <tr><td><strong>정책 결정 참여</strong></td><td>배당·투자 등 주요 정책에 참여</td><td>해당</td></tr>
+        <tr><td><strong>중요 거래</strong></td><td>투자자와 피투자자 간 중요 거래 존재</td><td>Holdings ↔ Tech 용역 거래</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>지분법 장부가 변동 구조 — 전체 흐름</h2>
+
+  <div class="bv-track">
+    <div class="bv-row">
+      <div class="bv-label">취득원가</div>
+      <div class="bv-desc">지분 취득 시 지급한 대가</div>
+      <div class="bv-amt">90억</div>
+    </div>
+    <div class="bv-row">
+      <div class="bv-label">투자차액</div>
+      <div class="bv-desc">취득원가(90) − 순자산 공정가치 지분(81억) = 9억 → 영업권 성격, 별도 상각 없음</div>
+      <div class="bv-amt num-pos">+9억</div>
+    </div>
+    <div class="bv-row">
+      <div class="bv-label">지분법이익</div>
+      <div class="bv-desc">Tech 당기순이익 8억 × 30% = 2.4억 → P&L 인식, 장부가 증가</div>
+      <div class="bv-amt num-pos">+2.4억</div>
+    </div>
+    <div class="bv-row">
+      <div class="bv-label">배당 수취</div>
+      <div class="bv-desc">Tech 배당 지급 시 수취 배당 → 장부가 감소 (이익 실현으로 간주)</div>
+      <div class="bv-amt num-neg">△배당액×30%</div>
+    </div>
+    <div class="bv-row">
+      <div class="bv-label">OCI 지분</div>
+      <div class="bv-desc">Tech의 기타포괄손익(CTA, 재평가잉여금 등) 지분 → OCI 인식, 장부가 증감</div>
+      <div class="bv-amt">±OCI×30%</div>
+    </div>
+    <div class="bv-row total">
+      <div class="bv-label">기말 장부가</div>
+      <div class="bv-desc">위 항목 누적 결과 — 매 기간 갱신</div>
+      <div class="bv-amt">92.4억*</div>
+    </div>
+  </div>
+  <p style="font-size:13px;color:var(--text-muted);">* 20X1년 말 기준: 취득원가 90 + 지분법이익 2.4 = 92.4억 (배당·OCI 없음 가정)</p>
+
+  <h2>취득원가 배분 — 투자차액 처리</h2>
+  <p>지분법에서 취득원가가 순자산 공정가치 지분을 초과하는 금액은 영업권 성격으로 투자주식 장부가에 포함되어 관리된다. 별도로 영업권 계정에 인식하지 않으며, 정기 상각도 하지 않는다. 다만 손상 검토 대상이 된다.</p>
+
+  <div class="callout">
+    <div class="callout-label">연결 C/I와의 차이</div>
+    종속기업 C/I에서는 영업권을 별도 계정으로 인식하고 CGU 손상 검토를 수행한다. 지분법에서는 영업권을 투자주식 장부가에 포함하여 투자주식 전체를 단일 자산으로 관리한다. 두 접근의 차이는 섹션 6 손상에서 상세히 다룬다.
+  </div>
+
+  <!-- QUIZ -->
+  <h3>확인 문제</h3>
+  <div class="quiz-block">
+    <div class="quiz-q">Holdings가 ASPN Tech 지분 30%를 90억에 취득했다. Tech의 순자산 공정가치는 270억이다. 지분법 적용 시 투자차액(영업권 성격)은?</div>
+    <div class="quiz-options" id="quiz0">
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz0',false)">
+        <div class="quiz-marker"></div>0억 (지분법에서는 영업권 없음)
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz0',true)">
+        <div class="quiz-marker"></div>9억 (취득원가 90 − 순자산 FV 지분 81)
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz0',false)">
+        <div class="quiz-marker"></div>270억 (순자산 공정가치 전체)
+      </div>
+    </div>
+    <div class="quiz-feedback" id="quiz0-fb"></div>
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" disabled>← 이전</button>
+    <span class="progress-label">1 / 6</span>
+    <button class="btn btn-primary" onclick="goSection(1)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 2 — 지분법 손익 및 자본변동 반영
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-1">
+  <div class="section-eyebrow">Section 02</div>
+  <div class="section-title">지분법 손익 및 자본변동 반영</div>
+  <div class="section-lead">관계기업의 순손익, 기타포괄손익, 배당 지급이 발생할 때마다 투자자 재무제표와 투자주식 장부가를 조정한다.</div>
+
+  <h2>20X1년 시나리오 — ASPN Tech</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>항목</th><th class="num">Tech 전체</th><th class="num">Holdings 지분 (30%)</th></tr></thead>
+      <tbody>
+        <tr><td>당기순이익</td><td class="num">8억</td><td class="num num-pos">2.4억</td></tr>
+        <tr><td>기타포괄손익 (재평가잉여금)</td><td class="num">5억</td><td class="num num-pos">1.5억</td></tr>
+        <tr><td>배당 지급</td><td class="num">△4억</td><td class="num num-neg">△1.2억</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>분개 처리</h2>
+
+  <div class="journal">
+    <div class="journal-header"><span>① 지분법이익 인식 — 당기순이익 지분</span><span class="j-tag">C/I Task</span></div>
+    <table>
+      <thead><tr><th>구분</th><th>계정</th><th class="num">차변</th><th class="num">대변</th></tr></thead>
+      <tbody>
+        <tr><td class="j-dr">차변</td><td>관계기업투자주식 (Tech)</td><td class="num j-amount-dr">2.4</td><td class="num">—</td></tr>
+        <tr><td class="j-cr">대변</td><td>지분법이익 (P&L)</td><td class="num">—</td><td class="num j-amount-cr">2.4</td></tr>
+        <tr class="row-sub"><td colspan="4" style="font-size:12px;padding:6px 14px;">Tech 순이익 8억 × 30% → Holdings P&L 반영, 투자주식 장부가 증가</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="journal">
+    <div class="journal-header"><span>② 지분법 자본변동 — OCI 지분</span><span class="j-tag">C/I Task</span></div>
+    <table>
+      <thead><tr><th>구분</th><th>계정</th><th class="num">차변</th><th class="num">대변</th></tr></thead>
+      <tbody>
+        <tr><td class="j-dr">차변</td><td>관계기업투자주식 (Tech)</td><td class="num j-amount-dr">1.5</td><td class="num">—</td></tr>
+        <tr><td class="j-cr">대변</td><td>지분법기타포괄손익 (OCI)</td><td class="num">—</td><td class="num j-amount-cr">1.5</td></tr>
+        <tr class="row-sub"><td colspan="4" style="font-size:12px;padding:6px 14px;">Tech OCI 5억 × 30% → Holdings OCI 반영. P&L이 아닌 OCI 처리 주의.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="journal">
+    <div class="journal-header"><span>③ 배당 수취 — 장부가 감소</span><span class="j-tag">C/I Task</span></div>
+    <table>
+      <thead><tr><th>구분</th><th>계정</th><th class="num">차변</th><th class="num">대변</th></tr></thead>
+      <tbody>
+        <tr><td class="j-dr">차변</td><td>현금</td><td class="num j-amount-dr">1.2</td><td class="num">—</td></tr>
+        <tr><td class="j-cr">대변</td><td>관계기업투자주식 (Tech)</td><td class="num">—</td><td class="num j-amount-cr">1.2</td></tr>
+        <tr class="row-sub"><td colspan="4" style="font-size:12px;padding:6px 14px;">배당은 관계기업 순자산 유출 → 이미 지분법이익으로 인식된 금액의 회수. 수익이 아닌 장부가 감소.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>20X1년 말 투자주식 장부가 추이</h2>
+  <div class="running-box">
+    <div class="rb-title">관계기업투자주식 (Tech) — 장부가 추이</div>
+    <div class="rb-row"><span>취득원가</span><span class="rb-val">90억</span></div>
+    <div class="rb-row"><span>지분법이익 (+)</span><span class="rb-val rb-pos">+2.4억</span></div>
+    <div class="rb-row"><span>OCI 지분 (+)</span><span class="rb-val rb-pos">+1.5억</span></div>
+    <div class="rb-row"><span>배당 수취 (−)</span><span class="rb-val rb-neg">△1.2억</span></div>
+    <div class="rb-row"><span>20X1년 말 장부가</span><span class="rb-val">92.7억</span></div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-label">배당을 수익으로 처리하면 이중 계상</div>
+    배당을 수익으로 인식하면 지분법이익(순이익 지분)과 함께 같은 이익을 두 번 인식하는 결과가 된다. 배당은 반드시 장부가 감소로 처리해야 한다.
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(0)">← 이전</button>
+    <span class="progress-label">2 / 6</span>
+    <button class="btn btn-primary" onclick="goSection(2)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 3 — EPU 구조
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-2">
+  <div class="section-eyebrow">Section 03</div>
+  <div class="section-title">EPU — GR 처리 구조</div>
+  <div class="section-lead">Equity Pickup(EPU)은 회계기준 개념이 아닌 GR 생태계의 처리 방식이다. 연결 지분법과 혼동하지 않는 것이 중요하다.</div>
+
+  <h2>연결 지분법 vs EPU — 개념 구분</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>구분</th><th>연결 지분법</th><th>EPU (Equity Pickup)</th></tr></thead>
+      <tbody>
+        <tr><td><strong>성격</strong></td><td>회계기준 (IAS 28)</td><td>GR 생태계 처리 방식</td></tr>
+        <tr><td><strong>적용 대상</strong></td><td>관계기업·공동기업</td><td>종속기업 포함 그룹 내 모든 투자 법인</td></tr>
+        <tr><td><strong>목적</strong></td><td>투자자 재무제표에 관계기업 성과 반영</td><td>상위 법인의 투자주식 장부가를 하위 법인 자본 변동에 연동</td></tr>
+        <tr><td><strong>처리 도구</strong></td><td>GR C/I Task 내 처리</td><td>Equity Pickup App (별도 앱)</td></tr>
+        <tr><td><strong>IFRS 근거</strong></td><td>IAS 28</td><td>없음 — 시스템 기능</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Equity Pickup App — Data Flow</h2>
+  <p>Equity Pickup App은 하위 법인의 자본 변동 데이터를 읽어 상위 법인의 투자주식 장부가를 자동으로 업데이트하는 별도 앱이다. GR Consolidation Monitor의 Task와는 독립적으로 동작한다.</p>
+
+  <div class="epu-flow">
+    <div class="epu-box">
+      <div class="eb-label">하위 법인</div>
+      <div class="eb-title">자본 변동 발생</div>
+      <div class="eb-desc">순이익·OCI·배당<br>자본 항목 변동</div>
+    </div>
+    <div class="epu-arrow">→</div>
+    <div class="epu-box app">
+      <div class="eb-label">Equity Pickup App</div>
+      <div class="eb-title">자동 픽업</div>
+      <div class="eb-desc">지분율 × 자본변동액<br>투자주식 조정 계산</div>
+    </div>
+    <div class="epu-arrow">→</div>
+    <div class="epu-box gr">
+      <div class="eb-label">상위 법인 (GR)</div>
+      <div class="eb-title">투자주식 장부가 반영</div>
+      <div class="eb-desc">관계기업투자주식<br>장부가 자동 업데이트</div>
+    </div>
+  </div>
+
+  <h2>EPU와 C/I Task의 관계</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>처리 단계</th><th>담당 도구</th><th>내용</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>투자주식 장부가 업데이트</td>
+          <td><span class="badge badge-epu">Equity Pickup App</span></td>
+          <td>하위 법인 자본 변동 → 상위 법인 투자주식 자동 반영</td>
+        </tr>
+        <tr>
+          <td>연결조정 (지분법 포함)</td>
+          <td><span class="badge badge-auto">GR C/I Task</span></td>
+          <td>투자주식·자본 상계, 지분법이익 정리, NCI 계산</td>
+        </tr>
+        <tr>
+          <td>내부거래 조정</td>
+          <td><span class="badge badge-auto">Reclassification / Auto Posting Rule</span></td>
+          <td>관계기업 내부거래 지분율 비례 제거</td>
+        </tr>
+        <tr>
+          <td>중단·회복·손상</td>
+          <td><span class="badge badge-manual">Manual Adjustment</span></td>
+          <td>GR 표준기능 없음 — 수동 입력</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout purple">
+    <div class="callout-label">핵심 구분</div>
+    Equity Pickup App은 <strong>데이터 준비 단계</strong>의 도구다. 투자주식 장부가가 올바르게 업데이트된 후, GR C/I Task가 연결조정을 수행하는 구조다. 두 도구는 순서가 있으며 독립적으로 동작한다.
+  </div>
+
+  <h2>EPU의 존재 목적 — 금융지주 별도 리포팅</h2>
+  <p>EPU가 별도 앱으로 제공되는 이유는 단순한 시스템 편의가 아니다. 글로벌 금융지주는 규제 당국으로부터 <strong>연결재무제표 외에 별도(개별) 재무제표 기준의 자본 적정성 보고</strong>를 요구받는다. 이 맥락에서 EPU의 역할이 명확해진다.</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>구분</th><th>연결 지분법 (IAS 28)</th><th>EPU (금융지주 별도 리포팅)</th></tr></thead>
+      <tbody>
+        <tr><td><strong>보고 목적</strong></td><td>연결재무제표 작성</td><td>지주사 별도재무제표 기준 자본 적정성 보고</td></tr>
+        <tr><td><strong>요구 주체</strong></td><td>IFRS 기준 적용 기업 일반</td><td>금융감독 당국 (BIS, FSB, 각국 감독기관)</td></tr>
+        <tr><td><strong>핵심 관심사</strong></td><td>그룹 전체 손익 및 재무상태</td><td>지주사 단독 기준 자기자본 변동 추적</td></tr>
+        <tr><td><strong>투자주식 반영</strong></td><td>연결 조정에서 상계</td><td>지주사 별도 B/S의 투자주식 장부가 유지·보고</td></tr>
+        <tr><td><strong>처리 도구</strong></td><td>GR C/I Task</td><td>Equity Pickup App</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <div class="callout-label">실무 맥락</div>
+    금융지주회사는 BIS 자기자본비율 산정, 내부자본적정성평가(ICAAP), 감독당국 보고 등을 위해 지주사 별도 기준으로 자회사·관계회사 투자주식의 장부가 변동을 정확히 추적해야 한다. Equity Pickup App은 이 요구에 응답하기 위해 설계된 도구다. 연결 패키지를 생산하는 GR과는 목적이 다르며, 두 시스템이 병렬로 운영되는 구조가 일반적이다.
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(1)">← 이전</button>
+    <span class="progress-label">3 / 6</span>
+    <button class="btn btn-primary" onclick="goSection(3)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 4 — 관계기업 내부거래 조정
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-3">
+  <div class="section-eyebrow">Section 04</div>
+  <div class="section-title">관계기업 내부거래 조정</div>
+  <div class="section-lead">관계기업과의 내부거래에서 발생한 미실현이익은 지분율만큼만 제거한다. 종속기업 IC 제거와의 핵심 차이다.</div>
+
+  <h2>종속기업 IC vs 관계기업 IC — 핵심 차이</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>구분</th><th>종속기업 (Korea)</th><th>관계기업 (Tech)</th></tr></thead>
+      <tbody>
+        <tr><td>제거 범위</td><td>미실현이익 <strong>100% 전액</strong> 제거</td><td>미실현이익 중 <strong>지분율(30%)만큼만</strong> 제거</td></tr>
+        <tr><td>이유</td><td>연결 대상 — 그룹 내부 거래 전액 제거</td><td>연결 대상 아님 — 투자자 귀속분만 제거</td></tr>
+        <tr><td>GR 처리</td><td>IC Elimination Task</td><td>Reclassification / Auto Posting Rule</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>상향판매 vs 하향판매</h2>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-label">상향판매 (Upstream)</div>
+      <div class="card-title">관계기업 → 투자자 판매</div>
+      <p>Tech가 Holdings에 재고를 판매. Tech의 이익에 미실현분 포함. Holdings 지분(30%)만큼 지분법이익에서 제거.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">하향판매 (Downstream)</div>
+      <div class="card-title">투자자 → 관계기업 판매</div>
+      <p>Holdings가 Tech에 재고를 판매. Holdings의 이익에 미실현분 포함. 지분율(30%)만큼 Holdings 손익에서 직접 제거.</p>
+    </div>
+  </div>
+
+  <h2>시나리오 — 상향판매 (Tech → Holdings)</h2>
+  <p>Tech가 Holdings에 재고를 판매. 미실현이익 10억 포함. Holdings 재고에 잔존.</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>구분</th><th class="num">전체 미실현이익</th><th class="num">지분율 30% 해당분</th><th>처리</th></tr></thead>
+      <tbody>
+        <tr><td>미실현이익</td><td class="num">10억</td><td class="num num-neg">△3억</td><td>지분법이익에서 차감</td></tr>
+        <tr><td>외부 귀속분 (70%)</td><td class="num">—</td><td class="num">7억</td><td>제거 대상 아님</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="journal">
+    <div class="journal-header"><span>상향판매 미실현이익 제거 — Tech → Holdings</span><span class="j-tag warn">Auto Posting Rule</span></div>
+    <table>
+      <thead><tr><th>구분</th><th>계정</th><th class="num">차변</th><th class="num">대변</th></tr></thead>
+      <tbody>
+        <tr><td class="j-dr">차변</td><td>지분법이익 (P&L)</td><td class="num j-amount-dr">3</td><td class="num">—</td></tr>
+        <tr><td class="j-cr">대변</td><td>관계기업투자주식 (Tech)</td><td class="num">—</td><td class="num j-amount-cr">3</td></tr>
+        <tr class="row-sub"><td colspan="4" style="font-size:12px;padding:6px 14px;">미실현이익 10억 × 30% = 3억 → 지분법이익 차감, 투자주식 장부가 감소</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>GR — Automatic Posting Rule 구성</h2>
+  <p>GR에서 관계기업 내부거래 조정은 Reclassification Rule 또는 Automatic Posting Rule로 구성한다. 미실현이익 FS Item에 지분율을 곱한 금액을 지분법이익 FS Item에서 자동 차감하도록 규칙을 설정한다.</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>설정 항목</th><th>내용</th></tr></thead>
+      <tbody>
+        <tr><td>Source FS Item</td><td>관계기업 미실현이익 계정</td></tr>
+        <tr><td>Target FS Item</td><td>지분법이익 계정</td></tr>
+        <tr><td>적용 비율</td><td>지분율 (30%)</td></tr>
+        <tr><td>실행 시점</td><td>C/I Task 전 또는 내부에서 자동 실행</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- QUIZ -->
+  <h3>확인 문제</h3>
+  <div class="quiz-block">
+    <div class="quiz-q">Holdings(투자자)가 Tech(관계기업 30%)에 재고를 판매했다. 미실현이익 20억이 Tech 재고에 잔존한다. 하향판매 조정 시 제거 금액은?</div>
+    <div class="quiz-options" id="quiz1">
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz1',false)">
+        <div class="quiz-marker"></div>20억 전액 제거
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz1',true)">
+        <div class="quiz-marker"></div>6억 제거 (20억 × 30%)
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz1',false)">
+        <div class="quiz-marker"></div>14억 제거 (20억 × 70%)
+      </div>
+    </div>
+    <div class="quiz-feedback" id="quiz1-fb"></div>
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(2)">← 이전</button>
+    <span class="progress-label">4 / 6</span>
+    <button class="btn btn-primary" onclick="goSection(4)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 5 — 지분법 중단과 회복
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-4">
+  <div class="section-eyebrow">Section 05</div>
+  <div class="section-title">지분법 중단과 회복</div>
+  <div class="section-lead">관계기업 손실이 누적되어 투자주식 장부가가 0에 도달하면 지분법 적용을 중단한다. 이후 흑자 전환 시 미인식 손실을 초과하는 이익분부터 재개한다.</div>
+
+  <h2>중단 조건과 재개 조건</h2>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-label">중단 조건</div>
+      <div class="card-title">장부가 0 도달 시</div>
+      <p>누적 손실로 투자주식 장부가가 0이 되면 지분법 적용 중단. 추가 손실은 장부가를 음수로 인식하지 않는다. 단, 법적 의무 또는 의제의무가 있으면 부채로 인식.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">재개 조건</div>
+      <div class="card-title">미인식 손실 초과 이익 발생 시</div>
+      <p>관계기업 흑자 전환 후, 미인식 누적손실을 초과하는 이익이 발생하는 시점부터 지분법 재개. 미인식 손실 잔액이 소진될 때까지는 이익 인식 없음.</p>
+    </div>
+  </div>
+
+  <h2>시나리오 — Tech 적자 누적 및 회복</h2>
+
+  <div class="sus-track">
+    <div class="sus-row">
+      <div class="sus-year">취득시</div>
+      <div class="sus-desc">취득원가 90억. 지분법 적용 시작.</div>
+      <div class="sus-bv" style="color:var(--navy)">90억</div>
+    </div>
+    <div class="sus-row">
+      <div class="sus-year">20X1</div>
+      <div class="sus-desc">Tech 순손실 100억. 지분 30% = △30억 손실 인식.</div>
+      <div class="sus-bv" style="color:var(--navy)">60억</div>
+    </div>
+    <div class="sus-row">
+      <div class="sus-year">20X2</div>
+      <div class="sus-desc">Tech 순손실 150억. 지분 30% = △45억. 장부가 60 → 15억.</div>
+      <div class="sus-bv" style="color:var(--navy)">15억</div>
+    </div>
+    <div class="sus-row suspended">
+      <div class="sus-year">20X3</div>
+      <div class="sus-desc">Tech 순손실 200억. 지분 30% = △60억. 장부가 15억 → 0 도달. <strong>지분법 중단.</strong> 미인식 손실 45억 별도 관리.</div>
+      <div class="sus-bv" style="color:var(--warn-border)">0억<br><span style="font-size:11px;">미인식 △45억</span></div>
+    </div>
+    <div class="sus-row suspended">
+      <div class="sus-year">20X4</div>
+      <div class="sus-desc">Tech 순손실 50억. 지분 30% = △15억. 장부가 0 유지. 미인식 손실 45 + 15 = 60억으로 증가.</div>
+      <div class="sus-bv" style="color:var(--warn-border)">0억<br><span style="font-size:11px;">미인식 △60억</span></div>
+    </div>
+    <div class="sus-row">
+      <div class="sus-year">20X5</div>
+      <div class="sus-desc">Tech 순이익 30억. 지분 30% = 9억. 미인식 손실 60억 > 이익 9억 → 아직 재개 불가. 미인식 손실 51억으로 감소.</div>
+      <div class="sus-bv" style="color:var(--text-muted)">0억<br><span style="font-size:11px;">미인식 △51억</span></div>
+    </div>
+    <div class="sus-row resume">
+      <div class="sus-year">20X6~</div>
+      <div class="sus-desc">Tech 이익 누적으로 미인식 손실 전액 소진 시점 이후 이익분부터 <strong>지분법 재개.</strong> 장부가 0에서 재출발.</div>
+      <div class="sus-bv" style="color:var(--correct-border)">재개↑</div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-label">미인식 손실 관리 — GR 표준기능 없음</div>
+    지분법 중단 및 미인식 누적손실 추적은 GR 표준기능으로 자동화되지 않는다. 별도 스프레드시트 또는 Manual Adjustment로 관리해야 한다. 미인식 손실 잔액을 정확히 추적하지 않으면 재개 시점 오류로 이어진다.
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(3)">← 이전</button>
+    <span class="progress-label">5 / 6</span>
+    <button class="btn btn-primary" onclick="goSection(5)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 6 — 지분법 손상
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-5">
+  <div class="section-eyebrow">Section 06</div>
+  <div class="section-title">지분법 손상</div>
+  <div class="section-lead">지분법 투자주식 손상은 CGU 단위가 아닌 투자주식 전체를 단일 자산으로 보아 검토한다. 종속기업 영업권 손상과의 차이를 명확히 구분해야 한다.</div>
+
+  <h2>IAS 28 §40 — 단일 자산 손상 원칙</h2>
+  <p>지분법 투자주식에는 영업권 성격의 투자차액이 포함되어 있지만, 이를 별도 분리하여 검토하지 않는다. 투자주식 전체 장부가와 회수가능액을 비교하여 손상 여부를 판단한다.</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>구분</th><th>종속기업 영업권 손상 (모듈 5)</th><th>지분법 투자주식 손상 (이번 섹션)</th></tr></thead>
+      <tbody>
+        <tr><td>회계기준</td><td>IAS 36 (CGU 기준)</td><td>IAS 28 §40 + IAS 36 준용</td></tr>
+        <tr><td>검토 단위</td><td>CGU (현금창출단위)</td><td>투자주식 전체 (단일 자산)</td></tr>
+        <tr><td>영업권 분리</td><td>별도 영업권 계정 → 먼저 감액</td><td>영업권 분리 없음 — 투자주식 통합 감액</td></tr>
+        <tr><td>손상차손 환입</td><td>불가 (IAS 36 §124)</td><td><strong>가능</strong> (IAS 28 §40 → IAS 36 §117 준용)</td></tr>
+        <tr><td>GR 처리</td><td>Manual Adjustment (모듈 5)</td><td>Manual Adjustment</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout correct">
+    <div class="callout-label">핵심 차이 — 환입 가능 여부</div>
+    종속기업 영업권 손상차손은 환입이 불가하다. 반면 지분법 투자주식 손상차손은 IAS 36 §117에 따라 <strong>환입이 가능</strong>하다. 두 항목을 혼동하지 않도록 주의한다.
+  </div>
+
+  <h2>시나리오 — Tech 투자주식 손상 검토</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>항목</th><th class="num">금액 (억원)</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td>투자주식 장부가</td><td class="num">92.7</td><td>20X1년 말 기준</td></tr>
+        <tr><td>회수가능액 (DCF 추정)</td><td class="num num-neg">70</td><td>Tech 사업가치 하락 가정</td></tr>
+        <tr class="row-total"><td><strong>손상차손</strong></td><td class="num num-neg"><strong>△22.7</strong></td><td>92.7 − 70</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="journal">
+    <div class="journal-header"><span>지분법 투자주식 손상차손 인식</span><span class="j-tag warn">Manual Adjustment</span></div>
+    <table>
+      <thead><tr><th>구분</th><th>계정</th><th class="num">차변</th><th class="num">대변</th></tr></thead>
+      <tbody>
+        <tr><td class="j-dr">차변</td><td>지분법투자손상차손 (P&L)</td><td class="num j-amount-dr">22.7</td><td class="num">—</td></tr>
+        <tr><td class="j-cr">대변</td><td>관계기업투자주식 (Tech)</td><td class="num">—</td><td class="num j-amount-cr">22.7</td></tr>
+        <tr class="row-sub"><td colspan="4" style="font-size:12px;padding:6px 14px;">투자주식 전체를 단일 자산으로 감액. 영업권 분리 없음. GR Manual Adjustment로 입력.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>손상차손 환입 — 이후 회복 시</h2>
+  <div class="journal">
+    <div class="journal-header"><span>지분법 투자주식 손상차손 환입 — 회수가능액 회복 시</span><span class="j-tag warn">Manual Adjustment</span></div>
+    <table>
+      <thead><tr><th>구분</th><th>계정</th><th class="num">차변</th><th class="num">대변</th></tr></thead>
+      <tbody>
+        <tr><td class="j-dr">차변</td><td>관계기업투자주식 (Tech)</td><td class="num j-amount-dr">22.7</td><td class="num">—</td></tr>
+        <tr><td class="j-cr">대변</td><td>지분법투자손상차손환입 (P&L)</td><td class="num">—</td><td class="num j-amount-cr">22.7</td></tr>
+        <tr class="row-sub"><td colspan="4" style="font-size:12px;padding:6px 14px;">환입 한도: 손상차손 인식 전 장부가(92.7억) 초과 불가. 종속기업 영업권과 달리 환입 가능.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-label">환입 한도 주의</div>
+    손상차손 환입액은 손상을 인식하지 않았더라면 인식되었을 장부가(지분법 적용 후 금액)를 한도로 한다. 손상 이후 발생한 지분법이익 등을 감안한 금액이 상한이 된다.
+  </div>
+
+  <h2>모듈 6 — 핵심 정리</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>주제</th><th>핵심 원칙</th><th>GR 처리</th></tr></thead>
+      <tbody>
+        <tr><td>지분법 절차</td><td>취득원가 → 손익·OCI·배당으로 장부가 누적 변동</td><td>C/I Task</td></tr>
+        <tr><td>손익·자본변동</td><td>순이익→P&L / OCI→OCI / 배당→장부가 감소</td><td>C/I Task</td></tr>
+        <tr><td>EPU</td><td>회계기준 아님 — Equity Pickup App 별도 처리</td><td>Equity Pickup App</td></tr>
+        <tr><td>내부거래 조정</td><td>지분율(30%)만큼만 제거 — 100% 제거 아님</td><td>Auto Posting Rule</td></tr>
+        <tr><td>중단·회복</td><td>장부가 0 → 중단 / 미인식손실 소진 후 재개</td><td>Manual Adjustment</td></tr>
+        <tr><td>손상</td><td>단일 자산 검토 / 환입 가능 (종속기업 영업권과 차이)</td><td>Manual Adjustment</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout correct">
+    <div class="callout-label">모듈 6 완료</div>
+    지분법의 전 과정 — 적용 절차, EPU 구조, 내부거래, 중단·회복, 손상 — 을 ASPN Tech 시나리오로 완결했다. 모듈 7에서는 연결재무제표 표시 기준으로 진입한다.
+  </div>
+
+  <!-- QUIZ -->
+  <h3>확인 문제</h3>
+  <div class="quiz-block">
+    <div class="quiz-q">종속기업 영업권 손상차손과 지분법 투자주식 손상차손의 차이로 옳은 것은?</div>
+    <div class="quiz-options" id="quiz2">
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz2',false)">
+        <div class="quiz-marker"></div>두 경우 모두 환입이 불가하다
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz2',false)">
+        <div class="quiz-marker"></div>두 경우 모두 환입이 가능하다
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz2',true)">
+        <div class="quiz-marker"></div>종속기업 영업권 손상은 환입 불가, 지분법 투자주식 손상은 환입 가능하다
+      </div>
+    </div>
+    <div class="quiz-feedback" id="quiz2-fb"></div>
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(4)">← 이전</button>
+    <span class="progress-label">6 / 6</span>
+    <button class="btn btn-primary" disabled>완료 ✓</button>
+  </div>
+</section>
+
+</main>
+
+<script>
+  const TOTAL = 6;
+  function goSection(idx) {
+    document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i===idx));
+    document.querySelectorAll('.nav-tabs a').forEach((a,i) => a.classList.toggle('active', i===idx));
+    document.getElementById('progressBar').style.width = ((idx+1)/TOTAL*100).toFixed(2)+'%';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  document.querySelectorAll('.nav-tabs a').forEach((a,i) => {
+    a.addEventListener('click', e => { e.preventDefault(); goSection(i); });
+  });
+  function checkQuiz(el, groupId, isCorrect) {
+    const group = document.getElementById(groupId);
+    if (group.querySelector('.correct-ans') || group.querySelector('.wrong-ans')) return;
+    const fb = document.getElementById(groupId+'-fb');
+    el.classList.add(isCorrect ? 'correct-ans' : 'wrong-ans');
+    el.querySelector('.quiz-marker').textContent = isCorrect ? '✓' : '✗';
+    fb.classList.add('show', isCorrect ? 'ok' : 'ng');
+    const msgs = {
+      quiz0: {
+        ok: '정답입니다. 투자차액 = 취득원가 90 − 순자산 FV 지분(270 × 30% = 81) = 9억. 이 9억은 영업권 성격으로 투자주식 장부가에 포함되며 별도 계정으로 분리하지 않습니다.',
+        ng: '다시 생각해보세요. 지분법에서도 취득원가가 순자산 공정가치 지분을 초과하면 투자차액(영업권 성격)이 발생합니다. 취득원가 − 순자산 FV × 지분율을 계산해보세요.'
+      },
+      quiz1: {
+        ok: '정답입니다. 하향판매(투자자→관계기업) 미실현이익도 지분율(30%)만큼만 제거합니다. 20억 × 30% = 6억. 종속기업과 달리 전액 제거가 아닙니다.',
+        ng: '다시 생각해보세요. 관계기업 내부거래 조정은 지분율 비례 제거가 원칙입니다. 상향·하향 판매 모두 동일하게 적용됩니다.'
+      },
+      quiz2: {
+        ok: '정답입니다. 종속기업 영업권 손상차손은 IAS 36 §124에 따라 환입이 불가합니다. 지분법 투자주식 손상차손은 IAS 28 §40 → IAS 36 §117에 따라 환입이 가능합니다.',
+        ng: '다시 생각해보세요. 두 항목의 환입 가능 여부가 다릅니다. 종속기업 영업권과 지분법 투자주식 각각의 근거 기준서를 확인해보세요.'
+      }
+    };
+    fb.textContent = isCorrect ? msgs[groupId].ok : msgs[groupId].ng;
+  }
+</script>
+</body>
+</html>
