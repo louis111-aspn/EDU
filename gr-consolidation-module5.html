@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모듈 5 — 자본연결 심화 (C/I) | SAP Group Reporting</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#003366; --navy-light:#e8eef5; --navy-mid:#ccd9e8;
+    --bg:#f0f3f8; --white:#ffffff; --text:#1a1a2e; --text-muted:#5a6a7a;
+    --border:#d0dae6;
+    --warn-bg:#fff8e6; --warn-border:#e6a800;
+    --correct-bg:#e8f5ee; --correct-border:#2a7a4f;
+    --wrong-bg:#fce8e8; --wrong-border:#c0392b;
+    --purple-bg:#f5eeff; --purple:#7a4a9a; --purple-border:#c8a8f8;
+    --pad-x:48px; --radius:4px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Noto Sans KR',sans-serif;font-size:15px;background:var(--bg);color:var(--text);line-height:1.75;}
+
+  .page-header{background:var(--navy);color:var(--white);padding:40px var(--pad-x) 36px;}
+  .page-header .series-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:13px;color:var(--navy-mid);letter-spacing:.08em;margin-bottom:12px;}
+  .page-header h1{font-family:'DM Serif Display',serif;font-size:36px;font-weight:400;line-height:1.25;margin-bottom:10px;}
+  .page-header .subtitle{font-size:15px;color:var(--navy-mid);font-weight:300;}
+
+  .scenario-bar{background:#002244;border-top:1px solid #004488;padding:10px var(--pad-x);display:flex;gap:24px;flex-wrap:wrap;}
+  .sc-item{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;color:var(--navy-mid);}
+  .sc-item span{color:#7fb3e0;font-weight:500;}
+
+  .progress-bar-wrap{background:var(--border);height:3px;}
+  .progress-bar-fill{background:var(--navy);height:3px;transition:width .3s ease;}
+
+  .nav-wrap{position:sticky;top:0;z-index:100;background:var(--white);border-bottom:2px solid var(--navy);overflow-x:auto;}
+  .nav-tabs{display:flex;list-style:none;padding:0 var(--pad-x);white-space:nowrap;}
+  .nav-tabs li a{display:block;padding:14px 16px;font-size:12px;font-family:'JetBrains Mono','Noto Sans KR',monospace;color:var(--text-muted);text-decoration:none;border-bottom:3px solid transparent;margin-bottom:-2px;transition:color .2s,border-color .2s;}
+  .nav-tabs li a:hover,.nav-tabs li a.active{color:var(--navy);border-bottom-color:var(--navy);font-weight:500;}
+
+  .main{max-width:980px;margin:0 auto;padding:48px var(--pad-x) 80px;}
+
+  .section{display:none;animation:fadeIn .3s ease;}
+  .section.active{display:block;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+  .section-eyebrow{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;color:var(--navy);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
+  .section-title{font-family:'DM Serif Display',serif;font-size:30px;font-weight:400;color:var(--navy);margin-bottom:6px;line-height:1.3;}
+  .section-lead{font-size:15px;color:var(--text-muted);margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid var(--border);}
+  h2{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;color:var(--navy);margin:36px 0 14px;}
+  h3{font-size:16px;font-weight:700;color:var(--text);margin:28px 0 10px;}
+  p{margin-bottom:14px;}
+
+  .card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:14px;}
+  .card-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+  .card-grid.three{grid-template-columns:repeat(3,1fr);}
+  @media(max-width:680px){.card-grid,.card-grid.three{grid-template-columns:1fr;}}
+  .card .card-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:11px;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+  .card .card-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px;}
+  .card p{font-size:13px;color:var(--text-muted);margin-bottom:0;}
+
+  .callout{border-left:4px solid var(--navy);background:var(--navy-light);padding:14px 18px;border-radius:0 var(--radius) var(--radius) 0;margin:18px 0;font-size:14px;}
+  .callout.warn{border-left-color:var(--warn-border);background:var(--warn-bg);}
+  .callout.correct{border-left-color:var(--correct-border);background:var(--correct-bg);}
+  .callout.wrong{border-left-color:var(--wrong-border);background:var(--wrong-bg);}
+  .callout.purple{border-left-color:var(--purple);background:var(--purple-bg);}
+  .callout .callout-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--navy);margin-bottom:5px;}
+  .callout.warn .callout-label{color:var(--warn-border);}
+  .callout.correct .callout-label{color:var(--correct-border);}
+  .callout.wrong .callout-label{color:var(--wrong-border);}
+  .callout.purple .callout-label{color:var(--purple);}
+
+  .tbl-wrap{overflow-x:auto;margin:18px 0;}
+  table{width:100%;border-collapse:collapse;font-size:14px;}
+  th{background:var(--navy);color:var(--white);padding:9px 14px;text-align:left;font-weight:500;font-size:12px;font-family:'JetBrains Mono','Noto Sans KR',monospace;}
+  td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+  tr:nth-child(even) td{background:var(--navy-light);}
+  tr:last-child td{border-bottom:none;}
+  td strong{color:var(--navy);}
+  .num{font-family:'JetBrains Mono','Noto Sans KR',monospace;text-align:right;}
+  .num-neg{color:var(--wrong-border);}
+  .num-pos{color:var(--correct-border);}
+  .row-total td{font-weight:700;border-top:2px solid var(--navy)!important;background:var(--navy-light)!important;}
+  .row-sub td{background:#f7f9fc!important;font-size:13px;color:var(--text-muted);}
+  .row-header td{background:var(--navy-light)!important;font-weight:700;font-size:13px;color:var(--navy);}
+  .row-purple td{background:var(--purple-bg)!important;font-weight:700;color:var(--purple);}
+
+  .badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:500;font-family:'JetBrains Mono','Noto Sans KR',monospace;white-space:nowrap;}
+  .badge-h{background:var(--navy);color:white;}
+  .badge-k{background:#1a5276;color:white;}
+  .badge-e{background:#154360;color:white;}
+  .badge-t{background:var(--navy-light);color:var(--navy);border:1px solid var(--navy-mid);}
+  .badge-gw{background:#f0e8ff;color:#4a1a7a;border:1px solid #c8a8f8;}
+  .badge-nci{background:#fff3e0;color:#7a4a00;border:1px solid #f0a800;}
+  .badge-cap{background:var(--correct-bg);color:var(--correct-border);border:1px solid var(--correct-border);}
+
+  .journal{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:16px 0;}
+  .journal-header{background:var(--navy-light);padding:8px 16px;font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;color:var(--navy);font-weight:500;display:flex;justify-content:space-between;align-items:center;}
+  .journal-header .j-tag{font-size:10px;background:var(--navy);color:white;padding:2px 8px;border-radius:10px;}
+  .journal-header .j-tag.purple{background:var(--purple);}
+  .journal table{margin:0;}
+  .journal th{background:#f0f4f8;color:var(--text-muted);font-size:11px;}
+  .journal td{font-size:13px;font-family:'JetBrains Mono','Noto Sans KR',monospace;}
+  .j-dr{padding-left:14px;}
+  .j-cr{padding-left:36px;color:var(--text-muted);}
+  .j-amount-dr{color:var(--navy);font-weight:500;}
+  .j-amount-cr{color:var(--text-muted);}
+
+  /* GOODWILL COMPARE */
+  .gw-compare{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:18px 0;}
+  .gw-col{background:var(--white);padding:0;}
+  .gw-col .gw-header{padding:12px 18px;font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;font-weight:700;text-align:center;}
+  .gw-col.partial .gw-header{background:var(--navy-light);color:var(--navy);}
+  .gw-col.full .gw-header{background:var(--navy);color:white;}
+  .gw-row{display:flex;justify-content:space-between;padding:10px 18px;border-top:1px solid var(--border);font-size:13px;}
+  .gw-val{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-weight:500;}
+  .gw-total{font-weight:700;color:var(--navy);border-top:2px solid var(--navy)!important;}
+  @media(max-width:600px){.gw-compare{grid-template-columns:1fr;}}
+
+  /* ACQUISITION TIMELINE */
+  .acq-timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0;}
+  .acq-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+  .acq-card .ac-header{padding:10px 14px;font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;text-align:center;font-weight:500;}
+  .acq-card.step1 .ac-header{background:var(--navy-light);color:var(--navy);}
+  .acq-card.step2 .ac-header{background:var(--warn-bg);color:#7a5c00;}
+  .acq-card.step3 .ac-header{background:var(--navy);color:white;}
+  .acq-card .ac-row{display:flex;justify-content:space-between;padding:8px 14px;border-top:1px solid var(--border);font-size:13px;}
+  .acq-card .ac-row:last-child{font-weight:700;color:var(--navy);}
+  .ac-val{font-family:'JetBrains Mono','Noto Sans KR',monospace;}
+  @media(max-width:600px){.acq-timeline{grid-template-columns:1fr;}}
+
+  /* EQUITY CHANGE STRIP */
+  .eq-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0;}
+  .eq-box{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;text-align:center;}
+  .eq-box .eq-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:10px;color:var(--text-muted);margin-bottom:6px;}
+  .eq-box .eq-val{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:20px;font-weight:500;color:var(--navy);}
+  .eq-box.highlight{border-color:var(--purple);background:var(--purple-bg);}
+  .eq-box.highlight .eq-val{color:var(--purple);}
+  @media(max-width:600px){.eq-strip{grid-template-columns:1fr 1fr;}}
+
+  .running-box{background:var(--white);border:2px solid var(--navy);border-radius:var(--radius);padding:18px 22px;margin:20px 0;}
+  .running-box .rb-title{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:11px;color:var(--navy);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;}
+  .rb-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;}
+  .rb-row:last-child{border-bottom:none;font-weight:700;color:var(--navy);}
+  .rb-val{font-family:'JetBrains Mono','Noto Sans KR',monospace;}
+  .rb-neg{color:var(--wrong-border);}
+  .rb-pos{color:var(--correct-border);}
+
+  .drill{margin:14px 0;}
+  .drill-trigger{display:flex;align-items:center;gap:10px;cursor:pointer;padding:11px 16px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);font-size:14px;font-weight:500;color:var(--navy);user-select:none;transition:background .15s;}
+  .drill-trigger:hover{background:var(--navy-light);}
+  .drill-arrow{font-size:12px;transition:transform .2s;}
+  .drill-trigger.open .drill-arrow{transform:rotate(90deg);}
+  .drill-body{display:none;border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:16px 18px;background:var(--white);font-size:14px;}
+  .drill-body.open{display:block;}
+
+  .quiz-block{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:22px 26px;margin:18px 0;}
+  .quiz-q{font-size:15px;font-weight:500;margin-bottom:14px;}
+  .quiz-options{display:flex;flex-direction:column;gap:8px;}
+  .quiz-option{display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+  .quiz-option:hover{border-color:var(--navy);background:var(--navy-light);}
+  .quiz-option.correct-ans{border-color:var(--correct-border);background:var(--correct-bg);}
+  .quiz-option.wrong-ans{border-color:var(--wrong-border);background:var(--wrong-bg);}
+  .quiz-marker{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+  .quiz-option.correct-ans .quiz-marker{border-color:var(--correct-border);background:var(--correct-border);color:white;}
+  .quiz-option.wrong-ans .quiz-marker{border-color:var(--wrong-border);background:var(--wrong-border);color:white;}
+  .quiz-feedback{margin-top:12px;padding:11px 14px;border-radius:var(--radius);font-size:14px;display:none;}
+  .quiz-feedback.show{display:block;}
+  .quiz-feedback.ok{background:var(--correct-bg);border-left:4px solid var(--correct-border);}
+  .quiz-feedback.ng{background:var(--wrong-bg);border-left:4px solid var(--wrong-border);}
+
+  .section-nav{display:flex;justify-content:space-between;align-items:center;margin-top:48px;padding-top:24px;border-top:1px solid var(--border);}
+  .btn{padding:10px 22px;border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;border:2px solid var(--navy);transition:background .15s,color .15s;font-family:'Noto Sans KR',sans-serif;}
+  .btn-primary{background:var(--navy);color:var(--white);}
+  .btn-primary:hover{background:#002244;}
+  .btn-ghost{background:transparent;color:var(--navy);}
+  .btn-ghost:hover{background:var(--navy-light);}
+  .btn:disabled{opacity:.3;cursor:default;}
+  .progress-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;color:var(--text-muted);}
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="series-label">SAP GROUP REPORTING · 연결회계 입문 시리즈 · MODULE 05</div>
+  <h1>자본연결 심화 (C/I)</h1>
+  <div class="subtitle">단계취득·지분율 변동·영업권 손상·기타자본잉여금까지 — C/I 전 케이스 완결</div>
+</header>
+
+<div class="scenario-bar">
+  <div class="sc-item">기준 시나리오 <span>ASPN Holdings → Korea (최종 80% 보유)</span></div>
+  <div class="sc-item">단계취득 <span>40% 취득 후 추가 40% 취득</span></div>
+  <div class="sc-item">지분율 변동 <span>80%→90% 추가취득 / 80%→55% 일부처분</span></div>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-bar-fill" id="progressBar" style="width:20%"></div>
+</div>
+
+<nav class="nav-wrap">
+  <ul class="nav-tabs" id="navTabs">
+    <li><a href="#" class="active" data-section="0">01 C/I 구조 심화</a></li>
+    <li><a href="#" data-section="1">02 영업권 후속측정</a></li>
+    <li><a href="#" data-section="2">03 단계취득</a></li>
+    <li><a href="#" data-section="3">04 지배력 유지 변동</a></li>
+    <li><a href="#" data-section="4">05 지배력 상실</a></li>
+  </ul>
+</nav>
+
+<main class="main">
+
+<!-- ══════════════════════════════════════════════
+     SECTION 1 — C/I 구조 복습 및 심화
+══════════════════════════════════════════════ -->
+<section class="section active" id="sec-0">
+  <div class="section-eyebrow">Section 01</div>
+  <div class="section-title">C/I 구조 복습 및 심화</div>
+  <div class="section-lead">취득일 회계의 핵심 구조를 재정리하고, 부분영업권과 완전영업권의 차이, NCI 손익 귀속 계산을 확립한다.</div>
+
+  <h2>취득일 회계 — 기본 구조</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>항목</th><th>계산</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td><strong>이전대가</strong></td><td>지급한 현금 + 주식 등 공정가치</td><td>취득 원가</td></tr>
+        <tr><td><strong>피취득자 순자산 공정가치</strong></td><td>식별가능자산 FV − 식별가능부채 FV</td><td>취득일 기준 재측정</td></tr>
+        <tr><td><strong>영업권</strong></td><td>이전대가 − (순자산 FV × 지배지분%)</td><td>부분영업권 기준</td></tr>
+        <tr><td><strong>NCI</strong></td><td>순자산 FV × NCI%</td><td>부분영업권 기준</td></tr>
+        <tr><td><strong>염가매수차익</strong></td><td>이전대가 < 순자산 FV 지배지분분</td><td>즉시 P&L 인식</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>부분영업권 vs 완전영업권</h2>
+
+  <div class="gw-compare">
+    <div class="gw-col partial">
+      <div class="gw-header">부분영업권 (Partial Goodwill)</div>
+      <div class="gw-row"><span>NCI 측정 기준</span><span class="gw-val">순자산 공정가치 비례</span></div>
+      <div class="gw-row"><span>영업권 인식 범위</span><span class="gw-val">지배지분 해당분만</span></div>
+      <div class="gw-row"><span>NCI에 영업권 포함</span><span class="gw-val">없음</span></div>
+      <div class="gw-row"><span>필요 데이터</span><span class="gw-val">순자산 공정가치만</span></div>
+      <div class="gw-row gw-total"><span>GR 기본 설정</span><span class="gw-val" style="color:var(--correct-border);">✓ Default</span></div>
+    </div>
+    <div class="gw-col full">
+      <div class="gw-header">완전영업권 (Full Goodwill)</div>
+      <div class="gw-row"><span>NCI 측정 기준</span><span class="gw-val">NCI 지분 공정가치</span></div>
+      <div class="gw-row"><span>영업권 인식 범위</span><span class="gw-val">NCI 귀속분 포함 전체</span></div>
+      <div class="gw-row"><span>NCI에 영업권 포함</span><span class="gw-val">있음</span></div>
+      <div class="gw-row"><span>필요 데이터</span><span class="gw-val">NCI 지분 공정가치 별도 평가</span></div>
+      <div class="gw-row gw-total"><span>GR 적용 조건</span><span class="gw-val" style="color:var(--warn-border);">외부 평가 필요</span></div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-label">GR 실무 포인트</div>
+    SAP GR은 부분영업권을 기본값으로 설정한다. 완전영업권 적용은 NCI 지분의 공정가치를 외부 평가로 산정해야 하는데, 비상장 자회사의 경우 이 데이터를 구하기 어려워 실무에서 완전영업권 적용이 제한된다.
+  </div>
+
+  <h2>시나리오 — Holdings의 Korea 취득 (부분영업권 기준)</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>항목</th><th class="num">금액 (억원)</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td>이전대가 (지급 현금)</td><td class="num">150</td><td>Holdings → Korea 80% 취득</td></tr>
+        <tr><td>Korea 식별가능 순자산 공정가치</td><td class="num">112</td><td>자본금 80 + 이잉 32</td></tr>
+        <tr><td>지배지분 순자산 (80%)</td><td class="num">89.6</td><td>112 × 80%</td></tr>
+        <tr><td><strong>영업권</strong></td><td class="num num-pos"><strong>60.4</strong></td><td>150 − 89.6</td></tr>
+        <tr><td><strong>NCI (부분영업권)</strong></td><td class="num"><strong>22.4</strong></td><td>112 × 20%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>NCI 손익 귀속 계산</h2>
+  <p>매 기간 자회사 순손익은 지배지분과 비지배지분(NCI)에 지분율 비례로 귀속된다. 흑자·적자 모두 동일한 원칙이 적용된다.</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>구분</th><th class="num">Korea 순이익</th><th class="num">지배지분 (80%)</th><th class="num">NCI (20%)</th></tr></thead>
+      <tbody>
+        <tr><td>20X1년 (흑자)</td><td class="num">20억</td><td class="num num-pos">16억</td><td class="num num-pos">4억</td></tr>
+        <tr><td>20X2년 (적자 가정)</td><td class="num num-neg">△30억</td><td class="num num-neg">△24억</td><td class="num num-neg">△6억</td></tr>
+        <tr><td>20X3년 (적자 누적, NCI 음수 도달)</td><td class="num num-neg">△100억</td><td class="num num-neg">△80억</td><td class="num num-neg">△20억 (NCI 장부가 음수 가능)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <div class="callout-label">IFRS 10 원칙</div>
+    IFRS 10은 자회사 적자가 누적되어 NCI 장부가가 0 이하가 되더라도 손실을 계속 NCI에 배분한다. 별도 로직이 있는 것이 아니라 흑자·적자 모두 동일하게 지분율 비례 배분하는 원칙이 그대로 적용될 뿐이다.
+  </div>
+
+  <!-- QUIZ -->
+  <h3>확인 문제</h3>
+  <div class="quiz-block">
+    <div class="quiz-q">Holdings가 Korea 지분 80%를 취득했다. 이전대가 200억, Korea 식별가능 순자산 공정가치 160억일 때, 부분영업권 방식의 영업권과 NCI는?</div>
+    <div class="quiz-options" id="quiz0">
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz0',false)">
+        <div class="quiz-marker"></div>영업권 40억, NCI 32억
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz0',true)">
+        <div class="quiz-marker"></div>영업권 72억, NCI 32억
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz0',false)">
+        <div class="quiz-marker"></div>영업권 40억, NCI 40억
+      </div>
+    </div>
+    <div class="quiz-feedback" id="quiz0-fb"></div>
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" disabled>← 이전</button>
+    <span class="progress-label">1 / 5</span>
+    <button class="btn btn-primary" onclick="goSection(1)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 2 — 영업권 후속 측정
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-1">
+  <div class="section-eyebrow">Section 02</div>
+  <div class="section-title">영업권 후속 측정</div>
+  <div class="section-lead">취득일에 인식한 영업권은 상각하지 않는다. 대신 매년 손상 검토를 수행하며, 손상차손은 환입이 불가하다.</div>
+
+  <h2>영업권 후속 측정 원칙 (IFRS 3 + IAS 36)</h2>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-label">상각 금지</div>
+      <div class="card-title">IFRS 3 — 비한정 내용연수</div>
+      <p>영업권은 내용연수가 비한정이므로 정기 상각 없음. K-GAAP의 20년 정액상각과 핵심 차이. 매년 손상 검토로 대체.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">손상 검토</div>
+      <div class="card-title">IAS 36 — 매년 의무 검토</div>
+      <p>손상 징후 유무와 무관하게 매년 CGU 단위로 손상 검토 수행. 회수가능액 < 장부가 시 손상차손 인식.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">환입 불가</div>
+      <div class="card-title">IAS 36 §124</div>
+      <p>영업권 손상차손은 이후 회수가능액이 회복되더라도 환입하지 않는다. 인식 후 영구적으로 감소.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">CGU 배분</div>
+      <div class="card-title">현금창출단위</div>
+      <p>영업권은 시너지를 향유하는 CGU에 배분. CGU 전체 장부가와 회수가능액을 비교하여 손상 판단.</p>
+    </div>
+  </div>
+
+  <h2>손상 검토 절차</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>단계</th><th>내용</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td><strong>① CGU 결정</strong></td><td>영업권이 배분될 현금창출단위 식별</td><td>Korea 전체를 하나의 CGU로 설정 가능</td></tr>
+        <tr><td><strong>② 장부가 산정</strong></td><td>CGU 순자산 장부가 + 배분된 영업권</td><td>연결 기준 장부가</td></tr>
+        <tr><td><strong>③ 회수가능액 산정</strong></td><td>사용가치(DCF) vs 순공정가치 중 높은 금액</td><td>외부 평가 또는 내부 추정</td></tr>
+        <tr><td><strong>④ 비교</strong></td><td>회수가능액 < 장부가 → 손상차손 인식</td><td>차액만큼 영업권 먼저 감액</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>시나리오 — Korea CGU 손상 검토</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>항목</th><th class="num">금액 (억원)</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td>Korea CGU 순자산 장부가</td><td class="num">112</td><td>자본금 80 + 이잉 32</td></tr>
+        <tr><td>배분된 영업권</td><td class="num">60.4</td><td>취득 시 인식분</td></tr>
+        <tr class="row-total"><td><strong>CGU 총 장부가</strong></td><td class="num"><strong>172.4</strong></td><td></td></tr>
+        <tr><td>회수가능액 (DCF 추정)</td><td class="num num-neg">140</td><td>사업 가치 하락 가정</td></tr>
+        <tr class="row-total"><td><strong>손상차손</strong></td><td class="num num-neg"><strong>△32.4</strong></td><td>172.4 − 140</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="journal">
+    <div class="journal-header"><span>영업권 손상차손 인식</span><span class="j-tag">Impairment</span></div>
+    <table>
+      <thead><tr><th>구분</th><th>계정</th><th class="num">차변</th><th class="num">대변</th></tr></thead>
+      <tbody>
+        <tr><td class="j-dr">차변</td><td>영업권손상차손 (P&L)</td><td class="num j-amount-dr">32.4</td><td class="num">—</td></tr>
+        <tr><td class="j-cr">대변</td><td>영업권 (B/S)</td><td class="num">—</td><td class="num j-amount-cr">32.4</td></tr>
+        <tr class="row-sub"><td colspan="4" style="font-size:12px;padding:6px 14px;">손상차손 32.4억 중 지배지분 귀속분(80%) 25.92억, NCI 귀속분(20%) 6.48억으로 배분</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-label">환입 불가 — 실무 영향</div>
+    Korea의 사업이 이후 회복되어 회수가능액이 다시 172.4억을 초과하더라도, 인식한 영업권 손상차손 32.4억은 환입하지 않는다. 영업권 장부가는 27.9억(60.4 − 32.4)으로 영구 감액된 상태로 유지된다.
+  </div>
+
+  <div class="callout">
+    <div class="callout-label">GR — 영업권 FS Item 관리</div>
+    GR에서 영업권은 별도 FS Item(Goodwill)으로 관리된다. C/I Task 실행 시 자동 계산되며, 손상차손은 Manual Adjustment로 입력한 후 해당 FS Item 잔액에 반영한다.
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(0)">← 이전</button>
+    <span class="progress-label">2 / 5</span>
+    <button class="btn btn-primary" onclick="goSection(2)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 3 — 단계취득
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-2">
+  <div class="section-eyebrow">Section 03</div>
+  <div class="section-title">단계취득</div>
+  <div class="section-lead">지배력 획득 전 보유하던 지분을 추가 취득하여 지배력을 획득하는 구조다. 기존 지분을 공정가치로 재측정하는 것이 핵심이다.</div>
+
+  <h2>시나리오 — Holdings의 Korea 단계취득</h2>
+
+  <div class="acq-timeline">
+    <div class="acq-card step1">
+      <div class="ac-header">1단계 — 20X0년</div>
+      <div class="ac-row"><span>취득 지분율</span><span class="ac-val">40%</span></div>
+      <div class="ac-row"><span>취득 대가</span><span class="ac-val">60억</span></div>
+      <div class="ac-row"><span>회계 처리</span><span class="ac-val">관계기업 (지분법)</span></div>
+      <div class="ac-row"><span>장부가 (20X1 초)</span><span class="ac-val">65억 (지분법 반영)</span></div>
+    </div>
+    <div class="acq-card step2">
+      <div class="ac-header">2단계 — 20X1년 중</div>
+      <div class="ac-row"><span>추가 취득</span><span class="ac-val">40%</span></div>
+      <div class="ac-row"><span>추가 대가</span><span class="ac-val">90억</span></div>
+      <div class="ac-row"><span>취득 후 지분율</span><span class="ac-val">80%</span></div>
+      <div class="ac-row"><span>지배력 획득</span><span class="ac-val">✓</span></div>
+    </div>
+    <div class="acq-card step3">
+      <div class="ac-header">취득일 회계 처리</div>
+      <div class="ac-row"><span>기존 40% 재측정</span><span class="ac-val">공정가치 80억</span></div>
+      <div class="ac-row"><span>재측정 이익</span><span class="ac-val">+15억 (P&L)</span></div>
+      <div class="ac-row"><span>이전대가 합계</span><span class="ac-val">170억</span></div>
+      <div class="ac-row"><span>영업권 계산</span><span class="ac-val">→ 하단 참조</span></div>
+    </div>
+  </div>
+
+  <h2>취득일 영업권 계산</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>항목</th><th class="num">금액 (억원)</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td>추가 취득 대가</td><td class="num">90</td><td>20X1년 현금 지급</td></tr>
+        <tr><td>기존 40% 공정가치 (재측정)</td><td class="num">80</td><td>취득일 현재 공정가치</td></tr>
+        <tr class="row-total"><td><strong>이전대가 합계</strong></td><td class="num"><strong>170</strong></td><td></td></tr>
+        <tr><td>Korea 순자산 공정가치 (취득일)</td><td class="num">136</td><td>취득일 기준 재평가</td></tr>
+        <tr><td>지배지분 (80%)</td><td class="num">108.8</td><td>136 × 80%</td></tr>
+        <tr><td><strong>영업권</strong></td><td class="num num-pos"><strong>61.2</strong></td><td>170 − 108.8</td></tr>
+        <tr><td><strong>NCI (20%)</strong></td><td class="num"><strong>27.2</strong></td><td>136 × 20%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>기존 지분 재측정 분개</h2>
+
+  <div class="journal">
+    <div class="journal-header"><span>기존 40% 지분 공정가치 재측정 — 취득일</span><span class="j-tag">단계취득</span></div>
+    <table>
+      <thead><tr><th>구분</th><th>계정</th><th class="num">차변</th><th class="num">대변</th></tr></thead>
+      <tbody>
+        <tr><td class="j-dr">차변</td><td>관계기업투자주식 (Korea 40%)</td><td class="num j-amount-dr">15</td><td class="num">—</td></tr>
+        <tr><td class="j-cr">대변</td><td>단계취득 재측정이익 (P&L)</td><td class="num">—</td><td class="num j-amount-cr">15</td></tr>
+        <tr class="row-sub"><td colspan="4" style="font-size:12px;padding:6px 14px;">지분법 장부가 65억 → 공정가치 80억, 차이 15억을 P&L 이익으로 즉시 인식</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout correct">
+    <div class="callout-label">단계취득의 핵심</div>
+    지배력 획득 시점에 기존 지분을 <strong>"팔고 다시 산 것처럼"</strong> 처리한다. 지분법 장부가와 공정가치의 차이는 P&L로 인식하며, 이후 C/I는 이전대가 합계(170억) 기준으로 수행한다. 지분법 시절의 장부가(65억)는 취득일에 소멸한다.
+  </div>
+
+  <!-- QUIZ -->
+  <h3>확인 문제</h3>
+  <div class="quiz-block">
+    <div class="quiz-q">단계취득에서 기존 보유 지분의 공정가치가 지분법 장부가보다 낮은 경우, 재측정 차이는 어떻게 처리되는가?</div>
+    <div class="quiz-options" id="quiz1">
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz1',false)">
+        <div class="quiz-marker"></div>기타포괄손익(OCI)으로 처리한다
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz1',true)">
+        <div class="quiz-marker"></div>당기손익(P&L) 손실로 인식한다
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz1',false)">
+        <div class="quiz-marker"></div>이익잉여금 직접 조정으로 처리한다
+      </div>
+    </div>
+    <div class="quiz-feedback" id="quiz1-fb"></div>
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(1)">← 이전</button>
+    <span class="progress-label">3 / 5</span>
+    <button class="btn btn-primary" onclick="goSection(3)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 4 — 지분율 변동 (지배력 유지)
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-3">
+  <div class="section-eyebrow">Section 04</div>
+  <div class="section-title">지분율 변동 — 지배력 유지</div>
+  <div class="section-lead">지배력을 유지한 상태에서의 추가 취득과 일부 처분은 자본 거래다. 손익이 발생하지 않으며, 투자차액은 기타자본잉여금으로 조정된다.</div>
+
+  <h2>핵심 원칙 — 자본 거래</h2>
+  <div class="callout correct">
+    <div class="callout-label">IFRS 10 자본 거래 원칙</div>
+    지배력을 유지한 상태에서 NCI와의 거래(추가 취득 또는 일부 처분)는 <strong>자본 거래</strong>로 처리한다. 손익(P&L)이나 영업권이 발생하지 않으며, 대가와 NCI 장부가의 차이는 <strong>기타자본잉여금</strong>으로 직접 조정한다.
+  </div>
+
+  <h2>케이스 A — 추가 취득 (80% → 90%)</h2>
+  <p>Holdings가 Korea 지분 10%를 NCI로부터 추가 취득. 지불 대가 20억.</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>항목</th><th class="num">금액 (억원)</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td>추가 취득 대가 (현금)</td><td class="num num-neg">△20</td><td>Holdings 지급</td></tr>
+        <tr><td>NCI 감소분 장부가</td><td class="num">11.2</td><td>Korea 순자산 112억 × 10%</td></tr>
+        <tr class="row-purple"><td><strong>투자차액 → 기타자본잉여금</strong></td><td class="num"><strong>△8.8</strong></td><td>20 − 11.2 = 8.8억 (자본잉여금 감소)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="journal">
+    <div class="journal-header"><span>추가 취득 — 지배력 유지 (80%→90%)</span><span class="j-tag purple">자본 거래</span></div>
+    <table>
+      <thead><tr><th>구분</th><th>계정</th><th class="num">차변</th><th class="num">대변</th></tr></thead>
+      <tbody>
+        <tr><td class="j-dr">차변</td><td>비지배지분 (NCI)</td><td class="num j-amount-dr">11.2</td><td class="num">—</td></tr>
+        <tr><td class="j-dr">차변</td><td>기타자본잉여금 (투자차액)</td><td class="num j-amount-dr">8.8</td><td class="num">—</td></tr>
+        <tr><td class="j-cr">대변</td><td>현금</td><td class="num">—</td><td class="num j-amount-cr">20</td></tr>
+        <tr class="row-sub"><td colspan="4" style="font-size:12px;padding:6px 14px;">NCI 11.2억 감소 + 대가 초과분 8.8억 → 기타자본잉여금 차감. 영업권·손익 없음.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>케이스 B — 일부 처분 (80% → 55%)</h2>
+  <p>Holdings가 Korea 지분 25%를 외부에 처분. 수취 대가 40억. 지배력 유지(55% > 50%).</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>항목</th><th class="num">금액 (억원)</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td>처분 대가 수취</td><td class="num num-pos">+40</td><td>Holdings 수취</td></tr>
+        <tr><td>NCI 증가분 장부가</td><td class="num">28</td><td>Korea 순자산 112억 × 25%</td></tr>
+        <tr class="row-purple"><td><strong>투자차액 → 기타자본잉여금</strong></td><td class="num"><strong>+12</strong></td><td>40 − 28 = 12억 (자본잉여금 증가)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="journal">
+    <div class="journal-header"><span>일부 처분 — 지배력 유지 (80%→55%)</span><span class="j-tag purple">자본 거래</span></div>
+    <table>
+      <thead><tr><th>구분</th><th>계정</th><th class="num">차변</th><th class="num">대변</th></tr></thead>
+      <tbody>
+        <tr><td class="j-dr">차변</td><td>현금</td><td class="num j-amount-dr">40</td><td class="num">—</td></tr>
+        <tr><td class="j-cr">대변</td><td>비지배지분 (NCI)</td><td class="num">—</td><td class="num j-amount-cr">28</td></tr>
+        <tr><td class="j-cr">대변</td><td>기타자본잉여금 (투자차액)</td><td class="num">—</td><td class="num j-amount-cr">12</td></tr>
+        <tr class="row-sub"><td colspan="4" style="font-size:12px;padding:6px 14px;">NCI 28억 증가 + 대가 초과 수취분 12억 → 기타자본잉여금 가산. 처분손익 없음.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout purple">
+    <div class="callout-label">기타자본잉여금 정리</div>
+    지배력 유지 상태의 지분 거래에서 발생하는 투자차액은 손익이 아닌 <strong>기타자본잉여금(Additional Paid-in Capital 유사 항목)</strong>으로 처리한다.<br><br>
+    추가 취득 시 대가 > NCI 장부가 → 기타자본잉여금 <strong>감소</strong><br>
+    일부 처분 시 대가 > NCI 장부가 → 기타자본잉여금 <strong>증가</strong>
+  </div>
+
+  <!-- QUIZ -->
+  <h3>확인 문제</h3>
+  <div class="quiz-block">
+    <div class="quiz-q">지배력을 유지한 상태에서 NCI로부터 지분 5%를 추가 취득했다. 대가 10억, NCI 장부가 감소분 8억. 기타자본잉여금 변동은?</div>
+    <div class="quiz-options" id="quiz2">
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz2',false)">
+        <div class="quiz-marker"></div>기타자본잉여금 2억 증가 (이익)
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz2',true)">
+        <div class="quiz-marker"></div>기타자본잉여금 2억 감소 (대가 > NCI 장부가)
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz2',false)">
+        <div class="quiz-marker"></div>영업권 2억 추가 인식
+      </div>
+    </div>
+    <div class="quiz-feedback" id="quiz2-fb"></div>
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(2)">← 이전</button>
+    <span class="progress-label">4 / 5</span>
+    <button class="btn btn-primary" onclick="goSection(4)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 5 — 지분율 변동 (지배력 상실)
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-4">
+  <div class="section-eyebrow">Section 05</div>
+  <div class="section-title">지분율 변동 — 지배력 상실</div>
+  <div class="section-lead">처분으로 지배력을 잃으면 자본 거래가 아닌 사업 처분으로 회계처리한다. 잔여 지분 재측정, CTA 재분류가 동시에 발생한다.</div>
+
+  <h2>지배력 상실 시 처리 구조</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>항목</th><th>처리 방법</th></tr></thead>
+      <tbody>
+        <tr><td><strong>처분 대가</strong></td><td>공정가치로 인식</td></tr>
+        <tr><td><strong>잔여 지분</strong></td><td>처분일 공정가치로 재측정 → 재측정 손익 P&L</td></tr>
+        <tr><td><strong>종속기업 자산·부채</strong></td><td>연결에서 전액 제거</td></tr>
+        <tr><td><strong>영업권</strong></td><td>전액 제거</td></tr>
+        <tr><td><strong>NCI</strong></td><td>전액 제거</td></tr>
+        <tr><td><strong>OCI 누적 CTA</strong></td><td>P&L로 재분류 (모듈 3 연계)</td></tr>
+        <tr><td><strong>처분손익</strong></td><td>위 항목 차감 후 잔액 → P&L</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>시나리오 — Holdings Korea 지분 80% → 30% 처분 (지배력 상실)</h2>
+  <p>Holdings가 Korea 지분 50%를 외부에 처분하여 지분율 80%→30%로 하락. Korea는 관계기업으로 전환.</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>항목</th><th class="num">금액 (억원)</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td>처분 대가 (50% 처분)</td><td class="num num-pos">+180</td><td>외부 매각</td></tr>
+        <tr><td>잔여 지분 30% 공정가치</td><td class="num num-pos">+90</td><td>처분일 재측정</td></tr>
+        <tr class="row-total"><td><strong>합계 (인식 자산)</strong></td><td class="num"><strong>270</strong></td><td></td></tr>
+        <tr><td>Korea 순자산 장부가 제거</td><td class="num num-neg">△112</td><td>자본금 80 + 이잉 32</td></tr>
+        <tr><td>영업권 제거</td><td class="num num-neg">△60.4</td><td>취득 시 인식 잔액</td></tr>
+        <tr><td>NCI 제거</td><td class="num num-pos">+22.4</td><td>NCI 장부가 제거 (대변 → 차변 효과)</td></tr>
+        <tr><td>OCI 누적 CTA 재분류</td><td class="num num-pos">+9.5</td><td>모듈 3 연계 — OCI→P&L</td></tr>
+        <tr class="row-total"><td><strong>처분이익</strong></td><td class="num num-pos"><strong>+129.5</strong></td><td>270 − 112 − 60.4 + 22.4 + 9.5</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="journal">
+    <div class="journal-header"><span>지배력 상실 — Korea 80%→30% 처분</span><span class="j-tag">Disposal</span></div>
+    <table>
+      <thead><tr><th>구분</th><th>계정</th><th class="num">차변</th><th class="num">대변</th></tr></thead>
+      <tbody>
+        <tr><td class="j-dr">차변</td><td>현금 (처분 대가)</td><td class="num j-amount-dr">180</td><td class="num">—</td></tr>
+        <tr><td class="j-dr">차변</td><td>관계기업투자주식 (잔여 30% 재측정)</td><td class="num j-amount-dr">90</td><td class="num">—</td></tr>
+        <tr><td class="j-dr">차변</td><td>비지배지분 NCI 제거</td><td class="num j-amount-dr">22.4</td><td class="num">—</td></tr>
+        <tr><td class="j-dr">차변</td><td>기타포괄손익 — CTA 제거</td><td class="num j-amount-dr">9.5</td><td class="num">—</td></tr>
+        <tr><td class="j-cr">대변</td><td>Korea 순자산 제거</td><td class="num">—</td><td class="num j-amount-cr">112</td></tr>
+        <tr><td class="j-cr">대변</td><td>영업권 제거</td><td class="num">—</td><td class="num j-amount-cr">60.4</td></tr>
+        <tr><td class="j-cr">대변</td><td>종속기업처분이익 (P&L)</td><td class="num">—</td><td class="num j-amount-cr">129.5</td></tr>
+        <tr class="row-sub"><td colspan="4" style="font-size:12px;padding:6px 14px;">CTA 9.5억 OCI→P&L 재분류 포함. 잔여 30% 지분은 관계기업으로 전환하여 지분법 적용 시작.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>지배력 유지 vs 지배력 상실 비교</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>구분</th><th>지배력 유지</th><th>지배력 상실</th></tr></thead>
+      <tbody>
+        <tr><td>회계 성격</td><td>자본 거래</td><td>사업 처분</td></tr>
+        <tr><td>손익 인식</td><td>없음</td><td>처분손익 P&L 인식</td></tr>
+        <tr><td>투자차액</td><td>기타자본잉여금 조정</td><td>처분손익에 포함</td></tr>
+        <tr><td>영업권</td><td>유지</td><td>전액 제거</td></tr>
+        <tr><td>CTA 재분류</td><td>없음</td><td>P&L 재분류</td></tr>
+        <tr><td>잔여 지분</td><td>연결 계속</td><td>공정가치 재측정 후 관계기업 전환</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <div class="callout-label">모듈 3 연계</div>
+    지배력 상실 시 OCI 누적 CTA가 P&L로 재분류되는 구조는 모듈 3 섹션 6에서 상세히 다뤘다. 한국어 외화환산 섹션과 이 섹션을 함께 복습하면 처분 회계의 전체 흐름이 완성된다.
+  </div>
+
+  <h2>모듈 5 — 핵심 정리</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>주제</th><th>핵심 원칙</th><th>GR 설정</th></tr></thead>
+      <tbody>
+        <tr><td>C/I 기본 구조</td><td>부분영업권 default / NCI 순자산 비례</td><td>GR C/I Task — Partial Goodwill</td></tr>
+        <tr><td>영업권 후속</td><td>상각 금지 / 매년 손상 검토 / 환입 불가</td><td>Goodwill FS Item + Manual Adj</td></tr>
+        <tr><td>단계취득</td><td>기존 지분 공정가치 재측정 → P&L</td><td>GR 단계취득 처리</td></tr>
+        <tr><td>지배력 유지 변동</td><td>자본 거래 / 투자차액 → 기타자본잉여금</td><td>GR 지분율 변동 Task</td></tr>
+        <tr><td>지배력 상실</td><td>사업 처분 / 잔여 재측정 / CTA 재분류</td><td>GR 지배력 상실 처리</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout correct">
+    <div class="callout-label">모듈 5 완료</div>
+    C/I의 전 케이스 — 취득, 영업권 후속, 단계취득, 지배력 유지·상실 변동 — 를 ASPN Group 시나리오로 완결했다. 모듈 6에서는 지분법 심화로 진입한다 — 지분법 적용 절차 전체, 관계기업 내부거래 조정, 지분법 중단·회복까지 다룬다.
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(3)">← 이전</button>
+    <span class="progress-label">5 / 5</span>
+    <button class="btn btn-primary" disabled>완료 ✓</button>
+  </div>
+</section>
+
+</main>
+
+<script>
+  const TOTAL = 5;
+  function goSection(idx) {
+    document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i===idx));
+    document.querySelectorAll('.nav-tabs a').forEach((a,i) => a.classList.toggle('active', i===idx));
+    document.getElementById('progressBar').style.width = ((idx+1)/TOTAL*100).toFixed(2)+'%';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  document.querySelectorAll('.nav-tabs a').forEach((a,i) => {
+    a.addEventListener('click', e => { e.preventDefault(); goSection(i); });
+  });
+  function toggleDrill(trigger) {
+    trigger.classList.toggle('open');
+    trigger.nextElementSibling.classList.toggle('open');
+  }
+  function checkQuiz(el, groupId, isCorrect) {
+    const group = document.getElementById(groupId);
+    if (group.querySelector('.correct-ans') || group.querySelector('.wrong-ans')) return;
+    const fb = document.getElementById(groupId+'-fb');
+    el.classList.add(isCorrect ? 'correct-ans' : 'wrong-ans');
+    el.querySelector('.quiz-marker').textContent = isCorrect ? '✓' : '✗';
+    fb.classList.add('show', isCorrect ? 'ok' : 'ng');
+    const msgs = {
+      quiz0: {
+        ok: '정답입니다. 영업권 = 이전대가 200 − (순자산 FV 160 × 80%) = 200 − 128 = 72억. NCI = 160 × 20% = 32억. 부분영업권에서 NCI는 순자산 공정가치 비례이며 영업권을 포함하지 않습니다.',
+        ng: '다시 생각해보세요. 부분영업권 영업권 = 이전대가 − 순자산 FV × 지배지분%. NCI = 순자산 FV × NCI%.'
+      },
+      quiz1: {
+        ok: '정답입니다. 단계취득 시 기존 지분의 공정가치 재측정 차이는 이익이든 손실이든 모두 당기손익(P&L)으로 처리합니다. OCI가 아닙니다.',
+        ng: '다시 생각해보세요. 단계취득 재측정 차이의 귀속처를 확인해보세요. OCI와 P&L 중 어느 쪽인지가 핵심입니다.'
+      },
+      quiz2: {
+        ok: '정답입니다. 추가 취득 시 대가(10억) > NCI 장부가(8억)이므로 차액 2억은 기타자본잉여금 감소로 처리합니다. 지배력이 유지되므로 영업권이나 손익은 발생하지 않습니다.',
+        ng: '다시 생각해보세요. 지배력 유지 상태의 추가 취득은 자본 거래입니다. 대가와 NCI 장부가의 차이가 어디로 가는지 생각해보세요.'
+      }
+    };
+    fb.textContent = isCorrect ? msgs[groupId].ok : msgs[groupId].ng;
+  }
+</script>
+</body>
+</html>
