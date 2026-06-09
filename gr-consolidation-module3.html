@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모듈 3 — 외화환산 심화 | SAP Group Reporting</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #003366;
+    --navy-light: #e8eef5;
+    --navy-mid: #ccd9e8;
+    --bg: #f0f3f8;
+    --white: #ffffff;
+    --text: #1a1a2e;
+    --text-muted: #5a6a7a;
+    --border: #d0dae6;
+    --warn-bg: #fff8e6;
+    --warn-border: #e6a800;
+    --correct-bg: #e8f5ee;
+    --correct-border: #2a7a4f;
+    --wrong-bg: #fce8e8;
+    --wrong-border: #c0392b;
+    --pad-x: 48px;
+    --radius: 4px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans KR', sans-serif; font-size: 15px; background: var(--bg); color: var(--text); line-height: 1.75; }
+
+  .page-header { background: var(--navy); color: var(--white); padding: 40px var(--pad-x) 36px; }
+  .page-header .series-label { font-family: 'JetBrains Mono','Noto Sans KR',monospace; font-size: 13px; color: var(--navy-mid); letter-spacing: 0.08em; margin-bottom: 12px; }
+  .page-header h1 { font-family: 'DM Serif Display', serif; font-size: 36px; font-weight: 400; line-height: 1.25; margin-bottom: 10px; }
+  .page-header .subtitle { font-size: 15px; color: var(--navy-mid); font-weight: 300; }
+
+  .scenario-bar { background: #002244; border-top: 1px solid #004488; padding: 10px var(--pad-x); display: flex; gap: 24px; flex-wrap: wrap; }
+  .sc-item { font-family: 'JetBrains Mono','Noto Sans KR',monospace; font-size: 12px; color: var(--navy-mid); }
+  .sc-item span { color: #7fb3e0; font-weight: 500; }
+
+  .progress-bar-wrap { background: var(--border); height: 3px; }
+  .progress-bar-fill { background: var(--navy); height: 3px; transition: width 0.3s ease; }
+
+  .nav-wrap { position: sticky; top: 0; z-index: 100; background: var(--white); border-bottom: 2px solid var(--navy); overflow-x: auto; }
+  .nav-tabs { display: flex; list-style: none; padding: 0 var(--pad-x); white-space: nowrap; }
+  .nav-tabs li a { display: block; padding: 14px 16px; font-size: 12px; font-family: 'JetBrains Mono','Noto Sans KR',monospace; color: var(--text-muted); text-decoration: none; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: color 0.2s, border-color 0.2s; }
+  .nav-tabs li a:hover, .nav-tabs li a.active { color: var(--navy); border-bottom-color: var(--navy); font-weight: 500; }
+
+  .main { max-width: 980px; margin: 0 auto; padding: 48px var(--pad-x) 80px; }
+
+  .section { display: none; animation: fadeIn 0.3s ease; }
+  .section.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+  .section-eyebrow { font-family: 'JetBrains Mono','Noto Sans KR',monospace; font-size: 12px; color: var(--navy); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+  .section-title { font-family: 'DM Serif Display', serif; font-size: 30px; font-weight: 400; color: var(--navy); margin-bottom: 6px; line-height: 1.3; }
+  .section-lead { font-size: 15px; color: var(--text-muted); margin-bottom: 36px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+
+  h2 { font-family: 'DM Serif Display', serif; font-size: 20px; font-weight: 400; color: var(--navy); margin: 36px 0 14px; }
+  h3 { font-size: 16px; font-weight: 700; color: var(--text); margin: 28px 0 10px; }
+  p { margin-bottom: 14px; }
+
+  .card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; margin-bottom: 14px; }
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .card-grid.three { grid-template-columns: repeat(3,1fr); }
+  @media(max-width:680px){ .card-grid,.card-grid.three { grid-template-columns:1fr; } }
+  .card .card-label { font-family: 'JetBrains Mono','Noto Sans KR',monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+  .card .card-title { font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+  .card p { font-size: 13px; color: var(--text-muted); margin-bottom: 0; }
+
+  .callout { border-left: 4px solid var(--navy); background: var(--navy-light); padding: 14px 18px; border-radius: 0 var(--radius) var(--radius) 0; margin: 18px 0; font-size: 14px; }
+  .callout.warn { border-left-color: var(--warn-border); background: var(--warn-bg); }
+  .callout.correct { border-left-color: var(--correct-border); background: var(--correct-bg); }
+  .callout.wrong { border-left-color: var(--wrong-border); background: var(--wrong-bg); }
+  .callout .callout-label { font-family: 'JetBrains Mono','Noto Sans KR',monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--navy); margin-bottom: 5px; }
+  .callout.warn .callout-label { color: var(--warn-border); }
+  .callout.correct .callout-label { color: var(--correct-border); }
+  .callout.wrong .callout-label { color: var(--wrong-border); }
+
+  .tbl-wrap { overflow-x: auto; margin: 18px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { background: var(--navy); color: var(--white); padding: 9px 14px; text-align: left; font-weight: 500; font-size: 12px; font-family: 'JetBrains Mono','Noto Sans KR',monospace; }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:nth-child(even) td { background: var(--navy-light); }
+  tr:last-child td { border-bottom: none; }
+  td strong { color: var(--navy); }
+  .num { font-family: 'JetBrains Mono','Noto Sans KR',monospace; text-align: right; }
+  .num-neg { color: var(--wrong-border); }
+  .num-pos { color: var(--correct-border); }
+  .row-total td { font-weight: 700; border-top: 2px solid var(--navy) !important; background: var(--navy-light) !important; }
+  .row-sub td { background: #f7f9fc !important; font-size: 13px; color: var(--text-muted); }
+  .row-header td { background: var(--navy-light) !important; font-weight: 700; font-size: 13px; color: var(--navy); }
+  .row-cta td { background: #fffbe6 !important; font-weight: 700; color: #7a5c00; }
+
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 11px; font-weight: 500; font-family: 'JetBrains Mono','Noto Sans KR',monospace; white-space: nowrap; }
+  .badge-h  { background: var(--navy); color: white; }
+  .badge-e  { background: #154360; color: white; }
+  .badge-grp { background: #0d3349; color: #7fb3e0; border: 1px solid #1a5c8a; }
+  .badge-rate { background: var(--warn-bg); color: #7a5c00; border: 1px solid var(--warn-border); }
+  .badge-cta { background: #fffbe6; color: #7a5c00; border: 1px solid var(--warn-border); }
+  .badge-oce { background: var(--correct-bg); color: #1a5c2a; border: 1px solid var(--correct-border); }
+
+  .journal { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin: 16px 0; }
+  .journal-header { background: var(--navy-light); padding: 8px 16px; font-family: 'JetBrains Mono','Noto Sans KR',monospace; font-size: 12px; color: var(--navy); font-weight: 500; display: flex; justify-content: space-between; align-items: center; }
+  .journal-header .j-tag { font-size: 10px; background: var(--navy); color: white; padding: 2px 8px; border-radius: 10px; }
+  .journal table { margin: 0; }
+  .journal th { background: #f0f4f8; color: var(--text-muted); font-size: 11px; }
+  .journal td { font-size: 13px; font-family: 'JetBrains Mono','Noto Sans KR',monospace; }
+  .j-dr { padding-left: 14px; }
+  .j-cr { padding-left: 36px; color: var(--text-muted); }
+  .j-amount-dr { color: var(--navy); font-weight: 500; }
+  .j-amount-cr { color: var(--text-muted); }
+
+  /* RATE DECISION TREE */
+  .rate-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin: 18px 0; }
+  .rate-cell { background: var(--white); padding: 14px 16px; }
+  .rate-cell.header { background: var(--navy); color: white; font-family: 'JetBrains Mono','Noto Sans KR',monospace; font-size: 12px; font-weight: 500; text-align: center; }
+  .rate-cell.highlight { background: var(--navy-light); }
+  .rate-type { font-family: 'JetBrains Mono','Noto Sans KR',monospace; font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+  .rate-items { font-size: 13px; color: var(--text-muted); line-height: 1.8; }
+
+  /* CTA FLOW */
+  .cta-flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 0; margin: 20px 0; align-items: center; }
+  .cta-box { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; text-align: center; }
+  .cta-box.navy { background: var(--navy); color: white; border-color: var(--navy); }
+  .cta-box .cta-label { font-family: 'JetBrains Mono','Noto Sans KR',monospace; font-size: 10px; color: var(--text-muted); margin-bottom: 4px; }
+  .cta-box.navy .cta-label { color: var(--navy-mid); }
+  .cta-box .cta-val { font-family: 'JetBrains Mono','Noto Sans KR',monospace; font-size: 18px; font-weight: 500; color: var(--navy); }
+  .cta-box.navy .cta-val { color: white; }
+  .cta-arrow { font-size: 20px; color: var(--navy); text-align: center; padding: 0 8px; }
+  @media(max-width:600px){ .cta-flow { grid-template-columns: 1fr; } .cta-arrow { display: none; } }
+
+  /* PERIOD TABLE — CTA 누적 */
+  .period-strip { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin: 20px 0; }
+  .period-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .period-card .pc-header { background: var(--navy); color: white; padding: 10px 14px; font-family: 'JetBrains Mono','Noto Sans KR',monospace; font-size: 12px; text-align: center; }
+  .period-card .pc-row { display: flex; justify-content: space-between; padding: 8px 14px; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .period-card .pc-row:last-child { border-bottom: none; font-weight: 700; color: var(--navy); }
+  .period-card .pc-val { font-family: 'JetBrains Mono','Noto Sans KR',monospace; }
+  @media(max-width:600px){ .period-strip { grid-template-columns: 1fr; } }
+
+  /* IAS 21 CRITERIA */
+  .criteria-list { counter-reset: criteria; display: flex; flex-direction: column; gap: 8px; margin: 18px 0; }
+  .criteria-item { display: flex; gap: 14px; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; align-items: flex-start; }
+  .criteria-num { font-family: 'JetBrains Mono','Noto Sans KR',monospace; font-size: 13px; font-weight: 700; color: var(--white); background: var(--navy); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .criteria-body strong { display: block; font-size: 14px; color: var(--navy); margin-bottom: 3px; }
+  .criteria-body span { font-size: 13px; color: var(--text-muted); }
+  .criteria-item.applied { border-color: var(--correct-border); background: var(--correct-bg); }
+  .criteria-item.applied .criteria-num { background: var(--correct-border); }
+
+  /* DISPOSAL TIMELINE */
+  .disposal-timeline { position: relative; padding-left: 28px; margin: 20px 0; }
+  .disposal-timeline::before { content: ''; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: var(--navy-mid); }
+  .tl-item { position: relative; margin-bottom: 20px; }
+  .tl-dot { position: absolute; left: -22px; top: 4px; width: 14px; height: 14px; border-radius: 50%; background: var(--navy); border: 2px solid var(--white); box-shadow: 0 0 0 2px var(--navy); }
+  .tl-item.highlight .tl-dot { background: var(--correct-border); box-shadow: 0 0 0 2px var(--correct-border); }
+  .tl-label { font-family: 'JetBrains Mono','Noto Sans KR',monospace; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+  .tl-content { font-size: 14px; }
+  .tl-content strong { color: var(--navy); }
+
+  .drill { margin: 14px 0; }
+  .drill-trigger { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 11px 16px; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px; font-weight: 500; color: var(--navy); user-select: none; transition: background 0.15s; }
+  .drill-trigger:hover { background: var(--navy-light); }
+  .drill-arrow { font-size: 12px; transition: transform 0.2s; }
+  .drill-trigger.open .drill-arrow { transform: rotate(90deg); }
+  .drill-body { display: none; border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--radius) var(--radius); padding: 16px 18px; background: var(--white); font-size: 14px; }
+  .drill-body.open { display: block; }
+
+  .quiz-block { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 26px; margin: 18px 0; }
+  .quiz-q { font-size: 15px; font-weight: 500; margin-bottom: 14px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-option { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; font-size: 14px; transition: border-color 0.15s, background 0.15s; user-select: none; }
+  .quiz-option:hover { border-color: var(--navy); background: var(--navy-light); }
+  .quiz-option.correct-ans { border-color: var(--correct-border); background: var(--correct-bg); }
+  .quiz-option.wrong-ans   { border-color: var(--wrong-border);   background: var(--wrong-bg); }
+  .quiz-marker { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+  .quiz-option.correct-ans .quiz-marker { border-color: var(--correct-border); background: var(--correct-border); color: white; }
+  .quiz-option.wrong-ans   .quiz-marker { border-color: var(--wrong-border);   background: var(--wrong-border);   color: white; }
+  .quiz-feedback { margin-top: 12px; padding: 11px 14px; border-radius: var(--radius); font-size: 14px; display: none; }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: var(--correct-bg); border-left: 4px solid var(--correct-border); }
+  .quiz-feedback.ng { background: var(--wrong-bg);   border-left: 4px solid var(--wrong-border); }
+
+  .section-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); }
+  .btn { padding: 10px 22px; border-radius: var(--radius); font-size: 14px; font-weight: 500; cursor: pointer; border: 2px solid var(--navy); transition: background 0.15s, color 0.15s; font-family: 'Noto Sans KR', sans-serif; }
+  .btn-primary { background: var(--navy); color: var(--white); }
+  .btn-primary:hover { background: #002244; }
+  .btn-ghost { background: transparent; color: var(--navy); }
+  .btn-ghost:hover { background: var(--navy-light); }
+  .btn:disabled { opacity: 0.3; cursor: default; }
+  .progress-label { font-family: 'JetBrains Mono','Noto Sans KR',monospace; font-size: 12px; color: var(--text-muted); }
+
+  .running-box { background: var(--white); border: 2px solid var(--navy); border-radius: var(--radius); padding: 18px 22px; margin: 20px 0; }
+  .running-box .rb-title { font-family: 'JetBrains Mono','Noto Sans KR',monospace; font-size: 11px; color: var(--navy); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+  .rb-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .rb-row:last-child { border-bottom: none; font-weight: 700; color: var(--navy); }
+  .rb-val { font-family: 'JetBrains Mono','Noto Sans KR',monospace; }
+  .rb-neg { color: var(--wrong-border); }
+  .rb-pos { color: var(--correct-border); }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="series-label">SAP GROUP REPORTING · 연결회계 입문 시리즈 · MODULE 03</div>
+  <h1>외화환산 심화</h1>
+  <div class="subtitle">기능통화 결정부터 CTA 처분까지 — IAS 21 전 과정</div>
+</header>
+
+<div class="scenario-bar">
+  <div class="sc-item">심화 대상 법인 <span>ASPN Europe (EUR / IFRS)</span></div>
+  <div class="sc-item">그룹 표시통화 <span>KRW</span></div>
+  <div class="sc-item">환율 설정 <span>취득 1,200 / 20X1 평균 1,350 / 20X1 기말 1,400 / 20X2 기말 1,500</span></div>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-bar-fill" id="progressBar" style="width:16.67%"></div>
+</div>
+
+<nav class="nav-wrap">
+  <ul class="nav-tabs" id="navTabs">
+    <li><a href="#" class="active" data-section="0">01 기능통화 결정</a></li>
+    <li><a href="#" data-section="1">02 환율 유형</a></li>
+    <li><a href="#" data-section="2">03 CTA 계산 구조</a></li>
+    <li><a href="#" data-section="3">04 기간별 CTA 증감</a></li>
+    <li><a href="#" data-section="4">05 관계기업 외화환산</a></li>
+    <li><a href="#" data-section="5">06 CTA 처분 재분류</a></li>
+  </ul>
+</nav>
+
+<main class="main">
+
+<!-- ══════════════════════════════════════════════
+     SECTION 1 — 기능통화의 결정
+══════════════════════════════════════════════ -->
+<section class="section active" id="sec-0">
+  <div class="section-eyebrow">Section 01</div>
+  <div class="section-title">기능통화의 결정</div>
+  <div class="section-lead">외화환산의 출발점은 기능통화를 올바르게 결정하는 것이다. 기능통화가 잘못 설정되면 이후 모든 환산 결과가 왜곡된다.</div>
+
+  <h2>기능통화 vs 표시통화</h2>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-label">기능통화 (Functional Currency)</div>
+      <div class="card-title">영업 활동이 이루어지는 주된 경제 환경의 통화</div>
+      <p>법인이 실제로 현금을 창출하고 지출하는 환경의 통화. 법인마다 하나만 존재하며 임의로 변경 불가. ASPN Europe의 경우 EUR.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">표시통화 (Presentation Currency)</div>
+      <div class="card-title">재무제표를 표시하는 통화</div>
+      <p>그룹이 외부 보고를 위해 선택하는 통화. 기능통화와 다를 수 있으며, ASPN Group은 KRW를 표시통화로 사용. 환산은 기능통화 → 표시통화 방향으로 발생.</p>
+    </div>
+  </div>
+
+  <h2>IAS 21 기능통화 판단 기준 6가지</h2>
+  <p>IAS 21은 기능통화 결정을 위한 주요 지표와 보조 지표를 제시한다. 단일 기준이 아닌 종합적 판단이 필요하다.</p>
+
+  <div class="criteria-list">
+    <div class="criteria-item applied">
+      <div class="criteria-num">1</div>
+      <div class="criteria-body">
+        <strong>재화·용역 판매 가격에 영향을 미치는 통화</strong>
+        <span>ASPN Europe 제품 가격이 EUR로 결정되고 EUR로 수취 → EUR 지지</span>
+      </div>
+    </div>
+    <div class="criteria-item applied">
+      <div class="criteria-num">2</div>
+      <div class="criteria-body">
+        <strong>경쟁 요인 및 규제 환경의 통화</strong>
+        <span>유럽 시장에서 EUR 기준 경쟁 → EUR 지지</span>
+      </div>
+    </div>
+    <div class="criteria-item applied">
+      <div class="criteria-num">3</div>
+      <div class="criteria-body">
+        <strong>재화·용역 공급에 사용되는 원가·비용의 통화</strong>
+        <span>유럽 현지 인건비·원자재 조달이 EUR로 발생 → EUR 지지</span>
+      </div>
+    </div>
+    <div class="criteria-item">
+      <div class="criteria-num">4</div>
+      <div class="criteria-body">
+        <strong>재무 활동에 사용되는 통화 (차입·배당)</strong>
+        <span>EUR 차입금 보유 → EUR 지지 (보조 지표)</span>
+      </div>
+    </div>
+    <div class="criteria-item">
+      <div class="criteria-num">5</div>
+      <div class="criteria-body">
+        <strong>영업 활동 수취액을 보유하는 통화</strong>
+        <span>수취 현금을 EUR로 보유 → EUR 지지 (보조 지표)</span>
+      </div>
+    </div>
+    <div class="criteria-item">
+      <div class="criteria-num">6</div>
+      <div class="criteria-body">
+        <strong>모회사와의 독립성</strong>
+        <span>Europe이 독립적으로 유럽 시장에서 운영 → EUR 지지 (보조 지표)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout correct">
+    <div class="callout-label">ASPN Europe 결론</div>
+    주요 지표 3가지(①②③)가 모두 EUR을 지지한다. <strong>기능통화 = EUR</strong> 확정. 그룹 표시통화 KRW와 다르므로 환산 절차가 필요하다.
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-label">실무 주의 — GR Entity 통화 설정</div>
+    GR에서 Consolidation Unit의 기능통화는 최초 설정 후 변경이 매우 어렵다. 기능통화 판단을 잘못하면 과거 기간 전체를 재환산해야 한다. 프로젝트 초기 법인별 기능통화 검토가 필수다.
+  </div>
+
+  <!-- QUIZ -->
+  <h3>확인 문제</h3>
+  <div class="quiz-block">
+    <div class="quiz-q">한국 모회사가 100% 소유한 미국 법인이 있다. 이 법인은 미국 현지에서 달러로 제품을 판매하고, 모든 비용도 달러로 지출하지만, 자금 조달은 한국 본사에서 KRW로 지원받는다. 이 법인의 기능통화는?</div>
+    <div class="quiz-options" id="quiz0">
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz0',false)">
+        <div class="quiz-marker"></div>KRW — 모회사가 KRW로 자금을 지원하기 때문
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz0',true)">
+        <div class="quiz-marker"></div>USD — 판매·비용 등 주요 영업 활동이 USD로 이루어지기 때문
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz0',false)">
+        <div class="quiz-marker"></div>판단 불가 — 복수 통화가 혼재하므로 기능통화 없음
+      </div>
+    </div>
+    <div class="quiz-feedback" id="quiz0-fb"></div>
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" disabled>← 이전</button>
+    <span class="progress-label">1 / 6</span>
+    <button class="btn btn-primary" onclick="goSection(1)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 2 — 환율 유형과 적용 원칙
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-1">
+  <div class="section-eyebrow">Section 02</div>
+  <div class="section-title">환율 유형과 적용 원칙</div>
+  <div class="section-lead">계정 항목의 성격에 따라 적용 환율이 다르다. 잘못된 환율 적용은 CTA 계산 오류로 직결된다.</div>
+
+  <h2>3가지 환율 유형</h2>
+
+  <div class="rate-grid">
+    <div class="rate-cell header">환율 유형</div>
+    <div class="rate-cell header">적용 대상</div>
+    <div class="rate-cell header">적용 이유</div>
+
+    <div class="rate-cell highlight">
+      <div class="rate-type">마감환율<br><span style="font-size:11px;color:var(--text-muted)">Closing Rate</span></div>
+    </div>
+    <div class="rate-cell">
+      <div class="rate-items">자산 전체<br>부채 전체</div>
+    </div>
+    <div class="rate-cell">
+      <div class="rate-items">재무상태표일 현재의 경제적 가치를 반영. 자산·부채는 보고일 기준 현재 가치로 표시해야 함.</div>
+    </div>
+
+    <div class="rate-cell highlight">
+      <div class="rate-type">역사적환율<br><span style="font-size:11px;color:var(--text-muted)">Historical Rate</span></div>
+    </div>
+    <div class="rate-cell">
+      <div class="rate-items">자본금 (납입자본)<br>자본잉여금<br>취득일 영업권</div>
+    </div>
+    <div class="rate-cell">
+      <div class="rate-items">출자·취득 시점에 확정된 금액. 이후 환율 변동에 따라 재측정하지 않음. CTA 발생의 핵심 원인.</div>
+    </div>
+
+    <div class="rate-cell highlight">
+      <div class="rate-type">평균환율<br><span style="font-size:11px;color:var(--text-muted)">Average Rate</span></div>
+    </div>
+    <div class="rate-cell">
+      <div class="rate-items">수익<br>비용<br>(당기 발생 거래)</div>
+    </div>
+    <div class="rate-cell">
+      <div class="rate-items">기간 중 고르게 발생하는 거래의 근사치. 거래일 환율의 실용적 대체. 환율 변동이 크면 정확도 저하.</div>
+    </div>
+  </div>
+
+  <h2>자본 항목별 환율 적용 — 주의 대상</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>자본 항목</th><th>적용 환율</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td>자본금 (납입자본)</td><td><span class="badge badge-rate">역사적환율</span></td><td>최초 출자 시점 환율 고정</td></tr>
+        <tr><td>자본잉여금</td><td><span class="badge badge-rate">역사적환율</span></td><td>납입자본과 동일 시점 처리</td></tr>
+        <tr><td>이익잉여금</td><td><span class="badge badge-rate">역사적환율 누적</span></td><td>매기 당기순이익(평균환율)이 누적된 결과. 별도 환율 적용 없이 I/S 환산 결과가 자동 누적</td></tr>
+        <tr><td>기타포괄손익 (CTA 제외)</td><td><span class="badge badge-rate">발생 시점 환율</span></td><td>해당 OCI 항목 발생 시 환율</td></tr>
+        <tr><td><strong>CTA</strong></td><td><span class="badge badge-cta">대차차액 (자동)</span></td><td>위 항목 모두 환산 후 B/S 차대차액으로 자동 도출</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-label">초인플레이션 예외 (IAS 29)</div>
+    누적 인플레이션율이 3년간 100% 초과하는 국가에 소재한 종속기업은 IAS 29를 적용하여 재무제표를 재작성(restating)한 후 마감환율로만 환산한다. 역사적환율·평균환율 구분이 사라지며 CTA도 발생하지 않는다. 아르헨티나·튀르키예 등 일부 국가가 해당.
+  </div>
+
+  <div class="callout">
+    <div class="callout-label">GR — Translation Rate Type</div>
+    GR에서는 Translation Method 설정에서 계정(FS Item) 그룹별로 적용 환율 유형을 지정한다. 자산·부채는 Closing Rate, 자본금은 Historical Rate, 수익·비용은 Average Rate로 매핑하는 것이 표준 설정이다.
+  </div>
+
+  <!-- QUIZ -->
+  <h3>확인 문제</h3>
+  <div class="quiz-block">
+    <div class="quiz-q">ASPN Europe이 20X0년에 유형자산 €5M을 취득했다. 20X1년 말 연결 B/S에 이 자산을 환산할 때 적용하는 환율은?</div>
+    <div class="quiz-options" id="quiz1">
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz1',false)">
+        <div class="quiz-marker"></div>20X0년 취득 시점 역사적환율
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz1',true)">
+        <div class="quiz-marker"></div>20X1년 말 마감환율
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz1',false)">
+        <div class="quiz-marker"></div>20X1년 평균환율
+      </div>
+    </div>
+    <div class="quiz-feedback" id="quiz1-fb"></div>
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(0)">← 이전</button>
+    <span class="progress-label">2 / 6</span>
+    <button class="btn btn-primary" onclick="goSection(2)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 3 — CTA 계산 구조
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-2">
+  <div class="section-eyebrow">Section 03</div>
+  <div class="section-title">CTA 계산 구조</div>
+  <div class="section-lead">CTA(Currency Translation Adjustment)는 환율 유형의 혼용에서 발생하는 대차차액이다. 손익이 아닌 OCI 항목으로 자본에 누적된다.</div>
+
+  <h2>CTA가 발생하는 이유</h2>
+  <p>자산·부채는 마감환율로, 자본금은 역사적환율로, 이익잉여금은 평균환율 누적으로 환산한다. 세 환율이 다르므로 환산 후 B/S 차변과 대변이 일치하지 않는다. 이 차이를 CTA로 메운다.</p>
+
+  <div class="cta-flow">
+    <div class="cta-box">
+      <div class="cta-label">자산 합계 (마감환율)</div>
+      <div class="cta-val" style="color:var(--navy)">154억</div>
+    </div>
+    <div class="cta-arrow">≠</div>
+    <div class="cta-box">
+      <div class="cta-label">부채+자본 (혼합환율)</div>
+      <div class="cta-val" style="color:var(--navy)">144.5억</div>
+    </div>
+    <div class="cta-arrow">→</div>
+    <div class="cta-box navy">
+      <div class="cta-label">CTA (대차차액)</div>
+      <div class="cta-val">+9.5억</div>
+    </div>
+  </div>
+
+  <h2>ASPN Europe 20X1년 CTA 계산 — 전체 과정</h2>
+
+  <h3>B/S 환산</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>계정</th><th class="num">EUR 백만</th><th class="num">환율</th><th class="num">KRW 억원</th></tr></thead>
+      <tbody>
+        <tr class="row-header"><td colspan="4">자산 (마감환율 1,400)</td></tr>
+        <tr><td>현금</td><td class="num">2</td><td class="num">1,400</td><td class="num">28</td></tr>
+        <tr><td>매출채권</td><td class="num">3</td><td class="num">1,400</td><td class="num">42</td></tr>
+        <tr><td>재고자산</td><td class="num">1</td><td class="num">1,400</td><td class="num">14</td></tr>
+        <tr><td>유형자산</td><td class="num">5</td><td class="num">1,400</td><td class="num">70</td></tr>
+        <tr class="row-total"><td><strong>자산 합계</strong></td><td class="num"><strong>11</strong></td><td class="num">—</td><td class="num"><strong>154</strong></td></tr>
+        <tr class="row-header"><td colspan="4">부채 (마감환율 1,400)</td></tr>
+        <tr><td>매입채무</td><td class="num">1</td><td class="num">1,400</td><td class="num">14</td></tr>
+        <tr><td>차입금</td><td class="num">3</td><td class="num">1,400</td><td class="num">42</td></tr>
+        <tr class="row-header"><td colspan="4">자본 (혼합환율)</td></tr>
+        <tr><td>자본금</td><td class="num">4</td><td class="num">1,200 (역사적)</td><td class="num">48</td></tr>
+        <tr><td>이익잉여금</td><td class="num">3</td><td class="num">1,350 (평균)</td><td class="num">40.5</td></tr>
+        <tr class="row-total"><td><strong>부채·자본 소계 (CTA 제외)</strong></td><td class="num"><strong>11</strong></td><td class="num">—</td><td class="num"><strong>144.5</strong></td></tr>
+        <tr class="row-cta">
+          <td><strong>CTA (대차차액)</strong></td>
+          <td class="num">—</td><td class="num">—</td>
+          <td class="num"><strong class="num-pos">+9.5</strong></td>
+        </tr>
+        <tr class="row-total"><td><strong>부채·자본 합계</strong></td><td class="num"><strong>11</strong></td><td class="num">—</td><td class="num"><strong>154</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>CTA 방향성 해석</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>상황</th><th>CTA 방향</th><th>이유</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>기말환율 &gt; 역사적환율 (EUR 강세)</td>
+          <td><span class="badge badge-oce">CTA 대변 (이익)</span></td>
+          <td>자산을 높은 환율로 환산 → 자산 증가분을 OCI로 흡수</td>
+        </tr>
+        <tr>
+          <td>기말환율 &lt; 역사적환율 (EUR 약세)</td>
+          <td><span class="badge" style="background:var(--wrong-bg);color:var(--wrong-border);border:1px solid var(--wrong-border);">CTA 차변 (손실)</span></td>
+          <td>자산을 낮은 환율로 환산 → 자산 감소분을 OCI로 흡수</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout correct">
+    <div class="callout-label">20X1년 해석</div>
+    기말 1,400 &gt; 역사적 1,200 → EUR 강세 → CTA +9.5억 (대변, OCI 이익). 이는 실현되지 않은 환산이익이므로 당기손익이 아닌 기타포괄손익(OCI)으로 처리하며, 자본 내 별도 항목으로 누적된다.
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(1)">← 이전</button>
+    <span class="progress-label">3 / 6</span>
+    <button class="btn btn-primary" onclick="goSection(3)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 4 — 기간별 CTA 증감
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-3">
+  <div class="section-eyebrow">Section 04</div>
+  <div class="section-title">기간별 CTA 증감</div>
+  <div class="section-lead">CTA는 매 기간 재계산된다. 전기 누적 CTA에 당기 환율 변동분이 가산되어 누적 잔액이 관리된다.</div>
+
+  <h2>20X2년 추가 가정</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>항목</th><th class="num">20X1</th><th class="num">20X2 추가 가정</th></tr></thead>
+      <tbody>
+        <tr><td>기말환율 (KRW/EUR)</td><td class="num">1,400</td><td class="num">1,500</td></tr>
+        <tr><td>평균환율 (KRW/EUR)</td><td class="num">1,350</td><td class="num">1,450</td></tr>
+        <tr><td>Europe 순자산 (EUR 백만)</td><td class="num">7 (=11-4)</td><td class="num">8.5 (순이익 €1.5M 가정)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>기간별 CTA 계산</h2>
+
+  <div class="period-strip">
+    <div class="period-card">
+      <div class="pc-header">취득 시점 (기준)</div>
+      <div class="pc-row"><span>환율</span><span class="pc-val">1,200</span></div>
+      <div class="pc-row"><span>순자산 EUR</span><span class="pc-val">€7M</span></div>
+      <div class="pc-row"><span>KRW 환산</span><span class="pc-val">84억</span></div>
+      <div class="pc-row"><span>누적 CTA</span><span class="pc-val">—</span></div>
+    </div>
+    <div class="period-card">
+      <div class="pc-header">20X1년 말</div>
+      <div class="pc-row"><span>기말환율</span><span class="pc-val">1,400</span></div>
+      <div class="pc-row"><span>순자산 EUR</span><span class="pc-val">€7M</span></div>
+      <div class="pc-row"><span>기말환율 환산</span><span class="pc-val">98억</span></div>
+      <div class="pc-row"><span>역사적 기준</span><span class="pc-val">△84억</span></div>
+      <div class="pc-row"><span>당기 CTA</span><span class="pc-val" style="color:var(--correct-border)">+9.5억*</span></div>
+    </div>
+    <div class="period-card">
+      <div class="pc-header">20X2년 말</div>
+      <div class="pc-row"><span>기말환율</span><span class="pc-val">1,500</span></div>
+      <div class="pc-row"><span>순자산 EUR</span><span class="pc-val">€8.5M</span></div>
+      <div class="pc-row"><span>기말환율 환산</span><span class="pc-val">127.5억</span></div>
+      <div class="pc-row"><span>역사적+이잉누적</span><span class="pc-val">△110.25억**</span></div>
+      <div class="pc-row"><span>누적 CTA</span><span class="pc-val" style="color:var(--correct-border)">+17.25억</span></div>
+    </div>
+  </div>
+
+  <p style="font-size:13px;color:var(--text-muted);">* 20X1 CTA 9.5억: B/S 대차차액 (섹션 3 참조). 순자산 단순 계산과 미세 차이는 이익잉여금 평균환율 적용 효과.</p>
+  <p style="font-size:13px;color:var(--text-muted);">** 20X2 역사적+이잉누적: 자본금 €4M×1,200=48억 + 20X1 이잉 €3M×1,350=40.5억 + 20X2 순이익 €1.5M×1,450=21.75억 = 110.25억</p>
+
+  <h2>당기 CTA 증감 분개</h2>
+
+  <div class="journal">
+    <div class="journal-header">
+      <span>20X2년 CTA 증감 — OCI 추가 누적</span>
+      <span class="j-tag">Currency Translation</span>
+    </div>
+    <table>
+      <thead><tr><th>구분</th><th>계정</th><th class="num">차변</th><th class="num">대변</th></tr></thead>
+      <tbody>
+        <tr><td class="j-dr">차변</td><td>외화환산조정 자산·부채 (환산차이)</td><td class="num j-amount-dr">7.75</td><td class="num">—</td></tr>
+        <tr><td class="j-cr">대변</td><td>기타포괄손익 — CTA (OCI)</td><td class="num">—</td><td class="num j-amount-cr">7.75</td></tr>
+        <tr class="row-sub"><td colspan="4" style="font-size:12px;padding:6px 14px;">20X2 누적 CTA 17.25억 − 20X1 누적 9.5억 = 당기 증가 7.75억</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="running-box">
+    <div class="rb-title">CTA 누적 잔액 추이</div>
+    <div class="rb-row"><span>취득 시점</span><span class="rb-val">—</span></div>
+    <div class="rb-row"><span>20X1년 말 누적</span><span class="rb-val rb-pos">+9.5억</span></div>
+    <div class="rb-row"><span>20X2년 당기 증가</span><span class="rb-val rb-pos">+7.75억</span></div>
+    <div class="rb-row"><span>20X2년 말 누적 CTA</span><span class="rb-val rb-pos">+17.25억</span></div>
+  </div>
+
+  <div class="callout">
+    <div class="callout-label">GR — CTA FS Item 구조</div>
+    GR에서 CTA는 별도 FS Item(예: OCI_CTA)으로 관리된다. Translation Task 실행 시 GR이 자동으로 대차차액을 계산하여 CTA FS Item에 기록하며, 기간별 증감도 자동 추적된다. 담당자가 수동으로 CTA를 계산할 필요가 없다.
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(2)">← 이전</button>
+    <span class="progress-label">4 / 6</span>
+    <button class="btn btn-primary" onclick="goSection(4)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 5 — 관계기업 외화환산
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-4">
+  <div class="section-eyebrow">Section 05</div>
+  <div class="section-title">관계기업 외화환산</div>
+  <div class="section-lead">관계기업은 연결 합산 대상이 아니다. 외화 관계기업의 환산 효과는 별도의 방식으로 투자자 재무제표에 반영된다.</div>
+
+  <h2>핵심 원칙 — 합산하지 않는다</h2>
+  <p>종속기업(ASPN Europe)은 자산·부채·손익 전체를 환산하여 연결 재무제표에 합산한다. 반면 관계기업은 <strong>연결 합산 대상이 아니다.</strong> 지분법을 적용하므로 투자주식 단일 계정만 연결 B/S에 표시된다.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-label">종속기업 (ASPN Europe)</div>
+      <div class="card-title">FS 전체 환산 후 합산</div>
+      <p>자산·부채 마감환율 / 손익 평균환율 / CTA → 연결 OCI 누적. 환산 절차 전체 적용.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">관계기업 (외화 법인 가정)</div>
+      <div class="card-title">투자주식 장부가만 조정</div>
+      <p>FS를 환산하여 합산하지 않는다. 관계기업의 외화환산 효과는 <strong>지분법자본조정(OCI)</strong>으로만 반영.</p>
+    </div>
+  </div>
+
+  <h2>관계기업 외화환산 효과 반영 구조</h2>
+  <p>만약 ASPN Tech가 KRW가 아닌 USD 기능통화 법인이라고 가정하면, 다음과 같이 처리된다.</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>항목</th><th>처리 방법</th><th>재무제표 표시</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>관계기업 당기순이익의 지분</td>
+          <td>지분법이익으로 인식 (평균환율 적용)</td>
+          <td>투자자 <strong>당기손익(P&L)</strong></td>
+        </tr>
+        <tr>
+          <td>관계기업 CTA의 지분</td>
+          <td>지분법자본조정으로 인식</td>
+          <td>투자자 <strong>기타포괄손익(OCI)</strong></td>
+        </tr>
+        <tr>
+          <td>관계기업 기타 OCI의 지분</td>
+          <td>지분법기타포괄손익으로 인식</td>
+          <td>투자자 <strong>기타포괄손익(OCI)</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout correct">
+    <div class="callout-label">핵심 정리</div>
+    외화 관계기업의 CTA는 투자자의 <strong>지분법자본조정(OCI)</strong> 항목으로 흡수된다. 관계기업 FS를 직접 환산하거나 합산하는 절차는 없다. 지분법 적용 결과에 환율 효과가 자동으로 녹아드는 구조다.
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-label">혼동 주의</div>
+    지분법이익(P&L)과 지분법자본조정(OCI)은 별개 항목이다. 관계기업 순이익의 내 지분 → P&L. 관계기업 CTA·기타OCI의 내 지분 → OCI. 두 항목을 합산하여 P&L에 넣으면 오류다.
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(3)">← 이전</button>
+    <span class="progress-label">5 / 6</span>
+    <button class="btn btn-primary" onclick="goSection(5)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 6 — CTA 처분 시 재분류
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-5">
+  <div class="section-eyebrow">Section 06</div>
+  <div class="section-title">CTA 처분 시 재분류</div>
+  <div class="section-lead">OCI에 누적된 CTA는 종속기업 처분 시 당기손익으로 재분류된다. "실현"되는 시점이 처분 시점이다.</div>
+
+  <h2>처분 시나리오 — ASPN Europe 전부 처분</h2>
+  <p>ASPN Holdings가 20X2년 말에 ASPN Europe 지분 100%를 외부에 처분한다고 가정한다.</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>항목</th><th class="num">금액 (억원)</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td>처분 대가 (현금 수취)</td><td class="num num-pos">200</td><td>외부 매각 금액</td></tr>
+        <tr><td>Europe 순자산 장부가 (KRW 환산)</td><td class="num num-neg">△127.5</td><td>€8.5M × 기말환율 1,500</td></tr>
+        <tr><td>OCI 누적 CTA 재분류</td><td class="num num-neg">△17.25</td><td>OCI → P&L 재분류 (이익)</td></tr>
+        <tr class="row-total"><td><strong>처분이익</strong></td><td class="num"><strong>55.25</strong></td><td>당기손익 인식</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>처분 시 분개</h3>
+  <div class="journal">
+    <div class="journal-header">
+      <span>ASPN Europe 전부 처분 — 20X2년 말</span>
+      <span class="j-tag">Disposal</span>
+    </div>
+    <table>
+      <thead><tr><th>구분</th><th>계정</th><th class="num">차변</th><th class="num">대변</th></tr></thead>
+      <tbody>
+        <tr><td class="j-dr">차변</td><td>현금 (처분 대가)</td><td class="num j-amount-dr">200</td><td class="num">—</td></tr>
+        <tr><td class="j-dr">차변</td><td>기타포괄손익 — CTA (OCI 제거)</td><td class="num j-amount-dr">17.25</td><td class="num">—</td></tr>
+        <tr><td class="j-cr">대변</td><td>종속기업 순자산 (장부가)</td><td class="num">—</td><td class="num j-amount-cr">127.5</td></tr>
+        <tr><td class="j-cr">대변</td><td>종속기업처분이익 (P&L)</td><td class="num">—</td><td class="num j-amount-cr">55.25</td></tr>
+        <tr><td class="j-cr">대변</td><td>종속기업투자주식 제거</td><td class="num">—</td><td class="num j-amount-cr">34.5</td></tr>
+        <tr class="row-sub"><td colspan="4" style="font-size:12px;padding:6px 14px;">OCI에 누적된 CTA 17.25억이 차변으로 제거되며 P&L 처분이익에 포함됨</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>처분 흐름 — 타임라인</h2>
+  <div class="disposal-timeline">
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-label">취득 시점</div>
+      <div class="tl-content">Europe 지분 취득. CTA = 0. 투자주식 장부가 확정.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-label">20X1년 말</div>
+      <div class="tl-content">EUR 강세. CTA <strong>+9.5억</strong> OCI 누적. 미실현 — P&L 영향 없음.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-label">20X2년 말 (처분 전)</div>
+      <div class="tl-content">EUR 추가 강세. CTA <strong>+17.25억</strong>으로 증가. 여전히 미실현.</div>
+    </div>
+    <div class="tl-item highlight">
+      <div class="tl-dot"></div>
+      <div class="tl-label">20X2년 말 (처분)</div>
+      <div class="tl-content"><strong>처분 확정.</strong> OCI 누적 CTA 17.25억 전액 P&L로 재분류. 처분이익 55.25억에 포함되어 실현.</div>
+    </div>
+  </div>
+
+  <h2>부분 처분 케이스</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>처분 유형</th><th>지배력 변동</th><th>CTA 처리</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>전부 처분</strong></td>
+          <td>지배력 상실</td>
+          <td>누적 CTA 전액 P&L 재분류</td>
+        </tr>
+        <tr>
+          <td><strong>부분 처분 — 지배력 유지</strong></td>
+          <td>지배력 유지 (예: 100%→70%)</td>
+          <td>CTA 재분류 없음. 자본 거래로 처리. NCI 증가분 조정만 반영</td>
+        </tr>
+        <tr>
+          <td><strong>부분 처분 — 지배력 상실</strong></td>
+          <td>지배력 상실 후 관계기업 전환</td>
+          <td>처분 시점에 누적 CTA 전액 P&L 재분류. 잔여 지분은 공정가치 재측정</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-label">핵심 구분</div>
+    지배력 유지 상태의 부분 처분은 <strong>자본 거래</strong>이므로 CTA 재분류가 발생하지 않는다. 반드시 지배력 상실 여부를 먼저 판단한 후 CTA 처리 방향을 결정해야 한다.
+  </div>
+
+  <!-- QUIZ -->
+  <h3>확인 문제</h3>
+  <div class="quiz-block">
+    <div class="quiz-q">Holdings가 Europe 지분을 100%에서 60%로 줄였다. 지배력은 유지된다. 이 시점에 OCI 누적 CTA 17.25억의 처리는?</div>
+    <div class="quiz-options" id="quiz2">
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz2',false)">
+        <div class="quiz-marker"></div>처분 비율(40%)에 해당하는 CTA 6.9억을 P&L로 재분류한다
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz2',true)">
+        <div class="quiz-marker"></div>지배력이 유지되므로 CTA 재분류 없음 — 자본 거래로 처리한다
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz2',false)">
+        <div class="quiz-marker"></div>CTA 전액 17.25억을 P&L로 재분류한다
+      </div>
+    </div>
+    <div class="quiz-feedback" id="quiz2-fb"></div>
+  </div>
+
+  <h2>모듈 3 — 핵심 정리</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>주제</th><th>핵심 원칙</th><th>GR 설정</th></tr></thead>
+      <tbody>
+        <tr><td>기능통화 결정</td><td>영업 환경의 주된 통화 — IAS 21 6가지 기준 종합 판단</td><td>Entity 통화 설정 (변경 불가)</td></tr>
+        <tr><td>환율 유형</td><td>자산·부채 마감 / 자본금 역사적 / 손익 평균</td><td>Translation Rate Type 매핑</td></tr>
+        <tr><td>CTA 발생</td><td>환율 혼용으로 인한 대차차액 → OCI 누적</td><td>Translation Task 자동 계산</td></tr>
+        <tr><td>기간별 증감</td><td>매 기간 재계산 — 누적 잔액 관리</td><td>CTA FS Item 자동 추적</td></tr>
+        <tr><td>관계기업</td><td>FS 합산 없음 — 지분법자본조정(OCI)으로만 반영</td><td>Equity Method 환산 처리</td></tr>
+        <tr><td>CTA 처분</td><td>지배력 상실 시 전액 P&L 재분류 / 지배력 유지 시 재분류 없음</td><td>Disposal Task</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout correct">
+    <div class="callout-label">모듈 3 완료</div>
+    외화환산의 전 과정을 ASPN Europe 시나리오로 완결했다. 모듈 4에서는 내부거래 제거 심화로 진입한다 — 용역·재고를 넘어 유형자산 매각, 대여금 이자, IC 불일치 케이스까지 다룬다.
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(4)">← 이전</button>
+    <span class="progress-label">6 / 6</span>
+    <button class="btn btn-primary" disabled>완료 ✓</button>
+  </div>
+</section>
+
+</main>
+
+<script>
+  const TOTAL = 6;
+
+  function goSection(idx) {
+    document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i===idx));
+    document.querySelectorAll('.nav-tabs a').forEach((a,i) => a.classList.toggle('active', i===idx));
+    document.getElementById('progressBar').style.width = ((idx+1)/TOTAL*100).toFixed(2)+'%';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  document.querySelectorAll('.nav-tabs a').forEach((a,i) => {
+    a.addEventListener('click', e => { e.preventDefault(); goSection(i); });
+  });
+
+  function toggleDrill(trigger) {
+    trigger.classList.toggle('open');
+    trigger.nextElementSibling.classList.toggle('open');
+  }
+
+  function checkQuiz(el, groupId, isCorrect) {
+    const group = document.getElementById(groupId);
+    if (group.querySelector('.correct-ans') || group.querySelector('.wrong-ans')) return;
+    const fb = document.getElementById(groupId+'-fb');
+    el.classList.add(isCorrect ? 'correct-ans' : 'wrong-ans');
+    el.querySelector('.quiz-marker').textContent = isCorrect ? '✓' : '✗';
+    fb.classList.add('show', isCorrect ? 'ok' : 'ng');
+    const msgs = {
+      quiz0: {
+        ok: '정답입니다. 기능통화는 모회사 통화가 아닌 해당 법인의 주된 영업 환경을 기준으로 결정합니다. 판매·비용이 USD로 발생하므로 자금 조달 통화와 무관하게 기능통화는 USD입니다.',
+        ng: '다시 생각해보세요. IAS 21의 주요 지표는 재화·용역 판매 통화와 비용 발생 통화입니다. 자금 조달 통화는 보조 지표에 불과합니다.'
+      },
+      quiz1: {
+        ok: '정답입니다. 유형자산은 자산 항목이므로 보고일(20X1년 말) 기준 마감환율을 적용합니다. 취득 시점이 언제였는지와 무관합니다. 역사적환율은 자본금 등 자본 항목에만 적용됩니다.',
+        ng: '다시 생각해보세요. 자산·부채는 재무상태표일 현재 가치 반영을 위해 마감환율을 적용합니다. 역사적환율과 마감환율의 적용 대상을 구분해보세요.'
+      },
+      quiz2: {
+        ok: '정답입니다. 지배력이 유지되는 부분 처분은 자본 거래입니다. CTA는 종속기업 관계가 종료(지배력 상실)될 때 비로소 P&L로 재분류됩니다. 지배력 유지 상태에서는 CTA가 OCI에 그대로 남습니다.',
+        ng: '다시 생각해보세요. CTA 재분류의 핵심 조건은 처분 비율이 아니라 지배력 상실 여부입니다.'
+      }
+    };
+    fb.textContent = isCorrect ? msgs[groupId].ok : msgs[groupId].ng;
+  }
+</script>
+</body>
+</html>
