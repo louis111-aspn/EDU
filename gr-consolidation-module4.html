@@ -224,13 +224,13 @@
     <div class="ic-cell type1">
       <div class="ic-type-label">Type A</div>
       <div class="ic-title">손익 불변 거래</div>
-      <div class="ic-items">용역 제공<br>이자수취·지급<br>임대료 수취·지급</div>
+      <div class="ic-items">용역 제공<br>이자수취·지급<br>임대료 수취·지급<br><span style="color:var(--navy);font-weight:500;">매출채권·매입채무 상계</span></div>
     </div>
     <div class="ic-cell type1">
-      <div class="ic-items">수익과 비용이 동시에 제거됨. 그룹 손익에 순효과 없음.</div>
+      <div class="ic-items">수익·비용이 동시에 제거됨. 그룹 손익에 순효과 없음.<br>거래에서 발생한 <strong>채권·채무 잔액도 함께 상계</strong>해야 B/S IC 잔액이 0이 됨.</div>
     </div>
     <div class="ic-cell type1">
-      <div class="ic-items" style="color:var(--correct-border);font-weight:500;">영업이익 변동 없음<br>단, 매출·비용 총액 감소</div>
+      <div class="ic-items" style="color:var(--correct-border);font-weight:500;">영업이익 변동 없음<br>매출·비용 총액 감소<br>B/S 채권·채무 동시 감소</div>
     </div>
 
     <div class="ic-cell type2">
@@ -444,8 +444,27 @@
 
   <h2>연결조정 분개</h2>
 
+  <div class="callout">
+    <div class="callout-label">처리 원칙</div>
+    내부거래에서 발생한 <strong>채권·채무(B/S)</strong>와 <strong>수익·비용(I/S)</strong>은 각각 별도 분개로 상계한다. 어느 하나라도 누락되면 ICMR 잔액 불일치가 발생한다.
+  </div>
+
+  <h3>① 용역 거래 채권·채무 상계 (Holdings → Korea)</h3>
   <div class="journal">
-    <div class="journal-header"><span>① B/S 대여금·차입금 상계</span><span class="j-tag">Type C</span></div>
+    <div class="journal-header"><span>매출채권·매입채무 상계 — Holdings 용역 거래</span><span class="j-tag">Type A — B/S</span></div>
+    <table>
+      <thead><tr><th>구분</th><th>계정</th><th class="num">차변</th><th class="num">대변</th></tr></thead>
+      <tbody>
+        <tr><td class="j-dr">차변</td><td>매입채무 (Korea 부채)</td><td class="num j-amount-dr">10</td><td class="num">—</td></tr>
+        <tr><td class="j-cr">대변</td><td>매출채권 (Holdings 자산)</td><td class="num">—</td><td class="num j-amount-cr">10</td></tr>
+        <tr class="row-sub"><td colspan="4" style="font-size:12px;padding:6px 14px;">용역 매출 10억에서 발생한 채권·채무 잔액 상계. I/S 수익·비용 상계와 반드시 함께 처리.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>② 대여금·차입금 상계</h3>
+  <div class="journal">
+    <div class="journal-header"><span>② B/S 대여금·차입금 상계</span><span class="j-tag">Type C</span></div>
     <table>
       <thead><tr><th>구분</th><th>계정</th><th class="num">차변</th><th class="num">대변</th></tr></thead>
       <tbody>
@@ -457,7 +476,7 @@
   </div>
 
   <div class="journal">
-    <div class="journal-header"><span>② I/S 이자수익·비용 상계</span><span class="j-tag">Type A</span></div>
+    <div class="journal-header"><span>③ I/S 이자수익·비용 상계</span><span class="j-tag">Type A</span></div>
     <table>
       <thead><tr><th>구분</th><th>계정</th><th class="num">차변</th><th class="num">대변</th></tr></thead>
       <tbody>
@@ -469,7 +488,7 @@
   </div>
 
   <div class="journal">
-    <div class="journal-header"><span>③ 미수이자·미지급이자 상계</span><span class="j-tag">Type C</span></div>
+    <div class="journal-header"><span>④ 미수이자·미지급이자 상계</span><span class="j-tag">Type C</span></div>
     <table>
       <thead><tr><th>구분</th><th>계정</th><th class="num">차변</th><th class="num">대변</th></tr></thead>
       <tbody>
