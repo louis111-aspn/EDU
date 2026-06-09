@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모듈 1 — 연결회계의 개념과 목적 | SAP Group Reporting</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #003366;
+    --navy-light: #e8eef5;
+    --navy-mid: #ccd9e8;
+    --bg: #f0f3f8;
+    --white: #ffffff;
+    --text: #1a1a2e;
+    --text-muted: #5a6a7a;
+    --border: #d0dae6;
+    --warn-bg: #fff8e6;
+    --warn-border: #e6a800;
+    --correct-bg: #e8f5ee;
+    --correct-border: #2a7a4f;
+    --wrong-bg: #fce8e8;
+    --wrong-border: #c0392b;
+    --pad-x: 48px;
+    --radius: 4px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 15px;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.75;
+  }
+
+  /* ── HEADER ── */
+  .page-header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 40px var(--pad-x) 36px;
+  }
+  .page-header .series-label {
+    font-family: 'JetBrains Mono','Noto Sans KR',monospace;
+    font-size: 13px;
+    color: var(--navy-mid);
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+  .page-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.25;
+    margin-bottom: 10px;
+  }
+  .page-header .subtitle {
+    font-size: 15px;
+    color: var(--navy-mid);
+    font-weight: 300;
+  }
+
+  /* ── NAV TABS ── */
+  .nav-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--white);
+    border-bottom: 2px solid var(--navy);
+    overflow-x: auto;
+  }
+  .nav-tabs {
+    display: flex;
+    list-style: none;
+    padding: 0 var(--pad-x);
+    gap: 0;
+    white-space: nowrap;
+  }
+  .nav-tabs li a {
+    display: block;
+    padding: 14px 20px;
+    font-size: 13px;
+    font-family: 'JetBrains Mono','Noto Sans KR',monospace;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .nav-tabs li a:hover,
+  .nav-tabs li a.active {
+    color: var(--navy);
+    border-bottom-color: var(--navy);
+    font-weight: 500;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 48px var(--pad-x) 80px;
+  }
+
+  /* ── SECTION ── */
+  .section {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .section.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-eyebrow {
+    font-family: 'JetBrains Mono','Noto Sans KR',monospace;
+    font-size: 12px;
+    color: var(--navy);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 30px;
+    font-weight: 400;
+    color: var(--navy);
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .section-lead {
+    font-size: 15px;
+    color: var(--text-muted);
+    margin-bottom: 36px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--navy);
+    margin: 36px 0 14px;
+  }
+  h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 28px 0 10px;
+  }
+  p { margin-bottom: 14px; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 16px;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .card-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+  @media (max-width: 640px) {
+    .card-grid, .card-grid.three { grid-template-columns: 1fr; }
+  }
+  .card .card-label {
+    font-family: 'JetBrains Mono','Noto Sans KR',monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .card .card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .card p { font-size: 14px; color: var(--text-muted); margin-bottom: 0; }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    border-left: 4px solid var(--navy);
+    background: var(--navy-light);
+    padding: 16px 20px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin: 20px 0;
+    font-size: 14px;
+  }
+  .callout.warn {
+    border-left-color: var(--warn-border);
+    background: var(--warn-bg);
+  }
+  .callout.correct {
+    border-left-color: var(--correct-border);
+    background: var(--correct-bg);
+  }
+  .callout .callout-label {
+    font-family: 'JetBrains Mono','Noto Sans KR',monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .callout.warn .callout-label { color: var(--warn-border); }
+  .callout.correct .callout-label { color: var(--correct-border); }
+
+  /* ── TABLE ── */
+  .tbl-wrap { overflow-x: auto; margin: 20px 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  th {
+    background: var(--navy);
+    color: var(--white);
+    padding: 10px 16px;
+    text-align: left;
+    font-weight: 500;
+    font-size: 13px;
+    font-family: 'JetBrains Mono','Noto Sans KR',monospace;
+  }
+  td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: var(--navy-light); }
+  tr:last-child td { border-bottom: none; }
+  td strong { color: var(--navy); }
+
+  /* ── FLOW DIAGRAM ── */
+  .flow {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0;
+    margin: 24px 0;
+  }
+  .flow-item {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  .flow-box {
+    background: var(--white);
+    border: 2px solid var(--navy);
+    border-radius: var(--radius);
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--navy);
+    text-align: center;
+    white-space: nowrap;
+  }
+  .flow-box.highlight {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .flow-arrow {
+    font-size: 18px;
+    color: var(--navy);
+    padding: 0 8px;
+    flex-shrink: 0;
+  }
+  .flow-label {
+    font-family: 'JetBrains Mono','Noto Sans KR',monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 6px;
+  }
+  .flow-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ── DUAL FLOW (회계 ↔ GR) ── */
+  .dual-flow {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 16px;
+    margin: 24px 0;
+    align-items: start;
+  }
+  .dual-flow-col {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .dual-flow-col .col-header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 10px 16px;
+    font-family: 'JetBrains Mono','Noto Sans KR',monospace;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-align: center;
+  }
+  .dual-flow-col .col-header.light {
+    background: var(--navy-light);
+    color: var(--navy);
+  }
+  .dual-flow-step {
+    padding: 12px 16px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .dual-flow-step:last-child { border-bottom: none; }
+  .step-num {
+    font-family: 'JetBrains Mono','Noto Sans KR',monospace;
+    font-size: 11px;
+    color: var(--white);
+    background: var(--navy);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-weight: 500;
+  }
+  .dual-flow-connector {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    padding-top: 44px;
+  }
+  .connector-arrow {
+    font-size: 20px;
+    color: var(--navy);
+  }
+
+  /* ── COMPARISON ── */
+  .compare-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 20px 0;
+  }
+  @media (max-width: 600px) { .compare-row { grid-template-columns: 1fr; } }
+  .compare-col {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .compare-col .compare-header {
+    padding: 12px 18px;
+    font-size: 13px;
+    font-weight: 700;
+    background: var(--navy-light);
+    color: var(--navy);
+  }
+  .compare-col.highlight-col .compare-header {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .compare-col .compare-body {
+    padding: 16px 18px;
+    font-size: 14px;
+  }
+  .compare-col .compare-body li {
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+    list-style: none;
+    color: var(--text);
+  }
+  .compare-col .compare-body li:last-child { border-bottom: none; }
+
+  /* ── ISSUE LIST ── */
+  .issue-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 20px 0;
+  }
+  @media (max-width: 600px) { .issue-grid { grid-template-columns: 1fr; } }
+  .issue-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .issue-num {
+    font-family: 'JetBrains Mono','Noto Sans KR',monospace;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--navy-mid);
+    flex-shrink: 0;
+    line-height: 1;
+    margin-top: 2px;
+  }
+  .issue-item h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .issue-item p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 0;
+    line-height: 1.6;
+  }
+
+  /* ── QUIZ ── */
+  .quiz-block {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin: 20px 0;
+  }
+  .quiz-q {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 14px;
+    transition: border-color 0.15s, background 0.15s;
+    user-select: none;
+  }
+  .quiz-option:hover { border-color: var(--navy); background: var(--navy-light); }
+  .quiz-option.correct-ans { border-color: var(--correct-border); background: var(--correct-bg); }
+  .quiz-option.wrong-ans   { border-color: var(--wrong-border);   background: var(--wrong-bg); }
+  .quiz-marker {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    transition: border-color 0.15s;
+  }
+  .quiz-option.correct-ans .quiz-marker { border-color: var(--correct-border); background: var(--correct-border); color: white; }
+  .quiz-option.wrong-ans   .quiz-marker { border-color: var(--wrong-border);   background: var(--wrong-border);   color: white; }
+  .quiz-feedback {
+    margin-top: 14px;
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok  { background: var(--correct-bg); border-left: 4px solid var(--correct-border); }
+  .quiz-feedback.ng  { background: var(--wrong-bg);   border-left: 4px solid var(--wrong-border); }
+
+  /* ── NAV BOTTOM ── */
+  .section-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+  .btn {
+    padding: 10px 22px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 2px solid var(--navy);
+    transition: background 0.15s, color 0.15s;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .btn-primary { background: var(--navy); color: var(--white); }
+  .btn-primary:hover { background: #002244; }
+  .btn-ghost { background: transparent; color: var(--navy); }
+  .btn-ghost:hover { background: var(--navy-light); }
+  .btn:disabled { opacity: 0.3; cursor: default; }
+  .progress-label {
+    font-family: 'JetBrains Mono','Noto Sans KR',monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar-wrap {
+    background: var(--border);
+    height: 3px;
+    width: 100%;
+  }
+  .progress-bar-fill {
+    background: var(--navy);
+    height: 3px;
+    transition: width 0.3s ease;
+  }
+
+  /* ── SCOPE TABLE ── */
+  .scope-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'JetBrains Mono','Noto Sans KR',monospace;
+  }
+  .badge-consolidate { background: var(--navy); color: white; }
+  .badge-equity      { background: var(--navy-light); color: var(--navy); border: 1px solid var(--navy-mid); }
+  .badge-direct      { background: #f0f0f0; color: #555; border: 1px solid var(--border); }
+
+  /* ── SAMPLE NUMBERS ── */
+  .num-table td:last-child, .num-table td:nth-child(2) {
+    font-family: 'JetBrains Mono','Noto Sans KR',monospace;
+    text-align: right;
+  }
+  .num-table th:last-child, .num-table th:nth-child(2) { text-align: right; }
+  .num-neg { color: #c0392b; }
+  .num-total td { font-weight: 700; border-top: 2px solid var(--navy) !important; background: var(--navy-light) !important; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="page-header">
+  <div class="series-label">SAP GROUP REPORTING · 연결회계 입문 시리즈 · MODULE 01</div>
+  <h1>연결회계의 개념과 목적</h1>
+  <div class="subtitle">왜 연결재무제표가 필요한가, 그리고 SAP Group Reporting은 그 문제를 어떻게 해결하는가</div>
+</header>
+
+<div class="progress-bar-wrap">
+  <div class="progress-bar-fill" id="progressBar" style="width:16.67%"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav-wrap">
+  <ul class="nav-tabs" id="navTabs">
+    <li><a href="#" class="active" data-section="0">01 별도 vs 연결</a></li>
+    <li><a href="#" data-section="1">02 지배력 판단</a></li>
+    <li><a href="#" data-section="2">03 연결 범위</a></li>
+    <li><a href="#" data-section="3">04 연결FS 구성</a></li>
+    <li><a href="#" data-section="4">05 연결 프로세스</a></li>
+    <li><a href="#" data-section="5">06 어려운 이유</a></li>
+  </ul>
+</nav>
+
+<main class="main">
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 1 — 별도 vs 연결재무제표
+  ═══════════════════════════════════════════════ -->
+  <section class="section active" id="sec-0">
+    <div class="section-eyebrow">Section 01</div>
+    <div class="section-title">별도 vs 연결재무제표</div>
+    <div class="section-lead">단일 법인의 재무제표만으로는 그룹 전체의 실상을 파악할 수 없다.</div>
+
+    <h2>경제적 단일실체 개념</h2>
+    <p>지주회사 A가 자회사 B와 C를 100% 보유하고 있다고 가정하자. A의 별도재무제표를 보면 자산 항목에 <strong>투자주식 1,000</strong>만 보인다. 그룹의 실제 자산인 B와 C의 영업자산은 전혀 보이지 않는다.</p>
+    <p>연결재무제표는 A·B·C를 <strong>하나의 경제적 실체</strong>로 간주하고, 내부거래를 제거한 뒤 통합 재무상태를 보여준다.</p>
+
+    <h3>수치로 보는 차이</h3>
+    <div class="tbl-wrap">
+      <table class="num-table">
+        <thead>
+          <tr>
+            <th>구분</th><th>금액</th><th>비고</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="3" style="background:var(--navy-light);font-weight:700;font-size:13px;padding:8px 16px;">별도재무제표 — A사</td></tr>
+          <tr><td>종속기업 투자주식 (B, C)</td><td>1,000</td><td>A의 장부가액</td></tr>
+          <tr><td colspan="3" style="background:var(--navy-light);font-weight:700;font-size:13px;padding:8px 16px;margin-top:8px;">연결재무제표 — A+B+C 그룹</td></tr>
+          <tr><td>B사 영업자산</td><td>700</td><td>실제 자산</td></tr>
+          <tr><td>C사 영업자산</td><td>500</td><td>실제 자산</td></tr>
+          <tr><td>투자주식 제거 (C/I)</td><td class="num-neg">△1,000</td><td>내부 상계</td></tr>
+          <tr class="num-total"><td>그룹 순자산 합계</td><td>200</td><td>실질 순자산</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">핵심 개념</div>
+      투자주식 1,000은 그룹 내부의 숫자다. 외부 투자자 입장에서는 B와 C가 실제로 어떤 자산을 보유하는지, 그 자산으로 얼마나 수익을 창출하는지가 중요하다. 연결재무제표는 그 질문에 답하기 위해 존재한다.
+    </div>
+
+    <h2>별도재무제표의 한계</h2>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-label">한계 1</div>
+        <div class="card-title">자회사 실적 미반영</div>
+        <p>지주사 별도FS에는 자회사 배당금만 인식된다. 자회사의 매출·비용·자산이 보이지 않는다.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">한계 2</div>
+        <div class="card-title">내부거래 미제거</div>
+        <p>A→B 매출을 각각 인식하면 그룹 매출이 이중 계상된다. 연결에서는 이를 제거해야 한다.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">한계 3</div>
+        <div class="card-title">투자와 자본 불일치</div>
+        <p>A의 투자주식 1,000과 B·C의 자본금이 동시에 존재하면 같은 금액이 두 번 계상된다.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">한계 4</div>
+        <div class="card-title">그룹 현금흐름 불투명</div>
+        <p>그룹 전체의 실질적인 차입 구조, 현금 이동, 리스크가 별도FS에서는 파악되지 않는다.</p>
+      </div>
+    </div>
+
+    <div class="callout correct">
+      <div class="callout-label">결론</div>
+      연결재무제표는 법적 경계(법인)가 아닌 <strong>경제적 경계(지배력)</strong>를 기준으로 그룹 전체를 하나의 회사처럼 표시한다.
+    </div>
+
+    <!-- QUIZ -->
+    <h3>확인 문제</h3>
+    <div class="quiz-block">
+      <div class="quiz-q">A사(지주)가 B사(자회사)에 상품을 500에 판매했다. 이 거래가 연결재무제표에서 제거되어야 하는 이유는?</div>
+      <div class="quiz-options" id="quiz0">
+        <div class="quiz-option" onclick="checkQuiz(this,'quiz0',false)">
+          <div class="quiz-marker"></div>B사의 매입 금액이 너무 크기 때문이다
+        </div>
+        <div class="quiz-option" onclick="checkQuiz(this,'quiz0',true)">
+          <div class="quiz-marker"></div>그룹 외부와의 거래가 아니어서 그룹 전체 매출에 포함되면 이중 계상이 되기 때문이다
+        </div>
+        <div class="quiz-option" onclick="checkQuiz(this,'quiz0',false)">
+          <div class="quiz-marker"></div>A사 별도FS에서 이미 제거되기 때문이다
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz0-fb"></div>
+    </div>
+
+    <div class="section-nav">
+      <button class="btn btn-ghost" disabled>← 이전</button>
+      <span class="progress-label">1 / 6</span>
+      <button class="btn btn-primary" onclick="goSection(1)">다음 →</button>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 2 — 지배력의 정의
+  ═══════════════════════════════════════════════ -->
+  <section class="section" id="sec-1">
+    <div class="section-eyebrow">Section 02</div>
+    <div class="section-title">지배력의 정의</div>
+    <div class="section-lead">연결 여부는 지분율이 아닌 지배력으로 판단한다. (IFRS 10)</div>
+
+    <h2>지배력 판단 3요소</h2>
+    <p>IFRS 10은 지배력을 다음 세 가지 조건이 모두 충족될 때 인정한다.</p>
+
+    <div class="card-grid three">
+      <div class="card">
+        <div class="card-label">요소 1</div>
+        <div class="card-title">Power (권력)</div>
+        <p>피투자자의 관련 활동을 지시할 수 있는 현존 능력. 의결권이 대표적이나 계약적 권리도 포함.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">요소 2</div>
+        <div class="card-title">Variable Returns (변동이익)</div>
+        <p>피투자자의 성과에 따라 투자자에게 귀속되는 이익이 변동함. 배당, 잔여재산, 수수료 등.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">요소 3</div>
+        <div class="card-title">Linkage (연계)</div>
+        <p>권력을 사용하여 변동이익에 영향을 미칠 수 있는 능력. 세 요소를 연결하는 고리.</p>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <div class="callout-label">주의</div>
+      지분율 50%를 초과하더라도 세 요소 중 하나라도 결여되면 지배력이 없을 수 있다. 반대로 지분율이 낮아도 계약 구조에 따라 지배력이 인정될 수 있다.
+    </div>
+
+    <h2>실무 결론</h2>
+    <div class="callout correct">
+      <div class="callout-label">핵심 메시지</div>
+      <strong>연결 범위는 단순 지분율이 아니라 지배력 기준으로 결정된다.</strong><br>
+      "지분 51% 보유 = 연결"은 일반적으로 맞지만, 예외가 존재한다. 실무에서는 법무·회계 검토를 거쳐 연결 여부를 확정한다.
+    </div>
+
+    <div class="section-nav">
+      <button class="btn btn-ghost" onclick="goSection(0)">← 이전</button>
+      <span class="progress-label">2 / 6</span>
+      <button class="btn btn-primary" onclick="goSection(2)">다음 →</button>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 3 — 연결 범위 결정
+  ═══════════════════════════════════════════════ -->
+  <section class="section" id="sec-2">
+    <div class="section-eyebrow">Section 03</div>
+    <div class="section-title">연결 범위 결정</div>
+    <div class="section-lead">투자 유형에 따라 회계 처리 방법이 달라진다. SAP GR의 Consolidation Group이 이 구조를 그대로 반영한다.</div>
+
+    <h2>투자 유형별 처리 방법</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>유형</th>
+            <th>기준</th>
+            <th>처리 방법</th>
+            <th>GR 반영</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>종속기업</strong><br><span style="font-size:12px;color:var(--text-muted)">Subsidiary</span></td>
+            <td>지배력 보유 (IFRS 10)</td>
+            <td><span class="scope-badge badge-consolidate">전체 연결</span></td>
+            <td>Consolidation Unit으로 등록, 전체 FS 수집</td>
+          </tr>
+          <tr>
+            <td><strong>관계기업</strong><br><span style="font-size:12px;color:var(--text-muted)">Associate</span></td>
+            <td>유의적 영향력 (IAS 28)<br>일반적으로 지분 20~50%</td>
+            <td><span class="scope-badge badge-equity">지분법</span></td>
+            <td>Equity Pickup 대상</td>
+          </tr>
+          <tr>
+            <td><strong>공동기업</strong><br><span style="font-size:12px;color:var(--text-muted)">Joint Venture</span></td>
+            <td>공동 지배력, 순자산에 대한 권리 (IFRS 11)</td>
+            <td><span class="scope-badge badge-equity">지분법</span></td>
+            <td>Equity Pickup 대상</td>
+          </tr>
+          <tr>
+            <td><strong>공동영업</strong><br><span style="font-size:12px;color:var(--text-muted)">Joint Operation</span></td>
+            <td>공동 지배력, 자산·부채에 대한 직접 권리</td>
+            <td><span class="scope-badge badge-direct">직접 인식</span></td>
+            <td>해당 비율만큼 직접 FS에 인식</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>GR에서의 구조 — Consolidation Group</h2>
+    <p>SAP GR에서 <strong>Consolidation Group</strong>은 "이번 연결 대상 집합"을 정의하는 단위다. 연결 범위가 달라지면 Consolidation Group의 구성이 달라진다.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-label">Consolidation Group</div>
+        <div class="card-title">연결 대상 집합 정의</div>
+        <p>어떤 법인을 이번 연결에 포함할지 설정하는 구조. 분기/연간, 보고 목적에 따라 복수 설정 가능.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Consolidation Unit</div>
+        <div class="card-title">개별 법인 단위</div>
+        <p>연결 대상이 되는 각 법인. 종속기업은 Consolidation Unit으로 등록하여 재무 데이터를 수집한다.</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">GR 연계 포인트</div>
+      회계 기준상 연결 범위(종속/관계/공동)가 먼저 확정되어야, GR에서 어떤 Entity를 어떤 방식으로 처리할지 설계할 수 있다. <strong>회계 판단 → 시스템 설계</strong> 순서를 반드시 지켜야 한다.
+    </div>
+
+    <!-- QUIZ -->
+    <h3>확인 문제</h3>
+    <div class="quiz-block">
+      <div class="quiz-q">A사가 B사 지분 35%를 보유하고 있으며, 이사회 구성원 3명 중 2명을 선임할 수 있다. SAP GR에서 B사는 어떻게 처리되는가?</div>
+      <div class="quiz-options" id="quiz1">
+        <div class="quiz-option" onclick="checkQuiz(this,'quiz1',false)">
+          <div class="quiz-marker"></div>지분 35%이므로 지분법(Equity Pickup) 처리
+        </div>
+        <div class="quiz-option" onclick="checkQuiz(this,'quiz1',true)">
+          <div class="quiz-marker"></div>이사회 다수 선임으로 지배력 인정 가능 → Consolidation Unit으로 등록하여 전체 연결
+        </div>
+        <div class="quiz-option" onclick="checkQuiz(this,'quiz1',false)">
+          <div class="quiz-marker"></div>공동기업으로 분류하여 비례연결
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz1-fb"></div>
+    </div>
+
+    <div class="section-nav">
+      <button class="btn btn-ghost" onclick="goSection(1)">← 이전</button>
+      <span class="progress-label">3 / 6</span>
+      <button class="btn btn-primary" onclick="goSection(3)">다음 →</button>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 4 — 연결재무제표의 구성
+  ═══════════════════════════════════════════════ -->
+  <section class="section" id="sec-3">
+    <div class="section-eyebrow">Section 04</div>
+    <div class="section-title">연결재무제표의 구성</div>
+    <div class="section-lead">연결재무제표는 별도재무제표와 구조는 같지만, 연결조정이 반영된 그룹 단일 보고서다.</div>
+
+    <h2>5가지 구성 요소</h2>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-label">① 연결 재무상태표</div>
+        <div class="card-title">Consolidated B/S</div>
+        <p>그룹 전체 자산·부채·자본을 단일 표시. 내부거래 제거 및 연결조정 반영.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">② 연결 손익계산서</div>
+        <div class="card-title">Consolidated I/S</div>
+        <p>그룹 전체 수익·비용. 내부매출 제거 후 외부 매출만 표시.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">③ 연결 현금흐름표</div>
+        <div class="card-title">Consolidated C/F</div>
+        <p>그룹 전체 현금 유출입. 내부 자금 이동은 제거.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">④ 연결 자본변동표</div>
+        <div class="card-title">Changes in Equity</div>
+        <p>지배지분·비지배지분(NCI) 구분 표시. 지분율 변동도 포함.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">⑤ 주석</div>
+      <div class="card-title">Notes to Consolidated Financial Statements</div>
+      <p>연결 범위, 유의적 회계정책, 영업권·NCI·CTA 세부 내역 등 본문 재무제표를 보완하는 공시 정보. 연결 고유 항목의 근거와 가정이 모두 주석에 기술된다.</p>
+    </div>
+
+    <h2>연결 고유 항목 — 예고</h2>
+    <p>연결재무제표에는 별도FS에 없는 고유 항목들이 등장한다. 이 항목들은 이후 모듈에서 상세히 다룬다.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>항목</th><th>개념 요약</th><th>상세 모듈</th></tr></thead>
+        <tbody>
+          <tr><td><strong>영업권 (Goodwill)</strong></td><td>취득 시 지불한 대가 중 식별 가능한 순자산 공정가치 초과분</td><td>모듈 4 (C/I)</td></tr>
+          <tr><td><strong>비지배지분 (NCI)</strong></td><td>지배주주 외 소수주주의 지분. 자본 내 별도 표시</td><td>모듈 4 (C/I)</td></tr>
+          <tr><td><strong>CTA</strong></td><td>외화 종속기업 환산 시 발생하는 환산차이. OCI 항목</td><td>모듈 6 (외화환산)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>GR — FS Item 체계</h2>
+    <p>SAP GR은 연결재무제표의 각 계정을 <strong>FS Item(Financial Statement Item)</strong>으로 관리한다. 법인별 CoA를 FS Item에 매핑하여 그룹 단일 계정체계로 통합한다.</p>
+
+    <div class="callout">
+      <div class="callout-label">GR 연계 포인트</div>
+      각 법인의 계정과목(CoA)이 FS Item에 정확히 매핑되어야 연결조정이 정상 작동한다. 계정 매핑 오류는 연결 불일치의 가장 흔한 원인 중 하나다.
+    </div>
+
+    <div class="section-nav">
+      <button class="btn btn-ghost" onclick="goSection(2)">← 이전</button>
+      <span class="progress-label">4 / 6</span>
+      <button class="btn btn-primary" onclick="goSection(4)">다음 →</button>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 5 — 연결 프로세스 조감
+  ═══════════════════════════════════════════════ -->
+  <section class="section" id="sec-4">
+    <div class="section-eyebrow">Section 05</div>
+    <div class="section-title">연결 프로세스 조감</div>
+    <div class="section-lead">연결은 개별 법인 마감에서 시작하여 공시까지 6단계로 진행된다. GR은 이 흐름을 구조적으로 지원한다.</div>
+
+    <h2>연결 프로세스 6단계</h2>
+
+    <div class="dual-flow">
+      <div class="dual-flow-col">
+        <div class="col-header">연결회계 프로세스</div>
+        <div class="dual-flow-step">
+          <div class="step-num">1</div>
+          <div>
+            <strong>개별회사 마감</strong><br>
+            <span style="font-size:13px;color:var(--text-muted)">각 법인 결산 완료, 개별FS 확정</span>
+          </div>
+        </div>
+        <div class="dual-flow-step">
+          <div class="step-num">2</div>
+          <div>
+            <strong>데이터 수집</strong><br>
+            <span style="font-size:13px;color:var(--text-muted)">각 법인의 FS 데이터를 연결 시스템으로 집계</span>
+          </div>
+        </div>
+        <div class="dual-flow-step">
+          <div class="step-num">3</div>
+          <div>
+            <strong>회계기준 변환</strong><br>
+            <span style="font-size:13px;color:var(--text-muted)">현지 GAAP → 그룹 기준(IFRS)으로 변환</span>
+          </div>
+        </div>
+        <div class="dual-flow-step">
+          <div class="step-num">4</div>
+          <div>
+            <strong>연결조정</strong><br>
+            <span style="font-size:13px;color:var(--text-muted)">IC 제거, C/I, 지분법, 외화환산 적용</span>
+          </div>
+        </div>
+        <div class="dual-flow-step">
+          <div class="step-num">5</div>
+          <div>
+            <strong>연결재무제표 생성</strong><br>
+            <span style="font-size:13px;color:var(--text-muted)">조정 반영된 그룹 FS 생성</span>
+          </div>
+        </div>
+        <div class="dual-flow-step">
+          <div class="step-num">6</div>
+          <div>
+            <strong>공시</strong><br>
+            <span style="font-size:13px;color:var(--text-muted)">감사, 주주·규제기관 보고</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="dual-flow-connector">
+        <div class="connector-arrow">↔</div>
+        <div class="connector-arrow">↔</div>
+        <div class="connector-arrow">↔</div>
+        <div class="connector-arrow">↔</div>
+        <div class="connector-arrow">↔</div>
+        <div class="connector-arrow">↔</div>
+      </div>
+
+      <div class="dual-flow-col">
+        <div class="col-header light">SAP Group Reporting</div>
+        <div class="dual-flow-step">
+          <div class="step-num" style="background:var(--navy-mid);color:var(--navy);">1</div>
+          <div>
+            <strong>S/4HANA 개별 마감</strong><br>
+            <span style="font-size:13px;color:var(--text-muted)">ACDOCA 전기 완료</span>
+          </div>
+        </div>
+        <div class="dual-flow-step">
+          <div class="step-num" style="background:var(--navy-mid);color:var(--navy);">2</div>
+          <div>
+            <strong>Data Collection</strong><br>
+            <span style="font-size:13px;color:var(--text-muted)">Flexible Upload / Direct Pull</span>
+          </div>
+        </div>
+        <div class="dual-flow-step">
+          <div class="step-num" style="background:var(--navy-mid);color:var(--navy);">3</div>
+          <div>
+            <strong>Data Monitor</strong><br>
+            <span style="font-size:13px;color:var(--text-muted)">수집 데이터 검증, 변환 룰 적용</span>
+          </div>
+        </div>
+        <div class="dual-flow-step">
+          <div class="step-num" style="background:var(--navy-mid);color:var(--navy);">4</div>
+          <div>
+            <strong>Consolidation Monitor</strong><br>
+            <span style="font-size:13px;color:var(--text-muted)">IC, C/I, Equity, CTA Task 실행</span>
+          </div>
+        </div>
+        <div class="dual-flow-step">
+          <div class="step-num" style="background:var(--navy-mid);color:var(--navy);">5</div>
+          <div>
+            <strong>연결FS 생성</strong><br>
+            <span style="font-size:13px;color:var(--text-muted)">GR Reporting 레이어에서 생성</span>
+          </div>
+        </div>
+        <div class="dual-flow-step">
+          <div class="step-num" style="background:var(--navy-mid);color:var(--navy);">6</div>
+          <div>
+            <strong>Disclosure</strong><br>
+            <span style="font-size:13px;color:var(--text-muted)">SAP Disclosure Management 연계</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">GR Task Monitor</div>
+      GR의 Task Monitor는 위 각 단계의 진행 상태를 법인별로 추적한다. 어느 법인이 어느 단계까지 완료되었는지 한눈에 파악하고, 단계별 오류를 조기에 발견할 수 있다.
+    </div>
+
+    <div class="section-nav">
+      <button class="btn btn-ghost" onclick="goSection(3)">← 이전</button>
+      <span class="progress-label">5 / 6</span>
+      <button class="btn btn-primary" onclick="goSection(5)">다음 →</button>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 6 — 연결회계가 어려운 이유
+  ═══════════════════════════════════════════════ -->
+  <section class="section" id="sec-5">
+    <div class="section-eyebrow">Section 06</div>
+    <div class="section-title">연결회계가 어려운 이유</div>
+    <div class="section-lead">연결회계의 난이도는 개념이 아니라 복수의 조정 작업이 동시에 맞물리는 구조에서 온다.</div>
+
+    <h2>6대 연결조정 이슈</h2>
+
+    <div class="issue-grid">
+      <div class="issue-item">
+        <div class="issue-num">01</div>
+        <div>
+          <h4>투자와 자본 상계 (C/I)</h4>
+          <p>지주사의 투자주식과 자회사의 자본금을 상계. 차이가 영업권 또는 염가매수차익으로 처리된다.</p>
+        </div>
+      </div>
+      <div class="issue-item">
+        <div class="issue-num">02</div>
+        <div>
+          <h4>내부거래 제거 (IC Elimination)</h4>
+          <p>그룹 내 매출·매입, 채권·채무를 상계 제거. 거래 쌍방의 기록이 정확히 일치해야 제거가 성립한다.</p>
+        </div>
+      </div>
+      <div class="issue-item">
+        <div class="issue-num">03</div>
+        <div>
+          <h4>내부 미실현이익 제거</h4>
+          <p>재고·유형자산에 포함된 내부 마진을 제거. 외부에 판매되기 전까지 이익으로 인식할 수 없다.</p>
+        </div>
+      </div>
+      <div class="issue-item">
+        <div class="issue-num">04</div>
+        <div>
+          <h4>지분율 변동 처리</h4>
+          <p>추가 취득, 일부 처분, 지배력 변동 발생 시 각각 회계처리 방법이 달라진다.</p>
+        </div>
+      </div>
+      <div class="issue-item">
+        <div class="issue-num">05</div>
+        <div>
+          <h4>외화환산 (CTA)</h4>
+          <p>해외 종속기업의 FS를 기능통화로 환산. 발생하는 환산차이(CTA)는 OCI에 누적된다.</p>
+        </div>
+      </div>
+      <div class="issue-item">
+        <div class="issue-num">06</div>
+        <div>
+          <h4>비지배지분 (NCI) 계산</h4>
+          <p>100% 미만 소유 자회사에서 비지배주주의 몫을 별도 계산하여 자본 내 구분 표시.</p>
+        </div>
+      </div>
+    </div>
+
+    <h2>왜 이것이 어려운가</h2>
+    <div class="compare-row">
+      <div class="compare-col">
+        <div class="compare-header">별도 결산</div>
+        <div class="compare-body">
+          <ul>
+            <li>단일 법인 기준</li>
+            <li>거래는 외부 상대방과만 발생</li>
+            <li>기준통화 단일</li>
+            <li>지분 구조 변동 없음</li>
+            <li>기간 간 독립적</li>
+          </ul>
+        </div>
+      </div>
+      <div class="compare-col highlight-col">
+        <div class="compare-header">연결 결산</div>
+        <div class="compare-body">
+          <ul>
+            <li>복수 법인 동시 처리</li>
+            <li>내부거래 추적·제거 필요</li>
+            <li>다수 기능통화 환산</li>
+            <li>지분율 변동마다 재계산</li>
+            <li>누적 조정액 관리 (Carry Forward)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout correct">
+      <div class="callout-label">SAP Group Reporting의 존재 이유</div>
+      SAP Group Reporting은 위 6대 이슈를 <strong>체계적이고 반복 가능한 방식으로 수행</strong>하기 위해 설계된 솔루션이다.<br><br>
+      모듈 3(IC 제거) · 모듈 4(C/I) · 모듈 5(지분법) · 모듈 6(외화환산)에서 각 이슈를 GR 기능과 연계하여 상세히 학습한다.
+    </div>
+
+    <!-- QUIZ -->
+    <h3>확인 문제</h3>
+    <div class="quiz-block">
+      <div class="quiz-q">A사가 B사(70% 보유) 주식 10%를 추가 취득하여 지분율이 80%가 되었다. 이 거래를 연결재무제표에 반영할 때 발생하는 이슈는?</div>
+      <div class="quiz-options" id="quiz2">
+        <div class="quiz-option" onclick="checkQuiz(this,'quiz2',false)">
+          <div class="quiz-marker"></div>내부거래 제거 이슈가 발생한다
+        </div>
+        <div class="quiz-option" onclick="checkQuiz(this,'quiz2',false)">
+          <div class="quiz-marker"></div>외화환산 이슈가 발생한다
+        </div>
+        <div class="quiz-option" onclick="checkQuiz(this,'quiz2',true)">
+          <div class="quiz-marker"></div>지분율 변동 처리 이슈가 발생한다 — 추가 취득 대가와 NCI 감소분의 차이를 자본 조정으로 처리해야 한다
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz2-fb"></div>
+    </div>
+
+    <h2>모듈 로드맵</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>#</th><th>모듈</th><th>다루는 이슈</th></tr></thead>
+        <tbody>
+          <tr><td style="font-family:'JetBrains Mono',monospace;color:var(--navy)">M1</td><td>연결회계의 개념과 목적</td><td>— (현재 모듈)</td></tr>
+          <tr><td style="font-family:'JetBrains Mono',monospace;color:var(--navy)">M2</td><td>연결 절차의 구조</td><td>전체 프로세스 심화</td></tr>
+          <tr><td style="font-family:'JetBrains Mono',monospace;color:var(--navy)">M3</td><td>내부거래 제거 (IC Elimination)</td><td>이슈 02, 03</td></tr>
+          <tr><td style="font-family:'JetBrains Mono',monospace;color:var(--navy)">M4</td><td>자본 연결 (C/I)</td><td>이슈 01, 04, 06</td></tr>
+          <tr><td style="font-family:'JetBrains Mono',monospace;color:var(--navy)">M5</td><td>지분법 회계</td><td>관계기업 지분법</td></tr>
+          <tr><td style="font-family:'JetBrains Mono',monospace;color:var(--navy)">M6</td><td>외화환산 (CTA)</td><td>이슈 05</td></tr>
+          <tr><td style="font-family:'JetBrains Mono',monospace;color:var(--navy)">M7</td><td>연결재무제표 표시</td><td>보고 구조</td></tr>
+          <tr><td style="font-family:'JetBrains Mono',monospace;color:var(--navy)">M8</td><td>연결 실전 종합</td><td>이슈 01~06 통합</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-nav">
+      <button class="btn btn-ghost" onclick="goSection(4)">← 이전</button>
+      <span class="progress-label">6 / 6</span>
+      <button class="btn btn-primary" disabled>완료 ✓</button>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  const TOTAL = 6;
+
+  function goSection(idx) {
+    document.querySelectorAll('.section').forEach((s, i) => {
+      s.classList.toggle('active', i === idx);
+    });
+    document.querySelectorAll('.nav-tabs a').forEach((a, i) => {
+      a.classList.toggle('active', i === idx);
+    });
+    const pct = ((idx + 1) / TOTAL * 100).toFixed(2);
+    document.getElementById('progressBar').style.width = pct + '%';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  document.querySelectorAll('.nav-tabs a').forEach((a, i) => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      goSection(i);
+    });
+  });
+
+  function checkQuiz(el, groupId, isCorrect) {
+    const group = document.getElementById(groupId);
+    if (group.querySelector('.correct-ans') || group.querySelector('.wrong-ans')) return;
+
+    const fb = document.getElementById(groupId + '-fb');
+    el.classList.add(isCorrect ? 'correct-ans' : 'wrong-ans');
+    el.querySelector('.quiz-marker').textContent = isCorrect ? '✓' : '✗';
+
+    fb.classList.add('show', isCorrect ? 'ok' : 'ng');
+
+    const msgs = {
+      quiz0: {
+        ok: '정답입니다. 그룹 내부 거래는 경제적으로 "한 주머니 안에서의 이동"입니다. 외부에 판매된 것이 아니므로, 그룹 매출로 인식하면 실제보다 과장된 수치가 됩니다.',
+        ng: '다시 생각해보세요. 핵심은 이 거래가 그룹 "외부"와의 거래인지 여부입니다.'
+      },
+      quiz1: {
+        ok: '정답입니다. 지분율이 50% 미만이더라도, 이사회 다수를 선임할 수 있다면 실질적 지배력이 인정될 수 있습니다. IFRS 10의 지배력 판단은 지분율보다 실질 권력을 우선합니다.',
+        ng: '다시 생각해보세요. 지분율만이 아니라 이사회 구성 권한 등 실질 지배력을 고려해야 합니다.'
+      },
+      quiz2: {
+        ok: '정답입니다. 지배력을 유지한 상태에서 추가 취득은 자본 거래로 처리합니다. 대가와 NCI 감소분의 차이는 지배주주 귀속 자본(자본잉여금)에서 조정합니다.',
+        ng: '다시 생각해보세요. 지배력은 유지되었으므로 사업결합 재측정이 아닙니다. 어떤 유형의 이슈가 발생하는지 생각해보세요.'
+      }
+    };
+
+    const m = msgs[groupId];
+    fb.textContent = isCorrect ? m.ok : m.ng;
+  }
+</script>
+</body>
+</html>
