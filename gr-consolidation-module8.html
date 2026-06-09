@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모듈 8 — 연결 실전 종합 | SAP Group Reporting</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#003366; --navy-light:#e8eef5; --navy-mid:#ccd9e8;
+    --bg:#f0f3f8; --white:#ffffff; --text:#1a1a2e; --text-muted:#5a6a7a;
+    --border:#d0dae6;
+    --warn-bg:#fff8e6; --warn-border:#e6a800;
+    --correct-bg:#e8f5ee; --correct-border:#2a7a4f;
+    --wrong-bg:#fce8e8; --wrong-border:#c0392b;
+    --purple-bg:#f5eeff; --purple:#7a4a9a; --purple-border:#c8a8f8;
+    --pad-x:48px; --radius:4px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Noto Sans KR',sans-serif;font-size:15px;background:var(--bg);color:var(--text);line-height:1.75;}
+
+  .page-header{background:var(--navy);color:var(--white);padding:40px var(--pad-x) 36px;}
+  .page-header .series-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:13px;color:var(--navy-mid);letter-spacing:.08em;margin-bottom:12px;}
+  .page-header h1{font-family:'DM Serif Display',serif;font-size:36px;font-weight:400;line-height:1.25;margin-bottom:10px;}
+  .page-header .subtitle{font-size:15px;color:var(--navy-mid);font-weight:300;}
+
+  .progress-bar-wrap{background:var(--border);height:3px;}
+  .progress-bar-fill{background:var(--navy);height:3px;transition:width .3s ease;}
+
+  .nav-wrap{position:sticky;top:0;z-index:100;background:var(--white);border-bottom:2px solid var(--navy);overflow-x:auto;}
+  .nav-tabs{display:flex;list-style:none;padding:0 var(--pad-x);white-space:nowrap;}
+  .nav-tabs li a{display:block;padding:14px 16px;font-size:12px;font-family:'JetBrains Mono','Noto Sans KR',monospace;color:var(--text-muted);text-decoration:none;border-bottom:3px solid transparent;margin-bottom:-2px;transition:color .2s,border-color .2s;}
+  .nav-tabs li a:hover,.nav-tabs li a.active{color:var(--navy);border-bottom-color:var(--navy);font-weight:500;}
+
+  .main{max-width:980px;margin:0 auto;padding:48px var(--pad-x) 80px;}
+
+  .section{display:none;animation:fadeIn .3s ease;}
+  .section.active{display:block;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+  .section-eyebrow{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;color:var(--navy);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
+  .section-title{font-family:'DM Serif Display',serif;font-size:30px;font-weight:400;color:var(--navy);margin-bottom:6px;line-height:1.3;}
+  .section-lead{font-size:15px;color:var(--text-muted);margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid var(--border);}
+  h2{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;color:var(--navy);margin:36px 0 14px;}
+  h3{font-size:16px;font-weight:700;color:var(--text);margin:28px 0 10px;}
+  p{margin-bottom:14px;}
+
+  .card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:14px;}
+  .card-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+  .card-grid.three{grid-template-columns:repeat(3,1fr);}
+  @media(max-width:680px){.card-grid,.card-grid.three{grid-template-columns:1fr;}}
+  .card .card-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:11px;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+  .card .card-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px;}
+  .card p{font-size:13px;color:var(--text-muted);margin-bottom:0;}
+
+  .callout{border-left:4px solid var(--navy);background:var(--navy-light);padding:14px 18px;border-radius:0 var(--radius) var(--radius) 0;margin:18px 0;font-size:14px;}
+  .callout.warn{border-left-color:var(--warn-border);background:var(--warn-bg);}
+  .callout.correct{border-left-color:var(--correct-border);background:var(--correct-bg);}
+  .callout.wrong{border-left-color:var(--wrong-border);background:var(--wrong-bg);}
+  .callout.purple{border-left-color:var(--purple);background:var(--purple-bg);}
+  .callout .callout-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--navy);margin-bottom:5px;}
+  .callout.warn .callout-label{color:var(--warn-border);}
+  .callout.correct .callout-label{color:var(--correct-border);}
+  .callout.wrong .callout-label{color:var(--wrong-border);}
+  .callout.purple .callout-label{color:var(--purple);}
+
+  .tbl-wrap{overflow-x:auto;margin:18px 0;}
+  table{width:100%;border-collapse:collapse;font-size:14px;}
+  th{background:var(--navy);color:var(--white);padding:9px 14px;text-align:left;font-weight:500;font-size:12px;font-family:'JetBrains Mono','Noto Sans KR',monospace;}
+  td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+  tr:nth-child(even) td{background:var(--navy-light);}
+  tr:last-child td{border-bottom:none;}
+  td strong{color:var(--navy);}
+  .row-total td{font-weight:700;border-top:2px solid var(--navy)!important;background:var(--navy-light)!important;}
+  .row-header td{background:var(--navy-light)!important;font-weight:700;font-size:13px;color:var(--navy);}
+
+  .badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:500;font-family:'JetBrains Mono','Noto Sans KR',monospace;white-space:nowrap;}
+  .badge-m{background:var(--navy);color:white;}
+  .badge-warn{background:var(--warn-bg);color:#7a5c00;border:1px solid var(--warn-border);}
+  .badge-ok{background:var(--correct-bg);color:var(--correct-border);border:1px solid var(--correct-border);}
+  .badge-ng{background:var(--wrong-bg);color:var(--wrong-border);border:1px solid var(--wrong-border);}
+  .badge-purple{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-border);}
+
+  /* GROUP STRUCTURE MAP */
+  .group-map{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin:20px 0;}
+  .gm-center{display:flex;justify-content:center;margin-bottom:24px;}
+  .gm-box{background:var(--navy);color:white;border-radius:var(--radius);padding:12px 24px;text-align:center;font-weight:700;font-size:14px;}
+  .gm-box .gm-sub{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:11px;color:var(--navy-mid);margin-top:3px;}
+  .gm-box.subsidiary{background:var(--navy-light);color:var(--navy);border:2px solid var(--navy);}
+  .gm-box.associate{background:var(--purple-bg);color:var(--purple);border:2px solid var(--purple-border);}
+  .gm-box.krw{border-color:var(--navy);}
+  .gm-box.eur{border-color:var(--warn-border);}
+  .gm-row{display:flex;justify-content:center;gap:32px;flex-wrap:wrap;}
+  .gm-item{display:flex;flex-direction:column;align-items:center;gap:8px;}
+  .gm-line{width:2px;height:24px;background:var(--navy-mid);}
+  .gm-pct{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;color:var(--navy);font-weight:700;}
+  .gm-method{font-size:11px;color:var(--text-muted);}
+
+  /* CHECKLIST */
+  .checklist{display:flex;flex-direction:column;gap:0;margin:20px 0;}
+  .cl-phase{background:var(--navy);color:white;padding:8px 18px;font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;font-weight:500;letter-spacing:.06em;}
+  .cl-item{display:flex;align-items:flex-start;gap:14px;padding:12px 18px;background:var(--white);border:1px solid var(--border);border-top:none;cursor:pointer;transition:background .15s;}
+  .cl-item:hover{background:var(--navy-light);}
+  .cl-item.checked{background:var(--correct-bg);}
+  .cl-check{width:22px;height:22px;border:2px solid var(--border);border-radius:var(--radius);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;transition:all .15s;margin-top:1px;}
+  .cl-item.checked .cl-check{background:var(--correct-border);border-color:var(--correct-border);color:white;}
+  .cl-text{flex:1;}
+  .cl-text strong{display:block;font-size:14px;color:var(--text);}
+  .cl-text span{font-size:13px;color:var(--text-muted);}
+  .cl-gr{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:11px;color:var(--navy);background:var(--navy-light);padding:2px 8px;border-radius:8px;margin-left:auto;flex-shrink:0;align-self:flex-start;margin-top:3px;}
+
+  /* CONCEPT RECAP */
+  .recap-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0;}
+  @media(max-width:680px){.recap-grid{grid-template-columns:1fr;}}
+  .recap-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+  .recap-card .rc-header{padding:10px 16px;font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;font-weight:700;background:var(--navy);color:white;display:flex;justify-content:space-between;align-items:center;}
+  .recap-card .rc-module{font-size:10px;color:var(--navy-mid);}
+  .recap-card .rc-body{padding:14px 16px;}
+  .recap-card .rc-point{display:flex;gap:10px;margin-bottom:10px;font-size:13px;}
+  .recap-card .rc-point:last-child{margin-bottom:0;}
+  .rc-dot{width:6px;height:6px;border-radius:50%;background:var(--navy);flex-shrink:0;margin-top:7px;}
+
+  /* ERROR CARDS */
+  .error-list{display:flex;flex-direction:column;gap:12px;margin:20px 0;}
+  .error-item{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+  .error-item .ei-header{display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer;user-select:none;}
+  .error-item .ei-num{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:18px;font-weight:500;color:var(--wrong-border);flex-shrink:0;width:32px;}
+  .error-item .ei-title{flex:1;}
+  .error-item .ei-title strong{display:block;font-size:14px;color:var(--text);}
+  .error-item .ei-title span{font-size:13px;color:var(--text-muted);}
+  .error-item .ei-tag{flex-shrink:0;}
+  .error-item .ei-arrow{font-size:12px;color:var(--text-muted);transition:transform .2s;}
+  .error-item.open .ei-arrow{transform:rotate(90deg);}
+  .error-body{display:none;padding:0 18px 16px;border-top:1px solid var(--border);}
+  .error-body.open{display:block;}
+  .error-body .eb-wrong{background:var(--wrong-bg);border-left:3px solid var(--wrong-border);padding:10px 14px;border-radius:0 var(--radius) var(--radius) 0;margin:10px 0;font-size:13px;}
+  .error-body .eb-correct{background:var(--correct-bg);border-left:3px solid var(--correct-border);padding:10px 14px;border-radius:0 var(--radius) var(--radius) 0;margin:10px 0;font-size:13px;}
+  .error-body .eb-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:10px;font-weight:700;letter-spacing:.06em;margin-bottom:4px;}
+  .eb-label.wrong{color:var(--wrong-border);}
+  .eb-label.correct{color:var(--correct-border);}
+
+  /* ROADMAP */
+  .roadmap{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0;}
+  @media(max-width:680px){.roadmap{grid-template-columns:1fr;}}
+  .rm-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;}
+  .rm-card .rm-level{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:11px;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+  .rm-card .rm-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:10px;}
+  .rm-card .rm-item{font-size:13px;color:var(--text-muted);padding:4px 0;border-bottom:1px solid var(--border);display:flex;gap:8px;}
+  .rm-card .rm-item:last-child{border-bottom:none;}
+  .rm-card .rm-item::before{content:'→';color:var(--navy);flex-shrink:0;}
+  .rm-card.highlight{border-color:var(--navy);background:var(--navy-light);}
+  .rm-card.highlight .rm-title{color:var(--navy);}
+
+  .section-nav{display:flex;justify-content:space-between;align-items:center;margin-top:48px;padding-top:24px;border-top:1px solid var(--border);}
+  .btn{padding:10px 22px;border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;border:2px solid var(--navy);transition:background .15s,color .15s;font-family:'Noto Sans KR',sans-serif;}
+  .btn-primary{background:var(--navy);color:var(--white);}
+  .btn-primary:hover{background:#002244;}
+  .btn-ghost{background:transparent;color:var(--navy);}
+  .btn-ghost:hover{background:var(--navy-light);}
+  .btn:disabled{opacity:.3;cursor:default;}
+  .progress-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;color:var(--text-muted);}
+
+  /* COMPLETE BANNER */
+  .complete-banner{background:var(--navy);color:white;border-radius:var(--radius);padding:32px 36px;margin:28px 0;text-align:center;}
+  .complete-banner .cb-title{font-family:'DM Serif Display',serif;font-size:28px;font-weight:400;margin-bottom:10px;}
+  .complete-banner .cb-sub{font-size:14px;color:var(--navy-mid);}
+  .module-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:20px;}
+  .module-pill{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:11px;padding:4px 12px;border-radius:12px;background:rgba(255,255,255,.15);color:white;}
+  .module-pill.done{background:var(--correct-border);}
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="series-label">SAP GROUP REPORTING · 연결회계 입문 시리즈 · MODULE 08</div>
+  <h1>연결 실전 종합</h1>
+  <div class="subtitle">ASPN Group 전체 정리 · 결산 체크리스트 · 핵심 복습 · 빈출 오류 · 다음 단계</div>
+</header>
+
+<div class="progress-bar-wrap">
+  <div class="progress-bar-fill" id="progressBar" style="width:20%"></div>
+</div>
+
+<nav class="nav-wrap">
+  <ul class="nav-tabs" id="navTabs">
+    <li><a href="#" class="active" data-section="0">01 그룹 구조 정리</a></li>
+    <li><a href="#" data-section="1">02 결산 체크리스트</a></li>
+    <li><a href="#" data-section="2">03 핵심 개념 복습</a></li>
+    <li><a href="#" data-section="3">04 빈출 오류 TOP 10</a></li>
+    <li><a href="#" data-section="4">05 다음 학습 로드맵</a></li>
+  </ul>
+</nav>
+
+<main class="main">
+
+<!-- ══════════════════════════════════════════════
+     SECTION 1 — ASPN Group 최종 구조 정리
+══════════════════════════════════════════════ -->
+<section class="section active" id="sec-0">
+  <div class="section-eyebrow">Section 01</div>
+  <div class="section-title">ASPN Group 최종 구조 정리</div>
+  <div class="section-lead">모듈 1~7에서 다룬 ASPN Group의 모든 법인·이벤트·처리 방법을 한 장에 정리한다.</div>
+
+  <h2>그룹 구조</h2>
+
+  <div class="group-map">
+    <div class="gm-center">
+      <div class="gm-box">
+        ASPN Holdings
+        <div class="gm-sub">지배기업 / KRW / IFRS</div>
+      </div>
+    </div>
+    <div class="gm-row">
+      <div class="gm-item">
+        <div class="gm-pct">80%</div>
+        <div class="gm-line"></div>
+        <div class="gm-box subsidiary krw">
+          ASPN Korea
+          <div class="gm-sub">종속기업 / KRW / K-GAAP</div>
+        </div>
+        <div class="gm-method">전체 연결</div>
+      </div>
+      <div class="gm-item">
+        <div class="gm-pct">100%</div>
+        <div class="gm-line"></div>
+        <div class="gm-box subsidiary eur" style="border-color:var(--warn-border);">
+          ASPN Europe
+          <div class="gm-sub">종속기업 / EUR / IFRS</div>
+        </div>
+        <div class="gm-method">전체 연결 + 환산</div>
+      </div>
+      <div class="gm-item">
+        <div class="gm-pct">30%</div>
+        <div class="gm-line"></div>
+        <div class="gm-box associate">
+          ASPN Tech
+          <div class="gm-sub">관계기업 / KRW / IFRS</div>
+        </div>
+        <div class="gm-method">지분법</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>모듈별 다룬 이벤트 — 전체 정리</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>모듈</th><th>주제</th><th>ASPN Group 적용 이벤트</th><th>핵심 산출물</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-m">M1</span></td>
+          <td>연결 개념</td>
+          <td>그룹 구조 설정, 연결 범위 결정</td>
+          <td>Consolidation Group / Entity 등록</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-m">M2</span></td>
+          <td>연결 절차</td>
+          <td>전체 결산 프로세스 1회 수행 (수집→환산→조정→생성)</td>
+          <td>연결 B/S·I/S 초안</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-m">M3</span></td>
+          <td>외화환산</td>
+          <td>Europe EUR→KRW 환산, CTA 계산·누적·처분</td>
+          <td>CTA 9.5→17.25억 누적, 처분 시 P&L 재분류</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-m">M4</span></td>
+          <td>IC 제거</td>
+          <td>용역·재고·배당·유형자산·대여금 전 유형</td>
+          <td>IC 조정 순효과 △23.4억</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-m">M5</span></td>
+          <td>C/I 심화</td>
+          <td>Korea 단계취득·추가취득·일부처분·지배력 상실</td>
+          <td>영업권 60.4억, 기타자본잉여금 조정</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-m">M6</span></td>
+          <td>지분법</td>
+          <td>Tech 지분법이익·OCI·배당·내부거래·중단·손상</td>
+          <td>Tech 투자주식 장부가 92.7→70억(손상)</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-m">M7</span></td>
+          <td>재무제표 표시</td>
+          <td>연결 B/S·I/S·CF·자본변동표·주석 최종 표시</td>
+          <td>연결 B/S 651.8억 차대일치</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>GR 처리 도구 전체 맵</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>처리 항목</th><th>GR 도구</th><th>자동화 수준</th></tr></thead>
+      <tbody>
+        <tr><td>데이터 수집</td><td>Data Collection / Flexible Upload</td><td><span class="badge badge-ok">자동</span></td></tr>
+        <tr><td>회계기준 변환</td><td>Reclassification Task</td><td><span class="badge badge-ok">자동</span></td></tr>
+        <tr><td>외화환산</td><td>Currency Translation Task</td><td><span class="badge badge-ok">자동</span></td></tr>
+        <tr><td>IC 제거 (채권채무·수익비용)</td><td>IC Elimination Task</td><td><span class="badge badge-ok">자동</span></td></tr>
+        <tr><td>미실현이익 소거</td><td>Inventory / FA Elimination Task</td><td><span class="badge badge-ok">자동</span></td></tr>
+        <tr><td>투자·자본 상계 (C/I)</td><td>C/I Task</td><td><span class="badge badge-ok">자동</span></td></tr>
+        <tr><td>지분법</td><td>C/I Task 내 처리</td><td><span class="badge badge-ok">자동</span></td></tr>
+        <tr><td>관계기업 내부거래</td><td>Automatic Posting Rule</td><td><span class="badge badge-ok">자동</span></td></tr>
+        <tr><td>Carry Forward</td><td>Carry Forward Task</td><td><span class="badge badge-ok">자동</span></td></tr>
+        <tr><td>Equity Pickup</td><td>Equity Pickup App (별도)</td><td><span class="badge badge-ok">자동</span></td></tr>
+        <tr><td>지분법 중단·회복</td><td>—</td><td><span class="badge badge-warn">Manual</span></td></tr>
+        <tr><td>지분법 손상</td><td>—</td><td><span class="badge badge-warn">Manual</span></td></tr>
+        <tr><td>영업권 손상</td><td>—</td><td><span class="badge badge-warn">Manual</span></td></tr>
+        <tr><td>연결주석</td><td>ASPN GR 애드인</td><td><span class="badge badge-purple">애드인</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" disabled>← 이전</button>
+    <span class="progress-label">1 / 5</span>
+    <button class="btn btn-primary" onclick="goSection(1)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 2 — 연결 결산 체크리스트
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-1">
+  <div class="section-eyebrow">Section 02</div>
+  <div class="section-title">연결 결산 체크리스트</div>
+  <div class="section-lead">실무 결산 시 단계별로 확인해야 할 항목이다. 항목을 클릭하여 체크할 수 있다.</div>
+
+  <div class="checklist">
+    <div class="cl-phase">Phase 1 — 사전 준비</div>
+    <div class="cl-item" onclick="toggleCheck(this)">
+      <div class="cl-check"></div>
+      <div class="cl-text"><strong>연결 범위 확정</strong><span>종속·관계·공동기업 목록 검토, 지분율 변동 여부 확인</span></div>
+      <div class="cl-gr">M1</div>
+    </div>
+    <div class="cl-item" onclick="toggleCheck(this)">
+      <div class="cl-check"></div>
+      <div class="cl-text"><strong>결산 캘린더 배포</strong><span>법인별 개별 마감 기한 및 GR 데이터 제출 기한 확정</span></div>
+      <div class="cl-gr">M2</div>
+    </div>
+    <div class="cl-item" onclick="toggleCheck(this)">
+      <div class="cl-check"></div>
+      <div class="cl-text"><strong>환율 테이블 업데이트</strong><span>기말환율·평균환율·역사적환율 GR 입력 완료</span></div>
+      <div class="cl-gr">M3</div>
+    </div>
+
+    <div class="cl-phase">Phase 2 — 데이터 수집</div>
+    <div class="cl-item" onclick="toggleCheck(this)">
+      <div class="cl-check"></div>
+      <div class="cl-text"><strong>개별 법인 마감 완료 확인</strong><span>Korea·Europe·Tech 개별 결산 완료 여부 확인</span></div>
+      <div class="cl-gr">M2</div>
+    </div>
+    <div class="cl-item" onclick="toggleCheck(this)">
+      <div class="cl-check"></div>
+      <div class="cl-text"><strong>Data Monitor 검증</strong><span>법인별 수집 상태 확인, B/S 차대차변 일치 여부, FS Item 누락 없음</span></div>
+      <div class="cl-gr">M2</div>
+    </div>
+    <div class="cl-item" onclick="toggleCheck(this)">
+      <div class="cl-check"></div>
+      <div class="cl-text"><strong>Reclassification 실행 (Korea)</strong><span>K-GAAP → IFRS 변환 룰 적용, 변환 후 B/S 일치 확인</span></div>
+      <div class="cl-gr">M2</div>
+    </div>
+
+    <div class="cl-phase">Phase 3 — 전처리</div>
+    <div class="cl-item" onclick="toggleCheck(this)">
+      <div class="cl-check"></div>
+      <div class="cl-text"><strong>Currency Translation 실행 (Europe)</strong><span>EUR→KRW 환산, CTA 발생 금액 전기 대비 증감 검토</span></div>
+      <div class="cl-gr">M3</div>
+    </div>
+    <div class="cl-item" onclick="toggleCheck(this)">
+      <div class="cl-check"></div>
+      <div class="cl-text"><strong>Carry Forward 실행</strong><span>전기 연결조정 이월, 미실현이익 역분개 반영 확인</span></div>
+      <div class="cl-gr">M2</div>
+    </div>
+
+    <div class="cl-phase">Phase 4 — 연결조정</div>
+    <div class="cl-item" onclick="toggleCheck(this)">
+      <div class="cl-check"></div>
+      <div class="cl-text"><strong>C/I Task 실행</strong><span>투자·자본 상계, 영업권, NCI, 배당환원 처리 확인</span></div>
+      <div class="cl-gr">M5</div>
+    </div>
+    <div class="cl-item" onclick="toggleCheck(this)">
+      <div class="cl-check"></div>
+      <div class="cl-text"><strong>IC Elimination 실행</strong><span>채권채무·수익비용·미실현이익 상계, ICMR 불일치 0 확인</span></div>
+      <div class="cl-gr">M4</div>
+    </div>
+    <div class="cl-item" onclick="toggleCheck(this)">
+      <div class="cl-check"></div>
+      <div class="cl-text"><strong>지분법 조정 확인 (Tech)</strong><span>지분법이익·OCI·배당 반영, 중단·손상 여부 Manual 처리</span></div>
+      <div class="cl-gr">M6</div>
+    </div>
+    <div class="cl-item" onclick="toggleCheck(this)">
+      <div class="cl-check"></div>
+      <div class="cl-text"><strong>영업권 손상 검토</strong><span>CGU 회수가능액 추정, 손상차손 발생 시 Manual Adjustment 입력</span></div>
+      <div class="cl-gr">M5</div>
+    </div>
+
+    <div class="cl-phase">Phase 5 — 검증 및 보고</div>
+    <div class="cl-item" onclick="toggleCheck(this)">
+      <div class="cl-check"></div>
+      <div class="cl-text"><strong>연결 B/S 차대일치 확인</strong><span>자산 합계 = 부채·자본 합계 검증</span></div>
+      <div class="cl-gr">M7</div>
+    </div>
+    <div class="cl-item" onclick="toggleCheck(this)">
+      <div class="cl-check"></div>
+      <div class="cl-text"><strong>NCI 잔액 검증</strong><span>Korea 순자산 × 20% = NCI 장부가 일치 확인</span></div>
+      <div class="cl-gr">M5</div>
+    </div>
+    <div class="cl-item" onclick="toggleCheck(this)">
+      <div class="cl-check"></div>
+      <div class="cl-text"><strong>연결 보고서 생성</strong><span>GR Reporting에서 B/S·I/S·CF·자본변동표 출력 및 검토</span></div>
+      <div class="cl-gr">M7</div>
+    </div>
+    <div class="cl-item" onclick="toggleCheck(this)">
+      <div class="cl-check"></div>
+      <div class="cl-text"><strong>연결주석 작성 (ASPN 애드인)</strong><span>개별주석 수집→환산합산→GR 원장 정합성 비교→리포팅</span></div>
+      <div class="cl-gr">M7</div>
+    </div>
+  </div>
+
+  <div id="checkProgress" class="callout" style="margin-top:16px;">
+    <div class="callout-label">진행 현황</div>
+    <span id="checkCount">0 / 16 완료</span>
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(0)">← 이전</button>
+    <span class="progress-label">2 / 5</span>
+    <button class="btn btn-primary" onclick="goSection(2)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 3 — 핵심 개념 복습
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-2">
+  <div class="section-eyebrow">Section 03</div>
+  <div class="section-title">핵심 개념 복습</div>
+  <div class="section-lead">모듈별 핵심 판단 포인트를 한 장에 정리한다. 실무에서 가장 자주 헷갈리는 지점들이다.</div>
+
+  <div class="recap-grid">
+    <div class="recap-card">
+      <div class="rc-header">외화환산 <span class="rc-module">M3</span></div>
+      <div class="rc-body">
+        <div class="rc-point"><div class="rc-dot"></div><span>자산·부채 → <strong>기말환율</strong> / 자본금 → <strong>역사적환율</strong> / 손익 → <strong>평균환율</strong></span></div>
+        <div class="rc-point"><div class="rc-dot"></div><span>CTA는 손익이 아닌 <strong>OCI</strong>. 처분 시에만 P&L 재분류.</span></div>
+        <div class="rc-point"><div class="rc-dot"></div><span>지배력 유지 부분처분 시 CTA 재분류 <strong>없음</strong>.</span></div>
+      </div>
+    </div>
+    <div class="recap-card">
+      <div class="rc-header">내부거래 제거 <span class="rc-module">M4</span></div>
+      <div class="rc-body">
+        <div class="rc-point"><div class="rc-dot"></div><span>수익·비용 상계 → 연결 <strong>손익 불변</strong>. 채권·채무도 함께 상계.</span></div>
+        <div class="rc-point"><div class="rc-dot"></div><span>미실현이익 소거 → 연결 <strong>손익 감소</strong>. Carry Forward로 분할 실현.</span></div>
+        <div class="rc-point"><div class="rc-dot"></div><span>배당환원 → <strong>이중 계상 제거</strong>. 미실현과 성격 다름.</span></div>
+      </div>
+    </div>
+    <div class="recap-card">
+      <div class="rc-header">자본연결 C/I <span class="rc-module">M5</span></div>
+      <div class="rc-body">
+        <div class="rc-point"><div class="rc-dot"></div><span>GR default → <strong>부분영업권</strong>. 완전영업권은 외부 평가 필요.</span></div>
+        <div class="rc-point"><div class="rc-dot"></div><span>지배력 유지 변동 → <strong>자본 거래</strong>. 투자차액 → 기타자본잉여금.</span></div>
+        <div class="rc-point"><div class="rc-dot"></div><span>지배력 상실 → <strong>사업 처분</strong>. 잔여 지분 재측정 + CTA 재분류.</span></div>
+      </div>
+    </div>
+    <div class="recap-card">
+      <div class="rc-header">지분법 <span class="rc-module">M6</span></div>
+      <div class="rc-body">
+        <div class="rc-point"><div class="rc-dot"></div><span>순이익 지분 → <strong>P&L</strong> / OCI 지분 → <strong>OCI</strong> / 배당 → <strong>장부가 감소</strong>.</span></div>
+        <div class="rc-point"><div class="rc-dot"></div><span>내부거래 제거는 <strong>지분율만큼만</strong>. 종속기업 100% 제거와 다름.</span></div>
+        <div class="rc-point"><div class="rc-dot"></div><span>투자주식 손상 → <strong>환입 가능</strong>. 영업권 손상 환입 불가와 구분.</span></div>
+      </div>
+    </div>
+    <div class="recap-card">
+      <div class="rc-header">연결 표시 <span class="rc-module">M7</span></div>
+      <div class="rc-body">
+        <div class="rc-point"><div class="rc-dot"></div><span>NCI → 자본 내 <strong>별도 구분</strong> 표시. 부채 아님.</span></div>
+        <div class="rc-point"><div class="rc-dot"></div><span>영업권 → <strong>비유동자산</strong>. 상각 없음. 매년 손상 검토.</span></div>
+        <div class="rc-point"><div class="rc-dot"></div><span>CTA → <strong>OCI</strong> 누적. 재분류 가능 항목.</span></div>
+      </div>
+    </div>
+    <div class="recap-card">
+      <div class="rc-header">GR 핵심 구분 <span class="rc-module">전체</span></div>
+      <div class="rc-body">
+        <div class="rc-point"><div class="rc-dot"></div><span>Reclassification → <strong>회계기준 변환</strong> (Korea만). 환산과 혼동 금지.</span></div>
+        <div class="rc-point"><div class="rc-dot"></div><span>EPU → GR Task 아님. <strong>Equity Pickup App</strong> 별도.</span></div>
+        <div class="rc-point"><div class="rc-dot"></div><span>중단·회복·손상 → GR 표준기능 없음. <strong>Manual Adjustment</strong>.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(1)">← 이전</button>
+    <span class="progress-label">3 / 5</span>
+    <button class="btn btn-primary" onclick="goSection(3)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 4 — 빈출 오류 TOP 10
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-3">
+  <div class="section-eyebrow">Section 04</div>
+  <div class="section-title">빈출 오류 TOP 10</div>
+  <div class="section-lead">실무에서 자주 발생하는 연결 결산 오류다. 각 항목을 클릭하면 오류 원인과 올바른 처리를 확인할 수 있다.</div>
+
+  <div class="error-list">
+
+    <div class="error-item" onclick="toggleError(this)">
+      <div class="ei-header">
+        <div class="ei-num">01</div>
+        <div class="ei-title"><strong>기능통화 잘못 설정</strong><span>GR Entity 통화를 현지 GAAP 통화가 아닌 모회사 통화로 설정</span></div>
+        <div class="ei-tag"><span class="badge badge-ng">M3</span></div>
+        <div class="ei-arrow">▶</div>
+      </div>
+      <div class="error-body">
+        <div class="eb-wrong"><div class="eb-label wrong">오류</div>모회사가 KRW를 쓰니까 해외 법인도 KRW로 설정 → CTA 미발생, 환산 오류</div>
+        <div class="eb-correct"><div class="eb-label correct">정정</div>기능통화는 해당 법인의 주된 영업 환경 통화. Europe은 EUR. GR 최초 설정 후 변경 불가이므로 프로젝트 초기 반드시 검토.</div>
+      </div>
+    </div>
+
+    <div class="error-item" onclick="toggleError(this)">
+      <div class="ei-header">
+        <div class="ei-num">02</div>
+        <div class="ei-title"><strong>자본금에 기말환율 적용</strong><span>자본금을 역사적환율이 아닌 기말환율로 환산</span></div>
+        <div class="ei-tag"><span class="badge badge-ng">M3</span></div>
+        <div class="ei-arrow">▶</div>
+      </div>
+      <div class="error-body">
+        <div class="eb-wrong"><div class="eb-label wrong">오류</div>자산·부채처럼 자본금도 기말환율 적용 → CTA 금액 왜곡, B/S 차대 불일치</div>
+        <div class="eb-correct"><div class="eb-label correct">정정</div>자본금·자본잉여금은 역사적환율(출자 시점 환율) 고정. CTA는 역사적환율과 기말환율 차이에서 발생하는 대차차액이므로 이 원칙이 무너지면 CTA 자체가 의미를 잃는다.</div>
+      </div>
+    </div>
+
+    <div class="error-item" onclick="toggleError(this)">
+      <div class="ei-header">
+        <div class="ei-num">03</div>
+        <div class="ei-title"><strong>채권·채무 상계 누락</strong><span>수익·비용만 상계하고 B/S 채권·채무 잔액 미상계</span></div>
+        <div class="ei-tag"><span class="badge badge-ng">M4</span></div>
+        <div class="ei-arrow">▶</div>
+      </div>
+      <div class="error-body">
+        <div class="eb-wrong"><div class="eb-label wrong">오류</div>용역 매출 상계는 했으나 미결 매출채권·매입채무를 상계하지 않음 → ICMR 잔액 불일치 발생</div>
+        <div class="eb-correct"><div class="eb-label correct">정정</div>IC 거래의 I/S 상계(수익·비용)와 B/S 상계(채권·채무)는 반드시 함께 처리. 미수이자·미지급이자도 포함.</div>
+      </div>
+    </div>
+
+    <div class="error-item" onclick="toggleError(this)">
+      <div class="ei-header">
+        <div class="ei-num">04</div>
+        <div class="ei-title"><strong>배당을 미실현이익과 동일하게 처리</strong><span>배당환원을 재고 미실현이익 소거와 동일한 성격으로 혼동</span></div>
+        <div class="ei-tag"><span class="badge badge-ng">M4</span></div>
+        <div class="ei-arrow">▶</div>
+      </div>
+      <div class="error-body">
+        <div class="eb-wrong"><div class="eb-label wrong">오류</div>배당환원을 자산 감소(재고 조정)로 처리 → B/S 왜곡</div>
+        <div class="eb-correct"><div class="eb-label correct">정정</div>배당환원은 이익잉여금의 이중 계상 제거. 자회사 이잉을 지주사가 수익으로 재인식한 것을 제거하는 구조. 자산 조정이 아닌 수익 제거.</div>
+      </div>
+    </div>
+
+    <div class="error-item" onclick="toggleError(this)">
+      <div class="ei-header">
+        <div class="ei-num">05</div>
+        <div class="ei-title"><strong>유형자산 IC에서 감가상각 조정 누락</strong><span>미실현이익만 소거하고 초과 감가상각 환입을 하지 않음</span></div>
+        <div class="ei-tag"><span class="badge badge-ng">M4</span></div>
+        <div class="ei-arrow">▶</div>
+      </div>
+      <div class="error-body">
+        <div class="eb-wrong"><div class="eb-label wrong">오류</div>취득 연도에 미실현이익 소거만 하고 매년 감가상각 환입 분개를 누락 → 매년 그룹 이익 과소 계상</div>
+        <div class="eb-correct"><div class="eb-label correct">정정</div>유형자산 IC는 미실현이익 소거 + 매년 감가상각 환입(미실현이익 ÷ 내용연수)이 세트. GR FA Elimination Task에서 자동 처리되나 내용연수 설정 오류 시 환입 금액이 틀려진다.</div>
+      </div>
+    </div>
+
+    <div class="error-item" onclick="toggleError(this)">
+      <div class="ei-header">
+        <div class="ei-num">06</div>
+        <div class="ei-title"><strong>지배력 유지 처분을 사업 처분으로 처리</strong><span>80%→60% 처분 시 처분손익 인식 오류</span></div>
+        <div class="ei-tag"><span class="badge badge-ng">M5</span></div>
+        <div class="ei-arrow">▶</div>
+      </div>
+      <div class="error-body">
+        <div class="eb-wrong"><div class="eb-label wrong">오류</div>지배력이 유지되는 부분 처분에서 처분손익을 P&L 인식 → 이익 과대 계상</div>
+        <div class="eb-correct"><div class="eb-label correct">정정</div>지배력 유지 상태의 처분은 자본 거래. 대가와 NCI 장부가의 차이는 기타자본잉여금 조정. P&L 없음. CTA 재분류도 없음.</div>
+      </div>
+    </div>
+
+    <div class="error-item" onclick="toggleError(this)">
+      <div class="ei-header">
+        <div class="ei-num">07</div>
+        <div class="ei-title"><strong>영업권 정기 상각</strong><span>IFRS 하에서 영업권을 매년 상각</span></div>
+        <div class="ei-tag"><span class="badge badge-ng">M5</span></div>
+        <div class="ei-arrow">▶</div>
+      </div>
+      <div class="error-body">
+        <div class="eb-wrong"><div class="eb-label wrong">오류</div>K-GAAP 관행(20년 상각)을 연결 IFRS에도 적용 → 영업권 과소 계상, 이익 과소 계상</div>
+        <div class="eb-correct"><div class="eb-label correct">정정</div>IFRS 3에서 영업권은 상각 금지. 매년 손상 검토(IAS 36)로 대체. K-GAAP과의 가장 큰 차이 중 하나이므로 전환 프로젝트 시 반드시 체크.</div>
+      </div>
+    </div>
+
+    <div class="error-item" onclick="toggleError(this)">
+      <div class="ei-header">
+        <div class="ei-num">08</div>
+        <div class="ei-title"><strong>지분법 배당을 수익으로 인식</strong><span>관계기업 배당 수취를 지분법이익과 별도로 수익 계상</span></div>
+        <div class="ei-tag"><span class="badge badge-ng">M6</span></div>
+        <div class="ei-arrow">▶</div>
+      </div>
+      <div class="error-body">
+        <div class="eb-wrong"><div class="eb-label wrong">오류</div>Tech 배당 수취를 배당수익(P&L)으로 인식 → 지분법이익과 이중 계상</div>
+        <div class="eb-correct"><div class="eb-label correct">정정</div>지분법 하에서 배당은 이미 인식된 이익의 회수. 투자주식 장부가 감소로 처리. 배당수익 인식 금지.</div>
+      </div>
+    </div>
+
+    <div class="error-item" onclick="toggleError(this)">
+      <div class="ei-header">
+        <div class="ei-num">09</div>
+        <div class="ei-title"><strong>관계기업 IC를 100% 제거</strong><span>종속기업과 동일하게 미실현이익 전액 제거</span></div>
+        <div class="ei-tag"><span class="badge badge-ng">M6</span></div>
+        <div class="ei-arrow">▶</div>
+      </div>
+      <div class="error-body">
+        <div class="eb-wrong"><div class="eb-label wrong">오류</div>Tech와의 내부거래 미실현이익을 전액(100%) 제거 → 지분법이익 과소 계상</div>
+        <div class="eb-correct"><div class="eb-label correct">정정</div>관계기업 내부거래는 지분율(30%)만큼만 제거. 나머지 70%는 외부 귀속분으로 제거 대상 아님.</div>
+      </div>
+    </div>
+
+    <div class="error-item" onclick="toggleError(this)">
+      <div class="ei-header">
+        <div class="ei-num">10</div>
+        <div class="ei-title"><strong>지분법 투자주식 손상차손 환입 불가로 오인</strong><span>영업권 손상 규정을 지분법 투자주식에 그대로 적용</span></div>
+        <div class="ei-tag"><span class="badge badge-ng">M6</span></div>
+        <div class="ei-arrow">▶</div>
+      </div>
+      <div class="error-body">
+        <div class="eb-wrong"><div class="eb-label wrong">오류</div>Tech 투자주식 손상차손 인식 후, 회수가능액 회복 시에도 환입하지 않음 → 투자주식 과소 계상 지속</div>
+        <div class="eb-correct"><div class="eb-label correct">정정</div>영업권 손상(IAS 36 §124)은 환입 불가. 그러나 지분법 투자주식 손상(IAS 28 §40)은 IAS 36 §117에 따라 환입 가능. 두 항목을 혼동하지 말 것.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(2)">← 이전</button>
+    <span class="progress-label">4 / 5</span>
+    <button class="btn btn-primary" onclick="goSection(4)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 5 — 다음 학습 로드맵
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-4">
+  <div class="section-eyebrow">Section 05</div>
+  <div class="section-title">다음 학습 로드맵</div>
+  <div class="section-lead">입문 시리즈를 완료했다. 이제 어디로 가야 하는가.</div>
+
+  <h2>현재 위치 확인</h2>
+  <p>이 시리즈를 마친 수강자는 다음을 할 수 있어야 한다.</p>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>역량</th><th>내용</th></tr></thead>
+      <tbody>
+        <tr><td>✓</td><td>연결 범위 결정 기준(IAS 10·IAS 28) 설명 가능</td></tr>
+        <tr><td>✓</td><td>외화환산 환율 유형별 적용 원칙과 CTA 방향성 판단 가능</td></tr>
+        <tr><td>✓</td><td>IC 거래 4분류(A·B-1·B-2·C) 구분 및 제거 방향 판단 가능</td></tr>
+        <tr><td>✓</td><td>C/I 취득·변동·처분 케이스별 회계처리 방향 판단 가능</td></tr>
+        <tr><td>✓</td><td>지분법과 EPU 개념 구분, GR 처리 도구 차이 설명 가능</td></tr>
+        <tr><td>✓</td><td>GR Task 실행 순서와 Manual Adjustment 필요 항목 구분 가능</td></tr>
+        <tr><td>✓</td><td>빈출 오류 TOP 10 인식 및 진단 가능</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>심화 학습 방향</h2>
+
+  <div class="roadmap">
+    <div class="rm-card highlight">
+      <div class="rm-level">회계기준 심화</div>
+      <div class="rm-title">IFRS 18 심화</div>
+      <div class="rm-item">손익계산서 3범주 분류</div>
+      <div class="rm-item">경영성과측정치 (MPM) 공시</div>
+      <div class="rm-item">GR FS Item 재설계 영향</div>
+      <div class="rm-item">2027년 의무 적용 준비</div>
+    </div>
+    <div class="rm-card">
+      <div class="rm-level">시스템 심화</div>
+      <div class="rm-title">GR 구현 심화</div>
+      <div class="rm-item">FS Item Hierarchy 설계</div>
+      <div class="rm-item">Translation Method 설정</div>
+      <div class="rm-item">Automatic Posting Rule 구성</div>
+      <div class="rm-item">ICMR 운영 실무</div>
+    </div>
+    <div class="rm-card">
+      <div class="rm-level">연계 시스템</div>
+      <div class="rm-title">SAC-P 연계</div>
+      <div class="rm-item">GR 연결 실적 → SAC-P 예산 연계</div>
+      <div class="rm-item">연결 기준 계획 수립</div>
+      <div class="rm-item">Write-Back 구조 이해</div>
+      <div class="rm-item">ACDOCP 연계 설계</div>
+    </div>
+  </div>
+
+  <div class="complete-banner">
+    <div class="cb-title">연결회계 입문 시리즈 완료</div>
+    <div class="cb-sub">SAP Group Reporting · 8개 모듈 · ASPN Group 시나리오 완결</div>
+    <div class="module-pills">
+      <div class="module-pill done">M1 개념·목적</div>
+      <div class="module-pill done">M2 절차 구조</div>
+      <div class="module-pill done">M3 외화환산</div>
+      <div class="module-pill done">M4 IC 제거</div>
+      <div class="module-pill done">M5 자본연결</div>
+      <div class="module-pill done">M6 지분법</div>
+      <div class="module-pill done">M7 FS 표시</div>
+      <div class="module-pill done">M8 실전 종합</div>
+    </div>
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(3)">← 이전</button>
+    <span class="progress-label">5 / 5</span>
+    <button class="btn btn-primary" disabled>시리즈 완료 ✓</button>
+  </div>
+</section>
+
+</main>
+
+<script>
+  const TOTAL = 5;
+  function goSection(idx) {
+    document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i===idx));
+    document.querySelectorAll('.nav-tabs a').forEach((a,i) => a.classList.toggle('active', i===idx));
+    document.getElementById('progressBar').style.width = ((idx+1)/TOTAL*100).toFixed(2)+'%';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  document.querySelectorAll('.nav-tabs a').forEach((a,i) => {
+    a.addEventListener('click', e => { e.preventDefault(); goSection(i); });
+  });
+
+  function toggleCheck(item) {
+    item.classList.toggle('checked');
+    const check = item.querySelector('.cl-check');
+    check.textContent = item.classList.contains('checked') ? '✓' : '';
+    updateCheckCount();
+  }
+
+  function updateCheckCount() {
+    const total = document.querySelectorAll('.cl-item').length;
+    const done = document.querySelectorAll('.cl-item.checked').length;
+    document.getElementById('checkCount').textContent = `${done} / ${total} 완료`;
+    const callout = document.getElementById('checkProgress');
+    if (done === total) {
+      callout.classList.remove('warn');
+      callout.classList.add('correct');
+    } else if (done > total / 2) {
+      callout.classList.add('warn');
+    }
+  }
+
+  function toggleError(item) {
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.error-item').forEach(e => {
+      e.classList.remove('open');
+      e.querySelector('.error-body').classList.remove('open');
+    });
+    if (!wasOpen) {
+      item.classList.add('open');
+      item.querySelector('.error-body').classList.add('open');
+    }
+  }
+</script>
+</body>
+</html>
