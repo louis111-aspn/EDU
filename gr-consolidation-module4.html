@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모듈 4 — 내부거래 제거 심화 | SAP Group Reporting</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Noto Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#003366; --navy-light:#e8eef5; --navy-mid:#ccd9e8;
+    --bg:#f0f3f8; --white:#ffffff; --text:#1a1a2e; --text-muted:#5a6a7a;
+    --border:#d0dae6;
+    --warn-bg:#fff8e6; --warn-border:#e6a800;
+    --correct-bg:#e8f5ee; --correct-border:#2a7a4f;
+    --wrong-bg:#fce8e8; --wrong-border:#c0392b;
+    --pad-x:48px; --radius:4px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Noto Sans KR',sans-serif;font-size:15px;background:var(--bg);color:var(--text);line-height:1.75;}
+
+  .page-header{background:var(--navy);color:var(--white);padding:40px var(--pad-x) 36px;}
+  .page-header .series-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:13px;color:var(--navy-mid);letter-spacing:.08em;margin-bottom:12px;}
+  .page-header h1{font-family:'DM Serif Display',serif;font-size:36px;font-weight:400;line-height:1.25;margin-bottom:10px;}
+  .page-header .subtitle{font-size:15px;color:var(--navy-mid);font-weight:300;}
+
+  .scenario-bar{background:#002244;border-top:1px solid #004488;padding:10px var(--pad-x);display:flex;gap:24px;flex-wrap:wrap;}
+  .sc-item{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;color:var(--navy-mid);}
+  .sc-item span{color:#7fb3e0;font-weight:500;}
+
+  .progress-bar-wrap{background:var(--border);height:3px;}
+  .progress-bar-fill{background:var(--navy);height:3px;transition:width .3s ease;}
+
+  .nav-wrap{position:sticky;top:0;z-index:100;background:var(--white);border-bottom:2px solid var(--navy);overflow-x:auto;}
+  .nav-tabs{display:flex;list-style:none;padding:0 var(--pad-x);white-space:nowrap;}
+  .nav-tabs li a{display:block;padding:14px 16px;font-size:12px;font-family:'JetBrains Mono','Noto Sans KR',monospace;color:var(--text-muted);text-decoration:none;border-bottom:3px solid transparent;margin-bottom:-2px;transition:color .2s,border-color .2s;}
+  .nav-tabs li a:hover,.nav-tabs li a.active{color:var(--navy);border-bottom-color:var(--navy);font-weight:500;}
+
+  .main{max-width:980px;margin:0 auto;padding:48px var(--pad-x) 80px;}
+
+  .section{display:none;animation:fadeIn .3s ease;}
+  .section.active{display:block;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+  .section-eyebrow{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;color:var(--navy);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
+  .section-title{font-family:'DM Serif Display',serif;font-size:30px;font-weight:400;color:var(--navy);margin-bottom:6px;line-height:1.3;}
+  .section-lead{font-size:15px;color:var(--text-muted);margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid var(--border);}
+  h2{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;color:var(--navy);margin:36px 0 14px;}
+  h3{font-size:16px;font-weight:700;color:var(--text);margin:28px 0 10px;}
+  p{margin-bottom:14px;}
+
+  .card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:14px;}
+  .card-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+  .card-grid.three{grid-template-columns:repeat(3,1fr);}
+  @media(max-width:680px){.card-grid,.card-grid.three{grid-template-columns:1fr;}}
+  .card .card-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:11px;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+  .card .card-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px;}
+  .card p{font-size:13px;color:var(--text-muted);margin-bottom:0;}
+
+  .callout{border-left:4px solid var(--navy);background:var(--navy-light);padding:14px 18px;border-radius:0 var(--radius) var(--radius) 0;margin:18px 0;font-size:14px;}
+  .callout.warn{border-left-color:var(--warn-border);background:var(--warn-bg);}
+  .callout.correct{border-left-color:var(--correct-border);background:var(--correct-bg);}
+  .callout.wrong{border-left-color:var(--wrong-border);background:var(--wrong-bg);}
+  .callout .callout-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--navy);margin-bottom:5px;}
+  .callout.warn .callout-label{color:var(--warn-border);}
+  .callout.correct .callout-label{color:var(--correct-border);}
+  .callout.wrong .callout-label{color:var(--wrong-border);}
+
+  .tbl-wrap{overflow-x:auto;margin:18px 0;}
+  table{width:100%;border-collapse:collapse;font-size:14px;}
+  th{background:var(--navy);color:var(--white);padding:9px 14px;text-align:left;font-weight:500;font-size:12px;font-family:'JetBrains Mono','Noto Sans KR',monospace;}
+  td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+  tr:nth-child(even) td{background:var(--navy-light);}
+  tr:last-child td{border-bottom:none;}
+  td strong{color:var(--navy);}
+  .num{font-family:'JetBrains Mono','Noto Sans KR',monospace;text-align:right;}
+  .num-neg{color:var(--wrong-border);}
+  .num-pos{color:var(--correct-border);}
+  .row-total td{font-weight:700;border-top:2px solid var(--navy)!important;background:var(--navy-light)!important;}
+  .row-sub td{background:#f7f9fc!important;font-size:13px;color:var(--text-muted);}
+  .row-header td{background:var(--navy-light)!important;font-weight:700;font-size:13px;color:var(--navy);}
+
+  .badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:500;font-family:'JetBrains Mono','Noto Sans KR',monospace;white-space:nowrap;}
+  .badge-h{background:var(--navy);color:white;}
+  .badge-k{background:#1a5276;color:white;}
+  .badge-e{background:#154360;color:white;}
+  .badge-t{background:var(--navy-light);color:var(--navy);border:1px solid var(--navy-mid);}
+  .badge-inv{background:var(--warn-bg);color:#7a5c00;border:1px solid var(--warn-border);}
+  .badge-fix{background:#f0e8ff;color:#4a1a7a;border:1px solid #c8a8f8;}
+  .badge-fin{background:#e8f5ee;color:#1a5c2a;border:1px solid var(--correct-border);}
+  .badge-ok{background:var(--correct-bg);color:var(--correct-border);border:1px solid var(--correct-border);}
+  .badge-ng{background:var(--wrong-bg);color:var(--wrong-border);border:1px solid var(--wrong-border);}
+
+  .journal{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:16px 0;}
+  .journal-header{background:var(--navy-light);padding:8px 16px;font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;color:var(--navy);font-weight:500;display:flex;justify-content:space-between;align-items:center;}
+  .journal-header .j-tag{font-size:10px;background:var(--navy);color:white;padding:2px 8px;border-radius:10px;}
+  .journal table{margin:0;}
+  .journal th{background:#f0f4f8;color:var(--text-muted);font-size:11px;}
+  .journal td{font-size:13px;font-family:'JetBrains Mono','Noto Sans KR',monospace;}
+  .j-dr{padding-left:14px;}
+  .j-cr{padding-left:36px;color:var(--text-muted);}
+  .j-amount-dr{color:var(--navy);font-weight:500;}
+  .j-amount-cr{color:var(--text-muted);}
+
+  /* IC TYPE MATRIX */
+  .ic-matrix{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:18px 0;}
+  .ic-cell{background:var(--white);padding:16px 18px;}
+  .ic-cell.header{background:var(--navy);color:white;font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;font-weight:500;text-align:center;padding:12px;}
+  .ic-cell.type1{border-top:3px solid var(--correct-border);}
+  .ic-cell.type2{border-top:3px solid var(--warn-border);}
+  .ic-cell.type3{border-top:3px solid var(--navy);}
+  .ic-type-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+  .type1 .ic-type-label{color:var(--correct-border);}
+  .type2 .ic-type-label{color:var(--warn-border);}
+  .type3 .ic-type-label{color:var(--navy);}
+  .ic-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px;}
+  .ic-items{font-size:13px;color:var(--text-muted);line-height:1.9;}
+  @media(max-width:680px){.ic-matrix{grid-template-columns:1fr;}}
+
+  /* ICMR STATUS */
+  .icmr-row{display:grid;grid-template-columns:1fr auto 1fr auto 80px;gap:8px;align-items:center;padding:10px 14px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;font-size:13px;}
+  .icmr-entity{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;}
+  .icmr-amount{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-weight:500;text-align:right;}
+  .icmr-sep{color:var(--text-muted);font-size:18px;text-align:center;}
+  .icmr-status{text-align:center;}
+  @media(max-width:600px){.icmr-row{grid-template-columns:1fr 1fr;gap:6px;}}
+
+  /* FA TIMELINE */
+  .fa-years{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0;}
+  .fa-year{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+  .fa-year .fy-header{background:var(--navy);color:white;padding:9px 14px;font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;text-align:center;}
+  .fa-year .fy-row{display:flex;justify-content:space-between;padding:8px 14px;border-bottom:1px solid var(--border);font-size:13px;}
+  .fa-year .fy-row:last-child{border-bottom:none;font-weight:700;color:var(--navy);}
+  .fy-val{font-family:'JetBrains Mono','Noto Sans KR',monospace;}
+  @media(max-width:600px){.fa-years{grid-template-columns:1fr;}}
+
+  /* RUNNING BOX */
+  .running-box{background:var(--white);border:2px solid var(--navy);border-radius:var(--radius);padding:18px 22px;margin:20px 0;}
+  .running-box .rb-title{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:11px;color:var(--navy);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;}
+  .rb-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;}
+  .rb-row:last-child{border-bottom:none;font-weight:700;color:var(--navy);}
+  .rb-val{font-family:'JetBrains Mono','Noto Sans KR',monospace;}
+  .rb-neg{color:var(--wrong-border);}
+  .rb-pos{color:var(--correct-border);}
+
+  .drill{margin:14px 0;}
+  .drill-trigger{display:flex;align-items:center;gap:10px;cursor:pointer;padding:11px 16px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);font-size:14px;font-weight:500;color:var(--navy);user-select:none;transition:background .15s;}
+  .drill-trigger:hover{background:var(--navy-light);}
+  .drill-arrow{font-size:12px;transition:transform .2s;}
+  .drill-trigger.open .drill-arrow{transform:rotate(90deg);}
+  .drill-body{display:none;border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:16px 18px;background:var(--white);font-size:14px;}
+  .drill-body.open{display:block;}
+
+  .quiz-block{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:22px 26px;margin:18px 0;}
+  .quiz-q{font-size:15px;font-weight:500;margin-bottom:14px;}
+  .quiz-options{display:flex;flex-direction:column;gap:8px;}
+  .quiz-option{display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+  .quiz-option:hover{border-color:var(--navy);background:var(--navy-light);}
+  .quiz-option.correct-ans{border-color:var(--correct-border);background:var(--correct-bg);}
+  .quiz-option.wrong-ans{border-color:var(--wrong-border);background:var(--wrong-bg);}
+  .quiz-marker{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+  .quiz-option.correct-ans .quiz-marker{border-color:var(--correct-border);background:var(--correct-border);color:white;}
+  .quiz-option.wrong-ans .quiz-marker{border-color:var(--wrong-border);background:var(--wrong-border);color:white;}
+  .quiz-feedback{margin-top:12px;padding:11px 14px;border-radius:var(--radius);font-size:14px;display:none;}
+  .quiz-feedback.show{display:block;}
+  .quiz-feedback.ok{background:var(--correct-bg);border-left:4px solid var(--correct-border);}
+  .quiz-feedback.ng{background:var(--wrong-bg);border-left:4px solid var(--wrong-border);}
+
+  .section-nav{display:flex;justify-content:space-between;align-items:center;margin-top:48px;padding-top:24px;border-top:1px solid var(--border);}
+  .btn{padding:10px 22px;border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;border:2px solid var(--navy);transition:background .15s,color .15s;font-family:'Noto Sans KR',sans-serif;}
+  .btn-primary{background:var(--navy);color:var(--white);}
+  .btn-primary:hover{background:#002244;}
+  .btn-ghost{background:transparent;color:var(--navy);}
+  .btn-ghost:hover{background:var(--navy-light);}
+  .btn:disabled{opacity:.3;cursor:default;}
+  .progress-label{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:12px;color:var(--text-muted);}
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="series-label">SAP GROUP REPORTING · 연결회계 입문 시리즈 · MODULE 04</div>
+  <h1>내부거래 제거 심화</h1>
+  <div class="subtitle">유형자산·금융·IC 불일치까지 — 내부거래 제거 전 유형 완결</div>
+</header>
+
+<div class="scenario-bar">
+  <div class="sc-item">그룹 <span>ASPN Holdings / Korea / Europe / Tech</span></div>
+  <div class="sc-item">신규 IC <span>Korea→Europe 유형자산 매각 / Holdings↔Korea 대여금</span></div>
+  <div class="sc-item">법인세율 <span>Korea 25% / Europe 20%</span></div>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-bar-fill" id="progressBar" style="width:16.67%"></div>
+</div>
+
+<nav class="nav-wrap">
+  <ul class="nav-tabs" id="navTabs">
+    <li><a href="#" class="active" data-section="0">01 IC유형 조감</a></li>
+    <li><a href="#" data-section="1">02 유형자산 IC</a></li>
+    <li><a href="#" data-section="2">03 대여금·이자 IC</a></li>
+    <li><a href="#" data-section="3">04 IC 불일치</a></li>
+    <li><a href="#" data-section="4">05 세율 효과</a></li>
+    <li><a href="#" data-section="5">06 종합 케이스</a></li>
+  </ul>
+</nav>
+
+<main class="main">
+
+<!-- ══════════════════════════════════════════════
+     SECTION 1 — 내부거래 유형 전체 조감
+══════════════════════════════════════════════ -->
+<section class="section active" id="sec-0">
+  <div class="section-eyebrow">Section 01</div>
+  <div class="section-title">내부거래 유형 전체 조감</div>
+  <div class="section-lead">IC 거래는 연결 손익에 미치는 영향과 제거 성격에 따라 네 가지로 분류된다. 분류를 먼저 파악하면 제거 방향이 자동으로 결정된다.</div>
+
+  <h2>IC 거래 4분류 체계</h2>
+
+  <div class="ic-matrix">
+    <div class="ic-cell header">유형</div>
+    <div class="ic-cell header">대표 거래</div>
+    <div class="ic-cell header">연결 손익 효과</div>
+
+    <div class="ic-cell type1">
+      <div class="ic-type-label">Type A</div>
+      <div class="ic-title">손익 불변 거래</div>
+      <div class="ic-items">용역 제공<br>이자수취·지급<br>임대료 수취·지급</div>
+    </div>
+    <div class="ic-cell type1">
+      <div class="ic-items">수익과 비용이 동시에 제거됨. 그룹 손익에 순효과 없음.</div>
+    </div>
+    <div class="ic-cell type1">
+      <div class="ic-items" style="color:var(--correct-border);font-weight:500;">영업이익 변동 없음<br>단, 매출·비용 총액 감소</div>
+    </div>
+
+    <div class="ic-cell type2">
+      <div class="ic-type-label">Type B-1</div>
+      <div class="ic-title">미실현이익 소거</div>
+      <div class="ic-items">재고 내부 판매<br>유형자산 내부 매각</div>
+    </div>
+    <div class="ic-cell type2">
+      <div class="ic-items">자산 내 미실현 마진이 그룹 내 잔존. 외부 실현 전까지 이익 인식 불가. 자산 감소 수반.</div>
+    </div>
+    <div class="ic-cell type2">
+      <div class="ic-items" style="color:var(--warn-border);font-weight:500;">그룹 이익 감소<br>자산 장부가 하향 조정</div>
+    </div>
+
+    <div class="ic-cell" style="border-top:3px solid #7a4a9a;">
+      <div class="ic-type-label" style="color:#7a4a9a;">Type B-2</div>
+      <div class="ic-title">이중 계상 제거</div>
+      <div class="ic-items">배당환원<br>(자회사 이잉 → 지주 수익)</div>
+    </div>
+    <div class="ic-cell" style="border-top:3px solid #7a4a9a;">
+      <div class="ic-items">자회사 이익잉여금 일부를 지주사가 배당수익으로 재인식. 이익잉여금의 이중 계상 제거. 자산 변동 없음.</div>
+    </div>
+    <div class="ic-cell" style="border-top:3px solid #7a4a9a;">
+      <div class="ic-items" style="color:#7a4a9a;font-weight:500;">그룹 이익 감소<br>이잉 복원 구조</div>
+    </div>
+
+    <div class="ic-cell type3">
+      <div class="ic-type-label">Type C</div>
+      <div class="ic-title">B/S 잔액 상계</div>
+      <div class="ic-items">내부 대여금·차입금<br>내부 채권·채무<br>내부 증자</div>
+    </div>
+    <div class="ic-cell type3">
+      <div class="ic-items">그룹 내 B/S 항목만 상계. 손익 영향 없음. 상계 후 잔액이 0이 되어야 함.</div>
+    </div>
+    <div class="ic-cell type3">
+      <div class="ic-items" style="color:var(--navy);font-weight:500;">손익 효과 없음<br>B/S 잔액 상계만</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="callout-label">모듈 2 복습</div>
+    모듈 2에서 다룬 용역 상계(Type A), 재고 미실현(Type B-1), 배당환원(Type B-2)에 이어, 이번 모듈에서는 유형자산 매각(Type B-1 심화), 대여금·이자(Type A+C 혼합)를 추가로 다룬다.
+  </div>
+
+  <h2>ASPN Group 신규 IC 거래 설정</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>거래</th><th>매도/대출</th><th>매수/차입</th><th>금액</th><th>유형</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Korea → Europe 유형자산 매각</td>
+          <td><span class="badge badge-k">Korea</span></td>
+          <td><span class="badge badge-e">Europe</span></td>
+          <td>장부가 30억, 매각가 50억 (KRW)<br>Europe 취득가 €35.7M 환산</td>
+          <td><span class="badge badge-fix">Type B-1</span></td>
+        </tr>
+        <tr>
+          <td>Holdings → Korea 대여금</td>
+          <td><span class="badge badge-h">Holdings</span></td>
+          <td><span class="badge badge-k">Korea</span></td>
+          <td>대여금 100억, 이자율 연 3%<br>이자 3억 발생</td>
+          <td><span class="badge badge-fin">Type A+C</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" disabled>← 이전</button>
+    <span class="progress-label">1 / 6</span>
+    <button class="btn btn-primary" onclick="goSection(1)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 2 — 유형자산 내부거래 제거
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-1">
+  <div class="section-eyebrow">Section 02</div>
+  <div class="section-title">유형자산 내부거래 제거</div>
+  <div class="section-lead">그룹 내 유형자산 매각은 재고 미실현이익과 유사하지만, 감가상각 조정이 추가로 발생한다는 점이 핵심 차이다.</div>
+
+  <h2>시나리오 — Korea → Europe 유형자산 매각</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>항목</th><th class="num">금액</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td>Korea 장부가 (매각 전)</td><td class="num">30억</td><td>취득원가 60억, 감가상각누계 30억</td></tr>
+        <tr><td>Korea → Europe 매각가</td><td class="num">50억</td><td>KRW 기준 / EUR 환산 €35.7M (1,400환율)</td></tr>
+        <tr><td>Korea 처분이익 (개별FS)</td><td class="num num-pos">+20억</td><td>미실현이익 — 그룹 외부 판매 아님</td></tr>
+        <tr><td>Europe 취득가 (연결 기준)</td><td class="num">30억</td><td>그룹 원가 기준 (Korea 장부가)</td></tr>
+        <tr><td>미실현이익</td><td class="num num-neg">△20억</td><td>연결에서 제거 대상</td></tr>
+        <tr><td>잔존내용연수</td><td class="num">5년</td><td>정액법 감가상각</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>취득 연도 (20X1년) — 미실현이익 소거</h2>
+
+  <div class="journal">
+    <div class="journal-header"><span>유형자산 미실현이익 소거 — 20X1년</span><span class="j-tag">FA Elimination</span></div>
+    <table>
+      <thead><tr><th>구분</th><th>계정</th><th class="num">차변</th><th class="num">대변</th></tr></thead>
+      <tbody>
+        <tr><td class="j-dr">차변</td><td>유형자산처분이익 (Korea I/S)</td><td class="num j-amount-dr">20</td><td class="num">—</td></tr>
+        <tr><td class="j-cr">대변</td><td>유형자산 (Europe B/S)</td><td class="num">—</td><td class="num j-amount-cr">20</td></tr>
+        <tr class="row-sub"><td colspan="4" style="font-size:12px;padding:6px 14px;">그룹 관점: 자산이 이동했을 뿐, 외부 실현 없음 → 처분이익 20억 제거, 자산 장부가 50→30억 조정</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>감가상각 조정 — 재고와의 핵심 차이</h2>
+  <p>유형자산은 상각 기간(5년) 동안 매년 미실현이익이 감가상각을 통해 조금씩 실현된다. Europe은 50억(매각가) 기준으로 감가상각하지만, 그룹 기준은 30억(원가)이므로 초과 상각분을 매년 환입해야 한다.</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>구분</th><th class="num">Europe 개별FS</th><th class="num">그룹 기준</th><th class="num">조정 (환입)</th></tr></thead>
+      <tbody>
+        <tr><td>자산 취득가</td><td class="num">50억</td><td class="num">30억</td><td class="num num-pos">△20억</td></tr>
+        <tr><td>연간 감가상각비</td><td class="num">10억 (50÷5)</td><td class="num">6억 (30÷5)</td><td class="num num-pos">△4억/년 환입</td></tr>
+        <tr><td>5년 누적 감가상각</td><td class="num">50억</td><td class="num">30억</td><td class="num num-pos">△20억 (전액 실현)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="journal">
+    <div class="journal-header"><span>감가상각 조정 — 매년 (20X1~20X5년)</span><span class="j-tag">Depreciation Adj</span></div>
+    <table>
+      <thead><tr><th>구분</th><th>계정</th><th class="num">차변</th><th class="num">대변</th></tr></thead>
+      <tbody>
+        <tr><td class="j-dr">차변</td><td>감가상각누계액</td><td class="num j-amount-dr">4</td><td class="num">—</td></tr>
+        <tr><td class="j-cr">대변</td><td>감가상각비 (Europe I/S)</td><td class="num">—</td><td class="num j-amount-cr">4</td></tr>
+        <tr class="row-sub"><td colspan="4" style="font-size:12px;padding:6px 14px;">초과 감가상각 4억/년 환입 → 그룹 이익 +4억/년 → 5년에 걸쳐 미실현이익 20억 전액 실현</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Carry Forward — 기간별 미실현이익 잔액</h2>
+
+  <div class="fa-years">
+    <div class="fa-year">
+      <div class="fy-header">20X1년 말</div>
+      <div class="fy-row"><span>미실현이익 소거</span><span class="fy-val" style="color:var(--wrong-border)">△20억</span></div>
+      <div class="fy-row"><span>감가상각 환입</span><span class="fy-val" style="color:var(--correct-border)">+4억</span></div>
+      <div class="fy-row"><span>미실현잔액</span><span class="fy-val">△16억</span></div>
+    </div>
+    <div class="fa-year">
+      <div class="fy-header">20X2년 말</div>
+      <div class="fy-row"><span>이월 잔액</span><span class="fy-val" style="color:var(--wrong-border)">△16억</span></div>
+      <div class="fy-row"><span>당기 감가상각 환입</span><span class="fy-val" style="color:var(--correct-border)">+4억</span></div>
+      <div class="fy-row"><span>미실현잔액</span><span class="fy-val">△12억</span></div>
+    </div>
+    <div class="fa-year">
+      <div class="fy-header">20X5년 말 (완전실현)</div>
+      <div class="fy-row"><span>이월 잔액</span><span class="fy-val" style="color:var(--wrong-border)">△4억</span></div>
+      <div class="fy-row"><span>당기 감가상각 환입</span><span class="fy-val" style="color:var(--correct-border)">+4억</span></div>
+      <div class="fy-row"><span>미실현잔액</span><span class="fy-val" style="color:var(--correct-border)">0 (완전실현)</span></div>
+    </div>
+  </div>
+
+  <div class="callout correct">
+    <div class="callout-label">재고 vs 유형자산 비교</div>
+    재고 미실현이익은 판매 시점에 일시에 실현된다. 유형자산 미실현이익은 내용연수에 걸쳐 감가상각을 통해 분할 실현된다. GR은 두 경우 모두 Carry Forward Task에서 자동으로 이월 및 조정 처리한다.
+  </div>
+
+  <!-- QUIZ -->
+  <h3>확인 문제</h3>
+  <div class="quiz-block">
+    <div class="quiz-q">Korea가 Europe에 유형자산을 장부가 40억, 매각가 60억에 내부 매각했다. 잔존내용연수 4년, 정액법 적용 시 20X1년 연결조정 후 그룹 당기손익에 미치는 순효과는?</div>
+    <div class="quiz-options" id="quiz0">
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz0',false)">
+        <div class="quiz-marker"></div>△20억 (미실현이익 전액 소거)
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz0',true)">
+        <div class="quiz-marker"></div>△15억 (미실현이익 20억 소거 + 감가상각 환입 5억)
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz0',false)">
+        <div class="quiz-marker"></div>+20억 (처분이익 인식)
+      </div>
+    </div>
+    <div class="quiz-feedback" id="quiz0-fb"></div>
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(0)">← 이전</button>
+    <span class="progress-label">2 / 6</span>
+    <button class="btn btn-primary" onclick="goSection(2)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 3 — 대여금·이자 내부거래 제거
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-2">
+  <div class="section-eyebrow">Section 03</div>
+  <div class="section-title">대여금·이자 내부거래 제거</div>
+  <div class="section-lead">내부 대여금은 B/S 상계(Type C)와 이자 손익 상계(Type A)가 동시에 발생한다. 두 가지를 구분하여 처리해야 한다.</div>
+
+  <h2>시나리오 — Holdings → Korea 대여금</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>항목</th><th>Holdings (대여자)</th><th>Korea (차입자)</th></tr></thead>
+      <tbody>
+        <tr><td>B/S 계상</td><td>대여금 (자산) 100억</td><td>차입금 (부채) 100억</td></tr>
+        <tr><td>I/S 계상</td><td>이자수익 3억</td><td>이자비용 3억</td></tr>
+        <tr><td>미수·미지급</td><td>미수이자 (자산) 0.75억*</td><td>미지급이자 (부채) 0.75억*</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:13px;color:var(--text-muted);">* 결산일 기준 미지급 이자 1분기분 가정 (3억 × 3/12)</p>
+
+  <h2>연결조정 분개</h2>
+
+  <div class="journal">
+    <div class="journal-header"><span>① B/S 대여금·차입금 상계</span><span class="j-tag">Type C</span></div>
+    <table>
+      <thead><tr><th>구분</th><th>계정</th><th class="num">차변</th><th class="num">대변</th></tr></thead>
+      <tbody>
+        <tr><td class="j-dr">차변</td><td>차입금 (Korea 부채)</td><td class="num j-amount-dr">100</td><td class="num">—</td></tr>
+        <tr><td class="j-cr">대변</td><td>대여금 (Holdings 자산)</td><td class="num">—</td><td class="num j-amount-cr">100</td></tr>
+        <tr class="row-sub"><td colspan="4" style="font-size:12px;padding:6px 14px;">그룹 내부 채권·채무 → 상계 후 연결 B/S에서 소멸. 손익 효과 없음.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="journal">
+    <div class="journal-header"><span>② I/S 이자수익·비용 상계</span><span class="j-tag">Type A</span></div>
+    <table>
+      <thead><tr><th>구분</th><th>계정</th><th class="num">차변</th><th class="num">대변</th></tr></thead>
+      <tbody>
+        <tr><td class="j-dr">차변</td><td>이자수익 (Holdings I/S)</td><td class="num j-amount-dr">3</td><td class="num">—</td></tr>
+        <tr><td class="j-cr">대변</td><td>이자비용 (Korea I/S)</td><td class="num">—</td><td class="num j-amount-cr">3</td></tr>
+        <tr class="row-sub"><td colspan="4" style="font-size:12px;padding:6px 14px;">수익·비용 동시 제거 → 그룹 손익 변동 없음 (Type A)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="journal">
+    <div class="journal-header"><span>③ 미수이자·미지급이자 상계</span><span class="j-tag">Type C</span></div>
+    <table>
+      <thead><tr><th>구분</th><th>계정</th><th class="num">차변</th><th class="num">대변</th></tr></thead>
+      <tbody>
+        <tr><td class="j-dr">차변</td><td>미지급이자 (Korea 부채)</td><td class="num j-amount-dr">0.75</td><td class="num">—</td></tr>
+        <tr><td class="j-cr">대변</td><td>미수이자 (Holdings 자산)</td><td class="num">—</td><td class="num j-amount-cr">0.75</td></tr>
+        <tr class="row-sub"><td colspan="4" style="font-size:12px;padding:6px 14px;">결산일 기준 발생주의 미수·미지급 잔액도 빠짐없이 상계해야 IC 잔액이 0이 됨</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-label">실무 주의 — 미수·미지급 누락</div>
+    이자수익·비용 상계는 챙기면서 미수이자·미지급이자 상계를 누락하는 경우가 많다. ICMR에서 잔액 불일치로 잡히지만, 원인 파악에 시간이 걸린다. 대여금 IC 처리 시 반드시 발생주의 미결항목까지 함께 처리한다.
+  </div>
+
+  <h2>대여금 IC의 Carry Forward</h2>
+  <p>대여금 원금은 상환 전까지 매 기간 동일하게 상계된다. 이자는 매 기간 새로 발생하므로 Carry Forward 대상이 아니다. 다만 전기 말 미수·미지급이자가 당기에 수취·지급되는 시점에 자동 해소된다.</p>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(1)">← 이전</button>
+    <span class="progress-label">3 / 6</span>
+    <button class="btn btn-primary" onclick="goSection(3)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 4 — IC 불일치 케이스
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-3">
+  <div class="section-eyebrow">Section 04</div>
+  <div class="section-title">IC 불일치 케이스</div>
+  <div class="section-lead">IC 거래는 쌍방이 동일 금액을 인식해야 제거가 성립한다. 불일치는 다양한 원인으로 발생하며, GR ICMR로 추적·해결한다.</div>
+
+  <h2>불일치 발생 원인 4가지</h2>
+  <div class="card-grid card-grid">
+    <div class="card">
+      <div class="card-label">원인 1</div>
+      <div class="card-title">환율 차이</div>
+      <p>Korea(KRW)와 Europe(EUR) 간 거래 시 양사가 다른 환율로 기록. KRW 기준 10억 ≠ EUR 기준 환산액이 될 수 있음.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">원인 2</div>
+      <div class="card-title">기간 귀속 차이</div>
+      <p>Korea가 12월에 발송한 매출을 인식했으나, Europe은 1월에 수령하여 다음 기간에 인식. 운송 중 재고(In-transit) 문제.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">원인 3</div>
+      <div class="card-title">계정 분류 차이</div>
+      <p>Korea는 용역 매출로 인식, Europe은 원가로 분류. 또는 Korea는 매출채권, Europe은 선급금으로 계상한 경우.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">원인 4</div>
+      <div class="card-title">데이터 누락</div>
+      <p>한쪽 법인이 IC 거래를 Partner 코드 없이 입력하거나 아예 미입력. GR IC Category 미설정 법인에서 빈번.</p>
+    </div>
+  </div>
+
+  <h2>ICMR 불일치 사례 — Korea ↔ Europe</h2>
+  <p>Korea가 Europe에 KRW 14억 상당의 부품을 매각했다. 환율 차이로 양사 인식 금액이 다르다.</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>법인</th><th>인식 계정</th><th class="num">인식 금액</th><th>환율 기준</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge badge-k">Korea</span></td><td>매출채권 / 매출</td><td class="num">14억 KRW</td><td>거래일 환율 1,400</td></tr>
+        <tr><td><span class="badge badge-e">Europe</span></td><td>매입채무 / 매입</td><td class="num">€0.96M → 13.44억 KRW 환산</td><td>거래일 환율 1,400 → 기말 1,400 동일 가정시 €1M</td></tr>
+        <tr class="row-total"><td colspan="2"><strong>불일치 금액</strong></td><td class="num"><strong class="num-neg">△0.56억</strong></td><td>환율 적용 시점 차이</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>ICMR 처리 상태</h3>
+
+  <div class="icmr-row">
+    <div><span class="badge badge-k">Korea</span><br><div class="icmr-entity">매출채권 14억</div></div>
+    <div class="icmr-sep">↔</div>
+    <div><span class="badge badge-e">Europe</span><br><div class="icmr-entity">매입채무 13.44억</div></div>
+    <div class="icmr-sep">→</div>
+    <div class="icmr-status"><span class="badge badge-ng">불일치</span><br><div style="font-size:12px;color:var(--wrong-border);font-family:'JetBrains Mono',monospace;">△0.56억</div></div>
+  </div>
+
+  <div class="icmr-row">
+    <div><span class="badge badge-h">Holdings</span><br><div class="icmr-entity">대여금 100억</div></div>
+    <div class="icmr-sep">↔</div>
+    <div><span class="badge badge-k">Korea</span><br><div class="icmr-entity">차입금 100억</div></div>
+    <div class="icmr-sep">→</div>
+    <div class="icmr-status"><span class="badge badge-ok">일치</span></div>
+  </div>
+
+  <h2>불일치 해결 프로세스</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>단계</th><th>처리 방법</th><th>GR 기능</th></tr></thead>
+      <tbody>
+        <tr><td><strong>① 원인 파악</strong></td><td>ICMR에서 Partner별 차이 금액 확인, 원인 분류(환율/기간/계정/누락)</td><td>ICMR 차이 리포트</td></tr>
+        <tr><td><strong>② 조정 분개</strong></td><td>원인에 따라 정정 분개 또는 Adjustment 입력. 환율 차이는 별도 환율차이 계정 처리</td><td>Manual Adjustment</td></tr>
+        <tr><td><strong>③ 재대사</strong></td><td>조정 후 ICMR 재실행하여 잔액 0 확인</td><td>ICMR 재실행</td></tr>
+        <tr><td><strong>④ 기록 보관</strong></td><td>불일치 원인과 조정 내역을 결산 문서에 기록</td><td>Audit Trail</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-label">환율 차이 불일치 처리 원칙</div>
+    환율 차이로 발생한 IC 불일치는 오류가 아닌 구조적 차이다. 일반적으로 <strong>매도 법인 기준(Korea KRW)</strong>을 그룹 기준으로 삼고, 매수 법인(Europe) 측에 환율차이 조정 계정을 설정하여 처리한다. GR에서는 IC Partner Currency 설정으로 자동 조정이 가능하다.
+  </div>
+
+  <!-- QUIZ -->
+  <h3>확인 문제</h3>
+  <div class="quiz-block">
+    <div class="quiz-q">Korea가 12월 28일에 Europe으로 상품을 발송하고 매출 10억을 인식했다. Europe은 1월 3일에 수령하여 해당 기간(다음 연도)에 매입을 인식했다. 이 IC 불일치의 원인 유형은?</div>
+    <div class="quiz-options" id="quiz1">
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz1',false)">
+        <div class="quiz-marker"></div>환율 차이
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz1',true)">
+        <div class="quiz-marker"></div>기간 귀속 차이 (In-transit)
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz1',false)">
+        <div class="quiz-marker"></div>계정 분류 차이
+      </div>
+    </div>
+    <div class="quiz-feedback" id="quiz1-fb"></div>
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(2)">← 이전</button>
+    <span class="progress-label">4 / 6</span>
+    <button class="btn btn-primary" onclick="goSection(4)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 5 — 미실현이익의 세율 효과
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-4">
+  <div class="section-eyebrow">Section 05</div>
+  <div class="section-title">미실현이익의 세율 효과</div>
+  <div class="section-lead">미실현이익 소거는 연결 세전이익을 감소시키지만, 개별 법인에서 이미 납부한 법인세는 돌려받을 수 없다. 이 차이를 이연법인세로 처리한다.</div>
+
+  <h2>왜 이연법인세가 발생하는가</h2>
+  <p>Korea는 유형자산 처분이익 20억에 대해 법인세 25% = 5억을 납부했다(개별FS 기준). 그러나 연결에서는 처분이익 20억이 제거된다. 즉, 세금은 냈지만 연결 이익은 없어진 상태 — 이 5억은 미래에 자산이 실현될 때 회수 가능한 선납세금(이연법인세자산)이다.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-label">개별 FS (Korea)</div>
+      <div class="card-title">처분이익 20억 인식</div>
+      <p>법인세 5억(=20×25%) 납부. Korea 입장에서는 정상 처리.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">연결 FS</div>
+      <div class="card-title">처분이익 20억 제거</div>
+      <p>세전이익 △20억 조정. 그러나 납부 세금 5억은 제거 불가. → 이연법인세자산 5억 인식 필요.</p>
+    </div>
+  </div>
+
+  <h2>이연법인세 분개</h2>
+
+  <div class="journal">
+    <div class="journal-header"><span>이연법인세자산 인식 — 유형자산 미실현이익 소거 시</span><span class="j-tag">Deferred Tax</span></div>
+    <table>
+      <thead><tr><th>구분</th><th>계정</th><th class="num">차변</th><th class="num">대변</th></tr></thead>
+      <tbody>
+        <tr><td class="j-dr">차변</td><td>이연법인세자산</td><td class="num j-amount-dr">5</td><td class="num">—</td></tr>
+        <tr><td class="j-cr">대변</td><td>법인세비용</td><td class="num">—</td><td class="num j-amount-cr">5</td></tr>
+        <tr class="row-sub"><td colspan="4" style="font-size:12px;padding:6px 14px;">미실현이익 20억 × 세율 25% = 5억. 미래 실현 시 회수되는 선납세금.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>감가상각에 따른 이연법인세 환입</h2>
+  <p>유형자산이 감가상각(연 4억 환입)됨에 따라 미실현이익이 매년 4억씩 실현된다. 이에 비례하여 이연법인세자산도 매년 1억(=4억×25%)씩 환입된다.</p>
+
+  <div class="journal">
+    <div class="journal-header"><span>이연법인세자산 환입 — 매년 (20X1~20X5년)</span><span class="j-tag">Deferred Tax 환입</span></div>
+    <table>
+      <thead><tr><th>구분</th><th>계정</th><th class="num">차변</th><th class="num">대변</th></tr></thead>
+      <tbody>
+        <tr><td class="j-dr">차변</td><td>법인세비용</td><td class="num j-amount-dr">1</td><td class="num">—</td></tr>
+        <tr><td class="j-cr">대변</td><td>이연법인세자산</td><td class="num">—</td><td class="num j-amount-cr">1</td></tr>
+        <tr class="row-sub"><td colspan="4" style="font-size:12px;padding:6px 14px;">감가상각 환입 4억 × 25% = 1억/년. 5년 후 이연법인세자산 전액 환입.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>세후 순효과 요약</h2>
+  <div class="running-box">
+    <div class="rb-title">취득 연도 (20X1년) — 연결조정 순효과</div>
+    <div class="rb-row"><span>미실현이익 소거</span><span class="rb-val rb-neg">세전이익 △20억</span></div>
+    <div class="rb-row"><span>이연법인세자산 인식</span><span class="rb-val rb-pos">법인세비용 △5억</span></div>
+    <div class="rb-row"><span>감가상각 환입</span><span class="rb-val rb-pos">세전이익 +4억</span></div>
+    <div class="rb-row"><span>이연법인세 환입</span><span class="rb-val rb-neg">법인세비용 +1억</span></div>
+    <div class="rb-row"><span>세후 순효과</span><span class="rb-val rb-neg">△12억 (= △20+5+4−1의 세후)</span></div>
+  </div>
+
+  <div class="callout">
+    <div class="callout-label">GR 세율 설정</div>
+    GR에서는 법인(Consolidation Unit)별로 법인세율을 설정할 수 있다. 미실현이익 소거 Task 실행 시 설정된 세율에 따라 이연법인세를 자동 계산하는 기능을 지원한다.
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(3)">← 이전</button>
+    <span class="progress-label">5 / 6</span>
+    <button class="btn btn-primary" onclick="goSection(5)">다음 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 6 — IC 제거 종합 케이스
+══════════════════════════════════════════════ -->
+<section class="section" id="sec-5">
+  <div class="section-eyebrow">Section 06</div>
+  <div class="section-title">IC 제거 종합 케이스</div>
+  <div class="section-lead">모듈 2와 모듈 4에서 다룬 모든 IC 거래를 ASPN Group에 동시 적용하여 연결 손익 영향을 최종 정리한다.</div>
+
+  <h2>전체 IC 거래 목록 — 20X1년</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>#</th><th>거래</th><th>유형</th><th>출처</th><th class="num">손익 효과</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>①</td>
+          <td>Holdings → Korea 용역 매출 상계</td>
+          <td><span class="badge" style="background:var(--correct-bg);color:var(--correct-border);border:1px solid var(--correct-border);">Type A</span></td>
+          <td>모듈 2</td>
+          <td class="num">0 (매출·판관비 동시 제거)</td>
+        </tr>
+        <tr>
+          <td>②</td>
+          <td>Korea → Holdings 재고 미실현이익 소거</td>
+          <td><span class="badge badge-inv">Type B-1</span></td>
+          <td>모듈 2</td>
+          <td class="num num-neg">△5억</td>
+        </tr>
+        <tr>
+          <td>③</td>
+          <td>Korea → Holdings 배당환원</td>
+          <td><span class="badge" style="background:#f5eeff;color:#7a4a9a;border:1px solid #c8a8f8;">Type B-2</span></td>
+          <td>모듈 2</td>
+          <td class="num num-neg">△6.4억</td>
+        </tr>
+        <tr>
+          <td>④</td>
+          <td>Korea → Europe 유형자산 미실현이익 소거</td>
+          <td><span class="badge badge-inv">Type B-1</span></td>
+          <td>모듈 4</td>
+          <td class="num num-neg">△20억</td>
+        </tr>
+        <tr>
+          <td>⑤</td>
+          <td>Korea → Europe 유형자산 감가상각 환입</td>
+          <td><span class="badge badge-fix">FA Adj</span></td>
+          <td>모듈 4</td>
+          <td class="num num-pos">+4억</td>
+        </tr>
+        <tr>
+          <td>⑥</td>
+          <td>Holdings ↔ Korea 이자수익·비용 상계</td>
+          <td><span class="badge" style="background:var(--correct-bg);color:var(--correct-border);border:1px solid var(--correct-border);">Type A</span></td>
+          <td>모듈 4</td>
+          <td class="num">0 (수익·비용 동시 제거)</td>
+        </tr>
+        <tr>
+          <td>⑦</td>
+          <td>유형자산 이연법인세자산 인식</td>
+          <td><span class="badge badge-fin">세율효과</span></td>
+          <td>모듈 4</td>
+          <td class="num num-pos">+5억 (법인세비용 감소)</td>
+        </tr>
+        <tr>
+          <td>⑧</td>
+          <td>이연법인세자산 당기 환입</td>
+          <td><span class="badge badge-fin">세율효과</span></td>
+          <td>모듈 4</td>
+          <td class="num num-neg">△1억</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>연결 손익 최종 조정 요약</h2>
+  <div class="running-box">
+    <div class="rb-title">모든 IC 조정 후 그룹 당기순이익 영향</div>
+    <div class="rb-row"><span>① 용역 상계</span><span class="rb-val">0</span></div>
+    <div class="rb-row"><span>② 재고 미실현이익</span><span class="rb-val rb-neg">△5억</span></div>
+    <div class="rb-row"><span>③ 배당환원</span><span class="rb-val rb-neg">△6.4억</span></div>
+    <div class="rb-row"><span>④ 유형자산 미실현이익</span><span class="rb-val rb-neg">△20억</span></div>
+    <div class="rb-row"><span>⑤ 감가상각 환입</span><span class="rb-val rb-pos">+4억</span></div>
+    <div class="rb-row"><span>⑥ 이자 상계</span><span class="rb-val">0</span></div>
+    <div class="rb-row"><span>⑦⑧ 이연법인세 순효과</span><span class="rb-val rb-pos">+4억 (5−1)</span></div>
+    <div class="rb-row"><span>IC 조정 순효과 합계</span><span class="rb-val rb-neg">△23.4억</span></div>
+  </div>
+
+  <h2>GR Consolidation Monitor — Task 실행 순서</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>순서</th><th>Task</th><th>처리 내용</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Currency Translation</td><td>Europe EUR→KRW 환산</td></tr>
+        <tr><td>2</td><td>Reclassification</td><td>Korea K-GAAP→IFRS 변환</td></tr>
+        <tr><td>3</td><td>Intercompany Elimination</td><td>①③⑥ 채권채무·수익비용 상계</td></tr>
+        <tr><td>4</td><td>Inventory Elimination</td><td>② 재고 미실현이익 소거</td></tr>
+        <tr><td>5</td><td>Fixed Asset Elimination</td><td>④⑤ 유형자산 미실현·감가상각 조정</td></tr>
+        <tr><td>6</td><td>Investment Income Elimination</td><td>③ 배당환원 (C/I Task 내 처리)</td></tr>
+        <tr><td>7</td><td>Deferred Tax</td><td>⑦⑧ 이연법인세</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout correct">
+    <div class="callout-label">모듈 4 완료</div>
+    내부거래 제거의 전 유형 — 손익불변(Type A), 손익변동(Type B), 자본거래(Type C) — 을 ASPN Group 시나리오로 완결했다. 모듈 5에서는 자본연결(C/I) 심화로 진입한다 — 단계취득, 지분율 변동, 영업권 손상까지 다룬다.
+  </div>
+
+  <!-- QUIZ -->
+  <h3>최종 확인 문제</h3>
+  <div class="quiz-block">
+    <div class="quiz-q">Holdings가 Korea에 대여금 100억을 제공하고 이자 3억을 수취했다. 연결조정 후 그룹 전체 부채와 이자비용에 미치는 영향은?</div>
+    <div class="quiz-options" id="quiz2">
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz2',false)">
+        <div class="quiz-marker"></div>부채 △100억, 이자비용 변동 없음
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz2',true)">
+        <div class="quiz-marker"></div>부채 △100억, 이자비용 △3억 (이자수익도 △3억)
+      </div>
+      <div class="quiz-option" onclick="checkQuiz(this,'quiz2',false)">
+        <div class="quiz-marker"></div>부채 변동 없음, 이자비용 △3억
+      </div>
+    </div>
+    <div class="quiz-feedback" id="quiz2-fb"></div>
+  </div>
+
+  <div class="section-nav">
+    <button class="btn btn-ghost" onclick="goSection(4)">← 이전</button>
+    <span class="progress-label">6 / 6</span>
+    <button class="btn btn-primary" disabled>완료 ✓</button>
+  </div>
+</section>
+
+</main>
+
+<script>
+  const TOTAL = 6;
+  function goSection(idx) {
+    document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i===idx));
+    document.querySelectorAll('.nav-tabs a').forEach((a,i) => a.classList.toggle('active', i===idx));
+    document.getElementById('progressBar').style.width = ((idx+1)/TOTAL*100).toFixed(2)+'%';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  document.querySelectorAll('.nav-tabs a').forEach((a,i) => {
+    a.addEventListener('click', e => { e.preventDefault(); goSection(i); });
+  });
+  function toggleDrill(trigger) {
+    trigger.classList.toggle('open');
+    trigger.nextElementSibling.classList.toggle('open');
+  }
+  function checkQuiz(el, groupId, isCorrect) {
+    const group = document.getElementById(groupId);
+    if (group.querySelector('.correct-ans') || group.querySelector('.wrong-ans')) return;
+    const fb = document.getElementById(groupId+'-fb');
+    el.classList.add(isCorrect ? 'correct-ans' : 'wrong-ans');
+    el.querySelector('.quiz-marker').textContent = isCorrect ? '✓' : '✗';
+    fb.classList.add('show', isCorrect ? 'ok' : 'ng');
+    const msgs = {
+      quiz0: {
+        ok: '정답입니다. 취득 연도에는 미실현이익 20억 소거(△20)와 감가상각 환입 5억(+5)이 동시 발생합니다. 순효과는 △15억입니다.',
+        ng: '다시 생각해보세요. 취득 연도에는 미실현이익 소거와 감가상각 환입이 함께 발생합니다. 감가상각 환입 = 미실현이익 20억 ÷ 내용연수 4년 = 5억.'
+      },
+      quiz1: {
+        ok: '정답입니다. 발송일(12월)과 수령일(1월)이 다른 기간에 속하는 In-transit 거래입니다. 기간 귀속 차이 불일치로, 운송 중 재고를 어느 법인이 인식할지 그룹 정책으로 정해야 합니다.',
+        ng: '다시 생각해보세요. 금액 자체는 동일하고 통화도 같습니다. 차이는 인식 시점(기간)에 있습니다.'
+      },
+      quiz2: {
+        ok: '정답입니다. 대여금 100억(B/S 부채 상계)과 이자수익 3억·이자비용 3억(I/S 동시 제거)이 모두 연결에서 제거됩니다. 그룹 외부 부채와 순이자는 영향받지 않습니다.',
+        ng: '다시 생각해보세요. 대여금(B/S)과 이자(I/S)는 별도로 처리하지만 둘 다 제거 대상입니다.'
+      }
+    };
+    fb.textContent = isCorrect ? msgs[groupId].ok : msgs[groupId].ng;
+  }
+</script>
+</body>
+</html>
