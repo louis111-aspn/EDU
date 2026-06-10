@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full Goodwill vs Partial Goodwill | ASPN BAC Education</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #003366;
+    --navy-light: #e8eef5;
+    --navy-mid: #c5d3e8;
+    --bg: #f0f3f8;
+    --white: #ffffff;
+    --gray-900: #1a1a2e;
+    --gray-700: #333333;
+    --gray-500: #666666;
+    --gray-300: #cccccc;
+    --warn: #b85c00;
+    --warn-bg: #fff4e6;
+    --correct: #1a6b3a;
+    --correct-bg: #e8f5ed;
+    --wrong: #8b1a1a;
+    --wrong-bg: #fdf0f0;
+    --accent-gold: #b8860b;
+    --pad-x: 96px;
+    --radius: 4px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--gray-700);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--navy);
+    padding: 0 var(--pad-x);
+    display: flex; align-items: center; gap: 0;
+    border-bottom: 2px solid rgba(255,255,255,0.1);
+  }
+  .nav-brand {
+    font-family: 'DM Serif Display', serif;
+    color: #fff;
+    font-size: 15px;
+    padding: 14px 0;
+    margin-right: 40px;
+    white-space: nowrap;
+    opacity: 0.85;
+  }
+  .nav-tabs { display: flex; gap: 0; overflow-x: auto; }
+  .nav-tab {
+    color: rgba(255,255,255,0.65);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 16px 20px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    transition: all .2s;
+    text-decoration: none;
+    display: block;
+  }
+  .nav-tab:hover { color: #fff; }
+  .nav-tab.active { color: #fff; border-bottom-color: rgba(255,255,255,0.85); }
+
+  /* ── SECTIONS ── */
+  .section {
+    display: none;
+    padding: 64px var(--pad-x);
+    min-height: calc(100vh - 52px);
+  }
+  .section.active { display: block; }
+
+  /* ── HERO ── */
+  .hero {
+    text-align: center;
+    padding: 72px var(--pad-x) 56px;
+  }
+  .hero-eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--navy);
+    opacity: 0.7;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 42px;
+    color: var(--navy);
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+  .hero p {
+    font-size: 17px;
+    color: var(--gray-500);
+    max-width: 620px;
+    margin: 0 auto 36px;
+  }
+
+  /* ── SECTION HEADER ── */
+  .sec-header {
+    border-left: 4px solid var(--navy);
+    padding-left: 20px;
+    margin-bottom: 36px;
+  }
+  .sec-header .label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--navy);
+    opacity: 0.6;
+    margin-bottom: 6px;
+  }
+  .sec-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 30px;
+    color: var(--navy);
+  }
+  .sec-header p {
+    margin-top: 8px;
+    color: var(--gray-500);
+    font-size: 15px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--navy-mid);
+    border-radius: var(--radius);
+    padding: 32px;
+    margin-bottom: 20px;
+  }
+  .card h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+  .card-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  .card-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    border-left: 4px solid;
+  }
+  .callout.navy { background: var(--navy-light); border-color: var(--navy); }
+  .callout.warn { background: var(--warn-bg); border-color: var(--warn); }
+  .callout.correct { background: var(--correct-bg); border-color: var(--correct); }
+  .callout.wrong { background: var(--wrong-bg); border-color: var(--wrong); }
+
+  .callout .callout-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 6px;
+  }
+  .callout.navy .callout-title { color: var(--navy); }
+  .callout.warn .callout-title { color: var(--warn); }
+  .callout.correct .callout-title { color: var(--correct); }
+  .callout.wrong .callout-title { color: var(--wrong); }
+
+  /* ── COMPARE TABLE ── */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    border: 1px solid var(--navy-mid);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 24px;
+    font-size: 14px;
+  }
+  .compare-table th {
+    padding: 16px 20px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+  }
+  .compare-table th:first-child {
+    background: var(--gray-900);
+    color: #fff;
+    width: 28%;
+  }
+  .compare-table th.full-col { background: var(--navy); color: #fff; }
+  .compare-table th.partial-col { background: #556B8D; color: #fff; }
+
+  .compare-table td {
+    padding: 14px 20px;
+    border-top: 1px solid #eef0f5;
+    vertical-align: top;
+    line-height: 1.55;
+  }
+  .compare-table td:first-child {
+    font-weight: 600;
+    color: var(--gray-700);
+    background: #fafbfc;
+    font-size: 13px;
+  }
+  .compare-table tr:hover td { background: #f5f8fd; }
+  .compare-table tr:hover td:first-child { background: #eef2f8; }
+
+  /* ── FLOW / CALCULATION ── */
+  .calc-block {
+    background: var(--white);
+    border: 1px solid var(--navy-mid);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .calc-header {
+    background: var(--navy);
+    color: #fff;
+    padding: 14px 24px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .calc-body { padding: 28px 32px; }
+
+  .calc-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 8px 0;
+    border-bottom: 1px dashed #e8ecf2;
+    font-size: 14px;
+  }
+  .calc-row:last-child { border-bottom: none; }
+  .calc-row.subtotal {
+    border-top: 2px solid var(--navy-mid);
+    border-bottom: none;
+    font-weight: 600;
+    padding-top: 14px;
+    margin-top: 6px;
+  }
+  .calc-row.total {
+    border-top: 3px double var(--navy);
+    font-weight: 700;
+    color: var(--navy);
+    font-size: 15px;
+    margin-top: 8px;
+    padding-top: 14px;
+  }
+  .calc-row .label { color: var(--gray-500); }
+  .calc-row .label.indent { padding-left: 20px; }
+  .calc-row .label.indent2 { padding-left: 40px; }
+  .calc-row .val {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-weight: 600;
+    color: var(--gray-900);
+    min-width: 120px;
+    text-align: right;
+  }
+  .calc-row .val.neg { color: var(--wrong); }
+  .calc-row .val.navy { color: var(--navy); }
+  .calc-row .val.highlight {
+    background: var(--navy);
+    color: #fff;
+    padding: 2px 10px;
+    border-radius: 3px;
+  }
+
+  /* ── NCI VISUAL ── */
+  .nci-bar-wrap {
+    background: var(--white);
+    border: 1px solid var(--navy-mid);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    margin-bottom: 20px;
+  }
+  .nci-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--gray-500);
+    margin-bottom: 8px;
+  }
+  .nci-bar {
+    height: 36px;
+    border-radius: 3px;
+    display: flex;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .nci-bar .seg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    transition: all .3s;
+  }
+  .seg.parent { background: var(--navy); }
+  .seg.nci-full { background: #556B8D; }
+  .seg.nci-partial { background: #a0b0c8; }
+
+  /* ── DIFF HIGHLIGHT ── */
+  .diff-box {
+    border: 2px dashed var(--accent-gold);
+    background: #fffdf0;
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 16px 0;
+  }
+  .diff-box .diff-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-gold);
+    margin-bottom: 8px;
+  }
+
+  /* ── QUIZ ── */
+  .quiz-container { max-width: 780px; margin: 0 auto; }
+  .quiz-progress {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+  .quiz-dot {
+    height: 6px;
+    flex: 1;
+    background: var(--navy-mid);
+    border-radius: 3px;
+    transition: background .3s;
+  }
+  .quiz-dot.done { background: var(--navy); }
+  .quiz-dot.current { background: var(--accent-gold); }
+
+  .quiz-card {
+    background: var(--white);
+    border: 1px solid var(--navy-mid);
+    border-radius: var(--radius);
+    padding: 40px;
+    margin-bottom: 20px;
+  }
+  .quiz-num {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--navy);
+    opacity: 0.5;
+    margin-bottom: 14px;
+  }
+  .quiz-q {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--navy);
+    line-height: 1.4;
+    margin-bottom: 28px;
+  }
+  .quiz-q .hint {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    color: var(--gray-500);
+    font-style: normal;
+    display: block;
+    margin-top: 8px;
+  }
+
+  .quiz-options { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+  .quiz-opt {
+    border: 1.5px solid var(--navy-mid);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all .15s;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: var(--white);
+  }
+  .quiz-opt:hover:not(.disabled) { border-color: var(--navy); background: var(--navy-light); }
+  .quiz-opt .opt-label {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1.5px solid var(--navy-mid);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gray-500);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .quiz-opt.selected { border-color: var(--navy); background: var(--navy-light); }
+  .quiz-opt.selected .opt-label { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .quiz-opt.correct { border-color: var(--correct); background: var(--correct-bg); }
+  .quiz-opt.correct .opt-label { background: var(--correct); color: #fff; border-color: var(--correct); }
+  .quiz-opt.wrong { border-color: var(--wrong); background: var(--wrong-bg); }
+  .quiz-opt.wrong .opt-label { background: var(--wrong); color: #fff; border-color: var(--wrong); }
+  .quiz-opt.disabled { cursor: default; }
+
+  .quiz-feedback {
+    display: none;
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    border-left: 4px solid;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .quiz-feedback.correct { background: var(--correct-bg); border-color: var(--correct); color: var(--correct); }
+  .quiz-feedback.wrong { background: var(--wrong-bg); border-color: var(--wrong); color: var(--gray-700); }
+  .quiz-feedback strong { font-weight: 700; }
+
+  .quiz-btn {
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    padding: 14px 32px;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: opacity .2s;
+    font-family: 'Noto Sans KR', sans-serif;
+    letter-spacing: 0.5px;
+  }
+  .quiz-btn:hover { opacity: 0.88; }
+  .quiz-btn:disabled { opacity: 0.4; cursor: default; }
+  .quiz-btn.secondary {
+    background: transparent;
+    color: var(--navy);
+    border: 1.5px solid var(--navy);
+    margin-left: 12px;
+  }
+
+  .score-display {
+    text-align: center;
+    padding: 60px 40px;
+    background: var(--white);
+    border: 1px solid var(--navy-mid);
+    border-radius: var(--radius);
+  }
+  .score-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 72px;
+    color: var(--navy);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .score-sub { color: var(--gray-500); margin-bottom: 28px; }
+  .score-bar-wrap { max-width: 320px; margin: 0 auto 32px; }
+  .score-bar-bg { height: 12px; background: var(--navy-mid); border-radius: 6px; overflow: hidden; }
+  .score-bar-fill { height: 100%; background: var(--navy); border-radius: 6px; transition: width 1s ease; }
+  .score-msg { font-size: 17px; color: var(--navy); font-weight: 600; margin-bottom: 8px; }
+  .score-detail { font-size: 14px; color: var(--gray-500); }
+
+  /* ── FORMULA MONO ── */
+  .formula {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    background: var(--navy-light);
+    border: 1px solid var(--navy-mid);
+    border-left: 4px solid var(--navy);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    font-size: 14px;
+    color: var(--navy);
+    margin: 12px 0;
+    line-height: 1.9;
+  }
+
+  /* ── TAG ── */
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-right: 6px;
+  }
+  .tag.full { background: var(--navy); color: #fff; }
+  .tag.partial { background: #556B8D; color: #fff; }
+  .tag.diff { background: var(--accent-gold); color: #fff; }
+  .tag.ifrs { background: #4a7c59; color: #fff; }
+
+  /* ── SPLIT CALC ── */
+  .split-calc {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  /* ── STEP FLOW ── */
+  .step-list { list-style: none; padding: 0; }
+  .step-item {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    align-items: flex-start;
+  }
+  .step-num {
+    width: 32px; height: 32px;
+    background: var(--navy);
+    color: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .step-content h4 {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .step-content p { font-size: 14px; color: var(--gray-500); }
+
+  /* ── UTIL ── */
+  .mt-8 { margin-top: 8px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-24 { margin-top: 24px; }
+  .mt-32 { margin-top: 32px; }
+  .mb-0 { margin-bottom: 0; }
+  .text-sm { font-size: 13px; }
+  .text-navy { color: var(--navy); font-weight: 600; }
+  .text-muted { color: var(--gray-500); }
+  .text-mono {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-weight: 600;
+  }
+  hr.divider {
+    border: none;
+    border-top: 1px solid #dde3ed;
+    margin: 32px 0;
+  }
+
+  @media (max-width: 900px) {
+    :root { --pad-x: 24px; }
+    .card-grid-2, .card-grid-3, .split-calc { grid-template-columns: 1fr; }
+    nav { padding: 0 16px; }
+    .hero h1 { font-size: 28px; }
+    .inline-grid-3 { grid-template-columns: 1fr !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">ASPN BAC · 연결회계</span>
+  <div class="nav-tabs">
+    <a class="nav-tab active" onclick="showTab('overview',this)">개념 비교</a>
+    <a class="nav-tab" onclick="showTab('calc',this)">수치 계산</a>
+    <a class="nav-tab" onclick="showTab('bs',this)">연결 B/S 비교</a>
+    <a class="nav-tab" onclick="showTab('ifrs',this)">IFRS 기준</a>
+    <a class="nav-tab" onclick="showTab('practical',this)">실무·시스템 맥락</a>
+    <a class="nav-tab" onclick="showTab('quiz',this)">📝 퀴즈</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════
+     TAB 1 : 개념 비교
+═══════════════════════════════════════════════ -->
+<section id="overview" class="section active">
+  <div class="hero">
+    <div class="hero-eyebrow">Goodwill Measurement Methods</div>
+    <h1>Full Goodwill vs. Partial Goodwill</h1>
+    <p>비지배주주의 지분을 어떻게 측정하느냐에 따라 영업권 규모와 연결재무제표 구조가 달라집니다.</p>
+  </div>
+
+  <div class="sec-header">
+    <div class="label">핵심 차이</div>
+    <h2>비지배지분(NCI) 측정 방식이 결정적 분기점</h2>
+    <p>두 방법의 유일한 차이는 NCI를 공정가치로 측정하는지, 비례지분으로 측정하는지입니다.</p>
+  </div>
+
+  <!-- NCI 지분 시각화 -->
+  <div class="nci-bar-wrap">
+    <p class="text-sm text-muted" style="margin-bottom:16px;font-weight:600;">동일 취득 시나리오: 지배주주 80% 취득</p>
+    <div class="nci-bar-label"><span>Full Goodwill 방식</span><span>NCI에도 영업권 배분</span></div>
+    <div class="nci-bar">
+      <div class="seg parent" style="width:80%">지배주주 80%</div>
+      <div class="seg nci-full" style="width:20%">NCI 20%</div>
+    </div>
+    <div class="nci-bar-label"><span>Partial Goodwill 방식</span><span>NCI = 순자산 비례</span></div>
+    <div class="nci-bar">
+      <div class="seg parent" style="width:80%">지배주주 80%</div>
+      <div class="seg nci-partial" style="width:20%">NCI 20%</div>
+    </div>
+    <div style="display:flex;gap:20px;margin-top:14px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray-500);">
+        <div style="width:16px;height:12px;background:var(--navy);border-radius:2px;"></div> 지배주주 지분 (공통)
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray-500);">
+        <div style="width:16px;height:12px;background:#556B8D;border-radius:2px;"></div> Full: NCI = 공정가치 측정
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray-500);">
+        <div style="width:16px;height:12px;background:#a0b0c8;border-radius:2px;"></div> Partial: NCI = 비례지분
+      </div>
+    </div>
+  </div>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>구분</th>
+        <th class="full-col">Full Goodwill</th>
+        <th class="partial-col">Partial Goodwill</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>다른 명칭</td>
+        <td>완전영업권법</td>
+        <td>부분영업권법 / 비례법</td>
+      </tr>
+      <tr>
+        <td>NCI 측정 기준</td>
+        <td><strong>공정가치(Fair Value)</strong><br><span class="text-sm text-muted">피취득자 전체를 공정가치로 평가</span></td>
+        <td><strong>비례적 지분(Proportionate share)</strong><br><span class="text-sm text-muted">식별가능 순자산 공정가치 × NCI%</span></td>
+      </tr>
+      <tr>
+        <td>영업권 인식 범위</td>
+        <td>피취득자 <strong>전체</strong>의 영업권<br>(지배주주분 + NCI분 포함)</td>
+        <td>지배주주가 <strong>취득한 지분</strong>에 해당하는 영업권만</td>
+      </tr>
+      <tr>
+        <td>영업권 규모</td>
+        <td><span class="tag diff">더 큼</span> NCI 귀속 영업권 포함</td>
+        <td><span class="tag partial">더 작음</span> 지배주주 귀속분만</td>
+      </tr>
+      <tr>
+        <td>NCI 규모</td>
+        <td><span class="tag diff">더 큼</span> 영업권 포함된 공정가치</td>
+        <td><span class="tag partial">더 작음</span> 순자산 비례만</td>
+      </tr>
+      <tr>
+        <td>손상차손 영향</td>
+        <td>NCI에도 손상차손 배분됨</td>
+        <td>지배주주 지분에만 손상차손 귀속</td>
+      </tr>
+      <tr>
+        <td>IFRS 허용 여부</td>
+        <td><span class="tag ifrs">IFRS 3 허용</span></td>
+        <td><span class="tag ifrs">IFRS 3 허용</span></td>
+      </tr>
+      <tr>
+        <td>US GAAP</td>
+        <td><span class="tag full">강제 적용</span></td>
+        <td>허용 안 됨</td>
+      </tr>
+      <tr>
+        <td>주요 특징</td>
+        <td>이론적으로 완전한 경제적 실체 개념 반영</td>
+        <td>실무 적용이 상대적으로 용이하여 실무에서 자주 활용</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card-grid-2">
+    <div class="callout navy">
+      <div class="callout-title">핵심 공식 — Full Goodwill</div>
+      <div class="formula">
+영업권(Full)<br>= 이전대가(지배주주 취득가)<br>
++ NCI 공정가치<br>
+− 피취득자 순자산 공정가치(100%)
+      </div>
+    </div>
+    <div class="callout warn">
+      <div class="callout-title">핵심 공식 — Partial Goodwill</div>
+      <div class="formula">
+영업권(Partial)<br>= 이전대가(지배주주 취득가)<br>
+− 피취득자 순자산 공정가치 × 지배주주%
+      </div>
+    </div>
+  </div>
+
+  <div class="diff-box">
+    <div class="diff-title">⚡ 핵심 포인트</div>
+    <p>두 방법의 <strong>차이 = NCI에 귀속되는 영업권</strong>입니다. Full에서는 NCI도 영업권을 보유하지만, Partial에서는 NCI가 순자산의 비례지분만 보유합니다. 이 차이가 연결B/S 상 자산 총액과 자본 총액에 모두 영향을 줍니다.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     TAB 2 : 수치 계산
+═══════════════════════════════════════════════ -->
+<section id="calc" class="section">
+  <div class="sec-header">
+    <div class="label">Numerical Example</div>
+    <h2>수치 예제: ASPN Holdings의 ASPN Korea 취득</h2>
+    <p>동일한 취득 조건에서 Full / Partial 영업권 계산 과정을 단계별로 비교합니다.</p>
+  </div>
+
+  <div class="callout navy" style="margin-bottom:32px;">
+    <div class="callout-title">📋 취득 조건</div>
+    <div class="card-grid-3" style="margin-top:12px;margin-bottom:0;">
+      <div>
+        <div class="text-sm text-muted">취득 지분율</div>
+        <div class="text-mono text-navy" style="font-size:20px;">80%</div>
+      </div>
+      <div>
+        <div class="text-sm text-muted">지배주주 이전대가</div>
+        <div class="text-mono text-navy" style="font-size:20px;">₩960억</div>
+      </div>
+      <div>
+        <div class="text-sm text-muted">피취득자 순자산 공정가치</div>
+        <div class="text-mono text-navy" style="font-size:20px;">₩800억</div>
+      </div>
+      <div>
+        <div class="text-sm text-muted">NCI 공정가치 (외부 독립 평가액)</div>
+        <div class="text-mono text-navy" style="font-size:20px;">₩230억</div>
+      </div>
+      <div>
+        <div class="text-sm text-muted">순자산 비례지분 (800 × 20%)</div>
+        <div class="text-mono text-navy" style="font-size:20px;">₩160억</div>
+      </div>
+      <div>
+        <div class="text-sm text-muted">NCI FV 프리미엄</div>
+        <div class="text-mono" style="font-size:20px;color:var(--accent-gold);">₩70억</div>
+      </div>
+    </div>
+  </div>
+
+  <p style="font-size:13px;color:var(--gray-500);margin-bottom:24px;">
+    💡 NCI 공정가치 230억 ≠ 순자산 비례 160억 — 이 차이 70억이 NCI에 귀속되는 영업권입니다.
+  </p>
+
+  <div class="split-calc">
+    <!-- FULL GOODWILL -->
+    <div class="calc-block">
+      <div class="calc-header">① Full Goodwill 계산</div>
+      <div class="calc-body">
+        <div class="calc-row">
+          <span class="label">이전대가 (지배주주)</span>
+          <span class="val">96,000</span>
+        </div>
+        <div class="calc-row">
+          <span class="label">+ NCI 공정가치</span>
+          <span class="val">23,000</span>
+        </div>
+        <div class="calc-row subtotal">
+          <span class="label">취득시점 피취득자 FV 합계</span>
+          <span class="val navy">119,000</span>
+        </div>
+        <div class="calc-row" style="margin-top:16px;">
+          <span class="label">− 피취득자 순자산 FV (100%)</span>
+          <span class="val neg">(80,000)</span>
+        </div>
+        <div class="calc-row total">
+          <span class="label">Full Goodwill</span>
+          <span class="val highlight">39,000</span>
+        </div>
+        <div class="mt-16" style="font-size:12px;color:var(--gray-500);line-height:1.8;">
+          <div>・ 지배주주 귀속 영업권: 96,000 − 64,000 = <strong>32,000</strong></div>
+          <div>・ NCI 귀속 영업권: 23,000 − 16,000 = <strong>7,000</strong></div>
+          <div>・ 합계: 32,000 + 7,000 = <strong>39,000</strong> ✓</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PARTIAL GOODWILL -->
+    <div class="calc-block">
+      <div class="calc-header" style="background:#556B8D;">② Partial Goodwill 계산</div>
+      <div class="calc-body">
+        <div class="calc-row">
+          <span class="label">이전대가 (지배주주)</span>
+          <span class="val">96,000</span>
+        </div>
+        <div class="calc-row">
+          <span class="label">− 피취득자 순자산 FV × 80%</span>
+          <span class="val neg">(64,000)</span>
+        </div>
+        <div class="calc-row total" style="margin-top:16px;">
+          <span class="label">Partial Goodwill</span>
+          <span class="val highlight" style="background:#556B8D;">32,000</span>
+        </div>
+        <div class="mt-16" style="font-size:12px;color:var(--gray-500);line-height:1.8;">
+          <div>・ 지배주주 귀속 영업권만 인식</div>
+          <div>・ NCI 귀속 영업권(7,000) 미인식</div>
+          <div>&nbsp;</div>
+          <div style="border-top:1px dashed #dde3ed;padding-top:8px;">
+            <strong>차이 = Full − Partial</strong><br>
+            39,000 − 32,000 = <strong style="color:var(--accent-gold);">7,000 (NCI 영업권)</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NCI 비교 -->
+  <div class="sec-header mt-32">
+    <div class="label">결과 비교</div>
+    <h2>NCI 금액 비교</h2>
+  </div>
+
+  <div class="split-calc">
+    <div class="calc-block">
+      <div class="calc-header">Full Goodwill — NCI</div>
+      <div class="calc-body">
+        <div class="calc-row">
+          <span class="label">NCI 공정가치 (측정값)</span>
+          <span class="val navy">23,000</span>
+        </div>
+        <div class="calc-row">
+          <span class="label indent">순자산 비례지분 (80,000×20%)</span>
+          <span class="val">16,000</span>
+        </div>
+        <div class="calc-row">
+          <span class="label indent">NCI 귀속 영업권</span>
+          <span class="val">7,000</span>
+        </div>
+        <div class="calc-row total">
+          <span class="label">연결 NCI 계상액</span>
+          <span class="val highlight">23,000</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="calc-block">
+      <div class="calc-header" style="background:#556B8D;">Partial Goodwill — NCI</div>
+      <div class="calc-body">
+        <div class="calc-row">
+          <span class="label">피취득자 순자산 FV × NCI%</span>
+          <span class="val">16,000</span>
+        </div>
+        <div class="calc-row">
+          <span class="label indent">80,000 × 20%</span>
+          <span class="val">16,000</span>
+        </div>
+        <div class="calc-row">
+          <span class="label">(영업권 미포함)</span>
+          <span class="val">—</span>
+        </div>
+        <div class="calc-row total">
+          <span class="label">연결 NCI 계상액</span>
+          <span class="val highlight" style="background:#556B8D;">16,000</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-title">🔑 요약 비교</div>
+    <table style="width:100%;font-size:14px;border-collapse:collapse;margin-top:8px;">
+      <tr style="border-bottom:1px solid #e0c8a0;">
+        <td style="padding:8px;font-weight:700;width:40%;">항목</td>
+        <td style="padding:8px;text-align:center;"><span class="tag full">Full</span></td>
+        <td style="padding:8px;text-align:center;"><span class="tag partial">Partial</span></td>
+        <td style="padding:8px;text-align:center;"><span class="tag diff">차이</span></td>
+      </tr>
+      <tr style="border-bottom:1px solid #e8e0d0;">
+        <td style="padding:8px;">영업권</td>
+        <td style="padding:8px;text-align:center;" class="text-mono">39,000</td>
+        <td style="padding:8px;text-align:center;" class="text-mono">32,000</td>
+        <td style="padding:8px;text-align:center;" class="text-mono" style="color:var(--accent-gold);">+7,000</td>
+      </tr>
+      <tr style="border-bottom:1px solid #e8e0d0;">
+        <td style="padding:8px;">NCI</td>
+        <td style="padding:8px;text-align:center;" class="text-mono">23,000</td>
+        <td style="padding:8px;text-align:center;" class="text-mono">16,000</td>
+        <td style="padding:8px;text-align:center;" class="text-mono">+7,000</td>
+      </tr>
+      <tr>
+        <td style="padding:8px;">지배주주 귀속 순자산</td>
+        <td style="padding:8px;text-align:center;" class="text-mono">동일</td>
+        <td style="padding:8px;text-align:center;" class="text-mono">동일</td>
+        <td style="padding:8px;text-align:center;" class="text-mono">—</td>
+      </tr>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     TAB 3 : 연결 B/S 비교
+═══════════════════════════════════════════════ -->
+<section id="bs" class="section">
+  <div class="sec-header">
+    <div class="label">Consolidated Balance Sheet</div>
+    <h2>연결 취득일 B/S: Full vs Partial 비교</h2>
+    <p>위 수치 예제를 그대로 적용하여 취득일 연결 B/S를 작성합니다.</p>
+  </div>
+
+  <div class="callout navy" style="margin-bottom:28px;">
+    <div class="callout-title">전제 조건</div>
+    <p class="text-sm mt-8">ASPN Holdings(지배회사) 자산 총계 500,000 / ASPN Korea(피취득자) 장부상 순자산 70,000, 공정가치 순자산 80,000 (FV 조정액 10,000 포함). ASPN Holdings는 960억에 ASPN Korea 80% 취득.</p>
+  </div>
+
+  <div class="split-calc">
+    <!-- FULL B/S -->
+    <div class="calc-block">
+      <div class="calc-header">연결 B/S — Full Goodwill</div>
+      <div class="calc-body">
+        <p style="font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray-500);margin-bottom:12px;">자산</p>
+        <div class="calc-row">
+          <span class="label">ASPN Holdings 자산</span>
+          <span class="val">500,000</span>
+        </div>
+        <div class="calc-row">
+          <span class="label indent">− 투자주식 제거</span>
+          <span class="val neg">(96,000)</span>
+        </div>
+        <div class="calc-row">
+          <span class="label">ASPN Korea 자산 (FV 기준)</span>
+          <span class="val">180,000</span>
+        </div>
+        <div class="calc-row">
+          <span class="label"><strong>Full Goodwill</strong></span>
+          <span class="val navy">39,000</span>
+        </div>
+        <div class="calc-row total">
+          <span class="label">자산 합계</span>
+          <span class="val highlight">623,000</span>
+        </div>
+
+        <p style="font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray-500);margin:20px 0 12px;">자본 · 부채</p>
+        <div class="calc-row">
+          <span class="label">ASPN Holdings 부채</span>
+          <span class="val">260,000</span>
+        </div>
+        <div class="calc-row">
+          <span class="label">ASPN Korea 부채</span>
+          <span class="val">100,000</span>
+        </div>
+        <div class="calc-row">
+          <span class="label">지배주주 자본</span>
+          <span class="val">240,000</span>
+        </div>
+        <div class="calc-row">
+          <span class="label"><strong>비지배주주(NCI)</strong></span>
+          <span class="val navy">23,000</span>
+        </div>
+        <div class="calc-row total">
+          <span class="label">부채·자본 합계</span>
+          <span class="val highlight">623,000</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PARTIAL B/S -->
+    <div class="calc-block">
+      <div class="calc-header" style="background:#556B8D;">연결 B/S — Partial Goodwill</div>
+      <div class="calc-body">
+        <p style="font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray-500);margin-bottom:12px;">자산</p>
+        <div class="calc-row">
+          <span class="label">ASPN Holdings 자산</span>
+          <span class="val">500,000</span>
+        </div>
+        <div class="calc-row">
+          <span class="label indent">− 투자주식 제거</span>
+          <span class="val neg">(96,000)</span>
+        </div>
+        <div class="calc-row">
+          <span class="label">ASPN Korea 자산 (FV 기준)</span>
+          <span class="val">180,000</span>
+        </div>
+        <div class="calc-row">
+          <span class="label"><strong>Partial Goodwill</strong></span>
+          <span class="val" style="color:#556B8D;">32,000</span>
+        </div>
+        <div class="calc-row total">
+          <span class="label">자산 합계</span>
+          <span class="val highlight" style="background:#556B8D;">616,000</span>
+        </div>
+
+        <p style="font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray-500);margin:20px 0 12px;">자본 · 부채</p>
+        <div class="calc-row">
+          <span class="label">ASPN Holdings 부채</span>
+          <span class="val">260,000</span>
+        </div>
+        <div class="calc-row">
+          <span class="label">ASPN Korea 부채</span>
+          <span class="val">100,000</span>
+        </div>
+        <div class="calc-row">
+          <span class="label">지배주주 자본</span>
+          <span class="val">240,000</span>
+        </div>
+        <div class="calc-row">
+          <span class="label"><strong>비지배주주(NCI)</strong></span>
+          <span class="val" style="color:#556B8D;">16,000</span>
+        </div>
+        <div class="calc-row total">
+          <span class="label">부채·자본 합계</span>
+          <span class="val highlight" style="background:#556B8D;">616,000</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="diff-box">
+    <div class="diff-title">방법 간 차이 요약</div>
+    <div class="card-grid-3" style="margin-top:8px;margin-bottom:0;">
+      <div>
+        <div class="text-sm text-muted">자산 총계 차이</div>
+        <div class="text-mono text-navy" style="font-size:22px;">+7,000</div>
+        <div class="text-sm text-muted">(Full이 더 큼)</div>
+      </div>
+      <div>
+        <div class="text-sm text-muted">NCI 차이</div>
+        <div class="text-mono text-navy" style="font-size:22px;">+7,000</div>
+        <div class="text-sm text-muted">(Full이 더 큼)</div>
+      </div>
+      <div>
+        <div class="text-sm text-muted">지배주주 자본</div>
+        <div class="text-mono" style="font-size:22px;color:var(--correct);">동일</div>
+        <div class="text-sm text-muted">두 방법 모두 동일</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout correct mt-24">
+    <div class="callout-title">✅ 검증 포인트</div>
+    <p>두 방법 모두 <strong>차대일치(B/S 균형)</strong>는 유지됩니다. 영업권 차이(+7,000)가 자산쪽에 반영되고, 동일한 7,000이 NCI(자본)쪽에 반영되어 차변·대변이 일치합니다. 지배주주 귀속 자본은 두 방법에서 항상 동일합니다.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     TAB 4 : IFRS 기준
+═══════════════════════════════════════════════ -->
+<section id="ifrs" class="section">
+  <div class="sec-header">
+    <div class="label">IFRS 3 · K-IFRS 1103</div>
+    <h2>IFRS 기준서 적용 원칙</h2>
+    <p>K-IFRS 제1103호 사업결합 — 영업권 측정 선택권과 실무 적용 요점</p>
+  </div>
+
+  <div class="card-grid-2">
+    <div class="card">
+      <h3>IFRS 3 선택권 구조</h3>
+      <ul class="step-list mt-16">
+        <li class="step-item">
+          <div class="step-num">①</div>
+          <div class="step-content">
+            <h4>취득일마다 선택 가능</h4>
+            <p>Full / Partial 방법은 동일 그룹 내에서도 취득 건별로 선택 가능합니다. (단, 사업결합 건별 적용, 회계정책으로 일관 강제 아님)</p>
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-num">②</div>
+          <div class="step-content">
+            <h4>NCI 공정가치 입수 가능성</h4>
+            <p>Full 방법 적용 시 NCI의 공정가치(시장가격 또는 평가액)를 신뢰성 있게 측정 가능해야 합니다. 비상장 자회사의 경우 실무적 어려움이 있습니다.</p>
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-num">③</div>
+          <div class="step-content">
+            <h4>손상 검사 CGU 배분</h4>
+            <p>Full Goodwill에서는 영업권이 피취득자 전체 기준으로 인식되므로, 손상차손 발생 시 그 영향이 지배주주와 NCI에 모두 귀속됩니다.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>실무 선택 시 고려사항</h3>
+      <div class="callout warn mb-0" style="margin-bottom:12px;">
+        <div class="callout-title">Full 방법 채택 시 유의</div>
+        <p class="text-sm">① NCI FV 평가 비용 발생 ② 자산·자본 총액 증가로 ROA/ROE 등 비율지표 영향 ③ 손상 발생 시 연결재무제표상 인식되는 손상차손 총액이 더 크게 나타날 수 있음</p>
+      </div>
+      <div class="callout correct mb-0">
+        <div class="callout-title">Partial 방법 채택 시 유의</div>
+        <p class="text-sm">① 계산이 단순 ② US GAAP 연결재무제표와 비교 시 차이 발생 ③ 경제적 실체 개념상 NCI 영업권 미인식으로 이론적 불완전성 존재</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mt-24">
+    <h3>손상차손 처리 비교</h3>
+    <div class="callout navy mt-16">
+      <div class="callout-title">가정: CGU 전체 영업권 손상 50,000 발생 (지배주주 80% / NCI 20%)</div>
+    </div>
+    <table class="compare-table mt-16">
+      <thead>
+        <tr>
+          <th>구분</th>
+          <th class="full-col">Full Goodwill</th>
+          <th class="partial-col">Partial Goodwill</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>장부상 영업권</td>
+          <td>100,000 (지배 80,000 + NCI 20,000)</td>
+          <td>80,000 (지배주주분만)</td>
+        </tr>
+        <tr>
+          <td>손상 테스트 기준</td>
+          <td>장부 영업권 100,000 그대로 검토</td>
+          <td><strong>Gross-up:</strong> 장부 80,000 → 가상 100,000으로 환원 후 검토</td>
+        </tr>
+        <tr>
+          <td>인식할 손상차손</td>
+          <td>50,000 전액 장부 반영<br><span style="font-size:12px;color:var(--gray-500);">지배주주 40,000 + NCI 10,000</span></td>
+          <td>Gross-up 기준 50,000 중 지배주주 몫만 반영<br><strong>40,000</strong> (80%) 장부 인식, NCI분 10,000은 미인식</td>
+        </tr>
+        <tr>
+          <td>지배주주 당기순이익 감소</td>
+          <td><strong>40,000</strong></td>
+          <td><strong>40,000</strong></td>
+        </tr>
+        <tr>
+          <td>NCI 당기순이익 감소</td>
+          <td>10,000 (NCI 귀속분 별도 반영)</td>
+          <td>0 (애초에 NCI 영업권 미인식)</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout correct mt-16" style="margin-bottom:8px;">
+      <div class="callout-title">✅ 핵심: 지배주주 손실 금액은 두 방법이 동일</div>
+      <p style="font-size:14px;">손상차손으로 인한 <strong>지배주주 귀속 당기순이익 감소액은 두 방법 모두 동일</strong>합니다. Partial은 Gross-up 메커니즘을 통해 전체 손상을 먼저 산정한 뒤 지배주주 지분율만큼만 장부에 반영하기 때문입니다.</p>
+    </div>
+    <div class="callout warn" style="margin-bottom:0;">
+      <div class="callout-title">⚠️ 단, 체감·비율 지표 측면에서의 차이</div>
+      <p style="font-size:14px;">① <strong>손실 집중:</strong> Partial은 인식 손상차손 전액(40,000)이 100% 지배주주 귀속으로 표시 — Full은 50,000 중 10,000을 NCI가 분담하는 구조로 표시됨<br>② <strong>조기 손상 리스크:</strong> Partial은 영업권을 낮게 잡아 쿠션이 작아 손상 구간 진입이 더 빠를 수 있음<br>③ <strong>재무비율:</strong> 자산·자본을 낮게 출발한 Partial에서 동일 손실의 ROA/ROE 충격이 상대적으로 더 크게 나타남</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     TAB 5 : 실무·시스템 맥락
+═══════════════════════════════════════════════ -->
+<section id="practical" class="section">
+  <div class="sec-header">
+    <div class="label">Practical & System Context</div>
+    <h2>왜 실무에서 Partial이 지배적인가</h2>
+    <p>기준서 허용 범위, 실무 관행, 그리고 시스템 아키텍처 제약이 맞물린 결과입니다.</p>
+  </div>
+
+  <!-- ── 3단 비교 타임라인 카드 ── -->
+  <div class="card-grid-3" style="margin-bottom:32px;">
+    <div class="card" style="border-top:4px solid var(--navy);margin-bottom:0;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--navy);opacity:0.6;margin-bottom:10px;">US GAAP (ASC 805)</div>
+      <h3 style="margin-bottom:14px;">Full Goodwill<br>강제 적용</h3>
+      <p style="font-size:14px;color:var(--gray-500);line-height:1.7;">선택지 없음. NCI는 반드시 공정가치로 측정해야 합니다. 이론적 일관성 — 경제적 단일 실체(Single Economic Entity) 개념을 엄격하게 관철합니다.</p>
+    </div>
+    <div class="card" style="border-top:4px solid #556B8D;margin-bottom:0;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#556B8D;opacity:0.8;margin-bottom:10px;">K-IFRS 제1103호</div>
+      <h3 style="margin-bottom:14px;">두 방법 모두<br>허용 (선택)</h3>
+      <p style="font-size:14px;color:var(--gray-500);line-height:1.7;">취득 건별로 Full / Partial을 선택할 수 있습니다. 이론적 완결성(Full)과 실무 편의성(Partial) 사이에서 기업이 판단합니다.</p>
+    </div>
+    <div class="card" style="border-top:4px solid var(--accent-gold);margin-bottom:0;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent-gold);opacity:0.9;margin-bottom:10px;">한국 상장사 실무</div>
+      <h3 style="margin-bottom:14px;">Partial 방법<br>사실상 표준</h3>
+      <p style="font-size:14px;color:var(--gray-500);line-height:1.7;">NCI 공정가치 독립 평가 비용, 비상장 자회사의 측정 불확실성, 시스템 입력 부담이 복합적으로 작용하여 Partial이 압도적으로 채택됩니다.</p>
+    </div>
+  </div>
+
+  <!-- ── Partial 선택 이유 상세 ── -->
+  <div class="sec-header">
+    <div class="label">Partial 채택 배경</div>
+    <h2>실무에서 Partial을 선택하는 세 가지 이유</h2>
+  </div>
+
+  <div class="card" style="margin-bottom:20px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px;" class="inline-grid-3">
+      <div>
+        <div style="width:36px;height:36px;background:var(--navy-light);border:1.5px solid var(--navy-mid);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:14px;">💰</div>
+        <h4 style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px;">평가 비용</h4>
+        <p style="font-size:14px;color:var(--gray-500);line-height:1.7;">Full 방법은 NCI 지분에 대한 공정가치 평가 보고서가 필요합니다. 비상장 자회사의 경우 매 취득 건마다 외부 평가 비용이 발생하며, 평가 결과에 대한 감사인 검증도 수반됩니다.</p>
+      </div>
+      <div>
+        <div style="width:36px;height:36px;background:var(--navy-light);border:1.5px solid var(--navy-mid);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:14px;">📊</div>
+        <h4 style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px;">측정 불확실성</h4>
+        <p style="font-size:14px;color:var(--gray-500);line-height:1.7;">비상장 자회사의 NCI 공정가치는 지배주주 취득가와 달리 시장에서 직접 관찰되지 않습니다. 평가 모형 가정에 따라 금액 편차가 크고, 재무제표 신뢰성 논란의 소지가 됩니다.</p>
+      </div>
+      <div>
+        <div style="width:36px;height:36px;background:var(--navy-light);border:1.5px solid var(--navy-mid);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:14px;">🔢</div>
+        <h4 style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px;">계산 단순성</h4>
+        <p style="font-size:14px;color:var(--gray-500);line-height:1.7;">Partial 방법은 이미 확정된 두 값(이전대가, 순자산 FV)만으로 영업권이 결정됩니다. 내부 검증이 쉽고 오류 가능성이 낮아 결산 효율성이 높습니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 시스템 관점 ── -->
+  <div class="sec-header" style="margin-top:40px;">
+    <div class="label">System Architecture</div>
+    <h2>연결 시스템 관점: Full Goodwill이 기본 기능이 되지 못하는 이유</h2>
+    <p>SAP Group Reporting 등 연결 솔루션에서 Partial이 자연스럽게 구현되는 구조적 배경</p>
+  </div>
+
+  <div class="callout warn" style="margin-bottom:24px;">
+    <div class="callout-title">⚙️ 핵심 구조 문제</div>
+    <p>연결 시스템의 영업권 자동 계산 로직은 <strong>내부 데이터(이전대가 + 종속회사 순자산)</strong>만으로 완결됩니다. Full Goodwill을 위해 필요한 <strong>NCI 공정가치는 외부 평가 데이터</strong>로, 시스템이 자동 산출할 수 없습니다.</p>
+  </div>
+
+  <div class="card" style="margin-bottom:24px;">
+    <h3 style="margin-bottom:20px;">데이터 가용성 비교</h3>
+    <table class="compare-table" style="margin-bottom:0;">
+      <thead>
+        <tr>
+          <th>필요 데이터</th>
+          <th class="partial-col">Partial Goodwill</th>
+          <th class="full-col">Full Goodwill</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>지배주주 이전대가</td>
+          <td>✅ 투자주식 장부금액에서 자동 취득</td>
+          <td>✅ 동일</td>
+        </tr>
+        <tr>
+          <td>종속회사 순자산 공정가치</td>
+          <td>✅ 취득일 FV 조정 후 자동 반영</td>
+          <td>✅ 동일</td>
+        </tr>
+        <tr>
+          <td>NCI 공정가치</td>
+          <td>⬛ 불필요 — 순자산 × NCI%로 자동 산출</td>
+          <td>⚠️ <strong>외부 입력 필수</strong> — 평가보고서 기준 수동 입력</td>
+        </tr>
+        <tr>
+          <td>영업권 자동 계산</td>
+          <td>✅ 시스템 기본 기능으로 완결</td>
+          <td>❌ NCI FV 미입력 시 계산 불가</td>
+        </tr>
+        <tr>
+          <td>결산 자동화 수준</td>
+          <td>높음 — 추가 파라미터 없음</td>
+          <td>낮음 — 취득 건별 별도 파라미터 관리 필요</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 처리 흐름 비교 -->
+  <div class="card-grid-2">
+    <div class="card" style="margin-bottom:0;border-top:3px solid #556B8D;">
+      <h3 style="color:#556B8D;margin-bottom:16px;">Partial — 시스템 처리 흐름</h3>
+      <ul class="step-list">
+        <li class="step-item">
+          <div class="step-num" style="background:#556B8D;">1</div>
+          <div class="step-content">
+            <h4>투자주식 읽기</h4>
+            <p>지배회사 장부의 투자주식 금액 = 이전대가</p>
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-num" style="background:#556B8D;">2</div>
+          <div class="step-content">
+            <h4>종속회사 순자산 산출</h4>
+            <p>FV 조정 후 종속회사 자본 × 지배주주%</p>
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-num" style="background:#556B8D;">3</div>
+          <div class="step-content">
+            <h4>영업권 자동 계산 완결</h4>
+            <p>① − ② = Partial Goodwill. 추가 입력 없이 완결.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="card" style="margin-bottom:0;border-top:3px solid var(--navy);">
+      <h3 style="margin-bottom:16px;">Full — 시스템 처리 흐름</h3>
+      <ul class="step-list">
+        <li class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>투자주식 읽기</h4>
+            <p>지배회사 장부의 투자주식 금액 = 이전대가</p>
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4 style="color:var(--warn);">⚠️ NCI 공정가치 수동 입력</h4>
+            <p>외부 평가보고서 기준 금액을 취득 건별로 별도 파라미터에 입력. 시스템이 자동 산출 불가.</p>
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>영업권 계산</h4>
+            <p>이전대가 + NCI FV − 순자산 FV = Full GW. 단계 2가 선행되어야 완결.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="diff-box" style="margin-top:24px;">
+    <div class="diff-title">📌 실무 귀결</div>
+    <p>SAP Group Reporting 표준 투자제거 기능은 NCI 공정가치를 입력값으로 요구하지 않으므로, <strong>Partial Goodwill 방식을 전제로 설계</strong>되어 있습니다. Full Goodwill 적용을 위해서는 NCI 공정가치에 대한 별도 데이터 수집 및 확장 로직이 필요합니다. US GAAP(ASC 805)은 취득일 NCI를 공정가치로 측정하도록 요구하므로, 해당 기준 적용 기업이 SAP GR을 사용하는 경우 NCI 공정가치 파라미터 설정은 별도 프로젝트 과제로 취급됩니다.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     TAB 6 : 퀴즈
+═══════════════════════════════════════════════ -->
+<section id="quiz" class="section">
+  <div class="sec-header">
+    <div class="label">Knowledge Check</div>
+    <h2>학습 확인 퀴즈</h2>
+    <p>6문항 · Full/Partial 개념부터 수치 계산까지</p>
+  </div>
+
+  <div class="quiz-container">
+    <div class="quiz-progress" id="quizProgress"></div>
+    <div id="quizArea"></div>
+  </div>
+</section>
+
+<script>
+// ── NAVIGATION ──
+function showTab(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (el) el.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ── QUIZ DATA ──
+const questions = [
+  {
+    q: "Partial Goodwill 방법에서 비지배주주(NCI)는 어떻게 측정되는가?",
+    hint: "두 방법의 결정적 차이를 묻는 문항",
+    opts: [
+      "피취득자 전체의 공정가치 × NCI 지분율",
+      "피취득자 식별가능 순자산 공정가치 × NCI 지분율",
+      "지배주주 이전대가 × NCI/지배주주 비율",
+      "피취득자 장부가액 순자산 × NCI 지분율"
+    ],
+    answer: 1,
+    explain: "Partial(부분영업권) 방법에서 NCI는 피취득자의 <strong>식별가능 순자산의 공정가치에 NCI 지분율을 곱한 금액</strong>으로 측정합니다. 영업권은 포함하지 않습니다. Full 방법만 NCI 공정가치(영업권 포함)를 인식합니다."
+  },
+  {
+    q: "지배주주 이전대가 960억, 피취득자 순자산 공정가치 800억, 지배주주 취득 지분율 80%일 때, Partial Goodwill은?",
+    hint: "단위: 억원",
+    opts: [
+      "160억",
+      "320억",
+      "390억",
+      "230억"
+    ],
+    answer: 1,
+    explain: "Partial Goodwill = 이전대가 − 순자산 공정가치 × 지배주주% = 960 − (800 × 80%) = 960 − 640 = <strong>320억</strong>. NCI 공정가치는 Partial 계산에서 사용하지 않습니다."
+  },
+  {
+    q: "Full Goodwill이 Partial Goodwill보다 큰 이유는?",
+    opts: [
+      "지배주주가 더 높은 가격에 취득하기 때문",
+      "Full 방법은 NCI에게도 영업권을 귀속시키기 때문",
+      "순자산 공정가치를 더 높게 평가하기 때문",
+      "피취득자 부채를 제외하기 때문"
+    ],
+    answer: 1,
+    explain: "Full Goodwill = Partial Goodwill + <strong>NCI 귀속 영업권</strong>. Full 방법은 피취득자 전체(100%)에 대한 영업권을 인식하므로, NCI 지분에 해당하는 영업권도 포함됩니다. 이것이 두 방법의 유일한 차이입니다."
+  },
+  {
+    q: "IFRS(K-IFRS 제1103호)에서 Full과 Partial 방법 선택에 관한 설명으로 옳은 것은?",
+    opts: [
+      "회사 전체에 한 가지 방법만 일관 적용해야 한다",
+      "Full 방법만 허용된다",
+      "사업결합 건별로 두 방법 중 선택 적용 가능하다",
+      "Partial 방법은 IFRS에서 허용되지 않는다"
+    ],
+    answer: 2,
+    explain: "K-IFRS 제1103호는 NCI를 ① 공정가치(Full) 또는 ② 식별가능 순자산의 비례적 지분(Partial) 중 <strong>취득 건별로 선택</strong>할 수 있도록 허용합니다. 회계정책처럼 전사 일관 적용이 강제되지 않습니다. 참고로 US GAAP(ASC 805)은 Full 방법만 강제합니다."
+  },
+  {
+    q: "동일 조건에서 영업권 손상차손 발생 시, 지배주주 귀속 당기순이익 감소액을 두 방법과 비교하면?",
+    hint: "Gross-up 메커니즘을 떠올려보세요",
+    opts: [
+      "Full 방법이 더 크다 — 손상차손 총액이 더 크기 때문에",
+      "Partial 방법이 더 크다 — 손상차손 전액이 지배주주에게 귀속되기 때문에",
+      "두 방법이 수학적으로 동일하다",
+      "Partial 방법은 NCI 영업권이 없으므로 손상차손 자체가 발생하지 않는다"
+    ],
+    answer: 2,
+    explain: "Partial Goodwill에서는 손상검사 시 Full Goodwill 기준으로 환산(gross-up)한 후 CGU 손상을 산정하며, 실제 장부에는 인식된 영업권 범위 내에서만 손상차손이 반영됩니다. 예) 전체 손상 50 발생 시 → Full: 50 인식 후 지배주주 40 / NCI 10 배분 → Partial: 40만 인식, 전액 지배주주 귀속. <strong>결과적으로 지배주주 귀속 손실은 두 방법 모두 40으로 동일</strong>합니다. 다만 Partial은 ① 인식 손상 전액이 지배주주 귀속으로 표시(충격 집중) ② 영업권을 낮게 잡아 손상 구간 진입이 더 빠를 수 있는 실질적 리스크가 존재합니다."
+  },
+  {
+    q: "ASPN 예제에서 Full Goodwill 390억, Partial Goodwill 320억으로 70억의 차이가 발생하였다. 이 70억의 의미는?",
+    hint: "두 방법 간 유일한 차이가 무엇인지 생각해보세요",
+    opts: [
+      "취득일 FV 조정(공정가치 평가) 차이",
+      "NCI 귀속 영업권",
+      "염가매수차익(Bargain Purchase Gain)",
+      "지배주주 취득원가 산정 방식 차이"
+    ],
+    answer: 1,
+    explain: "Full Goodwill은 NCI를 공정가치(230억)로 측정하고, Partial은 순자산 비례지분(160억)으로 측정합니다. 그 차이 70억이 <strong>NCI에 귀속되는 영업권</strong>이며, 이것이 두 방법 간 영업권 차이의 전부입니다. FV 조정, 염가매수차익, 취득원가와는 무관합니다."
+  }
+];
+
+let current = 0;
+let score = 0;
+let answered = new Array(questions.length).fill(null);
+
+function initProgress() {
+  const p = document.getElementById('quizProgress');
+  p.innerHTML = '';
+  questions.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'quiz-dot' + (i === current ? ' current' : answered[i] !== null ? ' done' : '');
+    p.appendChild(d);
+  });
+}
+
+function renderQuestion() {
+  if (current >= questions.length) { renderScore(); return; }
+  initProgress();
+  const q = questions[current];
+  const isAnswered = answered[current] !== null;
+
+  let optsHtml = q.opts.map((o, i) => {
+    let cls = 'quiz-opt' + (isAnswered ? ' disabled' : '');
+    if (isAnswered) {
+      if (i === q.answer) cls += ' correct';
+      else if (i === answered[current]) cls += ' wrong';
+    }
+    const letters = ['A','B','C','D'];
+    return `<div class="${cls}" ${!isAnswered ? `onclick="selectOpt(${i})"` : ''}>
+      <div class="opt-label">${letters[i]}</div>
+      <div>${o}</div>
+    </div>`;
+  }).join('');
+
+  const feedbackCls = isAnswered ? (answered[current] === q.answer ? 'correct' : 'wrong') : '';
+  const feedbackStyle = isAnswered ? 'display:block' : 'display:none';
+  const feedbackIcon = answered[current] === q.answer ? '✅ 정답입니다!' : '❌ 오답입니다.';
+
+  document.getElementById('quizArea').innerHTML = `
+    <div class="quiz-card">
+      <div class="quiz-num">Question ${current + 1} / ${questions.length}</div>
+      <div class="quiz-q">${q.q}${q.hint ? `<span class="hint">💡 ${q.hint}</span>` : ''}</div>
+      <div class="quiz-options">${optsHtml}</div>
+      <div class="quiz-feedback ${feedbackCls}" style="${feedbackStyle}">
+        <strong>${feedbackIcon}</strong><br>${q.explain}
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;">
+      <button class="quiz-btn" id="nextBtn" onclick="nextQ()" ${!isAnswered ? 'disabled' : ''}>
+        ${current < questions.length - 1 ? '다음 문제 →' : '결과 보기 →'}
+      </button>
+      ${current > 0 ? `<button class="quiz-btn secondary" onclick="prevQ()">← 이전</button>` : ''}
+    </div>
+  `;
+}
+
+function selectOpt(i) {
+  if (answered[current] !== null) return;
+  answered[current] = i;
+  if (i === questions[current].answer) score++;
+  renderQuestion();
+}
+
+function nextQ() {
+  if (current < questions.length - 1) { current++; renderQuestion(); }
+  else renderScore();
+}
+function prevQ() {
+  if (current > 0) { current--; renderQuestion(); }
+}
+
+function renderScore() {
+  initProgress();
+  const pct = Math.round(score / questions.length * 100);
+  let msg, detail;
+  if (pct === 100) { msg = '완벽합니다! 🎉'; detail = 'Full/Partial Goodwill 개념을 완전히 이해하셨습니다.'; }
+  else if (pct >= 80) { msg = '우수합니다! 👍'; detail = '개념을 잘 이해하고 있습니다. 놓친 문항만 복습하세요.'; }
+  else if (pct >= 60) { msg = '기초 이해 완료 📖'; detail = '계산 방법과 IFRS 선택권 부분을 한번 더 확인해 보세요.'; }
+  else { msg = '다시 도전하세요 💪'; detail = 'Full/Partial의 핵심 차이(NCI 측정 기준)부터 다시 살펴보세요.'; }
+
+  document.getElementById('quizArea').innerHTML = `
+    <div class="score-display">
+      <div class="score-num">${score}/${questions.length}</div>
+      <div class="score-sub">정답 ${score}개 · 오답 ${questions.length - score}개</div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-bg"><div class="score-bar-fill" id="scoreBar" style="width:0%"></div></div>
+      </div>
+      <div class="score-msg">${msg}</div>
+      <div class="score-detail">${detail}</div>
+      <div style="margin-top:32px;">
+        <button class="quiz-btn" onclick="resetQuiz()">처음부터 다시</button>
+        <button class="quiz-btn secondary" onclick="showTab('overview', document.querySelector('.nav-tab'))">개념 다시 보기</button>
+      </div>
+    </div>
+  `;
+  setTimeout(() => {
+    const bar = document.getElementById('scoreBar');
+    if (bar) bar.style.width = pct + '%';
+  }, 100);
+}
+
+function resetQuiz() {
+  current = 0; score = 0;
+  answered = new Array(questions.length).fill(null);
+  renderQuestion();
+}
+
+// init
+renderQuestion();
+</script>
+</body>
+</html>
