@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Universal Journal 완전 이해 | ASPN BAC 교육 시리즈</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #003366;
+    --navy-light: #e8eef5;
+    --bg: #f0f3f8;
+    --white: #ffffff;
+    --text: #1a1a2e;
+    --text-muted: #555577;
+    --border: #d0d8e4;
+    --warn-bg: #fff8e1;
+    --warn-border: #f0c040;
+    --correct-bg: #e8f5e9;
+    --correct-border: #4caf50;
+    --wrong-bg: #fdecea;
+    --wrong-border: #e53935;
+    --radius: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 15px;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.75;
+  }
+
+  /* HEADER */
+  .hero {
+    background: var(--navy);
+    color: var(--white);
+    padding: 48px 48px 40px;
+  }
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 12px;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 38px;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+  .hero-sub {
+    font-size: 15px;
+    color: rgba(255,255,255,0.75);
+    max-width: 600px;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 24px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  .hero-meta span {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+  }
+  .hero-meta strong {
+    color: rgba(255,255,255,0.9);
+    font-weight: 600;
+  }
+
+  /* NAV */
+  .nav-wrap {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    overflow-x: auto;
+  }
+  .nav-inner {
+    display: flex;
+    gap: 0;
+    min-width: max-content;
+    padding: 0 48px;
+  }
+  .nav-tab {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 16px 20px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .nav-tab:hover { color: var(--navy); }
+  .nav-tab.active {
+    color: var(--navy);
+    border-bottom-color: var(--navy);
+    font-weight: 700;
+  }
+
+  /* MAIN */
+  main { max-width: 900px; margin: 0 auto; padding: 40px 48px 80px; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .section-lead {
+    font-size: 15px;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 20px;
+  }
+
+  /* MODULE HEADER */
+  .mod-label {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 12px;
+    color: var(--navy);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .mod-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 10px;
+  }
+  .card p { color: var(--text); line-height: 1.8; }
+
+  /* CALLOUTS */
+  .callout {
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    border-left: 4px solid;
+  }
+  .callout.navy { background: var(--navy-light); border-color: var(--navy); }
+  .callout.warn { background: var(--warn-bg); border-color: var(--warn-border); }
+  .callout.correct { background: var(--correct-bg); border-color: var(--correct-border); }
+  .callout.wrong { background: var(--wrong-bg); border-color: var(--wrong-border); }
+  .callout-label {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+  .callout.navy .callout-label { color: var(--navy); }
+  .callout.warn .callout-label { color: #b8860b; }
+  .callout.correct .callout-label { color: #2e7d32; }
+  .callout.wrong .callout-label { color: #c62828; }
+
+  /* COMPARE TABLE */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+  .compare-table th {
+    background: var(--navy);
+    color: var(--white);
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+  }
+  .compare-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .compare-table tr:nth-child(even) td { background: #f7f9fc; }
+  .compare-table tr:last-child td { border-bottom: none; }
+
+  /* FIELD TABLE */
+  .field-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+  .field-table th {
+    background: #eef2f8;
+    color: var(--navy);
+    padding: 9px 14px;
+    text-align: left;
+    font-weight: 700;
+    border-bottom: 2px solid var(--navy);
+  }
+  .field-table td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .field-table tr:last-child td { border-bottom: none; }
+  .field-mono {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 13px;
+    color: var(--navy);
+    font-weight: 600;
+  }
+
+  /* FLOW */
+  .flow {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0;
+    margin: 20px 0;
+  }
+  .flow-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    text-align: center;
+    min-width: 120px;
+    flex: 1;
+  }
+  .flow-item .fi-label {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .flow-item .fi-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .flow-item.highlight {
+    background: var(--navy);
+    border-color: var(--navy);
+  }
+  .flow-item.highlight .fi-label { color: rgba(255,255,255,0.6); }
+  .flow-item.highlight .fi-title { color: var(--white); }
+  .flow-arrow {
+    font-size: 20px;
+    color: var(--text-muted);
+    padding: 0 8px;
+    flex-shrink: 0;
+  }
+
+  /* DRILL TOGGLE */
+  .drill {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .drill-q {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 15px;
+  }
+  .drill-q:hover { background: #f7f9fc; }
+  .drill-icon {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 18px;
+    color: var(--navy);
+    transition: transform 0.2s;
+  }
+  .drill.open .drill-icon { transform: rotate(45deg); }
+  .drill-a {
+    display: none;
+    padding: 0 20px 18px;
+    color: var(--text);
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+    line-height: 1.8;
+  }
+  .drill.open .drill-a { display: block; }
+
+  /* QUIZ */
+  .quiz-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .quiz-q {
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-opt {
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.15s;
+    background: var(--white);
+    text-align: left;
+  }
+  .quiz-opt:hover { border-color: var(--navy); background: var(--navy-light); }
+  .quiz-opt.correct-ans { background: var(--correct-bg); border-color: var(--correct-border); color: #1b5e20; font-weight: 600; }
+  .quiz-opt.wrong-ans { background: var(--wrong-bg); border-color: var(--wrong-border); color: #b71c1c; }
+  .quiz-feedback { margin-top: 12px; font-size: 14px; display: none; padding: 10px 14px; border-radius: 6px; }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: var(--correct-bg); color: #1b5e20; }
+  .quiz-feedback.ng { background: var(--wrong-bg); color: #b71c1c; }
+
+  /* CHECKLIST */
+  .checklist { list-style: none; margin-bottom: 20px; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 15px;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist input[type=checkbox] {
+    margin-top: 3px;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--navy);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .progress-bar-wrap {
+    background: var(--border);
+    border-radius: 99px;
+    height: 8px;
+    margin: 16px 0 6px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    background: var(--navy);
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.3s;
+  }
+  .progress-label {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  /* STEP NAV */
+  .step-nav { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .step-btn {
+    font-size: 13px;
+    padding: 8px 16px;
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    cursor: pointer;
+    background: var(--white);
+    color: var(--text-muted);
+    font-family: 'Noto Sans KR', sans-serif;
+    transition: all 0.15s;
+  }
+  .step-btn:hover { border-color: var(--navy); color: var(--navy); }
+  .step-btn.active { background: var(--navy); color: var(--white); border-color: var(--navy); font-weight: 700; }
+  .step-panel { display: none; }
+  .step-panel.active { display: block; }
+
+  /* DIVIDER */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+  /* TAG */
+  .tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-weight: 600;
+  }
+  .tag.navy { background: var(--navy-light); color: var(--navy); }
+  .tag.gray { background: #eee; color: #555; }
+
+  /* ACDOCA ROW VIZ */
+  .acdoca-row {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .acdoca-header {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 12px;
+    padding: 10px 16px;
+    letter-spacing: 0.05em;
+  }
+  .acdoca-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1px;
+    background: var(--border);
+  }
+  .acdoca-field {
+    background: var(--white);
+    padding: 12px 14px;
+  }
+  .acdoca-field-name {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .acdoca-field-val {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .acdoca-field.fi { border-top: 3px solid #1976d2; }
+  .acdoca-field.co { border-top: 3px solid #388e3c; }
+  .acdoca-field.common { border-top: 3px solid var(--navy); }
+
+  .legend { display: flex; gap: 16px; margin: 12px 0 20px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
+
+  h4 { font-size: 16px; font-weight: 700; color: var(--navy); margin: 24px 0 10px; }
+  p { margin-bottom: 14px; }
+  ul { padding-left: 20px; margin-bottom: 14px; }
+  ul li { margin-bottom: 6px; line-height: 1.7; }
+
+  @media (max-width: 700px) {
+    .hero, main { padding-left: 20px; padding-right: 20px; }
+    .nav-inner { padding: 0 20px; }
+    .hero h1 { font-size: 28px; }
+    .acdoca-fields { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">ASPN BAC 교육 시리즈 · ERP 심화 학습</div>
+  <h1>Universal Journal<br>완전 이해</h1>
+  <p class="hero-sub">S/4HANA 회계 구조의 핵심 — ACDOCA가 FI와 CO를 어떻게 하나로 통합하는가</p>
+  <div class="hero-meta">
+    <span><strong>대상</strong> 주니어~미드 컨설턴트</span>
+    <span><strong>선수 지식</strong> FI/CO 기초 개념</span>
+    <span><strong>연결 자료</strong> CO-PA 완전 이해, GR 연결결산</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav-wrap">
+  <div class="nav-inner">
+    <button class="nav-tab active" onclick="showTab('m1')">M1. 왜 Universal Journal인가</button>
+    <button class="nav-tab" onclick="showTab('m2')">M2. ACDOCA 구조 해부</button>
+    <button class="nav-tab" onclick="showTab('m3')">M3. Ledger 개념</button>
+    <button class="nav-tab" onclick="showTab('m4')">M4. FI/CO 통합 원리</button>
+    <button class="nav-tab" onclick="showTab('m5')">M5. 실무 적용</button>
+    <button class="nav-tab" onclick="showTab('quiz')">확인 퀴즈</button>
+  </div>
+</div>
+
+<main>
+
+<!-- ===== M1 ===== -->
+<section id="tab-m1" class="section active">
+  <div class="mod-label">Module 01</div>
+  <div class="section-title">왜 Universal Journal인가</div>
+  <p class="section-lead">새로운 개념이 왜 필요했는지를 이해해야 그 의미가 온전히 보인다. ECC 시대의 구조적 한계부터 시작한다.</p>
+
+  <h4>ECC 시대의 문제: 두 개의 원장</h4>
+
+  <div class="flow">
+    <div class="flow-item">
+      <div class="fi-label">FI 원장</div>
+      <div class="fi-title">BSEG</div>
+    </div>
+    <div class="flow-arrow">≠</div>
+    <div class="flow-item">
+      <div class="fi-label">CO 원장</div>
+      <div class="fi-title">COEP</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item highlight">
+      <div class="fi-label">매월 필요</div>
+      <div class="fi-title">FI-CO 조정</div>
+    </div>
+  </div>
+
+  <p>ECC(ERP Central Component) 시대에는 재무회계(FI)와 관리회계(CO)가 <strong>구조적으로 분리된 별개의 원장</strong>으로 운영되었다.</p>
+  <ul>
+    <li><strong>FI</strong>는 BSEG 테이블에 외부 보고용 분개를 기록했다.</li>
+    <li><strong>CO</strong>는 COEP 테이블에 내부 원가 배부 데이터를 별도로 관리했다.</li>
+    <li>두 원장은 자동 연결되지 않아, 매월 말 <strong>FI-CO 조정(Reconciliation) 작업</strong>이 별도로 필요했다.</li>
+  </ul>
+
+  <div class="callout warn">
+    <div class="callout-label">⚠ 현장 현실</div>
+    국내 ECC 프로젝트에서는 FI-CO 조정 차이를 찾기 위해 엑셀 체크리스트를 수동으로 돌리는 월말 야근이 일상이었다. 차이 원인 추적이 어렵고, 조정 후에도 완전 일치를 보장하기 어려웠다.
+  </div>
+
+  <hr class="divider">
+  <h4>S/4HANA의 해답: 단일 전기, 단일 원장</h4>
+
+  <div class="flow">
+    <div class="flow-item">
+      <div class="fi-label">하나의 전기</div>
+      <div class="fi-title">FI 문서</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item highlight">
+      <div class="fi-label">단일 원장</div>
+      <div class="fi-title">ACDOCA</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item">
+      <div class="fi-label">FI 차원</div>
+      <div class="fi-title">재무 보고</div>
+    </div>
+    <div class="flow-arrow">+</div>
+    <div class="flow-item">
+      <div class="fi-label">CO 차원</div>
+      <div class="fi-title">원가 분석</div>
+    </div>
+  </div>
+
+  <p>S/4HANA는 ACDOCA(Accounting Document: Actual Line Items) 테이블 하나로 FI와 CO를 통합했다. 하나의 전기 행위가 FI 차원과 CO 차원을 <strong>동시에, 자동으로, 구조적으로</strong> 기록한다.</p>
+
+  <div class="callout correct">
+    <div class="callout-label">✓ 핵심 변화</div>
+    FI-CO 조정 작업이 <strong>구조적으로 불필요</strong>해졌다. 같은 테이블의 같은 행에 두 차원이 함께 존재하기 때문이다. 이것이 Universal Journal의 본질이다.
+  </div>
+
+  <hr class="divider">
+  <h4>ACDOCA 한 줄이 의미하는 것</h4>
+
+  <div class="card">
+    <h3>예시: 원재료 구매 전기 한 건</h3>
+    <p>과거 ECC에서는 이 전기가 BSEG(FI)와 COEP(CO) 두 곳에 각각 기록되었다. S/4HANA에서는 ACDOCA 한 행에 아래 정보가 모두 담긴다.</p>
+  </div>
+
+  <div class="acdoca-row">
+    <div class="acdoca-header">ACDOCA — 1개 전기 행 (개념 예시)</div>
+    <div class="acdoca-fields">
+      <div class="acdoca-field common">
+        <div class="acdoca-field-name">MANDT / RCLNT</div>
+        <div class="acdoca-field-val">클라이언트</div>
+      </div>
+      <div class="acdoca-field common">
+        <div class="acdoca-field-name">RBUKRS</div>
+        <div class="acdoca-field-val">회사코드</div>
+      </div>
+      <div class="acdoca-field common">
+        <div class="acdoca-field-name">GJAHR / BUDAT</div>
+        <div class="acdoca-field-val">회계연도 / 전기일</div>
+      </div>
+      <div class="acdoca-field fi">
+        <div class="acdoca-field-name">RACCT (FI)</div>
+        <div class="acdoca-field-val">G/L 계정</div>
+      </div>
+      <div class="acdoca-field fi">
+        <div class="acdoca-field-name">DRCRK</div>
+        <div class="acdoca-field-val">차변/대변 구분</div>
+      </div>
+      <div class="acdoca-field fi">
+        <div class="acdoca-field-name">HSL / KSL</div>
+        <div class="acdoca-field-val">회사통화 / 그룹통화</div>
+      </div>
+      <div class="acdoca-field co">
+        <div class="acdoca-field-name">RCNTR (CO)</div>
+        <div class="acdoca-field-val">원가센터</div>
+      </div>
+      <div class="acdoca-field co">
+        <div class="acdoca-field-name">PRCTR</div>
+        <div class="acdoca-field-val">이익센터</div>
+      </div>
+      <div class="acdoca-field co">
+        <div class="acdoca-field-name">SEGMENT</div>
+        <div class="acdoca-field-val">세그먼트</div>
+      </div>
+      <div class="acdoca-field co">
+        <div class="acdoca-field-name">AUFNR</div>
+        <div class="acdoca-field-val">내부오더</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#1976d2"></div> FI 차원 필드</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#388e3c"></div> CO 차원 필드</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--navy)"></div> 공통 필드</div>
+  </div>
+
+  <div class="callout navy">
+    <div class="callout-label">💡 포인트</div>
+    FI의 G/L 계정(RACCT)과 CO의 원가센터(RCNTR)·이익센터(PRCTR)가 <strong>같은 행에 공존</strong>한다. 이것이 FI-CO 자동 일치의 구조적 기반이다.
+  </div>
+
+  <hr class="divider">
+  <h4>핵심 개념 드릴</h4>
+
+  <div class="drill" onclick="toggleDrill(this)">
+    <div class="drill-q">ECC에서 FI-CO 조정이 필요했던 근본 이유는? <span class="drill-icon">+</span></div>
+    <div class="drill-a">FI(BSEG)와 CO(COEP)가 <strong>별개의 테이블, 별개의 원장</strong>으로 운영되었기 때문이다. 동일한 경제적 사건이 두 시스템에 독립적으로 기록되면서 시점 차이, 배부 로직 차이 등으로 인한 금액 불일치가 발생했다. 이를 해소하려면 매월 수동 조정이 필요했다.</div>
+  </div>
+
+  <div class="drill" onclick="toggleDrill(this)">
+    <div class="drill-q">Universal Journal이라는 이름이 붙은 이유는? <span class="drill-icon">+</span></div>
+    <div class="drill-a">FI, CO, ML(Material Ledger), AA(Asset Accounting) 등 <strong>모든 회계 영역의 실제(Actual) 데이터를 하나의 테이블(ACDOCA)에 통합</strong>하기 때문이다. 어느 모듈에서 전기가 발생하든 궁극적으로 ACDOCA 한 곳에 착지한다는 의미에서 "Universal(범용)"이라는 명칭을 얻었다.</div>
+  </div>
+</section>
+
+<!-- ===== M2 ===== -->
+<section id="tab-m2" class="section">
+  <div class="mod-label">Module 02</div>
+  <div class="section-title">ACDOCA 구조 해부</div>
+  <p class="section-lead">ACDOCA의 핵심 필드 그룹을 이해하고, ECC 테이블과 무엇이 달라졌는지 파악한다.</p>
+
+  <h4>핵심 필드 그룹</h4>
+
+  <table class="field-table">
+    <tr>
+      <th>필드 그룹</th>
+      <th>주요 필드</th>
+      <th>설명</th>
+    </tr>
+    <tr>
+      <td><span class="tag navy">식별자</span></td>
+      <td class="field-mono">RCLNT, RBUKRS, GJAHR, BELNR, DOCLN</td>
+      <td>클라이언트, 회사코드, 회계연도, 문서번호, 행번호 — 전기 행의 고유 키</td>
+    </tr>
+    <tr>
+      <td><span class="tag navy">계정</span></td>
+      <td class="field-mono">RACCT, RLDNR</td>
+      <td>G/L 계정 번호, Ledger 구분 — 어떤 계정에, 어떤 Ledger로 기록했는지</td>
+    </tr>
+    <tr>
+      <td><span class="tag navy">원가 대상</span></td>
+      <td class="field-mono">RCNTR, PRCTR, SEGMENT, AUFNR, PROJN</td>
+      <td>원가센터, 이익센터, 세그먼트, 내부오더, WBS — CO 분석의 기준점</td>
+    </tr>
+    <tr>
+      <td><span class="tag navy">금액</span></td>
+      <td class="field-mono">HSL, TSL, KSL, OSL</td>
+      <td>회사통화, 거래통화, 그룹통화, 추가통화 금액 — 다중 통화 동시 저장</td>
+    </tr>
+    <tr>
+      <td><span class="tag navy">수량</span></td>
+      <td class="field-mono">MENGE, MEINS</td>
+      <td>수량 및 단위 — 재고·원가 분석 시 금액과 수량을 함께 추적</td>
+    </tr>
+    <tr>
+      <td><span class="tag navy">시점</span></td>
+      <td class="field-mono">BUDAT, BLDAT, POPER</td>
+      <td>전기일, 문서일, 기간 — 회계 기간 구분의 기준</td>
+    </tr>
+  </table>
+
+  <div class="callout navy">
+    <div class="callout-label">💡 다중 통화 동시 저장의 의미</div>
+    ECC에서는 통화별로 별도 테이블 조회가 필요했다. ACDOCA는 하나의 행에 <strong>회사통화(HSL), 그룹통화(KSL), 거래통화(TSL)</strong>를 동시에 저장한다. Group Reporting에서 별도 통화 변환 없이 그룹 통화 기준 데이터를 바로 읽을 수 있는 기반이 여기서 온다.
+  </div>
+
+  <hr class="divider">
+  <h4>ECC와 무엇이 달라졌는가 — BSEG·COEP와의 비교</h4>
+
+  <p>과거의 구조를 이해해야 ACDOCA가 어떤 문제를 해결했는지 명확해진다.</p>
+
+  <table class="compare-table">
+    <tr>
+      <th>구분</th>
+      <th>ECC: BSEG (FI)</th>
+      <th>ECC: COEP (CO)</th>
+      <th>S/4HANA: ACDOCA</th>
+    </tr>
+    <tr>
+      <td><strong>역할</strong></td>
+      <td>외부 재무 보고용 분개</td>
+      <td>내부 원가 배부 기록</td>
+      <td>FI + CO + ML + AA 통합</td>
+    </tr>
+    <tr>
+      <td><strong>FI/CO 연계</strong></td>
+      <td>연계 없음 (별개)</td>
+      <td>연계 없음 (별개)</td>
+      <td>동일 행에 공존</td>
+    </tr>
+    <tr>
+      <td><strong>통화</strong></td>
+      <td>회사통화 중심</td>
+      <td>통화 정보 제한적</td>
+      <td>다중 통화 동시 저장</td>
+    </tr>
+    <tr>
+      <td><strong>월마감 조정</strong></td>
+      <td>FI-CO 조정 필요</td>
+      <td>FI-CO 조정 필요</td>
+      <td>구조적으로 불필요</td>
+    </tr>
+    <tr>
+      <td><strong>리포팅</strong></td>
+      <td>FI 관점만 가능</td>
+      <td>CO 관점만 가능</td>
+      <td>FI·CO 통합 리포팅</td>
+    </tr>
+    <tr>
+      <td><strong>테이블 크기</strong></td>
+      <td>상대적으로 작음</td>
+      <td>상대적으로 작음</td>
+      <td>컬럼 수 많음 (광폭 테이블)</td>
+    </tr>
+  </table>
+
+  <div class="callout warn">
+    <div class="callout-label">⚠ 알아두기: 광폭 테이블의 트레이드오프</div>
+    ACDOCA는 수백 개의 컬럼을 가진 매우 넓은 테이블이다. 대부분의 행에서 원가 관련 필드는 NULL로 채워진다. 조회 성능을 위해 SAP는 <strong>CDS View(Core Data Services)</strong>를 통한 접근을 권장하며, SE16N 직접 조회는 개발·분석 용도로 제한하는 것이 좋다.
+  </div>
+
+  <hr class="divider">
+  <h4>핵심 개념 드릴</h4>
+
+  <div class="drill" onclick="toggleDrill(this)">
+    <div class="drill-q">ACDOCA에서 FI 차원과 CO 차원이 "같은 행에 공존"한다는 것의 실무적 의미는? <span class="drill-icon">+</span></div>
+    <div class="drill-a">과거 ECC에서는 FI와 CO 데이터가 별개 테이블에 존재했기 때문에, "FI 영업이익과 CO 기여이익이 왜 다른가"를 추적하려면 두 테이블을 조인하고 차이 원인을 역추적하는 작업이 필요했다. ACDOCA에서는 하나의 행에 G/L 계정(FI)과 원가센터·이익센터(CO)가 함께 기록되므로, 별도 조정 없이 동일 데이터 기반의 FI 보고서와 CO 보고서가 자동으로 일치한다.</div>
+  </div>
+
+  <div class="drill" onclick="toggleDrill(this)">
+    <div class="drill-q">고객이 "S/4HANA 가면 기존 CO 데이터 다 사라지냐"고 물으면? <span class="drill-icon">+</span></div>
+    <div class="drill-a">마이그레이션 시 과거 ECC 데이터는 ACDOCA 구조로 변환되어 이관된다. 데이터 자체가 사라지는 것이 아니라 <strong>저장 구조가 바뀌는 것</strong>이다. 단, 이관 전 데이터는 ECC 원본 테이블에서 읽어야 하는 경우도 있으므로, 프로젝트에서는 이관 범위(얼마나 오래된 데이터까지 변환할지)를 별도로 결정한다.</div>
+  </div>
+</section>
+
+<!-- ===== M3 ===== -->
+<section id="tab-m3" class="section">
+  <div class="mod-label">Module 03</div>
+  <div class="section-title">Ledger 개념</div>
+  <p class="section-lead">복수의 회계기준을 병행 운영하는 구조 — Ledger가 무엇이고 어떻게 분리되는지 이해한다.</p>
+
+  <h4>왜 복수 Ledger가 필요한가</h4>
+
+  <p>국내 상장 대기업 그룹사는 다음 두 가지를 <strong>동시에</strong> 충족해야 한다.</p>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+    <div class="card">
+      <h3>K-IFRS (연결재무제표)</h3>
+      <p>국제회계기준원 기준 — 글로벌 투자자, 자본시장 공시 목적</p>
+    </div>
+    <div class="card">
+      <h3>K-GAAP (별도재무제표)</h3>
+      <p>국내 기업회계기준 — 세무 신고, 배당 기준 목적</p>
+    </div>
+  </div>
+
+  <p>두 기준은 <strong>리스(IFRS 16), 금융상품(IFRS 9), 수익인식(IFRS 15)</strong> 등 주요 영역에서 회계처리가 다르다. 하나의 전기 사건에 대해 기준별로 다른 분개를 기록해야 한다.</p>
+
+  <hr class="divider">
+  <h4>Leading Ledger vs. Non-Leading Ledger</h4>
+
+  <table class="compare-table">
+    <tr>
+      <th>구분</th>
+      <th>Leading Ledger (0L)</th>
+      <th>Non-Leading Ledger (예: 2L)</th>
+    </tr>
+    <tr>
+      <td><strong>역할</strong></td>
+      <td>주 회계기준 (K-IFRS)</td>
+      <td>부 회계기준 (K-GAAP 등)</td>
+    </tr>
+    <tr>
+      <td><strong>전기 시점</strong></td>
+      <td>모든 전기 자동 반영</td>
+      <td>차이 분개만 추가 전기</td>
+    </tr>
+    <tr>
+      <td><strong>ACDOCA 구분</strong></td>
+      <td>RLDNR = '0L'</td>
+      <td>RLDNR = '2L' (또는 설정값)</td>
+    </tr>
+    <tr>
+      <td><strong>보고서</strong></td>
+      <td>연결재무제표 기반</td>
+      <td>별도재무제표, 세무 목적</td>
+    </tr>
+    <tr>
+      <td><strong>기간 설정</strong></td>
+      <td>회사코드 회계 기간 따름</td>
+      <td>독립적 기간 설정 가능</td>
+    </tr>
+  </table>
+
+  <div class="callout navy">
+    <div class="callout-label">💡 RLDNR 필드의 의미</div>
+    ACDOCA의 RLDNR(Ledger) 필드가 <strong>같은 전기 행을 어느 기준으로 읽을지</strong>를 결정한다. K-IFRS 보고서는 RLDNR='0L' 필터, K-GAAP 보고서는 RLDNR='2L' 필터로 읽는다. 저장은 하나의 테이블, 읽기는 기준별로 분리되는 구조다.
+  </div>
+
+  <hr class="divider">
+  <h4>Ledger별 전기가 분리되는 구조</h4>
+
+  <div class="step-nav">
+    <button class="step-btn active" onclick="showStep('m3', 1, this)">Step 1: 기본 전기</button>
+    <button class="step-btn" onclick="showStep('m3', 2, this)">Step 2: 차이 분개</button>
+    <button class="step-btn" onclick="showStep('m3', 3, this)">Step 3: 보고서 분기</button>
+  </div>
+
+  <div id="m3-step-1" class="step-panel active">
+    <div class="card">
+      <h3>Step 1: 공통 전기 (모든 Ledger에 동시 반영)</h3>
+      <p>현금 지출, 매출 인식 등 K-IFRS와 K-GAAP 간 차이가 없는 거래는 <strong>Leading Ledger(0L)에 전기하면 Non-Leading Ledger에도 자동 반영</strong>된다.</p>
+      <p>예시: 현금 매출 1,000만원 인식 → 0L과 2L 모두 동일하게 기록</p>
+    </div>
+  </div>
+
+  <div id="m3-step-2" class="step-panel">
+    <div class="card">
+      <h3>Step 2: Ledger별 차이 분개 (Non-Leading Ledger에만 추가)</h3>
+      <p>IFRS 16 리스의 경우 K-IFRS는 사용권자산과 리스부채를 인식하지만, K-GAAP(중소기업 등)은 단순 비용 처리한다. 이 차이는 <strong>Non-Leading Ledger에만 추가 분개</strong>로 기록한다.</p>
+      <p>예시: 리스 계약 → 0L: 사용권자산/리스부채 인식 / 2L: 리스료 비용 처리 차이 분개 추가</p>
+    </div>
+  </div>
+
+  <div id="m3-step-3" class="step-panel">
+    <div class="card">
+      <h3>Step 3: 보고서 생성 시 Ledger 필터 적용</h3>
+      <p>RLDNR 필드로 분리된 데이터를 기준별 보고서에 필터링하여 읽는다.</p>
+      <ul>
+        <li>K-IFRS 연결재무제표 → RLDNR = '0L' 필터</li>
+        <li>K-GAAP 별도재무제표 → RLDNR = '2L' 필터</li>
+        <li>Group Reporting(ACDOCU) → 그룹 Ledger 설정 기준</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <h4>핵심 개념 드릴</h4>
+
+  <div class="drill" onclick="toggleDrill(this)">
+    <div class="drill-q">고객이 "K-IFRS랑 K-GAAP 동시에 관리하면 분개가 두 배 아니냐"고 물으면? <span class="drill-icon">+</span></div>
+    <div class="drill-a">그렇지 않다. <strong>차이가 있는 거래만 추가 분개</strong>가 발생한다. 두 기준 간 처리가 동일한 거래(대부분의 현금 거래, 일반 매출 등)는 Leading Ledger에 한 번 전기하면 Non-Leading Ledger에 자동 반영된다. 리스, 금융상품, 수익인식 등 기준 간 차이가 있는 항목에 대해서만 Ledger별 추가 분개가 필요하다.</div>
+  </div>
+
+  <div class="drill" onclick="toggleDrill(this)">
+    <div class="drill-q">Extension Ledger는 무엇이고 Group Reporting과 어떤 관계인가? <span class="drill-icon">+</span></div>
+    <div class="drill-a">Extension Ledger는 <strong>기준 Ledger(Base Ledger)의 데이터를 상속받으면서, 그 위에 추가 분개만 쌓는 구조</strong>다. Group Reporting은 이 개념을 활용하여 연결 조정 분개(IC 제거, 자본상계 등)를 별도의 그룹 Ledger에 기록한다. 기준 원장에 영향을 주지 않으면서 연결 조정이 가능한 이유가 여기에 있다. 이 내용은 GR 교육자료에서 상세히 다룬다.</div>
+  </div>
+</section>
+
+<!-- ===== M4 ===== -->
+<section id="tab-m4" class="section">
+  <div class="mod-label">Module 04</div>
+  <div class="section-title">FI/CO 통합 원리</div>
+  <p class="section-lead">CO 전기가 FI에 어떻게 실시간 반영되는지, 월마감 시 CO 결과가 ACDOCA에 어떻게 착지하는지 이해한다.</p>
+
+  <h4>CO 전기의 실시간 FI 반영 메커니즘</h4>
+
+  <p>ECC에서는 CO 배부 결과(원가센터 → 원가센터 등)가 FI에 자동 반영되지 않아 수동 조정이 필요했다. S/4HANA에서는 <strong>CO 내부 전기도 ACDOCA에 기록</strong>되며 FI와 자동 일치한다.</p>
+
+  <div class="flow">
+    <div class="flow-item">
+      <div class="fi-label">트리거</div>
+      <div class="fi-title">CO 전기/배부</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item highlight">
+      <div class="fi-label">즉시 기록</div>
+      <div class="fi-title">ACDOCA</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item">
+      <div class="fi-label">자동 반영</div>
+      <div class="fi-title">FI 잔액</div>
+    </div>
+    <div class="flow-arrow">+</div>
+    <div class="flow-item">
+      <div class="fi-label">자동 반영</div>
+      <div class="fi-title">CO 분석</div>
+    </div>
+  </div>
+
+  <div class="callout correct">
+    <div class="callout-label">✓ 실무 영향</div>
+    월마감 시 CO 배부 실행(KSV5, KO88 등) 후 FI-CO 조정 트랜잭션을 별도로 실행할 필요가 없다. ACDOCA 기반 리포트에서 FI와 CO 결과가 자동으로 일치한다.
+  </div>
+
+  <hr class="divider">
+  <h4>원가 대상별 흐름 — 개념 소개</h4>
+
+  <p>CO에서 원가는 다양한 <strong>원가 대상(Cost Object)</strong>을 통해 흐른다. 아래는 개념 구조이며, 상세 내용은 <span class="tag navy">CO-PA 완전 이해</span> 교육자료에서 다룬다.</p>
+
+  <div class="flow">
+    <div class="flow-item">
+      <div class="fi-label">직접 배부</div>
+      <div class="fi-title">원가센터</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item">
+      <div class="fi-label">프로젝트/생산</div>
+      <div class="fi-title">내부오더 / WBS</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item">
+      <div class="fi-label">원가 집계</div>
+      <div class="fi-title">생산오더</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item highlight">
+      <div class="fi-label">수익성 분석</div>
+      <div class="fi-title">CO-PA / 이익센터</div>
+    </div>
+  </div>
+
+  <p>각 단계의 전기가 ACDOCA에 기록되므로, 원가 흐름의 어느 단계든 ACDOCA 조회로 추적할 수 있다.</p>
+
+  <hr class="divider">
+  <h4>월마감 시 CO 결과의 ACDOCA 착지 구조</h4>
+
+  <div class="step-nav">
+    <button class="step-btn active" onclick="showStep('m4', 1, this)">① 실제원가 수집</button>
+    <button class="step-btn" onclick="showStep('m4', 2, this)">② 배부 실행</button>
+    <button class="step-btn" onclick="showStep('m4', 3, this)">③ 원가 정산</button>
+    <button class="step-btn" onclick="showStep('m4', 4, this)">④ ACDOCA 반영</button>
+  </div>
+
+  <div id="m4-step-1" class="step-panel active">
+    <div class="card">
+      <h3>① 실제원가 수집</h3>
+      <p>월 중 발생한 모든 비용(급여, 감가상각, 구매 등)이 원가센터·내부오더 등 원가 대상에 실시간으로 집계된다. 각 전기 시점마다 ACDOCA에 행이 생성된다.</p>
+    </div>
+  </div>
+
+  <div id="m4-step-2" class="step-panel">
+    <div class="card">
+      <h3>② CO 배부 실행 (KSV5, KB65 등)</h3>
+      <p>원가센터 간 배부, 간접비 배부 등 CO 배부 트랜잭션 실행 시 배부 결과가 ACDOCA에 즉시 기록된다. ECC와 달리 FI 별도 전기 불필요.</p>
+    </div>
+  </div>
+
+  <div id="m4-step-3" class="step-panel">
+    <div class="card">
+      <h3>③ 원가 정산 (KO88, KKS1 등)</h3>
+      <p>생산오더·내부오더의 잔액을 CO-PA나 원가센터로 정산한다. 정산 결과 역시 ACDOCA에 기록되며, 이때 CO-PA 관련 필드(수익성 세그먼트 등)가 함께 채워진다.</p>
+    </div>
+  </div>
+
+  <div id="m4-step-4" class="step-panel">
+    <div class="card">
+      <h3>④ ACDOCA에 모든 결과 착지</h3>
+      <p>월마감 완료 시점에 ACDOCA는 해당 월의 모든 FI 분개, CO 배부, 원가 정산 결과를 통합하여 보유한다. FI 기준 손익과 CO 기준 기여이익이 <strong>구조적으로 일치</strong>하게 된다.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <h4>핵심 개념 드릴</h4>
+
+  <div class="drill" onclick="toggleDrill(this)">
+    <div class="drill-q">S/4HANA에서도 월마감 순서(마감 시퀀스)를 지켜야 하는 이유는? <span class="drill-icon">+</span></div>
+    <div class="drill-a">ACDOCA로 통합되더라도 CO 계산은 <strong>선행 데이터에 의존하는 순서가 있다</strong>. 예를 들어 원가센터 배부(KSV5)가 끝나야 생산오더 정산(KO88)의 투입 원가가 확정되고, KO88 이후에야 CO-PA 데이터가 완성된다. 따라서 FI 마감 → CO 배부 → 원가 정산 → CO-PA 확정 순서는 S/4HANA에서도 유지된다. 이 순서를 지키지 않으면 ACDOCA 데이터가 중간 상태로 남아 Group Reporting Release 전 오류 원인이 된다.</div>
+  </div>
+</section>
+
+<!-- ===== M5 ===== -->
+<section id="tab-m5" class="section">
+  <div class="mod-label">Module 05</div>
+  <div class="section-title">실무 적용 포인트</div>
+  <p class="section-lead">ACDOCA 조회 방법과 셀프 스터디 접근법, 그리고 현장에서 자주 받는 고객 질문 대응법을 다룬다.</p>
+
+  <h4>ACDOCA 조회 방법 — 개념과 접근법</h4>
+
+  <table class="compare-table">
+    <tr>
+      <th>방법</th>
+      <th>용도</th>
+      <th>특징</th>
+    </tr>
+    <tr>
+      <td><strong>SE16N</strong></td>
+      <td>개발·분석·디버깅</td>
+      <td>테이블 직접 조회. 컬럼이 매우 많으므로 필요한 필드만 선택. 운영 환경에서는 권한 제한 있을 수 있음</td>
+    </tr>
+    <tr>
+      <td><strong>CDS View</strong></td>
+      <td>표준 리포트·앱</td>
+      <td>SAP 권장 방식. ACDOCA 위에 업무 목적별로 필드를 추려 노출. Fiori 앱·BW 추출 기반</td>
+    </tr>
+    <tr>
+      <td><strong>FAGLL03 / FAGLB03</strong></td>
+      <td>FI G/L 라인아이템 조회</td>
+      <td>회계 담당자 친화적 UI. 내부적으로 ACDOCA 읽음</td>
+    </tr>
+    <tr>
+      <td><strong>KSB1 / KOB1</strong></td>
+      <td>CO 원가센터 / 내부오더 라인아이템</td>
+      <td>CO 관점 필터. 내부적으로 ACDOCA 읽음</td>
+    </tr>
+  </table>
+
+  <div class="callout navy">
+    <div class="callout-label">💡 셀프 스터디 방법</div>
+    실제 S/4HANA 시스템(학습용 트라이얼 또는 사내 샌드박스)에서 아래 순서로 직접 확인해볼 것을 권장한다.
+  </div>
+
+  <ul class="checklist" id="study-list">
+    <li><input type="checkbox" onchange="updateProgress('study-list')"> <span>SE16N → 테이블명 ACDOCA 입력 → 필드 목록 확인 (전체 컬럼 구조 파악)</span></li>
+    <li><input type="checkbox" onchange="updateProgress('study-list')"> <span>FAGLL03 실행 → 특정 G/L 계정 라인아이템 조회 → SE16N ACDOCA와 같은 문서번호 데이터 비교</span></li>
+    <li><input type="checkbox" onchange="updateProgress('study-list')"> <span>KSB1 실행 → 원가센터 라인아이템 조회 → 동일 문서의 RCNTR 필드 확인</span></li>
+    <li><input type="checkbox" onchange="updateProgress('study-list')"> <span>ACDOCA에서 RLDNR 필드 확인 — Leading Ledger(0L)와 Non-Leading Ledger 행 구분</span></li>
+    <li><input type="checkbox" onchange="updateProgress('study-list')"> <span>SAP Help Portal(help.sap.com)에서 "ACDOCA" 검색 → Table Documentation 읽기</span></li>
+  </ul>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="study-list-bar" style="width:0%"></div></div>
+  <div class="progress-label" id="study-list-label">0 / 5 완료</div>
+
+  <hr class="divider">
+  <h4>고객 질문 대응: "FI랑 CO가 왜 차이나요?"</h4>
+
+  <p>현장에서 가장 자주 받는 질문 유형이다. S/4HANA 환경에서는 원칙적으로 FI-CO가 자동 일치하므로, 차이가 발생했다면 아래 원인을 점검해야 한다.</p>
+
+  <div class="drill" onclick="toggleDrill(this)">
+    <div class="drill-q">원인 1: 마감 시퀀스가 지켜지지 않은 경우 <span class="drill-icon">+</span></div>
+    <div class="drill-a">CO 배부나 원가 정산이 완료되지 않은 상태에서 보고서를 조회하면 중간 상태 데이터가 보인다. 마감 시퀀스 완료 후 재조회하면 대부분 해소된다. <strong>보고 시점과 마감 완료 시점을 먼저 확인</strong>하는 것이 첫 번째 대응이다.</div>
+  </div>
+
+  <div class="drill" onclick="toggleDrill(this)">
+    <div class="drill-q">원인 2: 리포트가 다른 Ledger를 보는 경우 <span class="drill-icon">+</span></div>
+    <div class="drill-a">FI 리포트와 CO 리포트가 서로 다른 RLDNR(Ledger)를 필터링하고 있을 수 있다. FI는 0L(K-IFRS), CO 리포트는 다른 Ledger 기준이라면 금액이 다르게 보인다. <strong>양쪽 리포트의 Ledger 설정을 확인</strong>하는 것이 두 번째 점검 사항이다.</div>
+  </div>
+
+  <div class="drill" onclick="toggleDrill(this)">
+    <div class="drill-q">원인 3: 통계적 전기(Statistical Posting)의 오해 <span class="drill-icon">+</span></div>
+    <div class="drill-a">CO에서 내부오더나 WBS에 통계적으로만 전기된 금액은 실제 원가 대상 잔액에 영향을 주지 않는다. 고객이 "통계 전기 금액이 FI에 안 보인다"고 하면 이를 설명해야 한다. 통계 전기는 참조 목적이며 FI 잔액을 변경하지 않는다.</div>
+  </div>
+
+  <hr class="divider">
+  <h4>Universal Journal → 상위 학습 연결 지점</h4>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+    <div class="card">
+      <h3>→ CO-PA 완전 이해</h3>
+      <p>ACDOCA의 수익성 세그먼트 필드(PSEGMENT 등)가 CO-PA Margin Analysis의 기반이다. Costing-Based와 Accounting-Based의 구조적 차이도 ACDOCA 이해 위에서 명확해진다.</p>
+    </div>
+    <div class="card">
+      <h3>→ Group Reporting 연결결산</h3>
+      <p>ACDOCA(개별 원장)와 ACDOCU(연결 원장)의 관계, Extension Ledger 기반 연결 조정 구조는 GR 교육자료에서 상세히 다룬다. Universal Journal 이해가 GR 아키텍처 학습의 전제다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== QUIZ ===== -->
+<section id="tab-quiz" class="section">
+  <div class="mod-label">확인 퀴즈</div>
+  <div class="section-title">이해도 점검</div>
+  <p class="section-lead">5개 문항으로 핵심 개념을 점검한다.</p>
+
+  <!-- Q1 -->
+  <div class="quiz-card">
+    <div class="quiz-q">Q1. ECC 시대에 FI-CO 월말 조정 작업이 필요했던 근본 원인은?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz(this, false, 'q1', 'FI 계정 과목이 CO 원가요소와 달랐기 때문이다.')">① FI 계정 과목이 CO 원가요소와 달랐기 때문이다.</button>
+      <button class="quiz-opt" onclick="checkQuiz(this, true, 'q1', 'FI(BSEG)와 CO(COEP)가 별개의 테이블로 분리 운영되어, 동일 거래가 두 시스템에 독립적으로 기록되었기 때문이다.')">② FI(BSEG)와 CO(COEP)가 별개의 테이블로 분리 운영되어 구조적 불일치가 발생했기 때문이다.</button>
+      <button class="quiz-opt" onclick="checkQuiz(this, false, 'q1', 'FI 계정 과목이 CO 원가요소와 달랐기 때문이다.')">③ SAP가 의도적으로 FI와 CO를 분리 설계했기 때문이다.</button>
+      <button class="quiz-opt" onclick="checkQuiz(this, false, 'q1', '통화 단위가 달랐기 때문이 아니다.')">④ FI는 회사통화, CO는 그룹통화 기준이어서 환율 차이가 발생했기 때문이다.</button>
+    </div>
+    <div class="quiz-feedback" id="q1-feedback"></div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-card">
+    <div class="quiz-q">Q2. ACDOCA 테이블에서 FI 차원과 CO 차원을 구분하는 핵심 필드는?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz(this, false, 'q2', 'BUDAT는 전기일 필드다.')">① BUDAT (전기일)</button>
+      <button class="quiz-opt" onclick="checkQuiz(this, false, 'q2', 'RBUKRS는 회사코드로, FI/CO 구분과 관계없다.')">② RBUKRS (회사코드)</button>
+      <button class="quiz-opt" onclick="checkQuiz(this, true, 'q2', 'RLDNR(Ledger)는 어느 회계기준(Leading/Non-Leading)으로 전기되었는지를 구분하며, RACCT(G/L 계정)은 FI 차원, RCNTR(원가센터)·PRCTR(이익센터)는 CO 차원을 나타낸다. 이 필드들이 같은 행에 공존하는 것이 ACDOCA 통합의 핵심이다.')">③ RACCT(G/L계정), RCNTR(원가센터), RLDNR(Ledger)이 같은 행에 공존하는 구조</button>
+      <button class="quiz-opt" onclick="checkQuiz(this, false, 'q2', 'HSL은 금액 필드로, FI/CO 차원 구분과 직접 관련이 없다.')">④ HSL (회사통화 금액)</button>
+    </div>
+    <div class="quiz-feedback" id="q2-feedback"></div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-card">
+    <div class="quiz-q">Q3. K-IFRS와 K-GAAP을 병행 운영할 때, 두 기준 간 처리가 동일한 거래의 경우 어떻게 전기되는가?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz(this, false, 'q3', '두 Ledger에 각각 별도 전기하면 데이터 중복이 발생한다.')">① 두 Ledger에 각각 별도로 전기해야 한다.</button>
+      <button class="quiz-opt" onclick="checkQuiz(this, true, 'q3', 'Leading Ledger(0L)에 전기하면 Non-Leading Ledger에도 자동 반영된다. 추가 분개는 두 기준 간 차이가 있는 거래에만 필요하다.')">② Leading Ledger에 한 번 전기하면 Non-Leading Ledger에도 자동 반영된다.</button>
+      <button class="quiz-opt" onclick="checkQuiz(this, false, 'q3', 'Non-Leading Ledger에만 전기하면 Leading Ledger에 반영되지 않는다.')">③ Non-Leading Ledger에만 전기하고 Leading Ledger는 별도 조정한다.</button>
+      <button class="quiz-opt" onclick="checkQuiz(this, false, 'q3', '전기 방식은 Ledger 설정으로 제어하며 수동 선택이 원칙이 아니다.')">④ 전기 시 수동으로 Ledger를 선택해야 한다.</button>
+    </div>
+    <div class="quiz-feedback" id="q3-feedback"></div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-card">
+    <div class="quiz-q">Q4. S/4HANA에서도 월마감 시퀀스(FI 마감 → CO 배부 → 원가 정산 순서)를 지켜야 하는 이유는?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz(this, false, 'q4', 'ACDOCA 통합으로 순서 의존성이 사라진 것이 아니다.')">① ACDOCA로 통합되어 순서에 관계없이 자동으로 맞춰지기 때문이다.</button>
+      <button class="quiz-opt" onclick="checkQuiz(this, false, 'q4', 'SAP 정책 문제가 아니라 계산 의존성의 문제다.')">② SAP 정책상 강제 순서이기 때문이다.</button>
+      <button class="quiz-opt" onclick="checkQuiz(this, true, 'q4', 'CO 계산은 선행 단계 데이터에 의존한다. 원가센터 배부가 완료되어야 생산오더 정산의 투입원가가 확정되고, 정산 후에야 CO-PA 데이터가 완성된다. 순서를 지키지 않으면 ACDOCA에 중간 상태 데이터가 남아 보고서 불일치가 발생한다.')">③ CO 계산이 선행 단계 데이터에 의존하므로, 순서를 지키지 않으면 ACDOCA에 중간 상태 데이터가 남기 때문이다.</button>
+      <button class="quiz-opt" onclick="checkQuiz(this, false, 'q4', '감사 대응이 이유가 아니다.')">④ 감사 대응을 위한 관리 목적이기 때문이다.</button>
+    </div>
+    <div class="quiz-feedback" id="q4-feedback"></div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-card">
+    <div class="quiz-q">Q5. 고객이 "FI 손익이랑 CO 기여이익이 다른데 버그 아니냐"고 할 때, S/4HANA 환경에서 가장 먼저 확인해야 할 사항은?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz(this, false, 'q5', '시스템 재설치는 첫 번째 대응이 아니다.')">① 시스템 재설치를 검토한다.</button>
+      <button class="quiz-opt" onclick="checkQuiz(this, true, 'q5', '월마감 시퀀스 완료 여부와 두 리포트가 참조하는 Ledger(RLDNR)가 동일한지 먼저 확인한다. 대부분의 FI-CO 불일치는 이 두 가지에서 기인한다.')">② 월마감 시퀀스 완료 여부와 두 리포트의 Ledger 설정(RLDNR)이 동일한지 확인한다.</button>
+      <button class="quiz-opt" onclick="checkQuiz(this, false, 'q5', 'ACDOCA 삭제는 올바른 대응이 아니다.')">③ ACDOCA 데이터를 삭제하고 재전기한다.</button>
+      <button class="quiz-opt" onclick="checkQuiz(this, false, 'q5', 'S/4HANA는 ECC와 달리 구조적 FI-CO 일치를 보장하므로 ECC 조정 방식은 불필요하다.')">④ ECC 방식의 FI-CO 조정 트랜잭션을 실행한다.</button>
+    </div>
+    <div class="quiz-feedback" id="q5-feedback"></div>
+  </div>
+
+</section>
+
+</main>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleDrill(el) {
+  el.classList.toggle('open');
+}
+
+function showStep(mod, n, btn) {
+  const prefix = mod + '-step-';
+  document.querySelectorAll('[id^="' + prefix + '"]').forEach(p => p.classList.remove('active'));
+  document.getElementById(prefix + n).classList.add('active');
+  btn.closest('.step-panel, section, main').querySelectorAll ? null : null;
+  // find sibling step-nav buttons
+  btn.parentElement.querySelectorAll('.step-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function checkQuiz(btn, correct, qid, explanation) {
+  const card = btn.closest('.quiz-card');
+  card.querySelectorAll('.quiz-opt').forEach(b => {
+    b.style.pointerEvents = 'none';
+  });
+  btn.classList.add(correct ? 'correct-ans' : 'wrong-ans');
+  if (!correct) {
+    card.querySelectorAll('.quiz-opt').forEach(b => {
+      if (b.onclick && b.onclick.toString().includes('true')) {
+        b.classList.add('correct-ans');
+      }
+    });
+  }
+  const fb = document.getElementById(qid + '-feedback');
+  fb.textContent = (correct ? '✓ 정답입니다. ' : '✗ 오답입니다. ') + explanation;
+  fb.className = 'quiz-feedback show ' + (correct ? 'ok' : 'ng');
+}
+
+function updateProgress(listId) {
+  const list = document.getElementById(listId);
+  const total = list.querySelectorAll('input[type=checkbox]').length;
+  const done = list.querySelectorAll('input[type=checkbox]:checked').length;
+  const pct = Math.round(done / total * 100);
+  document.getElementById(listId + '-bar').style.width = pct + '%';
+  document.getElementById(listId + '-label').textContent = done + ' / ' + total + ' 완료';
+}
+</script>
+</body>
+</html>
