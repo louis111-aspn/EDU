@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOX 컴플라이언스 실무 교육 | ASPN BAC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #003366;
+    --navy-mid: #0a4a8a;
+    --navy-light: #e8eef5;
+    --bg: #f0f3f8;
+    --white: #ffffff;
+    --text: #1a1a2e;
+    --text-muted: #5a6478;
+    --border: #d0d8e8;
+    --warn: #b85c00;
+    --warn-bg: #fff4e6;
+    --correct: #1a6b3a;
+    --correct-bg: #e8f5ee;
+    --pad-x: 64px;
+    --max-w: 960px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--navy);
+    padding: 0 var(--pad-x);
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .site-header .logo {
+    font-family: 'DM Serif Display', serif;
+    color: var(--white);
+    font-size: 17px;
+    letter-spacing: 0.04em;
+  }
+  .site-header .logo span {
+    color: #7aaad4;
+  }
+  .header-tag {
+    font-size: 11px;
+    color: #7aaad4;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--navy);
+    padding: 72px var(--pad-x) 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -40px;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; right: 60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #7aaad4;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 38px;
+    color: var(--white);
+    line-height: 1.2;
+    max-width: 620px;
+    margin-bottom: 20px;
+  }
+  .hero-sub {
+    color: rgba(255,255,255,0.65);
+    font-size: 15px;
+    max-width: 540px;
+    line-height: 1.7;
+    margin-bottom: 36px;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 32px;
+  }
+  .hero-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .hero-meta-item .label {
+    font-size: 11px;
+    color: #7aaad4;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .hero-meta-item .value {
+    font-size: 14px;
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+  }
+
+  /* ── NAV TABS ── */
+  .nav-bar {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 var(--pad-x);
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    position: sticky;
+    top: 56px;
+    z-index: 90;
+  }
+  .nav-bar::-webkit-scrollbar { display: none; }
+  .nav-tab {
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+    user-select: none;
+  }
+  .nav-tab:hover { color: var(--navy); }
+  .nav-tab.active {
+    color: var(--navy);
+    border-bottom-color: var(--navy);
+  }
+
+  /* ── MAIN CONTENT ── */
+  .content-wrap {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 48px var(--pad-x) 80px;
+  }
+
+  .module-section { display: none; }
+  .module-section.active { display: block; }
+
+  /* ── MODULE HEADER ── */
+  .module-header {
+    margin-bottom: 40px;
+  }
+  .module-num {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .module-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 30px;
+    color: var(--text);
+    margin-bottom: 12px;
+    line-height: 1.25;
+  }
+  .module-desc {
+    font-size: 15px;
+    color: var(--text-muted);
+    max-width: 640px;
+    line-height: 1.7;
+  }
+  .module-divider {
+    height: 3px;
+    background: var(--navy);
+    width: 40px;
+    margin: 16px 0;
+  }
+
+  /* ── SECTION ── */
+  .section {
+    margin-bottom: 48px;
+  }
+  .section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title .num {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 12px;
+    background: var(--navy-light);
+    color: var(--navy);
+    padding: 2px 8px;
+    border-radius: 3px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .card p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.75;
+  }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-left: 3px solid var(--navy);
+    background: var(--navy-light);
+    padding: 16px 20px;
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 16px;
+  }
+  .callout.warn {
+    border-left-color: var(--warn);
+    background: var(--warn-bg);
+  }
+  .callout.correct {
+    border-left-color: var(--correct);
+    background: var(--correct-bg);
+  }
+  .callout-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    color: var(--navy);
+  }
+  .callout.warn .callout-label { color: var(--warn); }
+  .callout.correct .callout-label { color: var(--correct); }
+  .callout p, .callout li {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  /* ── LIST ── */
+  ul.body-list {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0;
+  }
+  ul.body-list li {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.75;
+    padding-left: 18px;
+    position: relative;
+    margin-bottom: 6px;
+  }
+  ul.body-list li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--navy);
+    font-weight: 700;
+  }
+
+  /* ── TWO COLUMN ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  /* ── COMPARISON TABLE ── */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+  .compare-table th {
+    background: var(--navy);
+    color: var(--white);
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+  }
+  .compare-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .compare-table tr:nth-child(even) td { background: #f8f9fc; }
+
+  /* ── SEVERITY LADDER ── */
+  .severity-ladder {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 16px 0;
+  }
+  .severity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 14px 18px;
+  }
+  .severity-badge {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    margin-top: 1px;
+  }
+  .sev-1 { background: #fff4e6; color: var(--warn); border: 1px solid #f5c48a; }
+  .sev-2 { background: #fff0e0; color: #a04000; border: 1px solid #e8a060; }
+  .sev-3 { background: #fde8e8; color: #c0392b; border: 1px solid #e88080; }
+  .severity-content .title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .severity-content .desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+  /* ── ITGC DOMAIN GRID ── */
+  .domain-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin: 16px 0;
+  }
+  .domain-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--navy);
+    border-radius: 0 0 5px 5px;
+    padding: 20px 22px;
+  }
+  .domain-card .domain-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .domain-card .domain-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .domain-card ul.body-list li { font-size: 13px; margin-bottom: 4px; }
+
+  /* ── QUIZ ── */
+  .quiz-block {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px 28px;
+    margin-top: 32px;
+  }
+  .quiz-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 14px;
+  }
+  .quiz-q {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 18px;
+    line-height: 1.65;
+  }
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .quiz-opt {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 11px 16px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--bg);
+    user-select: none;
+  }
+  .quiz-opt:hover { border-color: var(--navy); background: var(--navy-light); }
+  .quiz-opt.selected { border-color: var(--navy); background: var(--navy-light); }
+  .quiz-opt.correct { border-color: var(--correct); background: var(--correct-bg); }
+  .quiz-opt.wrong { border-color: #c0392b; background: #fde8e8; }
+  .quiz-opt .opt-key {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--navy);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .quiz-feedback {
+    display: none;
+    font-size: 14px;
+    line-height: 1.7;
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin-top: 4px;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: var(--correct-bg); color: var(--correct); border-left: 3px solid var(--correct); }
+  .quiz-feedback.ng { background: #fde8e8; color: #c0392b; border-left: 3px solid #c0392b; }
+
+  /* ── DRILL TOGGLE ── */
+  .drill-toggle {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .drill-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .drill-header:hover { background: var(--bg); }
+  .drill-header .drill-q { font-size: 14px; font-weight: 500; color: var(--text); }
+  .drill-arrow {
+    font-size: 12px;
+    color: var(--navy);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .drill-toggle.open .drill-arrow { transform: rotate(180deg); }
+  .drill-body {
+    display: none;
+    padding: 0 20px 16px;
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.75;
+    border-top: 1px solid var(--border);
+    padding-top: 14px;
+  }
+  .drill-toggle.open .drill-body { display: block; }
+
+  /* ── FLOW DIAGRAM ── */
+  .flow {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin: 20px 0;
+    overflow-x: auto;
+  }
+  .flow-step {
+    flex: 1;
+    min-width: 120px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    padding: 14px 16px;
+    text-align: center;
+    position: relative;
+  }
+  .flow-step:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--navy);
+    font-size: 16px;
+    font-weight: 700;
+    z-index: 2;
+    background: var(--bg);
+    padding: 0 2px;
+  }
+  .flow-step .step-num {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 11px;
+    color: var(--navy);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .flow-step .step-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .flow-step .step-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+  .flow-step.highlight {
+    border-color: var(--navy);
+    border-top: 3px solid var(--navy);
+  }
+
+  /* ── FOOTER ── */
+  .site-footer {
+    background: var(--navy);
+    padding: 24px var(--pad-x);
+    text-align: center;
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.06em;
+  }
+
+  @media (max-width: 720px) {
+    :root { --pad-x: 20px; }
+    .hero h1 { font-size: 26px; }
+    .two-col, .domain-grid { grid-template-columns: 1fr; }
+    .hero-meta { flex-direction: column; gap: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="logo">ASPN <span>BAC</span> EDU</div>
+  <div class="header-tag">Internal Training Series</div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">Business Advisory Consulting · Internal Series</div>
+  <h1>SOX 컴플라이언스 실무 교육</h1>
+  <p class="hero-sub">엔론 사태에서 ITGC 현장 대응까지 — 법률 탄생 배경, 재무통제 프레임워크, IT 일반통제, 감사 대응 전략을 4모듈로 체계화한 BAC 컨설턴트 필수 교육 과정입니다.</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <span class="label">대상</span>
+      <span class="value">BAC 컨설턴트 전 레벨</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="label">모듈 수</span>
+      <span class="value">4 Modules</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="label">분류</span>
+      <span class="value">이론 · 재무 · IT · 실무 대응</span>
+    </div>
+  </div>
+</section>
+
+<!-- NAV TABS -->
+<nav class="nav-bar" id="navBar">
+  <div class="nav-tab active" data-target="m1">Module 1 · 배경</div>
+  <div class="nav-tab" data-target="m2">Module 2 · 재무통제</div>
+  <div class="nav-tab" data-target="m3">Module 3 · ITGC</div>
+  <div class="nav-tab" data-target="m4">Module 4 · 감사 대응</div>
+</nav>
+
+<!-- CONTENT -->
+<main class="content-wrap">
+
+  <!-- ══════════════════════════════════════
+       MODULE 1 · SOX 탄생과 거시적 이해
+       ══════════════════════════════════════ -->
+  <section class="module-section active" id="m1">
+    <div class="module-header">
+      <div class="module-num">Module 01</div>
+      <h2 class="module-title">SOX의 탄생과 거시적 이해</h2>
+      <div class="module-divider"></div>
+      <p class="module-desc">자본주의의 트라우마가 어떻게 전 세계 상장사의 내부통제 의무를 만들었는가 — 엔론 사태부터 입법 취지, 핵심 조항까지 맥락을 짚습니다.</p>
+    </div>
+
+    <!-- 1.1 엔론 -->
+    <div class="section">
+      <div class="section-title"><span class="num">1.1</span> 자본주의의 트라우마: 엔론 & 월드컴 사태</div>
+
+      <div class="callout warn">
+        <div class="callout-label">핵심 문제의식</div>
+        <p>회계법인이 감사인이자 컨설턴트로서 피감사법인의 주요 수익원이 될 때, 독립성은 구조적으로 훼손된다. 엔론 사태는 이 구조적 취약점이 폭발한 사건이다.</p>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">엔론(Enron) 사태 — 2001</div>
+          <p>특수목적법인(SPE)을 활용한 부채 은닉 및 수익 과대계상. 시장 가치 기반 회계(Mark-to-Market)를 남용하여 미실현 이익을 실현 이익으로 처리. 당시 미국 7위 기업이 수개월 만에 파산.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">월드컴(WorldCom) 사태 — 2002</div>
+          <p>운영 비용(OPEX) 약 38억 달러를 자본 지출(CAPEX)로 분류하여 손익계산서상 이익을 인위적으로 부풀림. 당시 미국 역사상 최대 기업 파산 기록.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">아더 앤더슨(Arthur Andersen)의 몰락</div>
+        <p>세계 5대 회계법인 중 하나였던 아더 앤더슨은 엔론 감사 증거 파기로 기소. 감사 독립성 훼손의 상징적 사례로, 이후 Big 5 → Big 4 체제로 재편. 이 사건은 감사인의 독립성과 직업적 회의주의(Professional Skepticism)의 중요성을 법제화하는 직접적 계기가 됨.</p>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">BAC 컨설턴트 관점</div>
+        <p>고객사가 SOX 대응을 비용으로만 인식하는 경향이 있다. 그러나 위 사례들은 내부통제 부재가 회사 존립 자체를 위협함을 보여준다. 프로젝트 초기 킥오프에서 이 맥락을 공유하면 경영진의 SOX 투자 의지를 높일 수 있다.</p>
+      </div>
+    </div>
+
+    <!-- 1.2 입법 취지 -->
+    <div class="section">
+      <div class="section-title"><span class="num">1.2</span> 사베인스-옥슬리법(SOX)의 입법 취지</div>
+
+      <div class="flow">
+        <div class="flow-step">
+          <div class="step-num">TRIGGER</div>
+          <div class="step-label">엔론·월드컴 파산</div>
+          <div class="step-sub">투자자 신뢰 붕괴</div>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">2002.07</div>
+          <div class="step-label">SOX 제정</div>
+          <div class="step-sub">상하원 통과 / 부시 서명</div>
+        </div>
+        <div class="flow-step highlight">
+          <div class="step-num">목표 ①</div>
+          <div class="step-label">경영진 책임 강화</div>
+          <div class="step-sub">형사 처벌 도입</div>
+        </div>
+        <div class="flow-step highlight">
+          <div class="step-num">목표 ②</div>
+          <div class="step-label">외부 감사 독립성</div>
+          <div class="step-sub">PCAOB 설립</div>
+        </div>
+        <div class="flow-step highlight">
+          <div class="step-num">목표 ③</div>
+          <div class="step-label">내부통제 의무화</div>
+          <div class="step-sub">Section 404</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">규율 중심(Rules-based) 규제 vs. 원칙 중심(Principles-based)</div>
+        <p>미국 SOX는 "<strong>무엇을 해야 하는가</strong>"를 조항별로 명시하는 규율 중심 체계. 반면 IFRS 기반의 유럽 접근은 원칙 중심 경향. SOX는 처벌 조항이 명확하여 이행 비용은 크지만, 컴플라이언스 기준이 명료하다는 장점이 있다.</p>
+      </div>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>구분</th><th>내용</th><th>비고</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>감독기관</td><td>PCAOB (Public Company Accounting Oversight Board) 설립</td><td>회계법인 감독 전담</td></tr>
+          <tr><td>형사 처벌</td><td>재무제표 허위 증명 시 최대 징역 20년</td><td>Section 906</td></tr>
+          <tr><td>적용 대상</td><td>SEC 등록 미국 상장사 (외국 기업 포함)</td><td>NYSE/NASDAQ 상장 한국 기업 포함</td></tr>
+          <tr><td>컴플라이언스 비용</td><td>대형사 기준 연간 수백만 달러 수준</td><td>중소형 상장사 부담 논쟁 지속</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 1.3 302 vs 404 -->
+    <div class="section">
+      <div class="section-title"><span class="num">1.3</span> 핵심 조항 마스터: Section 302 vs. Section 404</div>
+
+      <div class="two-col">
+        <div class="card" style="border-top: 3px solid var(--navy);">
+          <div class="card-title">Section 302 — CEO/CFO 직접 서명</div>
+          <p>분기·연간 재무제표 제출 시 CEO 및 CFO가 직접 서명. 재무제표의 공정 표시(Fair Presentation) 및 내부통제 설계·운영의 효과성에 대해 <strong>개인 형사 책임</strong>을 부담. 고의적 허위 서명 시 최대 징역 20년.</p>
+        </div>
+        <div class="card" style="border-top: 3px solid var(--navy);">
+          <div class="card-title">Section 404 — 내부통제 평가 의무화</div>
+          <p>경영진이 연간 내부통제 효과성을 자체 평가(Management Assessment)하고, 외부 감사인이 이를 독립적으로 검토. 중요한 취약점(Material Weakness) 발견 시 SEC 공시 의무. ITGC는 이 404 조항의 IT 구현체다.</p>
+        </div>
+      </div>
+
+      <div class="callout correct">
+        <div class="callout-label">실무 포인트</div>
+        <p>BAC 컨설턴트가 고객사 임원에게 Section 404를 설명할 때 핵심은 "IT 시스템이 만드는 숫자의 신뢰성을 경영진이 보증해야 한다"는 점이다. ITGC가 취약하면 Section 302 서명의 근거 자체가 흔들린다.</p>
+      </div>
+    </div>
+
+    <!-- QUIZ M1 -->
+    <div class="quiz-block" id="quiz-m1">
+      <div class="quiz-label">Module 1 · 확인 문제</div>
+      <div class="quiz-q">아더 앤더슨의 몰락이 SOX 입법에 미친 가장 핵심적인 함의는 무엇인가?</div>
+      <div class="quiz-options">
+        <div class="quiz-opt" data-idx="0"><span class="opt-key">A</span> 회계법인의 규모가 클수록 감사 품질이 높다는 것을 입증했다.</div>
+        <div class="quiz-opt" data-idx="1"><span class="opt-key">B</span> 감사인의 독립성 훼손이 시장 전체 신뢰를 붕괴시킬 수 있어 외부 감독기구(PCAOB) 설립이 필요했다.</div>
+        <div class="quiz-opt" data-idx="2"><span class="opt-key">C</span> 분식회계는 중소형 기업에서만 발생하므로 대형사 규제를 완화해야 한다.</div>
+        <div class="quiz-opt" data-idx="3"><span class="opt-key">D</span> 미국 회계기준(US GAAP)의 복잡성이 주된 원인이므로 IFRS 전환이 해법이다.</div>
+      </div>
+      <div class="quiz-feedback" id="qf-m1"></div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════
+       MODULE 2 · 재무 내부통제
+       ══════════════════════════════════════ -->
+  <section class="module-section" id="m2">
+    <div class="module-header">
+      <div class="module-num">Module 02</div>
+      <h2 class="module-title">재무 내부통제(Internal Control)의 프레임워크</h2>
+      <div class="module-divider"></div>
+      <p class="module-desc">COSO 5대 요소를 기반으로 재무제표 왜곡을 방지하는 통제 설계 원리와, 통제 미흡을 등급화하는 기준을 학습합니다.</p>
+    </div>
+
+    <!-- 2.1 COSO -->
+    <div class="section">
+      <div class="section-title"><span class="num">2.1</span> COSO 프레임워크의 5대 요소</div>
+
+      <div class="callout">
+        <div class="callout-label">프레임워크 위상</div>
+        <p>COSO(Committee of Sponsoring Organizations)의 내부통제 통합 프레임워크는 SOX Section 404 평가의 사실상 표준(De facto Standard). SEC 및 PCAOB가 이 프레임워크 기반 평가를 권장한다.</p>
+      </div>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>요소</th><th>핵심 질문</th><th>실무 관련 예시</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>① 통제환경</strong><br>(Control Environment)</td>
+            <td>경영진이 윤리와 내부통제를 얼마나 중시하는가?</td>
+            <td>Tone at the Top, 이사회 감사위원회 독립성, 윤리강령 문서화</td>
+          </tr>
+          <tr>
+            <td><strong>② 위험평가</strong><br>(Risk Assessment)</td>
+            <td>재무 왜곡 가능성이 있는 리스크를 체계적으로 식별했는가?</td>
+            <td>중요 계정(Significant Account) 선정, Assertion 레벨 위험 평가</td>
+          </tr>
+          <tr>
+            <td><strong>③ 통제활동</strong><br>(Control Activities)</td>
+            <td>식별된 위험을 완화하는 구체적 통제가 설계·운영되는가?</td>
+            <td>SoD, 승인 절차, IT 자동 통제(ITAC), 대사(Reconciliation)</td>
+          </tr>
+          <tr>
+            <td><strong>④ 정보 및 의사소통</strong><br>(Information & Communication)</td>
+            <td>통제 관련 정보가 적시에 정확하게 전달되는가?</td>
+            <td>내부통제 결함 보고 채널, 내부감사 보고 체계</td>
+          </tr>
+          <tr>
+            <td><strong>⑤ 모니터링</strong><br>(Monitoring)</td>
+            <td>통제가 지속적으로 작동하는지 검토하는 메커니즘이 있는가?</td>
+            <td>내부감사 수행, 자동 대사 알림, KRI 모니터링</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 2.2 통제 설계 -->
+    <div class="section">
+      <div class="section-title"><span class="num">2.2</span> 재무제표 왜곡방지를 위한 통제 설계</div>
+
+      <div class="card">
+        <div class="card-title">경영진 주장(Management Assertion)이란?</div>
+        <p>재무제표에 포함된 각 항목이 특정 기준을 충족한다는 경영진의 묵시적 주장. 감사인은 이 주장의 타당성을 검증한다. 통제는 반드시 특정 Assertion을 대상으로 설계되어야 효과적이다.</p>
+      </div>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>Assertion</th><th>의미</th><th>관련 통제 예시</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>실재성(Existence)</td><td>기록된 자산·부채·거래가 실제로 존재하는가</td><td>재고실사, AR 잔액확인서</td></tr>
+          <tr><td>완전성(Completeness)</td><td>존재하는 모든 항목이 누락 없이 기록됐는가</td><td>시퀀스 통제, Cut-off 검토</td></tr>
+          <tr><td>정확성(Accuracy)</td><td>거래가 정확한 금액으로 기록됐는가</td><td>자동 계산 검증, 대사</td></tr>
+          <tr><td>기간 귀속(Cut-off)</td><td>거래가 올바른 회계 기간에 기록됐는가</td><td>마감 일정 통제, 역분개 검토</td></tr>
+          <tr><td>표시·공시(Presentation)</td><td>재무제표 분류 및 공시가 적절한가</td><td>공시 체크리스트, CFO 검토</td></tr>
+        </tbody>
+      </table>
+
+      <div class="card" style="margin-top: 16px;">
+        <div class="card-title">업무분리(SoD: Segregation of Duties) 설계 원칙</div>
+        <p>동일인이 <strong>①승인 → ②실행 → ③기록 → ④감독</strong>을 모두 수행하면 오류·부정이 은폐될 수 있다. 최소한 <strong>승인자</strong>와 <strong>실행자</strong>는 반드시 분리해야 한다. ERP 환경에서는 역할(Role)과 권한(Authorization Object) 설계로 구현하며, SoD 충돌은 접근 보안 통제의 핵심 위험 지표가 된다.</p>
+      </div>
+
+      <div class="callout warn">
+        <div class="callout-label">ERP 특유 SoD 위험</div>
+        <p>SAP 등 ERP에서는 역할을 복수 할당하면 개별 역할은 적절해 보여도 <strong>조합 권한(Composite Role)</strong>이 SoD를 위반하는 경우가 발생한다. 단순 역할 목록 검토만으로는 불충분하며, 권한 조합 분석 툴(GRC 등)을 병행해야 한다.</p>
+      </div>
+    </div>
+
+    <!-- 2.3 등급 분류 -->
+    <div class="section">
+      <div class="section-title"><span class="num">2.3</span> 통제 미흡의 등급 분류</div>
+
+      <div class="severity-ladder">
+        <div class="severity-item">
+          <div class="severity-badge sev-1">1</div>
+          <div class="severity-content">
+            <div class="title">단순 미비점 (Control Deficiency)</div>
+            <div class="desc">내부통제가 잠재적 오류를 방지·적발하지 못할 가능성이 있으나, 경미한 수준. 경영진 보고 및 개선 조치로 관리 가능. 외부 공시 의무는 없음.</div>
+          </div>
+        </div>
+        <div class="severity-item">
+          <div class="severity-badge sev-2">2</div>
+          <div class="severity-content">
+            <div class="title">유의적 미비점 (Significant Deficiency)</div>
+            <div class="desc">단순 미비점보다 심각하지만 중요한 취약점에는 해당하지 않는 수준. 이사회 감사위원회에 서면 보고 의무. 외부 공시는 불요하나 감사인이 경영진에게 통보.</div>
+          </div>
+        </div>
+        <div class="severity-item">
+          <div class="severity-badge sev-3">3</div>
+          <div class="severity-content">
+            <div class="title">중요한 취약점 (Material Weakness)</div>
+            <div class="desc">하나 이상의 미비점이 조합되어 연간 재무제표의 <strong>중요한 왜곡표시(Material Misstatement)</strong>를 방지·적발하지 못할 합리적 가능성이 존재. SEC 공시 필수. 주가 하락, 신용등급 영향, 경영진 신뢰 손상의 직접적 원인.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout correct">
+        <div class="callout-label">등급 판단 기준</div>
+        <p>중요성(Materiality)은 절대 금액과 질적 요소(Fraud 관련성, 반복성, 경영진 개입 여부) 모두 고려. ITGC 미비점은 단독으로는 Control Deficiency이나 다수 계정·프로세스에 파급될 경우 Material Weakness로 격상될 수 있다. 이것이 IT 컨설턴트가 ITGC를 단순 IT 문제가 아닌 <strong>재무 리스크</strong>로 이해해야 하는 이유다.</p>
+      </div>
+    </div>
+
+    <!-- QUIZ M2 -->
+    <div class="quiz-block" id="quiz-m2">
+      <div class="quiz-label">Module 2 · 확인 문제</div>
+      <div class="quiz-q">ERP 환경에서 개별 역할(Role)은 적절하게 설계됐음에도 SoD 위반이 발생할 수 있는 가장 직접적인 이유는?</div>
+      <div class="quiz-options">
+        <div class="quiz-opt" data-idx="0"><span class="opt-key">A</span> ERP 시스템의 보안 패치가 최신 상태가 아니기 때문이다.</div>
+        <div class="quiz-opt" data-idx="1"><span class="opt-key">B</span> 사용자에게 복수 역할이 할당될 때 조합 권한이 SoD를 위반할 수 있기 때문이다.</div>
+        <div class="quiz-opt" data-idx="2"><span class="opt-key">C</span> 내부감사 팀이 역할 목록을 검토하지 않기 때문이다.</div>
+        <div class="quiz-opt" data-idx="3"><span class="opt-key">D</span> COSO 프레임워크가 ERP 환경을 명시적으로 다루지 않기 때문이다.</div>
+      </div>
+      <div class="quiz-feedback" id="qf-m2"></div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════
+       MODULE 3 · ITGC 깊이 파기
+       ══════════════════════════════════════ -->
+  <section class="module-section" id="m3">
+    <div class="module-header">
+      <div class="module-num">Module 03</div>
+      <h2 class="module-title">IT 일반통제(ITGC) 깊이 파기</h2>
+      <div class="module-divider"></div>
+      <p class="module-desc">재무 숫자의 신뢰성을 뒷받침하는 시스템 백단의 논리 — ITGC 4대 도메인의 통제 목적과 ITAC와의 구분까지 다룹니다.</p>
+    </div>
+
+    <!-- 3.1 데이터 무결성 -->
+    <div class="section">
+      <div class="section-title"><span class="num">3.1</span> 왜 ITGC인가?: 데이터 무결성의 개념</div>
+
+      <div class="callout">
+        <div class="callout-label">핵심 논리 구조</div>
+        <p>현대 재무제표는 ERP에서 자동 생성된다. ERP가 신뢰할 수 없다면 재무제표 숫자 자체가 신뢰할 수 없다. ITGC는 ERP가 신뢰 가능한 환경에서 운영된다는 것을 증명하는 메커니즘이다.</p>
+      </div>
+
+      <div class="flow">
+        <div class="flow-step">
+          <div class="step-num">SOURCE</div>
+          <div class="step-label">비즈니스 트랜잭션</div>
+          <div class="step-sub">매입·매출·급여 등</div>
+        </div>
+        <div class="flow-step highlight">
+          <div class="step-num">ITGC</div>
+          <div class="step-label">시스템 환경 통제</div>
+          <div class="step-sub">접근·변경·운영·개발</div>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">ITAC</div>
+          <div class="step-label">응용 통제</div>
+          <div class="step-sub">입력·처리·출력 검증</div>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">OUTPUT</div>
+          <div class="step-label">재무제표</div>
+          <div class="step-sub">경영진 서명(S.302/404)</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">ITGC가 취약하면 ITAC 결과도 무효화된다</div>
+        <p>자동 입력 검증(ITAC)이 아무리 잘 설계되어 있어도, 해당 프로그램 코드를 권한 없는 인원이 수정할 수 있다면(변경 관리 ITGC 미비) 그 ITAC는 신뢰할 수 없다. 감사인은 ITAC에 의존하기 전에 반드시 관련 ITGC를 먼저 평가한다.</p>
+      </div>
+    </div>
+
+    <!-- 3.2 4대 도메인 -->
+    <div class="section">
+      <div class="section-title"><span class="num">3.2</span> ITGC 4대 핵심 영역별 통제 목적</div>
+
+      <div class="domain-grid">
+        <div class="domain-card">
+          <div class="domain-label">Domain 01</div>
+          <div class="domain-title">프로그램 개발 (Program Development)</div>
+          <ul class="body-list">
+            <li>신규 시스템·기능 도입 시 요구사항 정의, UAT(사용자 인수 테스트), 승인·배포 프로세스 통제</li>
+            <li>테스트 환경과 운영 환경 분리(Dev/Test/Prod 환경 분리)</li>
+            <li>전환(Migration) 데이터 무결성 검증</li>
+            <li>프로젝트 도중 범위 변경(CR) 관리 절차</li>
+          </ul>
+        </div>
+        <div class="domain-card">
+          <div class="domain-label">Domain 02</div>
+          <div class="domain-title">변경 관리 (Change Management)</div>
+          <ul class="body-list">
+            <li>소스 코드·설정값 변경 시 공식 변경 요청(RFC) 및 승인 절차</li>
+            <li>긴급 변경(Emergency Change) 사후 승인 추적</li>
+            <li>변경 전 UAT 완료 증빙 및 Rollback 계획</li>
+            <li>배포(Transport) 이력과 변경 요청 티켓 정합성 검증</li>
+          </ul>
+        </div>
+        <div class="domain-card">
+          <div class="domain-label">Domain 03</div>
+          <div class="domain-title">접근 보안 (Access to Programs & Data)</div>
+          <ul class="body-list">
+            <li>계정 라이프사이클 관리: 신규 생성·권한 변경·퇴직자 즉시 비활성화</li>
+            <li>최소 권한 원칙(Least Privilege) 및 SoD 충돌 없는 역할 설계</li>
+            <li>특권 계정(Admin/Basis) 사용 모니터링 및 로그 검토</li>
+            <li>정기적 접근 권한 재검토(Access Review) 수행 및 증빙</li>
+          </ul>
+        </div>
+        <div class="domain-card">
+          <div class="domain-label">Domain 04</div>
+          <div class="domain-title">컴퓨터 운영 (Computer Operations)</div>
+          <ul class="body-list">
+            <li>배치(Batch) 작업 스케줄 모니터링 및 실패 알림·재처리 절차</li>
+            <li>백업 정책 준수 및 복구 테스트(DR Test) 수행 증빙</li>
+            <li>시스템 장애 이력 및 대응 기록(Incident Log) 유지</li>
+            <li>운영 환경 직접 접근 제한 및 예외 처리 승인</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <div class="callout-label">ERP 환경 특유 주의사항</div>
+        <p>SAP 등 ERP에서는 표준 프로그램 변경이 불가하므로 "변경 없음(No Change)" 증빙이 필요하다. 반면 CBO(Custom Built Object) 프로그램은 변경 관리 ITGC의 최우선 대상이다. 또한 Background Job(배치) 실패가 재무 마감 집계 오류로 직결될 수 있어 컴퓨터 운영 통제가 재무 Assertion과 직접 연결된다.</p>
+      </div>
+    </div>
+
+    <!-- 3.3 ITAC와 차이 -->
+    <div class="section">
+      <div class="section-title"><span class="num">3.3</span> IT 응용통제(ITAC)와의 차이점</div>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>구분</th><th>ITGC (IT 일반통제)</th><th>ITAC (IT 응용통제)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>정의</td><td>IT 환경의 전반적 신뢰성을 유지하는 통제</td><td>특정 애플리케이션 내 데이터 처리의 정확성을 보장하는 통제</td></tr>
+          <tr><td>적용 범위</td><td>모든 시스템에 공통 적용 (수평적)</td><td>특정 프로세스·모듈에 한정 (수직적)</td></tr>
+          <tr><td>통제 예시</td><td>변경 관리, 접근 권한, 운영 모니터링</td><td>입력 유효성 검사, 자동 계산, 중복 거래 차단</td></tr>
+          <tr><td>감사 의존 순서</td><td>ITGC 평가 → ITAC 의존 여부 결정</td><td>ITGC가 충분할 때만 ITAC에 의존 가능</td></tr>
+          <tr><td>주요 테스트</td><td>관련 증빙(티켓, 로그) 샘플링 검토</td><td>실제 데이터 또는 테스트 데이터로 기능 검증</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout correct">
+        <div class="callout-label">BAC 컨설턴트 시사점</div>
+        <p>GR·SAC-P 프로젝트에서 자동 집계 기능(ITAC)을 설계할 때, 해당 기능이 SOX 범위 내에 있다면 동시에 ITGC 관련 변경 관리·접근 통제 증빙 체계도 함께 설계해야 한다. 구현 단계에서 분리하면 후속 감사 시 ITAC 의존성이 부정될 수 있다.</p>
+      </div>
+
+      <!-- Drill Toggles -->
+      <div style="margin-top: 24px;">
+        <div style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 0.06em; text-transform: uppercase;">심화 Q&A</div>
+
+        <div class="drill-toggle">
+          <div class="drill-header">
+            <div class="drill-q">ITGC는 Manual Control과 Automated Control 중 어느 쪽인가?</div>
+            <div class="drill-arrow">▼</div>
+          </div>
+          <div class="drill-body">ITGC는 IT 환경의 통제이지만, ITGC 자체의 운영은 Manual Control(사람이 수행)인 경우가 많다. 예를 들어 "변경 요청 티켓 승인"은 IT 시스템 안에서 수행되지만 승인 행위는 담당자가 수동으로 한다. 반면 접근 로그 자동 수집은 Automated ITGC에 해당한다. 감사인은 수동 ITGC에 대해 더 넓은 샘플을 요구하는 경향이 있다.</div>
+        </div>
+
+        <div class="drill-toggle">
+          <div class="drill-header">
+            <div class="drill-q">SOC 1 보고서와 ITGC의 관계는 무엇인가?</div>
+            <div class="drill-arrow">▼</div>
+          </div>
+          <div class="drill-body">외부 서비스 제공업체(예: 클라우드 ERP 호스팅사)의 ITGC를 직접 감사하기 어려울 때, 해당 업체의 SOC 1 Type II 보고서로 대체할 수 있다. SOC 1은 해당 서비스 업체의 ITGC 설계 및 운영 효과성을 독립된 감사인이 검증한 보고서다. BAC 고객사가 SaaS/IaaS를 활용하는 경우 SOC 1 보고서 확보 및 보완 통제(Complementary User Entity Control) 적용 여부를 확인해야 한다.</div>
+        </div>
+
+        <div class="drill-toggle">
+          <div class="drill-header">
+            <div class="drill-q">긴급 변경(Emergency Change)은 어떻게 통제해야 하는가?</div>
+            <div class="drill-arrow">▼</div>
+          </div>
+          <div class="drill-body">긴급 상황에서는 정규 승인 전에 배포가 이루어질 수 있다. 이 경우 ① 긴급 변경 발생 즉시 로그 자동 캡처, ② 사후 일정 기간(예: 24시간) 내 공식 승인 완료, ③ 정기 모니터링(예: 월별 긴급 변경 목록 검토 및 승인 확인)의 3단계 통제가 필요하다. 감사인은 긴급 변경이 SoD를 우회하는 경로로 악용될 수 있음을 인지하고 있으므로 샘플 비율을 높게 설정하는 경향이 있다.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUIZ M3 -->
+    <div class="quiz-block" id="quiz-m3">
+      <div class="quiz-label">Module 3 · 확인 문제</div>
+      <div class="quiz-q">감사인이 ERP 자동 집계 기능(ITAC)에 의존하기 위해 가장 먼저 확인해야 하는 것은?</div>
+      <div class="quiz-options">
+        <div class="quiz-opt" data-idx="0"><span class="opt-key">A</span> 해당 ITAC가 COSO 5대 요소 중 통제활동에 해당하는지 여부</div>
+        <div class="quiz-opt" data-idx="1"><span class="opt-key">B</span> 해당 기능을 지원하는 시스템 환경의 ITGC가 효과적으로 운영되고 있는지 여부</div>
+        <div class="quiz-opt" data-idx="2"><span class="opt-key">C</span> 해당 기능이 Manual Control보다 처리 속도가 빠른지 여부</div>
+        <div class="quiz-opt" data-idx="3"><span class="opt-key">D</span> ERP 벤더가 Big 4 감사법인으로부터 시스템 인증을 받았는지 여부</div>
+      </div>
+      <div class="quiz-feedback" id="qf-m3"></div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════
+       MODULE 4 · 감사 대응 전략
+       ══════════════════════════════════════ -->
+  <section class="module-section" id="m4">
+    <div class="module-header">
+      <div class="module-num">Module 04</div>
+      <h2 class="module-title">상장사 실무자를 위한 SOX 감사 대응 전략</h2>
+      <div class="module-divider"></div>
+      <p class="module-desc">증빙 문서화, ERP 환경 특수성 대응, 피감사인 방어 전략까지 — BAC 컨설턴트가 고객사 현장에서 실제로 부딪히는 이슈를 다룹니다.</p>
+    </div>
+
+    <!-- 4.1 감사 추적성 -->
+    <div class="section">
+      <div class="section-title"><span class="num">4.1</span> 감사 추적성(Audit Trail) 확보를 위한 문서화</div>
+
+      <div class="callout">
+        <div class="callout-label">원칙</div>
+        <p>"문서화되지 않은 통제는 존재하지 않는 통제다." — 감사인은 구두 설명이 아닌 <strong>증빙(Evidence)</strong>만 인정한다.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">ITSM 티켓 ↔ 시스템 로그 정합성 검증</div>
+        <p>변경 관리 통제의 핵심은 티켓(ServiceNow, Jira 등)과 실제 배포 로그가 1:1로 매칭되는지 확인하는 것이다. 감사인은 배포 이력에서 역추적하여 대응하는 공식 RFC 티켓이 존재하는지, 사전 승인자가 명시되어 있는지, UAT 완료 증빙이 첨부되어 있는지를 검토한다.</p>
+      </div>
+
+      <div class="callout warn">
+        <div class="callout-label">감사인이 집중하는 패턴: '형식적 승인' 포착</div>
+        <p>승인 타임스탬프가 변경 배포 시점 <strong>이후</strong>에 찍혀 있거나, 동일인이 요청자·승인자를 겸하는 경우, 승인 소요 시간이 비정상적으로 짧은 경우(수 초 이내) 등은 사후 승인 또는 자기 승인으로 간주되어 중요 발견 사항이 될 수 있다.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">샘플링 vs. 전수 검사 — 감사인의 선택 기준</div>
+        <p>일반적으로 빈도가 낮은 통제(연간·반기)는 전수 검사, 빈도가 높은 통제(일별·주간)는 샘플링으로 검토한다. 전년도 미비점이 있거나 위험 등급이 높은 영역은 샘플 수가 증가한다. BAC 컨설턴트는 고객사가 <strong>샘플 추출 요청에 즉시 대응</strong>할 수 있도록 증빙을 체계화하는 것이 핵심 기여다.</p>
+      </div>
+    </div>
+
+    <!-- 4.2 ERP 환경 특수성 -->
+    <div class="section">
+      <div class="section-title"><span class="num">4.2</span> ERP 환경에서의 특수성</div>
+
+      <div class="two-col">
+        <div class="card" style="border-top: 3px solid var(--navy);">
+          <div class="card-title">표준 프로그램 변경 불변성 증빙</div>
+          <p>ERP 표준 프로그램(Vendor-Provided)은 고객이 소스를 수정할 수 없다. 그러나 감사인은 이를 당연시하지 않고 증빙을 요구한다. 대응 방안: ① 표준 프로그램 목록화, ② 배포 이력상 해당 프로그램에 변경 티켓 없음 확인, ③ 환경 비교(Transport Log 기반 Diff) 증빙 제시.</p>
+        </div>
+        <div class="card" style="border-top: 3px solid var(--navy);">
+          <div class="card-title">Variant 관리</div>
+          <p>표준 프로그램은 변경하지 않더라도 실행 매개변수(Variant)를 변경하면 결과가 달라질 수 있다. 감사인은 재무 집계 배치에 사용되는 Variant 변경 이력을 요청할 수 있다. 변경 관리 프로세스에 Variant 변경을 명시적으로 포함시켜야 한다.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">CBO(자체개발) 프로그램과 SoD 리스크</div>
+        <p>커스텀 프로그램은 표준 권한 체계를 우회하도록 개발되는 경우가 있다 — 예를 들어 특정 Z-프로그램이 정상 트랜잭션 코드 없이 직접 DB 테이블을 쓰는 구조. 이 경우 CBO 프로그램 실행 권한 자체가 SoD 위험의 우회 경로가 된다. 대응 방안: ① CBO 프로그램 목록화 및 권한 오브젝트 검토, ② CBO 접근 권한과 관련 비즈니스 기능 간 SoD 충돌 분석, ③ CBO 변경 이력의 변경 관리 통합.</p>
+      </div>
+
+      <div class="callout warn">
+        <div class="callout-label">현장 주의 사항</div>
+        <p>ERP 구축 프로젝트에서 편의상 개발자에게 운영 환경 직접 접근 권한을 부여하는 경우가 있다. 프로젝트 종료 시 반드시 해당 권한을 즉시 회수하고 증빙을 남겨야 한다. 이 시점이 누락되면 이후 감사에서 지속적 통제 미비로 기록된다.</p>
+      </div>
+    </div>
+
+    <!-- 4.3 방어 전략 -->
+    <div class="section">
+      <div class="section-title"><span class="num">4.3</span> 피감사인의 방어 전략</div>
+
+      <div class="card">
+        <div class="card-title">RCM(통제기술서) 기반 방어법</div>
+        <p>RCM(Risk and Control Matrix)은 위험 → 통제 → 증빙을 1:1로 매핑한 문서다. 감사인의 추가 자료 요청이 발생할 때 "이 위험은 이미 RCM의 X번 통제로 커버되며, 해당 증빙은 Y 폴더에 있습니다"로 답할 수 있으면 범위 확장을 차단할 수 있다. RCM 없이 대응하면 감사인이 요청을 계속 확장하는 경향이 있다.</p>
+      </div>
+
+      <div class="callout correct">
+        <div class="callout-label">실전 팁: 감사인과의 커뮤니케이션</div>
+        <ul class="body-list">
+          <li>요청 리스트(PBC List)는 수령 즉시 담당자를 지정하고 마감일을 확정한다. 무응답이 길어지면 범위가 확장된다.</li>
+          <li>증빙은 감사인이 요청한 형식으로 제공한다. 추가 설명이 필요한 증빙은 Cover Note를 첨부하여 문맥을 제공한다.</li>
+          <li>통제 설계상 의도적인 예외(예: 긴급 변경 사후 승인)는 사전에 경영진 승인 정책 문서로 설명한다. 발견 후 해명하면 신뢰도가 낮아진다.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">최적의 증빙 자산화: Folder Structure 가이드</div>
+        <p>연간 감사를 반복적으로 준비하는 고객사라면 다음 폴더 구조를 권장한다.</p>
+        <ul class="body-list" style="margin-top: 10px;">
+          <li><code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; background: var(--bg); padding: 1px 5px; border-radius: 3px;">01_RCM</code> — 최신 버전의 Risk &amp; Control Matrix (연 1회 이상 업데이트)</li>
+          <li><code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; background: var(--bg); padding: 1px 5px; border-radius: 3px;">02_Evidence / {Domain} / {Control_ID}</code> — 통제별 증빙을 RCM Control ID로 분류</li>
+          <li><code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; background: var(--bg); padding: 1px 5px; border-radius: 3px;">03_Exception</code> — 예외 처리 이력 및 경영진 승인 문서</li>
+          <li><code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; background: var(--bg); padding: 1px 5px; border-radius: 3px;">04_Prior_Year</code> — 전년도 감사 발견사항 및 개선 조치 완료 증빙</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- QUIZ M4 -->
+    <div class="quiz-block" id="quiz-m4">
+      <div class="quiz-label">Module 4 · 확인 문제</div>
+      <div class="quiz-q">감사인이 추가 자료 요청을 반복적으로 확장하는 상황을 방어하는 가장 효과적인 수단은?</div>
+      <div class="quiz-options">
+        <div class="quiz-opt" data-idx="0"><span class="opt-key">A</span> 감사 기간 중 경영진 회의를 최소화하여 접촉 빈도를 줄인다.</div>
+        <div class="quiz-opt" data-idx="1"><span class="opt-key">B</span> RCM(통제기술서) 기반으로 위험-통제-증빙 연결을 사전에 문서화하여 Coverage를 명확히 한다.</div>
+        <div class="quiz-opt" data-idx="2"><span class="opt-key">C</span> 감사법인 교체를 통해 이전 발견사항을 초기화한다.</div>
+        <div class="quiz-opt" data-idx="3"><span class="opt-key">D</span> 모든 증빙을 감사인에게 제출하지 않고 핵심 증빙만 선별하여 공유한다.</div>
+      </div>
+      <div class="quiz-feedback" id="qf-m4"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  ASPN BAC · Internal Education Series · For Internal Use Only
+</footer>
+
+<script>
+  // ── Tab Navigation ──
+  const tabs = document.querySelectorAll('.nav-tab');
+  const sections = document.querySelectorAll('.module-section');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.target;
+      tabs.forEach(t => t.classList.remove('active'));
+      sections.forEach(s => s.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(target).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  // ── Drill Toggles ──
+  document.querySelectorAll('.drill-toggle').forEach(dt => {
+    dt.querySelector('.drill-header').addEventListener('click', () => {
+      dt.classList.toggle('open');
+    });
+  });
+
+  // ── Quiz Logic ──
+  const quizConfig = {
+    'quiz-m1': { answer: 1, feedback: { ok: '정답입니다. 아더 앤더슨 사태는 감사인 독립성의 구조적 훼손이 시장 전반의 신뢰를 무너뜨릴 수 있음을 보여줬습니다. 이것이 PCAOB라는 독립 감독기구 설립으로 이어졌고, SOX의 핵심 설계 원리 중 하나가 됐습니다.', ng: '다시 생각해보세요. 아더 앤더슨의 핵심 이슈는 규모의 문제가 아니라, 피감사법인과의 경제적 이해관계로 인한 독립성 훼손이었습니다.' } },
+    'quiz-m2': { answer: 1, feedback: { ok: '정답입니다. SoD 분석은 개별 역할(Role) 수준이 아닌 사용자에게 실제 할당된 역할의 조합(Composite) 수준에서 수행해야 합니다. SAP GRC 등의 도구가 이 조합 분석을 자동화합니다.', ng: '다시 생각해보세요. 개별 역할이 적절해 보여도 사용자에게 복수 역할이 할당되면 조합 권한이 SoD를 위반하는 상황이 발생합니다.' } },
+    'quiz-m3': { answer: 1, feedback: { ok: '정답입니다. ITAC 의존 순서의 핵심 원칙 — ITGC 평가가 선행되어야 ITAC 신뢰성이 성립합니다. ITGC 미비 상태에서 ITAC는 감사 증거로서 신뢰할 수 없습니다.', ng: '다시 생각해보세요. 감사인은 ITAC에 의존하기 전에 해당 시스템의 ITGC 효과성을 먼저 평가합니다. ITGC가 미비하면 ITAC 결과는 신뢰할 수 없는 것으로 간주됩니다.' } },
+    'quiz-m4': { answer: 1, feedback: { ok: '정답입니다. RCM은 위험-통제-증빙의 연결고리를 명시적으로 문서화한 것으로, 감사인의 추가 요청에 대해 "이미 커버됨"을 즉시 제시할 수 있는 가장 강력한 방어 수단입니다.', ng: '다시 생각해보세요. 감사 범위 확장을 방지하는 핵심은 위험과 통제의 커버리지를 사전에 명확히 문서화하는 것입니다.' } }
+  };
+
+  Object.entries(quizConfig).forEach(([quizId, cfg]) => {
+    const block = document.getElementById(quizId);
+    if (!block) return;
+    const opts = block.querySelectorAll('.quiz-opt');
+    const fb = block.querySelector('.quiz-feedback');
+    let answered = false;
+
+    opts.forEach((opt, idx) => {
+      opt.addEventListener('click', () => {
+        if (answered) return;
+        answered = true;
+        opts.forEach(o => o.classList.remove('selected'));
+        opts[cfg.answer].classList.add('correct');
+        if (idx !== cfg.answer) opt.classList.add('wrong');
+        fb.textContent = idx === cfg.answer ? cfg.feedback.ok : cfg.feedback.ng;
+        fb.className = 'quiz-feedback show ' + (idx === cfg.answer ? 'ok' : 'ng');
+      });
+    });
+  });
+</script>
+</body>
+</html>
