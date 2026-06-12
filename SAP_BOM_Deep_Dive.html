@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BOM 체계 심화 학습 | ASPN BAC EDU</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#003366;
+  --navy-light:#e8eef5;
+  --bg:#f0f3f8;
+  --card:#ffffff;
+  --text:#222;
+  --sub:#5a6472;
+  --warn:#b35c00;
+  --warn-bg:#fff4e8;
+  --correct:#1e7a3c;
+  --correct-bg:#e8f5ee;
+  --wrong:#a3242a;
+  --wrong-bg:#fcebec;
+  --mono:'JetBrains Mono','Noto Sans KR',monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  font-family:'Noto Sans KR',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  font-size:15px;
+  line-height:1.7;
+  padding-bottom:80px;
+}
+h1,h2,h3{font-family:'DM Serif Display','Noto Sans KR',serif; font-weight:400; color:var(--navy);}
+
+/* ===== Header ===== */
+header{
+  background:var(--navy);
+  color:#fff;
+  padding:48px 24px 36px;
+  text-align:center;
+}
+header .tag{
+  font-family:var(--mono);
+  font-size:13px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  opacity:.75;
+  margin-bottom:10px;
+}
+header h1{color:#fff; font-size:42px; margin-bottom:10px;}
+header p{font-size:16px; opacity:.85; max-width:680px; margin:0 auto;}
+
+/* ===== Sticky Nav ===== */
+nav{
+  position:sticky; top:0; z-index:100;
+  background:#fff;
+  border-bottom:1px solid #d8dee8;
+  display:flex;
+  overflow-x:auto;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+nav button{
+  flex:1 0 auto;
+  min-width:140px;
+  border:none;
+  background:none;
+  font-family:'Noto Sans KR',sans-serif;
+  font-size:13px;
+  font-weight:700;
+  color:var(--sub);
+  padding:16px 12px;
+  cursor:pointer;
+  border-bottom:3px solid transparent;
+  transition:.15s;
+  white-space:nowrap;
+}
+nav button:hover{color:var(--navy); background:var(--navy-light);}
+nav button.active{color:var(--navy); border-bottom-color:var(--navy);}
+
+/* ===== Sections ===== */
+section{
+  max-width:880px;
+  margin:0 auto;
+  padding:48px 24px;
+  display:none;
+}
+section.active{display:block; animation:fade .35s ease;}
+@keyframes fade{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+
+.section-title{font-size:30px; margin-bottom:6px;}
+.section-sub{color:var(--sub); font-size:14px; margin-bottom:32px;}
+
+/* ===== Card ===== */
+.card{
+  background:var(--card);
+  border:1px solid #dde3ec;
+  border-radius:10px;
+  padding:24px 28px;
+  margin-bottom:24px;
+}
+.card h3{font-size:19px; margin-bottom:12px;}
+.card h4{font-family:'Noto Sans KR',sans-serif; font-size:14px; font-weight:700; color:var(--navy); margin:16px 0 8px;}
+.card p{margin-bottom:10px;}
+.card ul{padding-left:22px; margin-bottom:10px;}
+.card li{margin-bottom:6px;}
+
+/* ===== Callouts ===== */
+.callout{
+  border-radius:8px;
+  padding:16px 20px;
+  margin:16px 0;
+  font-size:14px;
+  border-left:4px solid;
+}
+.callout-label{
+  font-family:var(--mono);
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  display:block;
+  margin-bottom:6px;
+}
+.callout.navy{background:var(--navy-light); border-color:var(--navy);}
+.callout.navy .callout-label{color:var(--navy);}
+.callout.warn{background:var(--warn-bg); border-color:var(--warn);}
+.callout.warn .callout-label{color:var(--warn);}
+.callout.correct{background:var(--correct-bg); border-color:var(--correct);}
+.callout.correct .callout-label{color:var(--correct);}
+.callout.wrong{background:var(--wrong-bg); border-color:var(--wrong);}
+.callout.wrong .callout-label{color:var(--wrong);}
+
+/* ===== Flow Diagram ===== */
+.flow{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:center;
+  margin:20px 0;
+}
+.flow .box{
+  background:var(--navy-light);
+  border:1.5px solid var(--navy);
+  color:var(--navy);
+  font-weight:700;
+  font-size:13px;
+  padding:12px 16px;
+  border-radius:8px;
+  text-align:center;
+  min-width:110px;
+}
+.flow .box.highlight{background:var(--navy); color:#fff;}
+.flow .arrow{font-size:18px; color:var(--navy); font-weight:700;}
+
+/* ===== BOM Tree ===== */
+.bom-tree{
+  font-family:var(--mono);
+  font-size:14px;
+  background:#fbfcfe;
+  border:1px solid #dde3ec;
+  border-radius:8px;
+  padding:20px 24px;
+  margin:16px 0;
+  overflow-x:auto;
+}
+.bom-tree .lvl0{color:var(--navy); font-weight:700; font-size:16px;}
+.bom-tree .lvl1{padding-left:28px; color:#333;}
+.bom-tree .lvl2{padding-left:56px; color:#555;}
+.bom-tree .lvl1::before{content:"└─ "; color:#aaa;}
+.bom-tree .lvl2::before{content:"└─ "; color:#ccc;}
+.bom-tree .tag{
+  display:inline-block;
+  font-size:10px;
+  font-weight:700;
+  padding:2px 6px;
+  border-radius:4px;
+  margin-left:8px;
+  vertical-align:middle;
+}
+.bom-tree .tag.semi{background:var(--navy); color:#fff;}
+.bom-tree .tag.raw{background:#dde3ec; color:var(--navy);}
+
+/* ===== Table ===== */
+table{width:100%; border-collapse:collapse; font-size:14px; margin:14px 0;}
+th,td{border:1px solid #dde3ec; padding:10px 12px; text-align:left;}
+th{background:var(--navy-light); color:var(--navy); font-weight:700; font-size:13px;}
+td.num{text-align:right; font-family:var(--mono);}
+tr.total td{font-weight:700; background:#fafbfd;}
+tr.sum td{font-weight:700; background:var(--navy-light); color:var(--navy);}
+
+/* ===== Drill Toggle (Quiz) ===== */
+.quiz-item{
+  background:var(--card);
+  border:1px solid #dde3ec;
+  border-radius:10px;
+  padding:20px 24px;
+  margin-bottom:16px;
+}
+.quiz-q{font-weight:700; margin-bottom:12px; font-size:15px;}
+.quiz-opts{display:flex; flex-direction:column; gap:8px; margin-bottom:4px;}
+.quiz-opt{
+  background:#fbfcfe;
+  border:1.5px solid #dde3ec;
+  border-radius:6px;
+  padding:10px 14px;
+  cursor:pointer;
+  font-size:14px;
+  transition:.15s;
+}
+.quiz-opt:hover{border-color:var(--navy); background:var(--navy-light);}
+.quiz-opt.selected.correct{background:var(--correct-bg); border-color:var(--correct); color:var(--correct);}
+.quiz-opt.selected.wrong{background:var(--wrong-bg); border-color:var(--wrong); color:var(--wrong);}
+.quiz-explain{
+  display:none;
+  margin-top:12px;
+  padding:12px 16px;
+  background:var(--navy-light);
+  border-radius:6px;
+  font-size:13px;
+  border-left:4px solid var(--navy);
+}
+.quiz-explain.show{display:block;}
+
+/* ===== Checklist ===== */
+.checklist{list-style:none; padding:0;}
+.checklist li{
+  display:flex; align-items:flex-start; gap:10px;
+  padding:10px 0; border-bottom:1px solid #eef1f6;
+  font-size:14px;
+}
+.checklist li:last-child{border-bottom:none;}
+.checklist .chk{
+  flex-shrink:0; width:20px; height:20px; border:2px solid var(--navy);
+  border-radius:4px; margin-top:1px;
+}
+
+/* ===== Nav buttons (prev/next) ===== */
+.pagenav{
+  display:flex; justify-content:space-between;
+  max-width:880px; margin:8px auto 0; padding:0 24px;
+}
+.pagenav button{
+  font-family:'Noto Sans KR',sans-serif;
+  font-weight:700; font-size:14px;
+  color:var(--navy);
+  background:#fff;
+  border:1.5px solid var(--navy);
+  border-radius:6px;
+  padding:10px 20px;
+  cursor:pointer;
+  transition:.15s;
+}
+.pagenav button:hover{background:var(--navy); color:#fff;}
+.pagenav button:disabled{opacity:.3; cursor:default;}
+.pagenav button:disabled:hover{background:#fff; color:var(--navy);}
+
+/* responsive */
+@media(max-width:600px){
+  header h1{font-size:30px;}
+  .section-title{font-size:24px;}
+  .flow{flex-direction:column;}
+  .flow .arrow{transform:rotate(90deg);}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">ASPN BAC · GR / SAC-P 사전학습</div>
+  <h1>BOM 체계 심화 학습</h1>
+  <p>원가 마감의 큰 그림(정전개·역전개 / 수불부 관리 / 원가차이 조정) 가운데, BOM 체계가 어떻게 작동하고 표준원가 산정으로 연결되는지를 단일 예시를 통해 살펴봅니다.</p>
+</header>
+
+<nav id="nav"></nav>
+
+<section id="sec0" class="active">
+  <h2 class="section-title">Part 1. 원가 마감 큰 그림 속 BOM의 위치</h2>
+  <p class="section-sub">BOM은 원가 마감 전체 흐름의 "출발점"입니다.</p>
+
+  <div class="card">
+    <h3>왜 GR/SAC-P 컨설턴트가 BOM을 알아야 하는가</h3>
+    <p>BOM(Bill of Material) 마스터데이터 자체는 PP(생산관리) 모듈의 영역입니다. 그럼에도 GR/SAC-P 컨설턴트가 BOM의 작동 원리를 알아야 하는 이유는 다음과 같습니다.</p>
+    <ul>
+      <li><strong>다루는 숫자의 출처</strong>: GR의 IC 재고 미실현이익 제거, SAC-P의 원가계획 드라이버는 모두 CK11N이 산출한 Cost Component Split(재료비/가공비/간접비)을 입력값으로 사용합니다. 이 숫자가 어디서 어떻게 만들어졌는지 모르면, 숫자에 이상이 생겼을 때 그것이 GR/SAC-P 설정 문제인지 PP/CO 마스터데이터 문제인지 구분할 수 없습니다.</li>
+      <li><strong>고객 미팅에서의 신뢰</strong>: "SAC-P 계획 원가와 CK13N 실제 결과가 왜 차이 나는가"라는 질문에 "PP 담당입니다"로 넘기지 않고, BOM 구조 변경/Low-Level Code/Cost Component 전이 관점에서 원인을 분리해 설명할 수 있어야 합니다.</li>
+      <li><strong>SAC-P 드라이버 설계 품질</strong>: BOM의 고정비/변동비 구조를 모르고 "생산량 × 단가"로만 모델링하면, 실제와 어긋나는 계획이 만들어집니다. BOM 이해는 SAC-P 설계 품질을 좌우합니다.</li>
+    </ul>
+    <div class="callout navy">
+      <span class="callout-label">한 줄 요약</span>
+      GR/SAC-P 컨설턴트는 BOM을 설정하기 위해 배우는 것이 아니라, <strong>자신이 사용하는 숫자의 출처를 이해하기 위해</strong> 배웁니다.
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>원가 마감의 전체 흐름</h3>
+    <p>SAP 원가 마감은 통상 아래와 같은 흐름으로 진행됩니다. 이번 모듈은 가장 왼쪽 단계, 즉 <strong>BOM 체계와 그에 기반한 원가산정(CK11N)</strong>에 집중합니다.</p>
+    <div class="flow">
+      <div class="box highlight">BOM 체계<br>(정전개/역전개)</div>
+      <div class="arrow">→</div>
+      <div class="box">표준원가 산정<br>(CK11N)</div>
+      <div class="arrow">→</div>
+      <div class="box">수불부 관리<br>(자재 입출고)</div>
+      <div class="arrow">→</div>
+      <div class="box">원가차이 조정<br>(실제 vs 표준)</div>
+    </div>
+    <div class="callout navy">
+      <span class="callout-label">Why It Matters</span>
+      BOM은 단순히 "제품 구성표"가 아니라, 표준원가 산정의 <strong>수량 구조(Quantity Structure)</strong>를 정의하는 마스터데이터입니다. 이 수량 구조가 잘못 설계되면 이후 수불부·원가차이 단계의 숫자가 전부 영향을 받습니다.
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>이 모듈에서 사용할 예시</h3>
+    <p>아래 BOM 구조를 모듈 전체에서 동일하게 사용합니다. 완제품 2종(FG-100, FG-300)이 반제품 SF-10을 공유하는 구조입니다.</p>
+    <div class="bom-tree">
+<div class="lvl0">FG-100 <span class="tag semi">완제품</span></div>
+<div class="lvl1">SF-10 × 2 EA <span class="tag semi">반제품</span></div>
+<div class="lvl2">RM-B × 3 KG <span class="tag raw">원재료</span></div>
+<div class="lvl2">RM-C × 1 EA <span class="tag raw">원재료</span></div>
+<div class="lvl1">RM-A × 1 EA <span class="tag raw">원재료</span></div>
+<br>
+<div class="lvl0">FG-300 <span class="tag semi">완제품</span></div>
+<div class="lvl1">SF-10 × 1 EA <span class="tag semi">반제품</span></div>
+<div class="lvl2">(SF-10 BOM은 위와 동일)</div>
+<div class="lvl1">RM-D × 1 EA <span class="tag raw">원재료</span></div>
+    </div>
+    <p>SF-10이 FG-100과 FG-300 두 완제품에서 공통으로 사용된다는 점이 Part 2의 Low-Level Code 설명에서 핵심 역할을 합니다.</p>
+  </div>
+</section>
+
+<section id="sec1">
+  <h2 class="section-title">Part 2. 정전개 (BOM Explosion)</h2>
+  <p class="section-sub">상위 제품에서 하위 자재로 풀어 내려가는 방향입니다.</p>
+
+  <div class="card">
+    <h3>정전개란</h3>
+    <p>정전개(BOM Explosion)는 완제품에서 시작해 그 안에 어떤 반제품·원재료가, 얼마의 수량으로 들어가는지를 최하위 레벨까지 풀어나가는 것입니다. SAP에서는 자재 BOM(CS01/CS02/CS03)을 기반으로 이 구조가 정의됩니다.</p>
+    <div class="flow">
+      <div class="box highlight">FG-100</div>
+      <div class="arrow">↓</div>
+      <div class="box">SF-10 ×2</div>
+      <div class="arrow">↓</div>
+      <div class="box">RM-B ×3KG, RM-C ×1EA</div>
+    </div>
+    <p>이 방향이 바로 표준원가 산정(CK11N)이 진행되는 방향입니다 — 최하위 원재료의 가격에서부터 출발해, 위쪽으로 원가를 누적(Roll-up)시킵니다.</p>
+  </div>
+
+  <div class="card">
+    <h3>Low-Level Code — 동일 자재가 여러 BOM에 등장할 때</h3>
+    <p>SF-10은 FG-100(레벨 2 위치)과 FG-300(레벨 1 위치) 두 곳에서 사용됩니다. 만약 시스템이 FG-100을 계산할 때 한 번, FG-300을 계산할 때 또 한 번 SF-10의 원가를 각각 계산한다면 비효율적일 뿐 아니라 계산 시점에 따라 결과가 달라질 위험이 있습니다.</p>
+    <p>이를 방지하기 위해 SAP은 <strong>Low-Level Code(최저 생산 단계)</strong>를 자재별로 산정합니다 — 해당 자재가 전체 BOM 네트워크에서 등장하는 가장 깊은(낮은) 위치를 기준으로, <strong>그 위치에서 단 한 번만 원가를 계산</strong>하고, 그 결과값을 상위의 모든 BOM이 동일하게 참조합니다.</p>
+    <table>
+      <tr><th>자재</th><th>FG-100에서의 위치</th><th>FG-300에서의 위치</th><th>Low-Level Code</th></tr>
+      <tr><td>SF-10</td><td>레벨 2 (FG-100 하위)</td><td>레벨 1 (FG-300 하위)</td><td class="num">레벨 2 (더 깊은 쪽)</td></tr>
+    </table>
+    <p style="font-size:13px; color:var(--sub);">※ 본 예시의 "레벨"은 설명 편의를 위한 BOM 트리 위치 기준입니다. 실제 SAP Low-Level Code는 최상위 자재를 Level 0으로 관리하는 체계입니다.</p>
+    <div class="callout navy">
+      <span class="callout-label">핵심</span>
+      Low-Level Code는 <strong>원가산정만을 위한 기능이 아니라, MRP와 원가산정이 공통으로 사용하는 "처리 순서 결정 메커니즘"</strong>입니다. 원가산정 맥락에서는 이 메커니즘이 <strong>하위 레벨 자재가 먼저 계산되고, 그 결과(Cost Component Split)가 상위 레벨로 Roll-up되는 순서를 보장</strong>하는 역할을 합니다. SF-10의 원가는 이 보장된 순서에 따라 레벨 2에서 한 번 계산되고, 그 결과가 FG-100과 FG-300 양쪽에 동일하게 전달됩니다. Part 4에서 이 계산을 직접 수행해 봅니다.
+    </div>
+  </div>
+</section>
+
+<section id="sec2">
+  <h2 class="section-title">Part 3. 역전개 (Where-Used)</h2>
+  <p class="section-sub">하위 자재에서 상위 제품으로 영향을 추적하는 방향입니다.</p>
+
+  <div class="card">
+    <h3>역전개란</h3>
+    <p>역전개(Where-Used)는 정전개의 반대 방향입니다. 특정 자재가 <strong>어떤 상위 자재(반제품/완제품)에 어디서 사용되고 있는지</strong>를 추적하는 기능으로, SAP에서는 Where-Used List(CS15)를 통해 조회합니다.</p>
+    <div class="flow">
+      <div class="box highlight">RM-B</div>
+      <div class="arrow">↑</div>
+      <div class="box">SF-10</div>
+      <div class="arrow">↑</div>
+      <div class="box">FG-100, FG-300</div>
+    </div>
+    <p>RM-B는 SF-10에만 직접 사용되지만, SF-10이 FG-100과 FG-300 양쪽에서 사용되므로, RM-B의 단가 변동은 <strong>두 완제품 모두</strong>에 영향을 미칩니다. 역전개는 이런 "파급 범위"를 한눈에 보여줍니다.</p>
+  </div>
+
+  <div class="card">
+    <h3>정전개 vs 역전개 — 의사결정 관점 비교</h3>
+    <table>
+      <tr><th>구분</th><th>정전개 (Explosion)</th><th>역전개 (Where-Used)</th></tr>
+      <tr><td>방향</td><td>상위 → 하위</td><td>하위 → 상위</td></tr>
+      <tr><td>대표 기능</td><td>BOM 조회 (CS03), 원가산정 (CK11N)</td><td>Where-Used List (CS15)</td></tr>
+      <tr><td>주 용도</td><td>제품 원가 산출, 자재 소요량 계산</td><td>특정 자재 변경/단가 변동의 영향 범위 파악</td></tr>
+      <tr><td>대표 질문</td><td>"이 제품을 만들려면 무엇이 얼마나 필요한가?"</td><td>"이 자재가 바뀌면 어떤 제품이 영향받는가?"</td></tr>
+    </table>
+    <div class="callout navy">
+      <span class="callout-label">실무 적용</span>
+      원가 마감 관점에서는 정전개가 "산정"의 영역이고, 역전개는 "영향분석·변경관리"의 영역입니다. 두 방향 모두 동일한 BOM 마스터데이터를 기반으로 하지만, 조회 목적과 활용 시나리오가 다릅니다.
+    </div>
+  </div>
+</section>
+
+<section id="sec3">
+  <h2 class="section-title">Part 4. 표준원가 산정 (CK11N)으로의 연결</h2>
+  <p class="section-sub">BOM(수량 구조) + 가격/활동단가(가치 구조) + 부가 규칙 = Cost Component Split</p>
+
+  <div class="card">
+    <h3>원가산정에 필요한 세 가지 마스터데이터</h3>
+    <table>
+      <tr><th>구분</th><th>내용</th><th>관련 트랜잭션</th></tr>
+      <tr><td>① 수량 구조</td><td>BOM(자재별 투입량) + Routing(공정별 활동량)</td><td>CS01~CS03 — BOM 구조 조회/등록, CA01 — 작업계획(Routing) 등록</td></tr>
+      <tr><td>② 가치 구조</td><td>자재 가격(원재료) + 활동단가(공정별 가공비)</td><td>자재마스터 가격, KP26 — 활동단가 등록</td></tr>
+      <tr><td>③ 부가 규칙</td><td>간접비 배부율(Costing Sheet), 스크랩률 등</td><td>코스팅시트 정의</td></tr>
+    </table>
+    <p>참고로, 정전개/역전개 조회와 원가산정/조회에 쓰이는 핵심 트랜잭션을 한 줄로 정리하면 다음과 같습니다.</p>
+    <ul>
+      <li><strong>CS03</strong> — BOM 구조 조회 (정전개)</li>
+      <li><strong>CS15</strong> — 사용처(Where-Used) 조회 (역전개)</li>
+      <li><strong>CK11N</strong> — 표준원가 산정 실행</li>
+      <li><strong>CK13N</strong> — 산정된 표준원가 결과 조회 (실무에서는 CK11N보다 CK13N을 조회하는 빈도가 훨씬 높습니다)</li>
+    </ul>
+    <div class="callout navy">
+      <span class="callout-label">참고</span>
+      실제 CK11N에서는 <strong>Costing Variant</strong>가 어떤 BOM, Routing, 가격, Costing Sheet를 사용할지를 결정합니다. 이 모듈에서는 세 가지 마스터데이터의 결합 원리에 집중하며, Costing Variant 자체의 상세 설정은 다루지 않습니다.
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Cost Roll-up 흐름 — 왜 SF-10의 계산 결과가 FG-100으로 넘어가는가</h3>
+    <div class="flow">
+      <div class="box">RM-B, RM-C</div>
+      <div class="arrow">↓</div>
+      <div class="box highlight">SF-10<br>재료비 3,500<br>가공비 1,000</div>
+      <div class="arrow">↓ Roll-up</div>
+      <div class="box">FG-100</div>
+    </div>
+    <div class="flow">
+      <div class="box highlight">SF-10<br>재료비 3,500<br>가공비 1,000</div>
+      <div class="arrow">↓ Roll-up</div>
+      <div class="box">FG-300</div>
+    </div>
+    <p>SF-10에서 산정된 결과는 Low-Level Code에 따라 단 한 번 계산된 후, 그 값이 그대로 상위 레벨(FG-100, FG-300)의 계산에 입력값으로 사용됩니다. 아래 Step 1~3에서 이 흐름을 숫자로 직접 따라가 봅니다.</p>
+  </div>
+
+  <div class="card">
+    <h3>예시 데이터 — 가격 및 활동단가</h3>
+    <table>
+      <tr><th>자재/활동</th><th>단가</th><th>구분</th></tr>
+      <tr><td>RM-A</td><td class="num">1,000 KRW/EA</td><td>원재료 가격</td></tr>
+      <tr><td>RM-B</td><td class="num">500 KRW/KG</td><td>원재료 가격</td></tr>
+      <tr><td>RM-C</td><td class="num">2,000 KRW/EA</td><td>원재료 가격</td></tr>
+      <tr><td>RM-D</td><td class="num">1,500 KRW/EA</td><td>원재료 가격</td></tr>
+      <tr><td>SF-10 자체 공정</td><td class="num">1,000 KRW/EA</td><td>가공비 (활동단가 × 활동량)</td></tr>
+      <tr><td>FG-100 자체 공정</td><td class="num">1,500 KRW/EA</td><td>가공비</td></tr>
+      <tr><td>FG-300 자체 공정</td><td class="num">800 KRW/EA</td><td>가공비</td></tr>
+      <tr><td>간접비 배부율 (코스팅시트)</td><td class="num">가공비의 10%</td><td>간접비</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Step 1 — SF-10 원가산정 (Low-Level Code 단계)</h3>
+    <p>Part 2에서 정리한 대로, SF-10은 Low-Level Code 기준 단 한 번 계산됩니다.</p>
+    <table>
+      <tr><th>구성</th><th>계산</th><th>금액</th><th>Cost Component</th></tr>
+      <tr><td>RM-B</td><td>3 KG × 500</td><td class="num">1,500</td><td>재료비</td></tr>
+      <tr><td>RM-C</td><td>1 EA × 2,000</td><td class="num">2,000</td><td>재료비</td></tr>
+      <tr><td>SF-10 자체 공정</td><td>-</td><td class="num">1,000</td><td>가공비</td></tr>
+      <tr class="sum"><td colspan="2">SF-10 단위원가 합계</td><td class="num">4,500</td><td>재료비 3,500 / 가공비 1,000</td></tr>
+    </table>
+    <div class="callout navy">
+      <span class="callout-label">핵심 — 구조 자체가 전달됨</span>
+      SAP은 하위 자재의 <strong>총원가(4,500)만 전달하는 것이 아니라, "재료비 3,500 / 가공비 1,000"이라는 Cost Component Split 구조 자체를 그대로 상위 레벨로 전달(Roll-up)</strong>합니다. 이후 FG-100, FG-300 계산에서 이 구조는 재계산되지 않고 그대로 인용·합산됩니다. 이 구조별 전이는 이후 Group Reporting의 원가요소 매핑과도 직결됩니다.
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Step 2 — FG-100 원가산정 (SF-10 × 2 + RM-A × 1)</h3>
+    <table>
+      <tr><th>구성</th><th>계산</th><th>재료비</th><th>가공비</th></tr>
+      <tr><td>SF-10 × 2</td><td>4,500 × 2</td><td class="num">7,000</td><td class="num">2,000</td></tr>
+      <tr><td>RM-A × 1</td><td>1,000 × 1</td><td class="num">1,000</td><td class="num">-</td></tr>
+      <tr><td>FG-100 자체 공정</td><td>-</td><td class="num">-</td><td class="num">1,500</td></tr>
+      <tr class="total"><td colspan="2">소계</td><td class="num">8,000</td><td class="num">3,500</td></tr>
+      <tr><td>간접비</td><td>가공비 3,500 × 10%</td><td colspan="2" class="num">350</td></tr>
+      <tr class="sum"><td colspan="3">FG-100 단위원가 합계</td><td class="num">11,850</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Step 3 — FG-300 원가산정 (SF-10 × 1 + RM-D × 1)</h3>
+    <table>
+      <tr><th>구성</th><th>계산</th><th>재료비</th><th>가공비</th></tr>
+      <tr><td>SF-10 × 1</td><td>4,500 × 1</td><td class="num">3,500</td><td class="num">1,000</td></tr>
+      <tr><td>RM-D × 1</td><td>1,500 × 1</td><td class="num">1,500</td><td class="num">-</td></tr>
+      <tr><td>FG-300 자체 공정</td><td>-</td><td class="num">-</td><td class="num">800</td></tr>
+      <tr class="total"><td colspan="2">소계</td><td class="num">5,000</td><td class="num">1,800</td></tr>
+      <tr><td>간접비</td><td>가공비 1,800 × 10%</td><td colspan="2" class="num">180</td></tr>
+      <tr class="sum"><td colspan="3">FG-300 단위원가 합계</td><td class="num">6,980</td></tr>
+    </table>
+    <div class="callout navy">
+      <span class="callout-label">Low-Level Code 효과 확인</span>
+      FG-100과 FG-300 모두 동일한 SF-10 단위원가(4,500, 재료비 3,500 / 가공비 1,000)를 그대로 가져와 사용했습니다. SF-10의 BOM(RM-B, RM-C)을 FG-300 계산에서 다시 풀어내릴 필요가 없었습니다 — 이것이 Low-Level Code가 보장하는 일관성과 효율입니다.
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>참고 — 특수조달키(Special Procurement Key)에 따른 예외</h3>
+    <p>위 예시는 SF-10이 자체 공정을 거쳐 생산되는 "표준 자체생산" 자재라는 전제입니다. 다만 자재마스터의 특수조달키 설정에 따라 정전개 로직이 달라질 수 있습니다.</p>
+    <ul>
+      <li><strong>Phantom BOM (가상 BOM)</strong>: 해당 자재 자체는 독립적인 원가 객체로 계산되지 않고, 그 하위 자재(RM-B, RM-C 등)가 상위 BOM으로 직접 전개됩니다. 다만 자체 Routing/Activity Cost(가공비)가 함께 전개되는지 여부는 시스템 설계(설정)에 따라 달라질 수 있습니다.</li>
+      <li><strong>외주가공(Subcontracting)</strong>: 자체 공정 가공비 대신 외주처에 지급하는 가공비(외주비)가 별도의 Cost Component로 반영됩니다.</li>
+    </ul>
+    <div class="callout warn">
+      <span class="callout-label">개념 수준 안내</span>
+      이 모듈에서는 두 케이스를 "정전개 로직에 영향을 줄 수 있는 설정"으로만 소개합니다. 실제 자재마스터 설정값(특수조달키 코드 등)과 상세 처리 로직은 본 모듈 범위를 벗어나며, 별도 학습 모듈에서 다룹니다.
+    </div>
+  </div>
+</section>
+
+<section id="sec4">
+  <h2 class="section-title">Part 5. 종합 정리</h2>
+  <p class="section-sub">BOM은 원가 마감 전체 흐름의 "1회 실행, 전 영역 참조" 지점입니다.</p>
+
+  <div class="card">
+    <h3>전체 흐름 재확인</h3>
+    <div class="flow">
+      <div class="box highlight">BOM 정전개<br>(Low-Level Code 기준 1회 계산)</div>
+      <div class="arrow">→</div>
+      <div class="box">CK11N<br>Cost Component Split</div>
+      <div class="arrow">→</div>
+      <div class="box">수불부 관리<br>(표준가 기준 입출고)</div>
+      <div class="arrow">→</div>
+      <div class="box">원가차이 조정<br>(실제 vs 표준)</div>
+    </div>
+    <p>BOM 정전개를 통해 산출된 Cost Component Split(예: FG-100 = 재료비 8,000 + 가공비 3,500 + 간접비 350)은 이후 수불부의 표준가 기준이 되고, 원가차이 조정 단계에서 실제 발생 원가와 비교하는 "기준값"으로 계속 참조됩니다.</p>
+    <div class="callout navy">
+      <span class="callout-label">한 줄 정리</span>
+      정전개는 "산정의 출발점", 역전개는 "변경 영향분석의 도구"이며, 이 둘을 가능하게 하는 것이 BOM 마스터데이터와 Low-Level Code 메커니즘입니다.
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>체크리스트</h3>
+    <ul class="checklist">
+      <li><span class="chk"></span> 정전개(BOM Explosion)와 역전개(Where-Used)의 방향과 용도를 구분할 수 있다.</li>
+      <li><span class="chk"></span> Low-Level Code가 "동일 자재의 중복 계산을 방지"하기 위한 메커니즘임을 설명할 수 있다.</li>
+      <li><span class="chk"></span> CK11N 원가산정이 BOM(수량 구조) + 가격/활동단가(가치 구조) + 코스팅시트(부가 규칙)의 결합임을 안다.</li>
+      <li><span class="chk"></span> Cost Component Split(재료비/가공비/간접비)이 하위 레벨에서 상위 레벨로 어떻게 누적(Roll-up)되는지 직접 계산해 본 적이 있다.</li>
+      <li><span class="chk"></span> Phantom BOM, 외주가공 등 특수조달키가 정전개 로직에 영향을 줄 수 있다는 점을 인지하고 있다.</li>
+      <li><span class="chk"></span> 동일 반제품(SF-10)이 여러 완제품(FG-100, FG-300)에 사용되더라도, SAP은 하위 레벨 원가(Cost Component Split 포함)를 한 번만 계산하고 그 결과를 공유한다는 점을 설명할 수 있다.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>퀴즈</h3>
+
+    <div class="quiz-item">
+      <div class="quiz-q">Q1. SF-10이 FG-100(레벨 2)과 FG-300(레벨 1)에 모두 사용될 때, SAP이 SF-10의 Low-Level Code를 결정하는 기준은?</div>
+      <div class="quiz-opts">
+        <div class="quiz-opt" data-correct="false">먼저 계산이 요청된 BOM의 레벨</div>
+        <div class="quiz-opt" data-correct="true">전체 BOM 네트워크에서 가장 깊은(낮은) 레벨</div>
+        <div class="quiz-opt" data-correct="false">자재코드 생성일이 가장 오래된 BOM의 레벨</div>
+      </div>
+      <div class="quiz-explain">SF-10은 FG-100 하위에서 레벨 2, FG-300 하위에서 레벨 1로 등장하므로, 더 깊은 레벨 2가 Low-Level Code가 됩니다. 이 레벨에서 단 한 번 계산된 값을 양쪽 BOM이 공유합니다.</div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="quiz-q">Q2. RM-B의 단가가 인상되었을 때, 이 변화가 어떤 제품들에 영향을 미치는지 빠르게 확인하려면 어떤 기능을 사용하는가?</div>
+      <div class="quiz-opts">
+        <div class="quiz-opt" data-correct="false">CS03 (BOM 조회 - 정전개)</div>
+        <div class="quiz-opt" data-correct="true">CS15 (Where-Used List - 역전개)</div>
+        <div class="quiz-opt" data-correct="false">CK11N (표준원가 산정)</div>
+      </div>
+      <div class="quiz-explain">하위 자재에서 상위 제품으로의 영향 범위를 추적하는 것은 역전개(Where-Used)의 역할이며, SAP에서는 CS15로 조회합니다. CS03은 반대 방향(정전개)이고, CK11N은 산정 자체를 수행합니다.</div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="quiz-q">Q3. FG-100의 Cost Component 중 "간접비 350"은 어떤 기준으로 산출되었는가?</div>
+      <div class="quiz-opts">
+        <div class="quiz-opt" data-correct="false">재료비 8,000의 10%</div>
+        <div class="quiz-opt" data-correct="true">가공비 3,500의 10% (코스팅시트 배부율)</div>
+        <div class="quiz-opt" data-correct="false">단위원가 합계 11,850의 별도 고정 비율</div>
+      </div>
+      <div class="quiz-explain">예시에서 정의한 코스팅시트 배부율은 "가공비의 10%"였습니다. FG-100의 가공비 소계는 3,500(SF-10에서 전이된 2,000 + FG-100 자체 1,500)이므로, 그 10%인 350이 간접비로 산정됩니다.</div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="quiz-q">Q4. SF-10이 Phantom BOM으로 설정되어 있다면, FG-100 원가산정에서 어떤 변화가 발생하는가?</div>
+      <div class="quiz-opts">
+        <div class="quiz-opt" data-correct="false">SF-10의 가공비(1,000)만 제외되고 재료비는 그대로 반영된다</div>
+        <div class="quiz-opt" data-correct="true">SF-10 자체는 독립 원가 객체로 계산되지 않고, 그 하위 자재(RM-B, RM-C)가 상위 BOM(FG-100)으로 직접 전개된다</div>
+        <div class="quiz-opt" data-correct="false">SF-10이 BOM에서 자동으로 제외된다</div>
+      </div>
+      <div class="quiz-explain">Phantom BOM은 해당 자재가 독립적인 원가 레벨을 갖지 않고, 하위 구성요소가 상위 BOM에 직접 전개되는 설정입니다. 단, SF-10 자체의 Routing/Activity Cost(가공비)가 함께 전개되는지 여부는 시스템 설계에 따라 달라질 수 있어 일률적으로 단정할 수 없습니다.</div>
+    </div>
+  </div>
+</section>
+
+<div class="pagenav">
+  <button id="prevBtn">← 이전</button>
+  <button id="nextBtn">다음 →</button>
+</div>
+
+<script>
+const sections = ['sec0','sec1','sec2','sec3','sec4'];
+const titles = ['1. 큰 그림 속 BOM','2. 정전개', '3. 역전개', '4. CK11N 연결', '5. 종합 정리'];
+const nav = document.getElementById('nav');
+let current = 0;
+
+titles.forEach((t,i)=>{
+  const b = document.createElement('button');
+  b.textContent = t;
+  if(i===0) b.classList.add('active');
+  b.onclick = ()=> goTo(i);
+  nav.appendChild(b);
+});
+
+function goTo(i){
+  document.getElementById(sections[current]).classList.remove('active');
+  nav.children[current].classList.remove('active');
+  current = i;
+  document.getElementById(sections[current]).classList.add('active');
+  nav.children[current].classList.add('active');
+  document.getElementById('prevBtn').disabled = (current===0);
+  document.getElementById('nextBtn').disabled = (current===sections.length-1);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+document.getElementById('prevBtn').onclick = ()=>{ if(current>0) goTo(current-1); };
+document.getElementById('nextBtn').onclick = ()=>{ if(current<sections.length-1) goTo(current+1); };
+document.getElementById('prevBtn').disabled = true;
+
+// Quiz logic
+document.querySelectorAll('.quiz-item').forEach(item=>{
+  const opts = item.querySelectorAll('.quiz-opt');
+  const explain = item.querySelector('.quiz-explain');
+  opts.forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      if(item.dataset.answered) return;
+      item.dataset.answered = 'true';
+      opts.forEach(o=>{
+        o.classList.add('selected');
+        o.classList.add(o.dataset.correct === 'true' ? 'correct' : 'wrong');
+      });
+      explain.classList.add('show');
+    });
+  });
+});
+</script>
+
+</body>
+</html>
